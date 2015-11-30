@@ -1,0 +1,22 @@
+# OS / Qt Creator
+*~
+*.autosave
+
+# generated files
+bin/
+gen/
+*.o
+*.a
+moc_*
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# QT/QML
+*.pro.user
+*.pro.user.*
+*build-*Debug
+*build-*Release
+
+# build script tmp files
+*.tmp

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/translations">
+        <file alias="farcaster_de.qm">../translations/farcaster_de.qm</file>
+    </qresource>
+</RCC>

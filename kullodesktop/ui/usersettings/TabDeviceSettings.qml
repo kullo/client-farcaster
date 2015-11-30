@@ -1,0 +1,76 @@
+/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+import QtQuick 2.4
+
+import "../buttons"
+import "../native"
+
+TabContent {
+    id: _root
+
+    function reset() {
+        updateLaneRow.value = Devicesettings.updateLane
+        closeToTrayRow.checked = Devicesettings.closeToTray
+    }
+
+    Column {
+        id: mainColumn
+        anchors {
+            left: parent.left
+            top: parent.top
+            right: parent.right
+        }
+        spacing: 10
+
+        ComboBoxRow {
+            id: updateLaneRow
+            name: qsTr("Update lane")
+            values: ListModel {
+                //: Update lane name
+                ListElement { text: qsTr("important"); value: "important" }
+                //: Update lane name
+                ListElement { text: qsTr("all"); value: "all" }
+            }
+            initialValue: Devicesettings.updateLane
+            description: qsTr("'Important' updates are those we think everyone should install, e.g. security fixes or mayor feature improvements.") + " "
+                         + qsTr("We plan to have an 'important' update every 4-8 weeks.") + " "
+                         + qsTr("'All' updates contain minor improvements or changes that are only relevant for some users. Those come once a week or even more often.") + " "
+                         + qsTr("This is for pioneers.")
+        }
+
+        CheckBoxRow {
+            id: closeToTrayRow
+            name: qsTr("Tray icon")
+            text: qsTr("Close to tray")
+            checked: Devicesettings.closeToTray
+        }
+    }
+
+    Row {
+        id: bottonsRow
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+        }
+        spacing: 10
+
+        NativeButton {
+            id: buttonDiscard
+            text: qsTr("Discard")
+            style: KulloButtonStyle { source: "/resources/scalable/cancel_w.svg" }
+            onClicked: {
+                _root.closeWindow()
+            }
+        }
+
+        NativeButton {
+            id: buttonSave
+            text: qsTr("Save")
+            style: KulloButtonStyle { source: "/resources/scalable/ok_w.svg" }
+            onClicked: {
+                Devicesettings.updateLane = updateLaneRow.value
+                Devicesettings.closeToTray = closeToTrayRow.checked
+                _root.closeWindow()
+            }
+        }
+    }
+}

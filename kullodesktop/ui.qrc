@@ -1,0 +1,127 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="qmldir">ui/qmldir</file>
+        <file alias="Style.qml">ui/Style.qml</file>
+        <file alias="main.qml">ui/main.qml</file>
+        <file alias="viewInbox.qml">ui/viewInbox.qml</file>
+        <file alias="viewLoggingIn.qml">ui/viewLoggingIn.qml</file>
+        <file alias="viewLogin.qml">ui/viewLogin.qml</file>
+        <file alias="viewLoginSetUserSettings.qml">ui/viewLoginSetUserSettings.qml</file>
+        <file alias="viewRegister.qml">ui/viewRegister.qml</file>
+        <file alias="viewWelcome.qml">ui/viewWelcome.qml</file>
+        <file alias="libraryLoggerInitializer.qml">ui/libraryLoggerInitializer.qml</file>
+    </qresource>
+    <qresource prefix="/buttons">
+        <file alias="BackButton.qml">ui/buttons/BackButton.qml</file>
+        <file alias="KulloButtonStyle.qml">ui/buttons/KulloButtonStyle.qml</file>
+        <file alias="IconButton.qml">ui/buttons/IconButton.qml</file>
+        <file alias="ConversationButton.qml">ui/buttons/ConversationButton.qml</file>
+    </qresource>
+    <qresource prefix="/dialogs">
+        <file alias="AdvancedFileOpenDialog.qml">ui/dialogs/AdvancedFileOpenDialog.qml</file>
+        <file alias="AdvancedFileSaveDialog.qml">ui/dialogs/AdvancedFileSaveDialog.qml</file>
+        <file alias="BaseDialog.qml">ui/dialogs/BaseDialog.qml</file>
+        <file alias="YesNoDialog.qml">ui/dialogs/YesNoDialog.qml</file>
+        <file alias="PromptDialog.qml">ui/dialogs/PromptDialog.qml</file>
+        <file alias="GroupConversationStartDialog.qml">ui/dialogs/GroupConversationStartDialog.qml</file>
+        <file alias="UpdateDialog.qml">ui/dialogs/UpdateDialog.qml</file>
+        <file alias="ErrorDialog.qml">ui/dialogs/ErrorDialog.qml</file>
+        <file alias="GroupConversationChangeDialog.qml">ui/dialogs/GroupConversationChangeDialog.qml</file>
+    </qresource>
+    <qresource prefix="/formelements">
+        <file alias="FButton.qml">ui/formelements/FButton.qml</file>
+        <file alias="FClearButton.qml">ui/formelements/FClearButton.qml</file>
+        <file alias="FComboBox.qml">ui/formelements/FComboBox.qml</file>
+        <file alias="FForm.qml">ui/formelements/FForm.qml</file>
+        <file alias="FLabel.qml">ui/formelements/FLabel.qml</file>
+        <file alias="FSubmitButton.qml">ui/formelements/FSubmitButton.qml</file>
+        <file alias="FTextField.qml">ui/formelements/FTextField.qml</file>
+    </qresource>
+    <qresource prefix="/inbox">
+        <file alias="banners/ClientTooOldBanner.qml">ui/inbox/banners/ClientTooOldBanner.qml</file>
+        <file alias="banners/SyncErrorBanner.qml">ui/inbox/banners/SyncErrorBanner.qml</file>
+        <file alias="banners/SyncingBanner.qml">ui/inbox/banners/SyncingBanner.qml</file>
+        <file alias="AnswerBox.qml">ui/inbox/AnswerBox.qml</file>
+        <file alias="AttachmentDelegate.qml">ui/inbox/AttachmentDelegate.qml</file>
+        <file alias="ConversationDelegate.qml">ui/inbox/ConversationDelegate.qml</file>
+        <file alias="ConversationIntro.qml">ui/inbox/ConversationIntro.qml</file>
+        <file alias="ConversationsList.qml">ui/inbox/ConversationsList.qml</file>
+        <file alias="DraftAttachmentDelegate.qml">ui/inbox/DraftAttachmentDelegate.qml</file>
+        <file alias="ConversationHighlighter.qml">ui/inbox/ConversationHighlighter.qml</file>
+        <file alias="LeftColumn.qml">ui/inbox/LeftColumn.qml</file>
+        <file alias="MessageDelegate.qml">ui/inbox/MessageDelegate.qml</file>
+        <file alias="MessageDelegateAttachmentsBox.qml">ui/inbox/MessageDelegateAttachmentsBox.qml</file>
+        <file alias="MessageHeader.qml">ui/inbox/MessageHeader.qml</file>
+        <file alias="MessagesList.qml">ui/inbox/MessagesList.qml</file>
+        <file alias="MiddleColumn.qml">ui/inbox/MiddleColumn.qml</file>
+        <file alias="RightColumn.qml">ui/inbox/RightColumn.qml</file>
+        <file alias="SaveUnit.qml">ui/inbox/SaveUnit.qml</file>
+        <file alias="ToolbarTop.qml">ui/inbox/ToolbarTop.qml</file>
+        <file alias="ToolbarBottom.qml">ui/inbox/ToolbarBottom.qml</file>
+    </qresource>
+    <qresource prefix="/js">
+        <file alias="djb2.js">ui/js/djb2.js</file>
+        <file alias="format.js">ui/js/format.js</file>
+        <file alias="mime.js">ui/js/mime.js</file>
+        <file alias="shortcut.js">ui/js/shortcut.js</file>
+        <file alias="dynamic.js">ui/js/dynamic.js</file>
+        <file alias="js_helpers.js">ui/js/js_helpers.js</file>
+    </qresource>
+    <qresource prefix="/native">
+        <file alias="NativeSelectableText.qml">ui/native/NativeSelectableText.qml</file>
+        <file alias="NativeText.qml">ui/native/NativeText.qml</file>
+        <file alias="NativeTextEdit.qml">ui/native/NativeTextEdit.qml</file>
+        <file alias="NativeTextInput.qml">ui/native/NativeTextInput.qml</file>
+        <file alias="NativeWindow.qml">ui/native/NativeWindow.qml</file>
+        <file alias="TextFieldKulloAddress.qml">ui/native/TextFieldKulloAddress.qml</file>
+        <file alias="NativeModalWindow.qml">ui/native/NativeModalWindow.qml</file>
+        <file alias="NativeButton.qml">ui/native/NativeButton.qml</file>
+        <file alias="NativeImage.qml">ui/native/NativeImage.qml</file>
+        <file alias="FTextFieldKulloAddress.qml">ui/native/FTextFieldKulloAddress.qml</file>
+    </qresource>
+    <qresource prefix="/misc">
+        <file alias="BackgroundCover.qml">ui/misc/BackgroundCover.qml</file>
+        <file alias="ChessRectangle.qml">ui/misc/ChessRectangle.qml</file>
+        <file alias="CtrlKey.qml">ui/misc/CtrlKey.qml</file>
+        <file alias="CutCopyPasteMenu.qml">ui/misc/CutCopyPasteMenu.qml</file>
+        <file alias="ErrorHint.qml">ui/misc/ErrorHint.qml</file>
+        <file alias="Key.qml">ui/misc/Key.qml</file>
+        <file alias="Logo.qml">ui/misc/Logo.qml</file>
+        <file alias="Overlay.qml">ui/misc/Overlay.qml</file>
+        <file alias="ReturnKey.qml">ui/misc/ReturnKey.qml</file>
+        <file alias="ShortcutBlock.qml">ui/misc/ShortcutBlock.qml</file>
+        <file alias="ShortcutOverlay.qml">ui/misc/ShortcutOverlay.qml</file>
+        <file alias="ShortcutRow.qml">ui/misc/ShortcutRow.qml</file>
+        <file alias="TooltipArea.qml">ui/misc/TooltipArea.qml</file>
+    </qresource>
+    <qresource prefix="/usersettings">
+        <file alias="AvatarRow.qml">ui/usersettings/AvatarRow.qml</file>
+        <file alias="ButtonRow.qml">ui/usersettings/ButtonRow.qml</file>
+        <file alias="CheckBoxRow.qml">ui/usersettings/CheckBoxRow.qml</file>
+        <file alias="ComboBoxRow.qml">ui/usersettings/ComboBoxRow.qml</file>
+        <file alias="FontRow.qml">ui/usersettings/FontRow.qml</file>
+        <file alias="RowLabel.qml">ui/usersettings/RowLabel.qml</file>
+        <file alias="SelectableTextRow.qml">ui/usersettings/SelectableTextRow.qml</file>
+        <file alias="TabAccountSettings.qml">ui/usersettings/TabAccountSettings.qml</file>
+        <file alias="TabContent.qml">ui/usersettings/TabContent.qml</file>
+        <file alias="TabDeviceSettings.qml">ui/usersettings/TabDeviceSettings.qml</file>
+        <file alias="TabFont.qml">ui/usersettings/TabFont.qml</file>
+        <file alias="TabUserSettings.qml">ui/usersettings/TabUserSettings.qml</file>
+        <file alias="TextAreaRow.qml">ui/usersettings/TextAreaRow.qml</file>
+        <file alias="TextFieldRow.qml">ui/usersettings/TextFieldRow.qml</file>
+    </qresource>
+    <qresource prefix="/windows">
+        <file alias="ConversationInfoWindow.qml">ui/windows/ConversationInfoWindow.qml</file>
+        <file alias="InfoWindow.qml">ui/windows/InfoWindow.qml</file>
+        <file alias="MasterKeyImportWindow.qml">ui/windows/MasterKeyImportWindow.qml</file>
+        <file alias="MasterKeyShowWindow.qml">ui/windows/MasterKeyShowWindow.qml</file>
+        <file alias="SenderInfoWindow.qml">ui/windows/SenderInfoWindow.qml</file>
+        <file alias="SettingsWindow.qml">ui/windows/SettingsWindow.qml</file>
+        <file alias="MasterKeyBackupReminderWindow.qml">ui/windows/MasterKeyBackupReminderWindow.qml</file>
+    </qresource>
+    <qresource prefix="/registration">
+        <file alias="AddressSelection.qml">ui/registration/AddressSelection.qml</file>
+        <file alias="Keygen.qml">ui/registration/Keygen.qml</file>
+        <file alias="SetUserSettings.qml">ui/registration/SetUserSettings.qml</file>
+    </qresource>
+</RCC>

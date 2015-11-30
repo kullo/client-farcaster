@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="20"
+   height="20"
+   id="svg2"
+   xml:space="preserve"><metadata
+     id="metadata8"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath16"><path
+         d="M 0,0 16,0 16,16 0,16 0,0 z"
+         id="path18" /></clipPath></defs><g
+     transform="matrix(1.25,0,0,-1.25,0,20)"
+     id="g10"><g
+       transform="translate(0.8003,0)"
+       id="g12"
+       style="fill:#1a171b;fill-opacity:1"><g
+         clip-path="url(#clipPath16)"
+         id="g14"
+         style="fill:#1a171b;fill-opacity:1"><g
+           transform="translate(9.793,1.7324)"
+           id="g20"
+           style="fill:#1a171b;fill-opacity:1"><path
+             d="M 0,0 -1.061,1.061 -2.792,2.793 -1.732,3.854 0,2.121 3.146,5.268 4.207,4.207 0,0 z m 0.707,7.268 c -2.486,0 -4.499,-2.016 -4.499,-4.5 0,-2.487 2.013,-4.5 4.499,-4.5 2.486,0 4.5,2.013 4.5,4.5 0,2.484 -2.014,4.5 -4.5,4.5"
+             id="path22"
+             style="fill:#1a171b;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g></g></g><path
+       d="m 3.8003,9 4.001,0 0,1 -4.001,0 0,-1 z"
+       id="path24"
+       style="fill:#1a171b;fill-opacity:1;fill-rule:nonzero;stroke:none" /><path
+       d="m 3.8003,7 2.001,0 0,1 -2.001,0 0,-1 z"
+       id="path26"
+       style="fill:#1a171b;fill-opacity:1;fill-rule:nonzero;stroke:none" /><path
+       d="m 3.8003,5 2.001,0 0,1 -2.001,0 0,-1 z"
+       id="path28"
+       style="fill:#1a171b;fill-opacity:1;fill-rule:nonzero;stroke:none" /><g
+       transform="translate(3.8,16.0002)"
+       id="g30"
+       style="fill:#1a171b;fill-opacity:1"><path
+         d="m 0,0 0,-1 -3,0 0,-15 6.001,0 0,2 -4.001,0 0,10.999 1,0 0,-1 7,0 0,1 1,0 0,-2.999 2,0 0,5 -3,0 0,1 -7,0 z m 1,-1 5,0 0,-1 -5,0 0,1 z"
+         id="path32"
+         style="fill:#1a171b;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g></g></svg>

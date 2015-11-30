@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleExecutable</key>
+	<string>@EXECUTABLE@</string>
+	<key>CFBundleIdentifier</key>
+	<string>net.kullo.Kullo</string>
+	<key>CFBundleName</key>
+	<string>Kullo</string>
+	<key>CFBundleDisplayName</key>
+	<string>Kullo - Secure Messaging</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.0</string>
+	<key>BreakpadVendor</key>
+	<string>Kullo GmbH</string>
+	<key>CFBundleIconFile</key>
+	<string>@ICON@</string>
+	<key>BreakpadReportInterval</key>
+	<string>0</string>
+	<key>BreakpadConfirmTimeout</key>
+	<string>0</string>
+	<key>BreakpadRequestComments</key>
+	<string>YES</string>
+	<key>BreakpadRequestEmail</key>
+	<string>YES</string>
+	<key>BreakpadURL</key>
+        <string>https://kullo.kullo.net:8443/upload</string>
+</dict>
+</plist>

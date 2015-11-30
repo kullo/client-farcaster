@@ -1,0 +1,47 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/14/chevron-circle-bottom_b.png</file>
+        <file>resources/14/chevron-circle-right_b.png</file>
+        <file>resources/20/arrow-rounded-left.png</file>
+        <file>resources/20/delivery_error.png</file>
+        <file>resources/20/delivery_sending.png</file>
+        <file>resources/20/delivery_sent.png</file>
+        <file>resources/20/info_b.png</file>
+        <file>resources/20/later_w.png</file>
+        <file>resources/20/login_w.png</file>
+        <file>resources/20/logout2_b.png</file>
+        <file>resources/20/send_w.png</file>
+        <file>resources/20/settings2_b.png</file>
+        <file>resources/20/sound_muted_b.png</file>
+        <file>resources/20/sound_unmuted_b.png</file>
+        <file>resources/20/state_unread_b.png</file>
+        <file>resources/20/state_undone_b.png</file>
+        <file>resources/20/state_done_b.png</file>
+        <file>resources/20/state_done_g.png</file>
+        <file>resources/20/todo_b.png</file>
+        <file>resources/20/todo_active_b.png</file>
+        <file>resources/20/user_b.png</file>
+        <file>resources/scalable/add_w.svg</file>
+        <file>resources/scalable/attach_b.svg</file>
+        <file>resources/scalable/cancel_w.svg</file>
+        <file>resources/scalable/change_recipients_g.svg</file>
+        <file>resources/scalable/close_b.svg</file>
+        <file>resources/scalable/close2_b.svg</file>
+        <file>resources/scalable/delete_b.svg</file>
+        <file>resources/scalable/logo.svg</file>
+        <file>resources/scalable/minus_b.svg</file>
+        <file>resources/scalable/ok_w.svg</file>
+        <file>resources/scalable/trayicon_linux_gray.svg</file>
+        <file>resources/scalable/trayicon_linux_orange.svg</file>
+        <file>resources/scalable/trayicon_linux_turquoise.svg</file>
+        <file>resources/scalable/trayicon_osx_default.svg</file>
+        <file>resources/scalable/trayicon_osx_loggedout.svg</file>
+        <file>resources/scalable/trayicon_osx_notification.svg</file>
+        <file>resources/scalable/trayicon_windows_default.svg</file>
+        <file>resources/scalable/trayicon_windows_loggedout.svg</file>
+        <file>resources/scalable/trayicon_windows_notification.svg</file>
+        <file>resources/scalable/write_w.svg</file>
+        <file>resources/sounds/new_message.wav</file>
+        <file>resources/working-indicator.gif</file>
+    </qresource>
+</RCC>

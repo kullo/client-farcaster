@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="20"
+   height="20"
+   id="svg2"
+   xml:space="preserve"><metadata
+     id="metadata8"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath16"><path
+         d="M 0,0 16,0 16,16 0,16 0,0 z"
+         id="path18" /></clipPath></defs><g
+     transform="matrix(1.25,0,0,-1.25,0,20)"
+     id="g10"><g
+       transform="matrix(1.0666667,0,0,1.0666667,-0.0224,0)"
+       id="g12"
+       style="fill:#ffffff;fill-opacity:1"><g
+         clip-path="url(#clipPath16)"
+         id="g14"
+         style="fill:#ffffff;fill-opacity:1"><path
+           d="m 13.021,2 -11,0 0,11 11,0 0,-11 z m -12.5,13 c -0.274,0 -0.5,-0.226 -0.5,-0.5 l 0,-14 C 0.021,0.225 0.247,0 0.521,0 l 14,0 c 0.273,0 0.5,0.225 0.5,0.5 l 0,14 c 0,0.274 -0.227,0.5 -0.5,0.5 l -14,0 z"
+           id="path20"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" /><g
+           transform="translate(3.521,9)"
+           id="g22"
+           style="fill:#ffffff;fill-opacity:1"><path
+             d="m 0,0 0.5,0 0,-5 1,0 0,5 L 2,0 C 2.274,0 2.5,0.225 2.5,0.5 2.5,0.774 2.274,1 2,1 l -0.5,0 0,1 -1,0 0,-1 L 0,1 C -0.274,1 -0.5,0.774 -0.5,0.5 -0.5,0.225 -0.274,0 0,0"
+             id="path24"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g><g
+           transform="translate(6.521,6)"
+           id="g26"
+           style="fill:#ffffff;fill-opacity:1"><path
+             d="m 0,0 0.5,0 0,-2 1,0 0,2 L 2,0 C 2.273,0 2.5,0.225 2.5,0.5 2.5,0.773 2.273,1 2,1 l -0.5,0 0,4 -1,0 0,-4 L 0,1 C -0.274,1 -0.5,0.773 -0.5,0.5 -0.5,0.225 -0.274,0 0,0"
+             id="path28"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g><g
+           transform="translate(9.5215,8)"
+           id="g30"
+           style="fill:#ffffff;fill-opacity:1"><path
+             d="m 0,0 0.5,0 0,-4 1,0 0,4 L 2,0 C 2.272,0 2.5,0.225 2.5,0.5 2.5,0.774 2.272,1 2,1 l -0.5,0 0,2 -1,0 0,-2 L 0,1 C -0.275,1 -0.5,0.774 -0.5,0.5 -0.5,0.225 -0.275,0 0,0"
+             id="path32"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none" /></g></g></g></g></svg>

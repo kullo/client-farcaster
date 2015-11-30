@@ -1,0 +1,67 @@
+/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+import QtQuick 2.4
+import QtQuick.Window 2.2
+import Kullo 1.0
+
+Window {
+    property bool windowTypeModalWindow: false
+
+    SystemPalette {
+        id: _palette
+        colorGroup: SystemPalette.Active
+    }
+    color: _palette.window
+
+    function _validate() {
+        if (windowTypeModalWindow)
+        {
+            if (objectName.trim() === "")
+            {
+                console.warn("objectName should not be empty for NativeModalWindow.")
+            }
+        }
+        else
+        {
+            if (modality != Qt.NonModal)
+            {
+                console.error("Modality in NativeWindow must not be changed. Use NativeModalWindow.")
+            }
+        }
+    }
+
+    function openWindow() {
+        _validate()
+        if (windowTypeModalWindow)
+        {
+            if (!ModalityWatcher.aboutToOpen(objectName))
+            {
+                // don't make window visible
+                return
+            }
+        }
+        visible = true
+    }
+
+    function closeWindow() {
+        var closeEvent = { accepted: true };
+        closing(closeEvent)
+        visible = false
+    }
+
+    // CTRL + W (Win, Mac, KDE, Gnome)
+    function handleCtrlW(event)
+    {
+        if (event.accepted) return false
+
+        if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_W)
+        {
+            event.accepted = true
+            _root.closeWindow()
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+}
