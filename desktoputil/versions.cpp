@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "versions.h"
 
 #include <QtGlobal>
@@ -10,7 +10,7 @@
 
 namespace {
 
-const std::string KULLO_DESKTOP_VERSION = "0.36.0";
+const std::string KULLO_DESKTOP_VERSION = "0.37.0";
 
 bool charCiLess(char c1, char c2)
 {

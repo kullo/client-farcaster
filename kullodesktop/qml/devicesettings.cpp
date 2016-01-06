@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "devicesettings.h"
 
 #include <QSettings>
@@ -19,6 +19,8 @@ const int MAIN_WINDOW_MIN_HEIGHT = 400;
 const auto DEFAULT_UPDATE_BRANCH = QStringLiteral("important");
 const auto DEFAULT_CLOSE_TO_TRAY = true;
 const auto DEFAULT_FONT_SIZE_FACTOR = int{100};
+const auto ANSWER_COLUMN_WIDTH_DEFAULT = int{300};
+const auto ANSWER_COLUMN_WIDTH_MINIMUM = int{150};
 
 
 /*
@@ -303,6 +305,38 @@ void DeviceSettings::setCloseToTray(bool closeToTray)
     settings.endGroup();
 
     emit closeToTrayChanged(closeToTray);
+}
+
+int DeviceSettings::answerColumnWidth()
+{
+    if (!answerColumnWidth_)
+    {
+        int storedWidth = ANSWER_COLUMN_WIDTH_DEFAULT;
+        QSettings settings;
+        settings.beginGroup("global");
+        QVariant data = settings.value("answerColumnWidth");
+        if (data.isValid()) storedWidth = data.toInt();
+        settings.endGroup();
+        answerColumnWidth_ = boost::make_optional<int>(std::max(storedWidth, ANSWER_COLUMN_WIDTH_MINIMUM));
+    }
+
+    return *answerColumnWidth_;
+}
+
+void DeviceSettings::setAnswerColumnWidth(int width)
+{
+    if (width < ANSWER_COLUMN_WIDTH_MINIMUM) width = ANSWER_COLUMN_WIDTH_MINIMUM;
+
+    if (answerColumnWidth() == width) return;
+
+    answerColumnWidth_ = boost::make_optional<int>(width);
+
+    QSettings settings;
+    settings.beginGroup("global");
+    settings.setValue("answerColumnWidth", width);
+    settings.endGroup();
+
+    emit answerWidthChanged();
 }
 
 QString DeviceSettings::updateLane() const

@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
@@ -17,14 +17,14 @@ class SyncErrors : public QObject
     Q_OBJECT
 
 public:
-    enum SyncError
+    enum class SyncError
     {
         InternalServerError,
         NetworkError,
         Unauthorized,
         UnknownError
     };
-    Q_ENUMS(SyncError)
+    Q_ENUM(SyncError)
 
     static void init();
 };

@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import Kullo 1.0
@@ -297,7 +297,7 @@ Item {
                            : img.width + txt.anchors.leftMargin + txt.width
                     height: txt.contentHeight
 
-                    Image {
+                    NativeImage {
                         id: img
                         width: 14
                         height: 14
@@ -307,8 +307,8 @@ Item {
                             topMargin: Math.floor((parent.height-height) / 2)
                         }
                         source: showFooter ?
-                                    "/resources/14/chevron-circle-bottom_b.png"
-                                  : "/resources/14/chevron-circle-right_b.png"
+                                    "/resources/scalable/chevron-circle-bottom_b.svg"
+                                  : "/resources/scalable/chevron-circle-right_b.svg"
                     }
 
                     NativeText {

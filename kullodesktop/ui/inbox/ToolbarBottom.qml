@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 
 import "../buttons"
@@ -36,34 +36,38 @@ Rectangle {
         spacing: 5
 
         IconButton {
-            source: "/resources/20/logout2_b.png"
+            source: "/resources/scalable/logout2_b.svg"
             onClicked: inbox.logout()
             tooltip: qsTr("Go to start screen")
                      + " (%1)".arg(SC.nameOfCtrlAndKey("O", Os.osx))
         }
 
         IconButton {
-            source: "/resources/20/settings2_b.png"
+            source: "/resources/scalable/settings2_b.svg"
             onClicked: inbox.showUserSettingsWindow()
             tooltip: qsTr("Show settings")
                      + " (%1)".arg(SC.nameOfCtrlAndKey("G", Os.osx))
         }
 
         IconButton {
-            source: Devicesettings.muted ? "/resources/20/sound_muted_b.png" : "/resources/20/sound_unmuted_b.png"
+            source: Devicesettings.muted
+                    ? "/resources/scalable/sound_muted_b.svg"
+                    : "/resources/scalable/sound_unmuted_b.svg"
             onClicked: inbox.toggleSoundActive()
             tooltip: Devicesettings.muted ? qsTr("Unmute") : qsTr("Mute")
         }
 
         IconButton {
-            source: inbox.todoMode ? "/resources/20/todo_active_b.png" : "/resources/20/todo_b.png"
+            source: inbox.todoMode
+                    ? "/resources/scalable/todo_active_b.svg"
+                    : "/resources/scalable/todo_b.svg"
             onClicked: inbox.toggleTodoMode()
             tooltip: (inbox.todoMode ? qsTr("Switch todo mode off") : qsTr("Switch todo mode on"))
                      + " (%1)".arg(SC.nameOfCtrlAndKey("T", Os.osx))
         }
 
         IconButton {
-            source: "/resources/20/info_b.png"
+            source: "/resources/scalable/info_b.svg"
             onClicked: inbox.showInfoWindow()
             tooltip: qsTr("Show info window")
         }

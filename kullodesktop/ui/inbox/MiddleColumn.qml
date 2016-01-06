@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
@@ -51,7 +51,7 @@ FocusScope {
                     tooltip: qsTr("Mark all messages in this conversation as 'done'.")
 
                     onClicked: messagesList.model.markAllMessagesAsReadAndDone()
-                    iconSource: "/resources/20/state_done_g.png"
+                    iconSource: "/resources/scalable/state_done_g.svg"
                 }
 
                 ConversationButton {

@@ -1,6 +1,7 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include <cstdlib>
 #include <exception>
+#include <signal.h>
 #include <sstream>
 
 #include <QtQml>
@@ -101,6 +102,13 @@ int main(int argc, char *argv[])
         Util::BreakpadSetup::setup(Applications::KulloApplication::TEST_MODE);
 
         programOptions.crashtestActions();
+
+        // Register SIGINT handler to cleanly close application on Ctrl+C
+        // or `killall -SIGINT kullo`
+        signal(SIGINT, [](int sig) ->void {
+            Log.i() << "Quit the application (user request signal = " << sig << ")";
+            Applications::KulloApplication::quit();
+        });
 
         /*
          * Translator

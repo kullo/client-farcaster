@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import Kullo 1.0
 import Kullo.Visuals 1.0

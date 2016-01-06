@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 
 import "../"
@@ -153,11 +153,11 @@ Rectangle {
             width: 20
             visible: showMessageState
 
-            Image {
+            NativeImage {
                 width: 20
                 height: 20
-                source: !read ? "/resources/20/state_unread_b.png" :
-                                (!done ? "/resources/20/state_undone_b.png" : "/resources/20/state_done_b.png")
+                source: !read ? "/resources/scalable/state_unread_b.svg" :
+                                (!done ? "/resources/scalable/state_undone_b.svg" : "/resources/scalable/state_done_b.svg")
             }
 
             MouseArea {
@@ -181,11 +181,11 @@ Rectangle {
             width: 20
             visible: showMessageDeliveryStatus
 
-            Image {
+            NativeImage {
                 height: 20
                 width: 20
                 source: messageDeliveryStatus && messageDeliveryStatus !== "none"
-                        ? "/resources/20/delivery_%1.png".arg(messageDeliveryStatus)
+                        ? "/resources/scalable/delivery_%1.svg".arg(messageDeliveryStatus)
                         : ""
 
                 TooltipArea {

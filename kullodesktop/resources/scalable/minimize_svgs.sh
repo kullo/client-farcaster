@@ -17,10 +17,10 @@ for f in ./*.svg; do
     cp "$f" "$bu"
     svgo --precision=4 --input="$bu" --output="$f"
 
-    # Restore if optimization did reduze filesize by less than 1 %
+    # Restore if optimization did reduze filesize by less than 2 %
     size_f=$(filesize "$f")
     size_bu=$(filesize "$bu")
-    if (( size_f > size_bu * 99 / 100 )); then
+    if (( size_f > size_bu * 98 / 100 )); then
         cp "$bu" "$f"
     fi
 done

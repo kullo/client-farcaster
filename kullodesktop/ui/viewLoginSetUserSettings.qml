@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Controls.Styles 1.3
@@ -86,7 +86,7 @@ FocusScope {
                 NativeButton {
                     text: qsTr("Next")
                     style: KulloButtonStyle {
-                        source: "/resources/20/login_w.png"
+                        source: "/resources/scalable/login_w.svg"
                     }
                     onClicked: {
                         if (!validateName())

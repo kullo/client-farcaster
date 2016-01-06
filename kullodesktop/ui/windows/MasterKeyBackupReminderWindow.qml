@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
@@ -137,7 +137,7 @@ NativeModalWindow {
                     _root.closeWindow()
                 }
                 style: KulloButtonStyle {
-                    source: "/resources/20/later_w.png"
+                    source: "/resources/scalable/later_w.svg"
                 }
             }
         }

@@ -1,6 +1,6 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
-import QtQuick.Controls 1.3
+import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtMultimedia 5.0
 import Kullo 1.0
@@ -93,12 +93,15 @@ FocusScope {
 
     function openAnswer() {
         rightColumn.buttonBoxState = "answerOpen"
+        rightColumn.animationEnabled = true
         inbox.state = "reply"
         rightColumn.forceActiveFocus();
     }
 
     function closeAnswer() {
         rightColumn.buttonBoxState = "default"
+        rightColumn.animationEnabled = true
+        rightColumn.minimumWidthSet = false
         inbox.state = "basic"
         middleColumn.forceActiveFocus();
     }
@@ -240,6 +243,10 @@ FocusScope {
             {
                 errmsg = qsTr("Unknown error while syncing.")
             }
+            else
+            {
+                console.error("Unknown value for error: '" + error + "'")
+            }
             syncErrorBanner.show(errmsg)
         }
         onClientTooOld: {
@@ -311,7 +318,7 @@ FocusScope {
             name: "reply"
             PropertyChanges {
                 target: rightColumn
-                width: (inbox.width - leftColumn.width) / 2
+                width: Devicesettings.answerColumnWidth
             }
         }
     ]
@@ -369,33 +376,49 @@ FocusScope {
             KeyNavigation.right: middleColumn
         }
 
-        MiddleColumn {
-            id: middleColumn
+        SplitView {
+            id: splitView
 
             anchors {
                 left: leftColumn.right
-                right: rightColumn.left
-                bottom: parent.bottom
-                top: parent.top
-            }
-
-            onActiveFocusChanged: {
-                focusChanged(focus)
-            }
-            KeyNavigation.left: leftColumn
-        }
-
-        RightColumn {
-            id: rightColumn
-
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
                 right: parent.right
+                bottom: parent.bottom
+                top: parent.top
             }
 
-            onActiveFocusChanged: {
-                focusChanged(focus)
+            MiddleColumn {
+                id: middleColumn
+
+                Layout.fillWidth: true
+
+                onActiveFocusChanged: {
+                    focusChanged(focus)
+                }
+                KeyNavigation.left: leftColumn
+            }
+
+            RightColumn {
+                id: rightColumn
+                property bool minimumWidthSet: false
+
+                Layout.minimumWidth: minimumWidthSet ? 150 : 0
+                visible: inbox.state == "reply" || width > 0
+
+                onWidthChanged: {
+                    if (splitView.resizing) {
+                        // user interaction
+                        var widthToStore = Math.round(width)
+                        widthToStore -= widthToStore%5
+                        // console.debug(width + ", " + widthToStore)
+                        Devicesettings.answerColumnWidth = widthToStore
+                        minimumWidthSet = true
+                        animationEnabled = false
+                    }
+                }
+
+                onActiveFocusChanged: {
+                    focusChanged(focus)
+                }
             }
         }
     }

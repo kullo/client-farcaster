@@ -1,10 +1,11 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
 #include <QFont>
 #include <QObject>
 #include <QStringList>
+#include <boost/optional.hpp>
 
 class QSettings;
 
@@ -61,6 +62,10 @@ public:
     bool closeToTray() const;
     void setCloseToTray(bool closeToTray);
 
+    Q_PROPERTY(int answerColumnWidth READ answerColumnWidth WRITE setAnswerColumnWidth NOTIFY answerWidthChanged)
+    int answerColumnWidth();
+    void setAnswerColumnWidth(int width);
+
     Q_PROPERTY(QString updateLane READ updateLane WRITE setUpdateLane NOTIFY updateLaneChanged)
     QString updateLane() const;
     void setUpdateLane(const QString &lane);
@@ -83,6 +88,7 @@ signals:
     void messagesFontChanged();
     void messagesFontPreviewChanged();
     void closeToTrayChanged(bool value);
+    void answerWidthChanged();
     void updateLaneChanged();
     void activeUserChanged();
     void lastActiveUserChanged();
@@ -101,6 +107,8 @@ private:
 
     std::unique_ptr<QFont> messagesFont_;
     std::unique_ptr<QFont> messagesFontPreview_;
+
+    boost::optional<int> answerColumnWidth_;
 
     // Must be initialized when Application is set up,
     // i.e. in first setMainWindowHeight or setMainWindowHeight call

@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
@@ -14,6 +14,7 @@ FocusScope {
 
     property alias conversationId: answer.conversationId
     property alias buttonBoxState: buttonBox.state
+    property alias animationEnabled: fadeInOutAnimation.enabled
 
     function addQuoteToAnswer(quoteText) {
         answer.addQuoteToAnswer(quoteText)
@@ -24,6 +25,8 @@ FocusScope {
     }
 
     Behavior on width {
+        id: fadeInOutAnimation
+        enabled: true
         NumberAnimation { duration: 150 }
     }
 
@@ -31,7 +34,8 @@ FocusScope {
         id: buttonBox
         anchors {
             right: parent.left
-            rightMargin: 0
+            // one extra pixel to the right to cover rounding errors
+            rightMargin: -1
             top: parent.top
             topMargin: 5
         }
@@ -53,7 +57,8 @@ FocusScope {
                 name: "answerOpen"
                 PropertyChanges {
                     target: buttonBox
-                    width: 36
+                    // one extra pixel to the right to cover rounding errors
+                    width: 36 + 1
                 }
             }
         ]

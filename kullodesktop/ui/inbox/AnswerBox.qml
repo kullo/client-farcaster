@@ -1,4 +1,4 @@
-/* Copyright 2013–2015 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Controls.Styles 1.3
@@ -338,7 +338,7 @@ FocusScope {
                 enabled: answer.enabled && !answer.empty
                 onClicked: answer.tryToSend()
                 style: KulloButtonStyle {
-                    source: "/resources/20/send_w.png"
+                    source: "/resources/scalable/send_w.svg"
                 }
             }
         }
