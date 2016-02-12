@@ -42,6 +42,9 @@ ButtonStyle {
         property int borderRadiusBottomRight: _style.borderRadiusBottomRight
         property int borderRadiusBottomLeft: _style.borderRadiusBottomLeft
 
+        /* private */
+        property bool _hasLabel: control.text !== ""
+
         implicitWidth: _background.implicitWidth
         implicitHeight: _background.implicitHeight
 
@@ -58,7 +61,8 @@ ButtonStyle {
             radiusBottomRight: borderRadiusBottomRight
             radiusBottomLeft: borderRadiusBottomLeft
 
-            implicitHeight: _row.y + icon.height + _row.y
+            implicitHeight: (_hasLabel ? Math.max(icon.height, label.implicitHeight) : icon.height)
+                            + 2*paddingV
             implicitWidth: _row.x + _row.implicitWidth + _row.x
             height: implicitHeight
             width: implicitWidth
@@ -98,6 +102,7 @@ ButtonStyle {
                     spacing: 8
 
                     NativeText {
+                        id: label
                         color: textColor
                         text: control.text
                         anchors {
@@ -110,6 +115,9 @@ ButtonStyle {
                         source: iconSource
                         width: (iconSource && iconSource != "") ? 20 : 0
                         height: 20
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                        }
                     }
                 }
             }

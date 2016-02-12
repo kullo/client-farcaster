@@ -7,7 +7,7 @@
 #include <desktoputil/stlqt.h>
 
 #include <apimirror/Client.h>
-#include <apimirror/ClientCheckLoginListener.h>
+#include <apimirror/ClientCheckCredentialsListener.h>
 
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/MasterKey.h>
@@ -24,9 +24,9 @@ namespace Qml {
 LoginChecker::LoginChecker(QObject *parent)
     : QObject(parent)
 {
-    listener_ = std::make_shared<ApiMirror::ClientCheckLoginListener>();
+    listener_ = std::make_shared<ApiMirror::ClientCheckCredentialsListener>();
 
-    connect(listener_.get(), &ApiMirror::ClientCheckLoginListener::_finished,
+    connect(listener_.get(), &ApiMirror::ClientCheckCredentialsListener::_finished,
             this, [this](std::shared_ptr<Kullo::Api::Address> address, std::shared_ptr<Kullo::Api::MasterKey> masterKey, bool exists)
     {
         setLocked(false);
@@ -35,7 +35,7 @@ LoginChecker::LoginChecker(QObject *parent)
                           exists);
     });
 
-    connect(listener_.get(), &ApiMirror::ClientCheckLoginListener::_error,
+    connect(listener_.get(), &ApiMirror::ClientCheckCredentialsListener::_error,
             this, [this](std::shared_ptr<Kullo::Api::Address> address, Kullo::Api::NetworkError error)
     {
         setLocked(false);
@@ -103,9 +103,10 @@ void LoginChecker::run(const QString &addr, const QStringList &masterKeyBlocks)
         return;
     }
 
-    bgTask_ = client_->raw()->checkLoginAsync(Kullo::Api::Address::create(addr.toStdString()),
-                                              Kullo::Api::MasterKey::createFromDataBlocks(masterKeyBlocksStd),
-                                              listener_);
+    bgTask_ = client_->raw()->checkCredentialsAsync(
+                Kullo::Api::Address::create(addr.toStdString()),
+                Kullo::Api::MasterKey::createFromDataBlocks(masterKeyBlocksStd),
+                listener_);
 }
 
 void LoginChecker::setLocked(bool locked)

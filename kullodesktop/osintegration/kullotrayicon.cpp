@@ -26,6 +26,7 @@ const auto ICON_STATE_LOGGEDOUT = IconState(false, 0);
 
 KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainWindow, Qml::ClientModel& clientModel, QObject *parent)
     : QObject(parent)
+    , iconState_(IconState(false, 42))  // != _LOGGEDOUT, so that setIcon works
     , app_(app)
     , mainWindow_(mainWindow)
     , clientModel_(clientModel)

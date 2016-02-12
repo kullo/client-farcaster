@@ -9,7 +9,10 @@
 #include <mutex>
 #include <thread>
 
+#include <boost/optional.hpp>
 #include <kulloclient/http/HttpClient.h>
+#include <kulloclient/http/HttpHeader.h>
+#include <kulloclient/http/Response.h>
 
 namespace DesktopUtil {
 

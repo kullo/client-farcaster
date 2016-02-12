@@ -45,7 +45,7 @@ private:
     void setLocked(bool locked);
 
     ApiMirror::Client *client_ = nullptr;
-    std::shared_ptr<ApiMirror::ClientCheckLoginListener> listener_;
+    std::shared_ptr<ApiMirror::ClientCheckCredentialsListener> listener_;
     std::shared_ptr<Kullo::Api::AsyncTask> bgTask_;
     bool locked_ = false;
 };

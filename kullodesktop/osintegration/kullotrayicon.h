@@ -21,7 +21,6 @@ struct IconState {
     bool loggedIn;
     quint32 unreadMessages;
 
-    IconState() {}
     IconState(bool pLoggedIn, quint32 pUnreadMessages)
         : loggedIn(pLoggedIn)
         , unreadMessages(pUnreadMessages)

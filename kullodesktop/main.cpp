@@ -40,9 +40,9 @@
 #include "kullodesktop/qml/utils.h"
 
 #include "kullodesktop/util/breakpadsetup.h"
+#include "kullodesktop/util/consoleextendedloglistener.h"
+#include "kullodesktop/util/htmlfileloglistener.h"
 #include "kullodesktop/util/kullofoldersetup.h"
-#include "kullodesktop/util/logengineconsoleextended.h"
-#include "kullodesktop/util/logenginefilewriter.h"
 #include "kullodesktop/util/logfilecleaner.h"
 #include "kullodesktop/util/paths.h"
 #include "kullodesktop/util/qdebugmessagehandler.h"
@@ -59,13 +59,14 @@ int main(int argc, char *argv[])
     int ret = programOptions.preApplicationActions();
     if (ret != OsIntegration::ProgramOptions::NA) return ret;
 
-#ifdef QT_NO_DEBUG
-    Util::LogEngineFileWriter::open();
-    Kullo::Util::LibraryLogger::setLogFunction(&Util::LogEngineFileWriter::libraryLoggerWrapper);
+#ifdef NDEBUG
+    auto logListener = std::make_shared<Util::HtmlFileLogListener>();
+    Kullo::Api::Registry::setLogListener(logListener);
 #else
     if (programOptions.logFormatExtended_)
     {
-        Kullo::Util::LibraryLogger::setLogFunction(&Util::LogEngineConsoleExtended::libraryLoggerWrapper);
+        auto logListener = std::make_shared<Util::ConsoleExtendedLogListener>();
+        Kullo::Api::Registry::setLogListener(logListener);
     }
 #endif
     Kullo::Util::LibraryLogger::setCurrentThreadName("main");
@@ -245,6 +246,6 @@ int main(int argc, char *argv[])
     }
 
     Log.i() << "Closing application with status " << execStatus;
-    Util::LogEngineFileWriter::close();
+    Kullo::Api::Registry::setLogListener(nullptr);
     return execStatus;
 }

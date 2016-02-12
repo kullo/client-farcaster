@@ -54,9 +54,10 @@ function mime2icon(mime) {
     if (mime === "application/x-zerosize") return "default.svg";
 
     // fallbacks
-    if (mime.substring(0,5) === "audio") return "audio-x-generic.svg";
-    if (mime.substring(0,5) === "image") return "image-x-generic.svg";
-    if (mime.substring(0,4) === "text") return "text-generic.svg";
+    if (mime.substring(0,6) === "audio/") return "audio-x-generic.svg";
+    if (mime.substring(0,6) === "image/") return "image-x-generic.svg";
+    if (mime.substring(0,5) === "text/") return "text-generic.svg";
+    if (mime.substring(0,6) === "video/") return "video-x-generic.svg";
 
     console.warn("No file icon found for mime: '" + mime + "'");
     return "default.svg";

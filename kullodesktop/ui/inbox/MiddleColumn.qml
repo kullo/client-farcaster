@@ -26,24 +26,26 @@ FocusScope {
 
         Item {
             id: conversationHeader
+            property int _PADDING_VERTICAL: 5
+            property int _PADDING_HORIZONTAL: 15
+
             anchors {
                 left: parent.left
                 top: parent.top
             }
             width: inbox.width - leftColumn.width
-            height: leftPart.anchors.topMargin
-                    + leftPart.height
+            height: + leftPart.implicitHeight
+                    + 2*_PADDING_VERTICAL
 
             Row {
                 id: leftPart
                 anchors {
                     left: parent.left
                     top: parent.top
-                    topMargin: 5
-                    leftMargin: 15
+                    topMargin: conversationHeader._PADDING_VERTICAL
+                    leftMargin: conversationHeader._PADDING_HORIZONTAL
                     rightMargin: 15
                 }
-                height: 32 + 5
                 spacing: 10
 
                 ConversationButton {
@@ -76,9 +78,9 @@ FocusScope {
             NativeButton {
                 anchors {
                     top: parent.top
-                    topMargin: 5
+                    topMargin: conversationHeader._PADDING_VERTICAL
                     right: parent.right
-                    rightMargin: 15
+                    rightMargin: conversationHeader._PADDING_HORIZONTAL
                 }
                 text: qsTr("Write")
                 tooltip: qsTr("Write")

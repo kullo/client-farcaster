@@ -103,12 +103,12 @@ ListView {
     }
 
     property string quickKeySearchLastCharacter: ""
-    property int quickKeySearchLastCharacterCount: 0
+    property int quickKeySearchLastCharacterPosition: 0
 
     function resetQuickKeySearch()
     {
         quickKeySearchLastCharacter = ""
-        quickKeySearchLastCharacterCount = 0
+        quickKeySearchLastCharacterPosition = 0
     }
 
     function searchCharInConversation(character, conv)
@@ -167,46 +167,67 @@ ListView {
         {
             event.accepted = true
             var ch = event.text.toLowerCase()
-            console.debug("Serach for contact: '" + ch + "'")
-            var skip = 0
+            var reverseDirection = (event.modifiers === Qt.ShiftModifier)
+            console.debug("Search for contact: '" + ch + "' "
+                          + (reverseDirection ? 'up' : 'down'))
+
+            var hitsCount = 0
+            var skipsRemaining = 0
             if (quickKeySearchLastCharacter === ch)
             {
-                skip = quickKeySearchLastCharacterCount
-                quickKeySearchLastCharacterCount++
-            }
-            else {
-                quickKeySearchLastCharacterCount = 1
-            }
-            quickKeySearchLastCharacter = ch
+                if (reverseDirection)
+                    quickKeySearchLastCharacterPosition--
+                else
+                    quickKeySearchLastCharacterPosition++
 
-            var pos_first_found = -1
+                skipsRemaining = quickKeySearchLastCharacterPosition - 1
+            }
+            else
+            {
+                // User changed quick search character
+                quickKeySearchLastCharacter = ch
+                quickKeySearchLastCharacterPosition = 1
+            }
+
+            var posFirstFind = -1
+            var posLastFind = -1
             for (var p = 0; p < count; ++p)
             {
                 if (searchCharInConversation(ch, Client.conversations.at(p)))
                 {
-                    if (pos_first_found == -1) pos_first_found = p
-                    if (skip == 0)
+                    if (posFirstFind == -1) posFirstFind = p
+                    if (p > posLastFind) posLastFind = p
+
+                    if (skipsRemaining == 0)
                     {
                         _conversationsList.currentIndex = p
                         return
                     }
-                    else
+                    else if (skipsRemaining > 0)
                     {
-                        skip -= 1
+                        skipsRemaining -= 1
                     }
+
+                    hitsCount++
                 }
             }
 
-            if (pos_first_found != -1)
+            if (posFirstFind === -1)
             {
-                // not found anymore after `skip` results skipped
-                quickKeySearchLastCharacterCount = 1
-                _conversationsList.currentIndex = pos_first_found
+                // character not found at all
+                resetQuickKeySearch()
+            }
+            else if (reverseDirection)
+            {
+                _conversationsList.currentIndex = posLastFind
+                quickKeySearchLastCharacterPosition = hitsCount
             }
             else
             {
-                // not found at all
-                quickKeySearchLastCharacterCount = 0
+                // not found anymore after skipping too many results:
+                // Loop back to the top
+                quickKeySearchLastCharacterPosition = 1
+                _conversationsList.currentIndex = posFirstFind
             }
         }
     }

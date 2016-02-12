@@ -114,9 +114,9 @@ SOURCES += \
     qml/usersettingsmodel.cpp \
     qml/utils.cpp \
     util/breakpadsetup.cpp \
+    util/consoleextendedloglistener.cpp \
+    util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
-    util/logengineconsoleextended.cpp \
-    util/logenginefilewriter.cpp \
     util/logfilecleaner.cpp \
     util/paths.cpp \
     util/qdebugmessagehandler.cpp \
@@ -173,9 +173,9 @@ HEADERS += \
     qml/usersettingsmodel.h \
     qml/utils.h \
     util/breakpadsetup.h \
+    util/consoleextendedloglistener.h \
+    util/htmlfileloglistener.h \
     util/kullofoldersetup.h \
-    util/logengineconsoleextended.h \
-    util/logenginefilewriter.h \
     util/logfilecleaner.h \
     util/paths.h \
     util/qdebugmessagehandler.h \
@@ -261,7 +261,7 @@ PRE_TARGETDEPS += \
 # BEGIN breakpadwrapper
 windows() | linux() {
     windows(): LIBS += -lshell32 -lole32
-	LIBS += -lbreakpadwrapper
+    LIBS += -lbreakpadwrapper
 }
 # END breakpadwrapper
 

@@ -4,7 +4,7 @@
 namespace ApiMirror {
 class Client;
 class ClientAddressExistsListener;
-class ClientCheckLoginListener;
+class ClientCheckCredentialsListener;
 class ClientGenerateKeysListener;
 class RegistrationRegisterAccountListener;
 }

@@ -205,9 +205,17 @@ FocusScope {
                     property int attachmentIndex: -1
 
                     MenuItem {
-                        text: qsTr('Remove attachment')
-                        onTriggered:
+                        text: qsTr("Open")
+                        onTriggered: {
+                            Client.conversations.get(conversationId).draft.attachments.get(contextMenu.attachmentIndex).open()
+                        }
+                    }
+
+                    MenuItem {
+                        text: qsTr("Remove attachment")
+                        onTriggered: {
                             Client.conversations.get(conversationId).draft.removeAttachment(contextMenu.attachmentIndex)
+                        }
                     }
                 }
 
@@ -279,6 +287,7 @@ FocusScope {
                     delegate: DraftAttachmentDelegate {
                         width: attachmentsList.cellWidth
                         height: attachmentsList.cellHeight
+                        conversationId: answer.conversationId
 
                         function removeAttachment() {
                             Client.conversations.get(conversationId).draft.removeAttachment(attachmentIndex_)

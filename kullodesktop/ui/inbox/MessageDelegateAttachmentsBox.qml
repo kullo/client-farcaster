@@ -30,10 +30,10 @@ Item {
         currentIndex: -1
 
         model: attachments_
-        delegate: AttachmentDelegate {
+        delegate: MessageAttachmentDelegate {
             width: attachmentsList.cellWidth
             onImplicitHeightChanged: attachmentsList.cellHeight = implicitHeight
-            parentHasActiveFocus: false
+
             conversationId: _root.conversationId
             messageId: _root.messageId
             attachmentsReady: _root.attachmentsReady
@@ -53,6 +53,11 @@ Item {
 
             Menu {
                 id: contextMenu
+
+                MenuItem {
+                    text: qsTr('Open')
+                    onTriggered: attachments_.get(index).open()
+                }
 
                 MenuItem {
                     text: qsTr('Save as')

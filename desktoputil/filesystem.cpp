@@ -5,34 +5,54 @@
 #include <QRegularExpression>
 
 #include "desktoputil/qtypestreamers.h"
+#include "desktoputil/osdetection.h"
 
-static const std::string ALLOWED_FILENAME_CHARACTERS_WIN  = R"(a-zA-Z0-9)";
-static const std::string ALLOWED_FILENAME_CHARACTERS_UNIX = R"(\w)";
-static const std::string ALLOWED_FILENAME_SPECIALS_WIN    = R"(-. _)";
-static const std::string ALLOWED_FILENAME_SPECIALS_UNIX   = R"(-. _\:?%*|"<>^)";
+namespace DesktopUtil {
+
+namespace {
+const std::string ALLOWED_FILENAME_CHARACTERS_WIN  = R"(\w)"; // Anything unicode calls L (letter) or N (digit), plus underscore
+const std::string ALLOWED_FILENAME_CHARACTERS_UNIX = R"(\w)"; // Anything unicode calls L (letter) or N (digit), plus underscore
+const std::string ALLOWED_FILENAME_SPECIALS_WIN    = R"(-. _)";
+const std::string ALLOWED_FILENAME_SPECIALS_UNIX   = R"(-. _\:?%*|"<>^)";
+const std::string ALLOWED_FILENAME_SPECIALS_LATIN1 = R"(¡¢£¤¥¦§¨©«¬®¯°±´¶·¸»¿×÷)"; // latin1 special chars not covered by \w
 
 #ifdef Q_OS_WIN
-static const std::string ALLOWED_FILENAME_CHARACTERS = ALLOWED_FILENAME_CHARACTERS_WIN;
-static const std::string ALLOWED_FILENAME_SPECIALS   = ALLOWED_FILENAME_SPECIALS_WIN;
+const std::string ALLOWED_FILENAME_CHARACTERS = ALLOWED_FILENAME_CHARACTERS_WIN;
+const std::string ALLOWED_FILENAME_SPECIALS   = ALLOWED_FILENAME_SPECIALS_LATIN1 + ALLOWED_FILENAME_SPECIALS_WIN;
 #else
-static const std::string ALLOWED_FILENAME_CHARACTERS = ALLOWED_FILENAME_CHARACTERS_UNIX;
-static const std::string ALLOWED_FILENAME_SPECIALS   = ALLOWED_FILENAME_SPECIALS_UNIX;
+const std::string ALLOWED_FILENAME_CHARACTERS = ALLOWED_FILENAME_CHARACTERS_UNIX;
+const std::string ALLOWED_FILENAME_SPECIALS   = ALLOWED_FILENAME_SPECIALS_LATIN1 + ALLOWED_FILENAME_SPECIALS_UNIX;
 #endif
 
-static const QString PREPARE_TMP_FILENAME_PATTERN = QStringLiteral("[^%1%2]")
+const QString PREPARE_TMP_FILENAME_PATTERN = QStringLiteral("[^%1%2]")
         .arg(QString::fromStdString(ALLOWED_FILENAME_CHARACTERS))
         .arg(QRegularExpression::escape(QString::fromStdString(ALLOWED_FILENAME_SPECIALS)))
         ;
 
-static const QRegularExpression PREPARE_TMP_FILENAME_REGEXP(PREPARE_TMP_FILENAME_PATTERN, QRegularExpression::UseUnicodePropertiesOption);
-
-namespace DesktopUtil {
+const QRegularExpression PREPARE_TMP_FILENAME_REGEXP(PREPARE_TMP_FILENAME_PATTERN,
+                                                     QRegularExpression::UseUnicodePropertiesOption);
+}
 
 QString Filesystem::prepareTmpFilename(const QString &original)
 {
     QString out = original;
     out.replace(PREPARE_TMP_FILENAME_REGEXP, "_");
     return out;
+}
+
+std::string Filesystem::shortenSourcePath(const std::string &filepath)
+{
+    const auto PATH_SEPARATORS = R"(/\)";
+
+    std::size_t pos = filepath.find_last_of(PATH_SEPARATORS);
+    if (pos != std::string::npos)
+    {
+        return filepath.substr(pos + 1);
+    }
+    else
+    {
+        return filepath;
+    }
 }
 
 }

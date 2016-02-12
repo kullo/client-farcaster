@@ -71,15 +71,17 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
 
     bool okConvId;
     bool okMsgId;
-    bool okAttachmentPos;
-    quint32 convId        = pathParts[1].toUInt(&okConvId);
-    quint32 msgId         = pathParts[2].toUInt(&okMsgId);
-    quint32 attachmentPos = pathParts[3].toUInt(&okAttachmentPos);
-    if (!okConvId || !okMsgId || !okAttachmentPos || convId == 0)
+    bool okAttachmentId;
+    int convId       = pathParts[1].toInt(&okConvId);
+    int msgId        = pathParts[2].toInt(&okMsgId);
+    int attachmentId = pathParts[3].toInt(&okAttachmentId);
+    if (!okConvId || !okMsgId || !okAttachmentId || convId == -1)
     {
         Log.w() << "Invalid attachment preview string: " << url;
         return QPixmap();
     }
+
+    if (attachmentId == -1) return QPixmap(); // empty delegate
 
     QByteArray imageData;
     if (msgId == 0) // Draft
@@ -88,7 +90,7 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
         kulloAssert(conversation);
         auto draft = conversation->draft();
         kulloAssert(draft);
-        auto attachment = draft->attachments()->get(attachmentPos);
+        auto attachment = draft->attachments()->get(attachmentId);
         kulloAssert(attachment);
         imageData = attachment->content();
     }
@@ -98,7 +100,7 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
         kulloAssert(conversation);
         auto message = conversation->messages()->get(msgId);
         kulloAssert(message);
-        auto attachment = message->attachments()->get(attachmentPos);
+        auto attachment = message->attachments()->get(attachmentId);
         kulloAssert(attachment);
         imageData = attachment->content();
     }

@@ -17,6 +17,7 @@ class AttachmentListModel : public QAbstractListModel
 public:
     enum AttachmentRoles {
         FilenameRole = Qt::UserRole,
+        HashRole,
         SizeRole,
         NoteRole,
         MimeTypeRole

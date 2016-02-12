@@ -4,7 +4,10 @@
 #include <QObject>
 #include <thread>
 #include <mutex>
+#include <boost/optional.hpp>
 #include <kulloclient/http/HttpClient.h>
+#include <kulloclient/http/Response.h>
+#include <kulloclient/http/ResponseError.h>
 
 namespace DesktopUtil {
 

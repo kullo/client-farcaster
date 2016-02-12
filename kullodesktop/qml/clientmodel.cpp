@@ -253,10 +253,10 @@ void ClientModel::onSyncError(std::exception_ptr exptr)
         Log.w() << "Sync failed: " << Kullo::Util::formatException(ex);
         emit clientTooOld();
     }
-    catch (Kullo::Protocol::InternalServerError &ex)
+    catch (Kullo::Protocol::ServerError &ex)
     {
         Log.w() << "Sync failed: " << Kullo::Util::formatException(ex);
-        emit syncError(SyncErrors::SyncError::InternalServerError);
+        emit syncError(SyncErrors::SyncError::ServerError);
     }
     catch (Kullo::Protocol::NetworkError &ex)
     {

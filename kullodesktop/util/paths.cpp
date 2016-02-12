@@ -56,8 +56,8 @@ Paths::Paths()
 }
 
 Paths& kulloPaths() {
-    static Paths* ans = new Paths();
-    return *ans;
+    static Paths instance;
+    return instance;
 }
 
 }

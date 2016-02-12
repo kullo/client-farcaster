@@ -9,6 +9,7 @@ class Filesystem
 {
 public:
     static QString prepareTmpFilename(const QString &original);
+    static std::string shortenSourcePath(const std::string &filepath);
 };
 
 }

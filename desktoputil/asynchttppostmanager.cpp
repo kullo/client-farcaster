@@ -3,6 +3,8 @@
 
 #include <QUrl>
 #include <httpclient/httpclientfactoryimpl.h>
+#include <kulloclient/http/HttpMethod.h>
+#include <kulloclient/http/Request.h>
 #include <kulloclient/http/RequestListener.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>

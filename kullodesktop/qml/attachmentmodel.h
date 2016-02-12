@@ -19,6 +19,9 @@ public:
     Q_PROPERTY(QString filename READ filename NOTIFY filenameChanged)
     QString filename() const;
 
+    Q_PROPERTY(QString hash READ hash NOTIFY hashChanged)
+    QString hash() const;
+
     Q_PROPERTY(QString mimeType READ mimeType NOTIFY mimeTypeChanged)
     QString mimeType() const;
 
@@ -35,6 +38,7 @@ public:
 
 signals:
     void filenameChanged();
+    void hashChanged();
     void mimeTypeChanged();
     void sizeChanged();
     void noteChanged();

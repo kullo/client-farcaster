@@ -33,6 +33,12 @@ signals:
     void addingAttachmentsStarted();
     void addingAttachmentsFinished();
 
+    // interal
+    void _doneAddingAttachments();
+
+private slots:
+    void onDoneAddingAttachments();
+
 private:
     DraftModel* draftModel_;
     std::mutex working_;

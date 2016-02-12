@@ -81,4 +81,3 @@ macx {
 #  -r    remove directories and their contents recursively
 win32:QMAKE_DEL_DIR = rmdir /s /q
 unix:QMAKE_DEL_DIR = rm -rf
-

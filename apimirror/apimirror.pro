@@ -13,7 +13,7 @@ HEADERS += \
     apimirror-forwards.h \
     Client.h \
     ClientAddressExistsListener.h \
-    ClientCheckLoginListener.h \
+    ClientCheckCredentialsListener.h \
     ClientGenerateKeysListener.h \
     RegistrationRegisterAccountListener.h
 

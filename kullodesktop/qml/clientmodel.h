@@ -19,7 +19,7 @@ class SyncErrors : public QObject
 public:
     enum class SyncError
     {
-        InternalServerError,
+        ServerError,
         NetworkError,
         Unauthorized,
         UnknownError

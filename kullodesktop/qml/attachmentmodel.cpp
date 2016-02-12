@@ -35,6 +35,11 @@ QString AttachmentModel::filename() const
     return QString::fromStdString(attachment_->filename());
 }
 
+QString AttachmentModel::hash() const
+{
+    return QString::fromStdString(attachment_->hash());
+}
+
 QString AttachmentModel::mimeType() const
 {
     return QString::fromStdString(attachment_->mimeType());

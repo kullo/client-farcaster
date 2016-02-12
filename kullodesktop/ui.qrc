@@ -49,6 +49,7 @@
         <file alias="DraftAttachmentDelegate.qml">ui/inbox/DraftAttachmentDelegate.qml</file>
         <file alias="ConversationHighlighter.qml">ui/inbox/ConversationHighlighter.qml</file>
         <file alias="LeftColumn.qml">ui/inbox/LeftColumn.qml</file>
+        <file alias="MessageAttachmentDelegate.qml">ui/inbox/MessageAttachmentDelegate.qml</file>
         <file alias="MessageDelegate.qml">ui/inbox/MessageDelegate.qml</file>
         <file alias="MessageDelegateAttachmentsBox.qml">ui/inbox/MessageDelegateAttachmentsBox.qml</file>
         <file alias="MessageHeader.qml">ui/inbox/MessageHeader.qml</file>

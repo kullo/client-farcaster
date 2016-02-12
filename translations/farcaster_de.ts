@@ -99,6 +99,10 @@
         <extracomment>Name of the big key below backspace</extracomment>
         <translation>Eingabe</translation>
     </message>
+    <message>
+        <source>Open</source>
+        <translation>Öffnen</translation>
+    </message>
 </context>
 <context>
     <name>AvatarRow</name>
@@ -487,6 +491,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Save as</source>
         <translation>Speichern unter</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Öffnen</translation>
     </message>
 </context>
 <context>

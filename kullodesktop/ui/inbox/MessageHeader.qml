@@ -12,7 +12,7 @@ Rectangle {
     property string name
     property string organization
     property string address
-    property alias avatarSource: pictureFrom.source
+    property alias avatarSource: senderAvatar.source
     property bool showMessageState: true
     property bool showMessageDeliveryStatus: false
     property string messageDeliveryStatus
@@ -20,6 +20,10 @@ Rectangle {
     property string textRow1: organization.trim() == "" ? name
                                                         : name + " (" + organization + ")"
     property string textRow2: address
+
+    /* private */
+    property int _PADDING_VERTICAL: 5
+    property int _PADDING_HORIZONTAL: 5
 
     id: _header
     color: Style.messageHeaderBackground
@@ -38,19 +42,18 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
-        height: pictureFrom.height + 2*pictureFrom.y
+        height: Math.max(senderAvatar.height, senderNameBlock.implicitHeight)
+                + 2*_PADDING_VERTICAL
 
-        Image {
-            id: pictureFrom
-            anchors.left: parent.left
-            anchors.leftMargin: 5
+        NativeImage {
+            id: senderAvatar
+            anchors {
+                left: parent.left
+                leftMargin: _PADDING_HORIZONTAL
+                verticalCenter: parent.verticalCenter
+            }
             height: 40
             width: 40
-            y: 5
-            // Use source size to achieve smooth
-            // scaling via c++
-            sourceSize.width: width
-            sourceSize.height: height
 
             MouseArea {
                 anchors.fill: parent
@@ -63,7 +66,7 @@ Rectangle {
         Column {
             id: senderNameBlock
             anchors {
-                left: pictureFrom.right
+                left: senderAvatar.right
                 leftMargin: 7
                 right: textDate.left
                 rightMargin: 5
@@ -147,7 +150,7 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 5
+                rightMargin: _PADDING_HORIZONTAL
             }
             height: 20
             width: 20
@@ -175,7 +178,7 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 5
+                rightMargin: _PADDING_HORIZONTAL
             }
             height: 20
             width: 20

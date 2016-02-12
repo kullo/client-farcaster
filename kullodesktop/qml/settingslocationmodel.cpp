@@ -74,9 +74,9 @@ void SettingsLocationModel::openUrl()
         try {
             std::rethrow_exception(exception);
         }
-        catch (Kullo::Protocol::InternalServerError &ex)
+        catch (Kullo::Protocol::ServerError &ex)
         {
-            Log.e() << "HTTP 500 Internal Server Error: "
+            Log.e() << "Server Error: "
                     << Kullo::Util::formatException(ex);
         }
         catch (Kullo::Protocol::ProtocolError &ex)

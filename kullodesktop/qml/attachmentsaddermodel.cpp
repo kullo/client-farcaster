@@ -14,6 +14,8 @@ AttachmentsAdderModel::AttachmentsAdderModel(QObject *parent) :
     QObject(parent),
     cancel_(false)
 {
+    connect(this, &AttachmentsAdderModel::_doneAddingAttachments,
+            this, &AttachmentsAdderModel::onDoneAddingAttachments);
 }
 
 AttachmentsAdderModel::~AttachmentsAdderModel()
@@ -49,21 +51,29 @@ bool AttachmentsAdderModel::addAttachments(const QList<QUrl> &urls)
     // prevent DraftModel from being deleted as long as we are working
     draftModel_->addingAttachmentsInProgress().lock();
 
+    emit addingAttachmentsStarted();
+
     auto doAddAttachments = [&](DraftModel *draftModel, const QList<QUrl> &urls)
     {
-        emit addingAttachmentsStarted();
         for (const auto &url : urls)
         {
             if (cancel_) break;
             draftModel->addAttachment(url);
         }
-        draftModel->addingAttachmentsInProgress().unlock();
-        working_.unlock();
-        emit addingAttachmentsFinished();
+        emit _doneAddingAttachments();
     };
     backgroundJob_ = DesktopUtil::AsyncTask::run(std::bind(doAddAttachments, draftModel_, urls));
 
     return true;
+}
+
+void AttachmentsAdderModel::onDoneAddingAttachments()
+{
+    // Unlocking must happen from the same thread as locking (says Windows)
+    draftModel_->addingAttachmentsInProgress().unlock();
+    working_.unlock();
+
+    emit addingAttachmentsFinished();
 }
 
 }

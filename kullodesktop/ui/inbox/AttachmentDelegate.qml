@@ -3,6 +3,7 @@ import QtQuick 2.4
 
 import ".."
 import "../dialogs"
+import "../misc"
 import "../native"
 import "../js/format.js" as Format
 import "../js/mime.js" as Mime
@@ -12,20 +13,28 @@ Item {
     property int paddingBottom: 3
     property int paddingLeft: 3
     property int paddingRight: 3
-    property bool parentHasActiveFocus: false
 
+    property bool selected: false
+    property bool listHasActiveFocus: false
+
+    /* model data */
+    property int size
+    property string filename
+    property string hash
+    property string mimeType
     property int conversationId: -1
     property int messageId: -1
+    property int attachmentId: -1
     property bool attachmentsReady: false
 
     implicitHeight: paddingTop
-                    +_bodyContent.implicitHeight
+                    + _bodyContent.implicitHeight
                     + paddingBottom
 
     id: _root
 
     SystemPalette {
-        id: palette
+        id: _palette
         colorGroup: _root.enabled ? SystemPalette.Active : SystemPalette.Disabled
     }
 
@@ -38,69 +47,83 @@ Item {
             bottom: parent.bottom
         }
         radius: 3
-        color: attachmentsList.currentIndex == index ?
-                   attachmentsList.activeFocus ? palette.highlight : palette.alternateBase : "transparent"
+        color: selected ?
+                   listHasActiveFocus ? _palette.highlight : _palette.alternateBase : "transparent"
 
-        Column {
-            id: _bodyContent
+        TooltipArea {
+            text: filename
 
-            anchors {
-                fill: parent
-                topMargin: paddingTop
-                leftMargin: paddingLeft
-                rightMargin: paddingRight
-            }
-            spacing: 2
+            Column {
+                id: _bodyContent
 
-            Image {
-                id: _fileIcon
-                source: attachmentsReady && (mimeType_ === "image/bmp"
-                                             || mimeType_ === "image/gif"
-                                             || mimeType_ === "image/jpeg"
-                                             || mimeType_ === "image/png")
-                        ? "image://attachmentpreview/" + Utils.urlencode(Client.userSettings.address) + "/" + conversationId + "/" + messageId + "/" + index
-                        : Utils.makeFileUrl("/icons/filetypes/ubuntu/" + Mime.mime2icon(mimeType_))
                 anchors {
-                    left: parent.left
-                    leftMargin: 10
+                    fill: parent
+                    topMargin: paddingTop
+                    leftMargin: paddingLeft
+                    rightMargin: paddingRight
                 }
-                width: parent.width-2*anchors.leftMargin
-                height: 48
-                smooth: true
-                sourceSize.height: 48
-                sourceSize.width: 48
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-            }
+                spacing: 2
 
-            NativeText {
-                id: textFilename
-                anchors {
-                    left: parent.left
-                    right: parent.right
+                Image {
+                    id: _fileIcon
+
+                    function isImage(mime)
+                    {
+                        return mime === "image/bmp"
+                                || mime === "image/gif"
+                                || mime === "image/jpeg"
+                                || mime === "image/png"
+                    }
+
+                    source: attachmentsReady && isImage(mimeType)
+                            ? "image://attachmentpreview/" + Utils.urlencode(Client.userSettings.address)
+                              + "/" + conversationId
+                              + "/" + messageId
+                              + "/" + attachmentId
+                              + "?" + hash
+                            : Utils.makeFileUrl("/icons/filetypes/ubuntu/" + Mime.mime2icon(mimeType))
+                    anchors {
+                        left: parent.left
+                        leftMargin: 10
+                    }
+                    width: parent.width-2*anchors.leftMargin
+                    height: 48
+                    smooth: true
+                    sourceSize.height: 48
+                    sourceSize.width: 48
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
                 }
-                text: filename_
-                font.pointSize: Style.fontSize.attachmentFilename
-                horizontalAlignment: Text.AlignHCenter
-                elide: Text.ElideMiddle
-                wrapMode: Text.NoWrap
-                maximumLineCount: 1
 
-                color: (attachmentsList.currentIndex == index  && attachmentsList.activeFocus) ?
-                           palette.highlightedText : palette.text
-            }
+                NativeText {
+                    id: _textFilename
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    text: filename
+                    font.pointSize: Style.fontSize.attachmentFilename
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideMiddle
+                    wrapMode: Text.NoWrap
+                    maximumLineCount: 1
 
-            NativeText {
-                id: textFilesize
-                anchors {
-                    left: parent.left
-                    right: parent.right
+                    color: (selected && listHasActiveFocus) ?
+                               _palette.highlightedText : _palette.text
                 }
-                text: Format.filesize_human(size_)
-                font.pointSize: Style.fontSize.attachmentFilesize
-                horizontalAlignment: Text.AlignHCenter
-                color: (attachmentsList.currentIndex == index  && attachmentsList.activeFocus) ?
-                           palette.midlight : palette.mid
+
+                NativeText {
+                    id: _textFilesize
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    text: Format.filesize_human(size)
+                    font.pointSize: Style.fontSize.attachmentFilesize
+                    horizontalAlignment: Text.AlignHCenter
+                    color: (selected && listHasActiveFocus) ?
+                               _palette.midlight : _palette.mid
+                }
             }
         }
     }

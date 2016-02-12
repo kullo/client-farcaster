@@ -227,7 +227,7 @@ FocusScope {
         }
         onSyncError: {
             var errmsg;
-            if (error == SyncErrors.InternalServerError)
+            if (error == SyncErrors.ServerError)
             {
                 errmsg = qsTr("Server error. We're sorry :(")
             }

@@ -32,6 +32,7 @@ QHash<int, QByteArray> AttachmentListModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[FilenameRole] = QByteArrayLiteral("filename_");
+    roles[HashRole]     = QByteArrayLiteral("hash_");
     roles[SizeRole]     = QByteArrayLiteral("size_");
     roles[NoteRole]     = QByteArrayLiteral("note_");
     roles[MimeTypeRole] = QByteArrayLiteral("mimeType_");
@@ -49,6 +50,8 @@ QVariant AttachmentListModel::data(const QModelIndex &index, int role) const
     {
     case FilenameRole:
         return QVariant::fromValue(attachmentModels_[index.row()]->filename());
+    case HashRole:
+        return QVariant::fromValue(attachmentModels_[index.row()]->hash());
     case SizeRole:
         return QVariant::fromValue(attachmentModels_[index.row()]->size());
     case NoteRole:

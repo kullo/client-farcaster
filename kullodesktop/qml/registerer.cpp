@@ -10,10 +10,13 @@
 #include <desktoputil/qtypestreamers.h>
 
 #include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressNotAvailableReason.h>
 #include <kulloclient/api/Challenge.h>
+#include <kulloclient/api/ChallengeType.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/AsyncTask.h>
 #include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/NetworkError.h>
 #include <kulloclient/api/Registration.h>
 
 #include <kulloclient/util/assert.h>

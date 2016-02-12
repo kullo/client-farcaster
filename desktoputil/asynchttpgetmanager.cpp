@@ -2,7 +2,9 @@
 #include "asynchttpgetmanager.h"
 
 #include <httpclient/httpclientfactoryimpl.h>
+#include <kulloclient/http/HttpMethod.h>
 #include <kulloclient/http/ProgressResult.h>
+#include <kulloclient/http/Request.h>
 #include <kulloclient/http/ResponseListener.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
