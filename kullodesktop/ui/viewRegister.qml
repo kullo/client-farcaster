@@ -11,7 +11,6 @@ import "misc"
 import "native"
 
 FocusScope {
-    id: _root
     anchors.fill: parent
 
     function reset() {

@@ -2,37 +2,36 @@
 import QtQuick 2.4
 
 Timer {
-    // public
+    /* public */
     property int maxCount: 50
     property int maxTime: 15 // seconds
     signal save()
-    function count() { pCounter++ }
+    function count() { _counter++ }
 
+    /* private */
+    property int _counter: 0
 
-    // private stuff
-    property int pCounter: 0
-
-    id: saveTimer
+    id: root
     interval: maxTime*1000
     triggeredOnStart: false
     repeat: true
     running: true
 
     onTriggered: {
-        if (pCounter > 0) {
-            console.debug("Save draft from timer. (changes count: " + pCounter + ")")
-            saveTimer.save()
-            pCounter = 0
-            saveTimer.restart()
+        if (_counter > 0) {
+            console.debug("Save draft from timer. (changes count: " + _counter + ")")
+            root.save()
+            _counter = 0
+            root.restart()
         }
     }
 
-    onPCounterChanged: {
-        if (pCounter >= maxCount) {
-            console.debug("Save draft from counter. (changes count: " + pCounter + ")")
-            saveTimer.save()
-            pCounter = 0
-            saveTimer.restart()
+    on_CounterChanged: {
+        if (_counter >= maxCount) {
+            console.debug("Save draft from counter. (changes count: " + _counter + ")")
+            root.save()
+            _counter = 0
+            root.restart()
         }
     }
 }

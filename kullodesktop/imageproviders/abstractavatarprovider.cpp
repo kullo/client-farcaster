@@ -13,6 +13,10 @@
 
 namespace {
 const int RELATIVE_CORNER_RADIUS = 15; // %
+
+const QColor FALLBACK_AVATAR_BACKGROUND_COLOR( 90,  90,  90);
+const QColor FALLBACK_AVATAR_FOREGROUND_COLOR(255, 255, 255);
+const qreal FALLBACK_AVATAR_FOREGROUND_OPACITY = 0.8;
 }
 
 namespace KulloDesktop {
@@ -82,9 +86,13 @@ QPixmap AbstractAvatarProvider::getParticipantAvatar(const Qml::ParticipantModel
 
         return avatar.scaled(renderSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
-    else
+    else if (!part.name().isEmpty())
     {
         return getFallbackAvatar(part.name(), renderSize);
+    }
+    else
+    {
+        return getEmptyAvatar(renderSize);
     }
 }
 
@@ -92,18 +100,32 @@ QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString name, const QSiz
 {
     QPixmap pixmap(renderSize);
 
-    const QColor backgroundColor( 90,  90,  90);
-    const QColor foregroundColor(200, 200, 200);
-    pixmap.fill(backgroundColor);
-
-    QPainter painter(&pixmap);
+    pixmap.fill(FALLBACK_AVATAR_BACKGROUND_COLOR);
+    QPainter textPainter(&pixmap);
     QRect rect(0, 0, renderSize.width(), renderSize.height());
     int fontSize = std::lround(15.0 * renderSize.width() / 50.0);
-    painter.setFont(QFont("Arial", fontSize, QFont::Bold));
-    painter.setPen(QPen(foregroundColor));
-    painter.drawText(rect, Qt::AlignCenter, initialsFromName(name));
+    textPainter.setOpacity(FALLBACK_AVATAR_FOREGROUND_OPACITY);
+    textPainter.setFont(QFont("Arial", fontSize, QFont::Bold));
+    textPainter.setPen(QPen(FALLBACK_AVATAR_FOREGROUND_COLOR));
+    textPainter.drawText(rect, Qt::AlignCenter, initialsFromName(name));
 
     return pixmap;
+}
+
+QPixmap AbstractAvatarProvider::getEmptyAvatar(const QSize &renderSize)
+{
+    std::uint32_t key = (renderSize.width() << 16) | renderSize.height();
+
+    if (!emptyAvatarCache_.count(key))
+    {
+        QImage image(QStringLiteral(":/resources/empty_avatar.png"));
+        kulloAssert(!image.isNull());
+        QImage resized = image.scaled(renderSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+
+        emptyAvatarCache_.emplace(key, Kullo::make_unique<QPixmap>(QPixmap::fromImage(resized)));
+    }
+
+    return *emptyAvatarCache_[key];
 }
 
 QPixmap AbstractAvatarProvider::rounded(const QPixmap &in)

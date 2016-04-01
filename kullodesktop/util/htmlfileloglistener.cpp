@@ -4,6 +4,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/format.hpp>
 #include <desktoputil/filesystem.h>
+#include <desktoputil/paths.h>
 #include <desktoputil/versions.h>
 #include <kulloclient/api/LogType.h>
 #include <kulloclient/util/assert.h>
@@ -11,8 +12,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QString>
-
-#include "kullodesktop/util/paths.h"
 
 namespace KulloDesktop {
 namespace Util {
@@ -40,8 +39,8 @@ std::string getCurrentDateTime()
 HtmlFileLogListener::HtmlFileLogListener()
 {
     // create and get logfile dir
-    QDir().mkpath(logfileDir());
-    auto dir = QDir(logfileDir());
+    QDir().mkpath(DesktopUtil::logfileDir());
+    auto dir = QDir(DesktopUtil::logfileDir());
 
     // open logfile
     auto filename = (

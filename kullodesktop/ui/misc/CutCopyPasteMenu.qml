@@ -3,7 +3,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 
 MouseArea {
-    id: _root
+    id: root
 
     // default: Copy, Paste
     property bool hasCut: false
@@ -18,27 +18,27 @@ MouseArea {
 
     anchors.fill: parent
     acceptedButtons: Qt.RightButton
-    onClicked: _menu.popup()
+    onClicked: menu.popup()
 
     Menu {
-        id: _menu
-        enabled: _root.enabled
+        id: menu
+        enabled: root.enabled
 
         MenuItem {
             visible: hasCut
             text: qsTr("Cut")
-            onTriggered: _root.cut()
+            onTriggered: root.cut()
         }
 
         MenuItem {
             visible: hasCopy
             text: qsTr("Copy")
-            onTriggered: _root.copy()
+            onTriggered: root.copy()
         }
         MenuItem {
             visible: hasPaste
             text: qsTr("Paste")
-            onTriggered: _root.paste()
+            onTriggered: root.paste()
         }
 
         MenuSeparator {
@@ -47,7 +47,7 @@ MouseArea {
         MenuItem {
             visible: hasSelectAll
             text: qsTr("Select all")
-            onTriggered: _root.selectAll()
+            onTriggered: root.selectAll()
         }
     }
 }

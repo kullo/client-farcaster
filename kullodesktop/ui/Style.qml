@@ -35,12 +35,17 @@ QtObject {
     property color messageText: black
     property color messageFooter: "#666666"
 
+    property color answerHeaderBackground: "transparent"
+    property color answerHeaderForeground: black
+    property color answerHeaderForegroundSecondary: Utils.setAlpha(black, 0.7)
+
     property string buttonBackgroundColor: blue
     property string buttonBackgroundColorDisabled: Utils.setSaturation(buttonBackgroundColor, 0.3)
     property string buttonHoverColor: "#22ffffff"
     property string buttonTextColor: "#ffffff"
 
-    property color bannerBackground: "#80ffffff"
+    property color bannerBackground: "#bbffffff"
+    property int bannerBorderRadius: 7
     property color errorBannerBackground: red
     property color errorBannerTextColor: "#ffffff"
 
@@ -70,7 +75,7 @@ QtObject {
         property real messageHeaderSecondary: 10*sp
         property real loggingIn: 25*sp
         property real loginKulloAddressInput: bigTextInput
-        property real kulloVersion: 27*sp
+        property real kulloVersion: 35*sp
         property real masterKeyBackupHeadline: 20*sp
         property real registrationKeygenCheckmark: 21*sp
         property real registrationKulloAdressUsername: bigTextInput

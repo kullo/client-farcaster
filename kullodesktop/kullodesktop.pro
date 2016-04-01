@@ -113,12 +113,10 @@ SOURCES += \
     qml/softwareversions.cpp \
     qml/usersettingsmodel.cpp \
     qml/utils.cpp \
-    util/breakpadsetup.cpp \
     util/consoleextendedloglistener.cpp \
     util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
     util/logfilecleaner.cpp \
-    util/paths.cpp \
     util/qdebugmessagehandler.cpp \
     util/qmlsetup.cpp \
     visuals/advancedrectangle.cpp \
@@ -172,12 +170,10 @@ HEADERS += \
     qml/softwareversions.h \
     qml/usersettingsmodel.h \
     qml/utils.h \
-    util/breakpadsetup.h \
     util/consoleextendedloglistener.h \
     util/htmlfileloglistener.h \
     util/kullofoldersetup.h \
     util/logfilecleaner.h \
-    util/paths.h \
     util/qdebugmessagehandler.h \
     util/qmlsetup.h \
     visuals/advancedrectangle.h \

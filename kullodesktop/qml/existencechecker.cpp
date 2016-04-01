@@ -23,7 +23,7 @@ ExistenceChecker::ExistenceChecker(QObject *parent) :
 {
     listener_ = std::make_shared<ApiMirror::ClientAddressExistsListener>();
 
-    connect(listener_.get(), &ApiMirror::ClientAddressExistsListener::_existenceChecked,
+    connect(listener_.get(), &ApiMirror::ClientAddressExistsListener::_finished,
             this, &ExistenceChecker::onExistenceChecked);
     connect(listener_.get(), &ApiMirror::ClientAddressExistsListener::_error,
             this, &ExistenceChecker::onError);

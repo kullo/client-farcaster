@@ -6,7 +6,7 @@ import ".."
 import "../native"
 
 Hint {
-    id: _root
+    id: root
     property string text
     property int maxWidth: -1
 
@@ -35,7 +35,7 @@ Hint {
             left: parent.left
             right: parent.right
             top: parent.top
-            topMargin: _root.paddingTop
+            topMargin: root.paddingTop
         }
 
         NativeText {
@@ -50,7 +50,7 @@ Hint {
             }
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             color: Style.errorBannerTextColor
-            text: _root.text
+            text: root.text
         }
     }
 }

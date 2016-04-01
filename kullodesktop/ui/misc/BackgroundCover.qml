@@ -2,7 +2,7 @@
 import QtQuick 2.4
 
 Rectangle {
-    id: _root
+    id: root
     /* status banners are at z=3 */
     z: 4
     anchors.fill: parent
@@ -13,28 +13,28 @@ Rectangle {
     visible: opacity != 0
 
     function fadeOut() {
-        _root.state = "hidden"
+        root.state = "hidden"
         inboxContent.forceActiveFocus()
     }
     function fadeIn() {
-        _root.state = "visible"
-        _root.forceActiveFocus()
+        root.state = "visible"
+        root.forceActiveFocus()
     }
 
     states: [
         State {
             name: "visible"
-            PropertyChanges { target: _root; opacity: 1 }
+            PropertyChanges { target: root; opacity: 1 }
         },
         State {
             name: "hidden"
-            PropertyChanges { target: _root; opacity: 0 }
+            PropertyChanges { target: root; opacity: 0 }
         }
     ]
 
     transitions: Transition {
         NumberAnimation {
-            target: _root;
+            target: root;
             properties: "opacity"
             easing.type: Easing.InCubic;
             duration: 150

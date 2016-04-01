@@ -6,7 +6,7 @@ import "." // QTBUG-34418, singletons require explicit import to load qmldir fil
 import "native"
 
 Item {
-    id: _root
+    id: root
     anchors.fill: parent
 
     Component.onCompleted: {
@@ -38,7 +38,7 @@ Item {
         interval: 250
         repeat: false
         onTriggered: {
-            content.createObject(_root);
+            content.createObject(root);
         }
     }
 
@@ -52,7 +52,7 @@ Item {
                 left: parent.left
             }
             Component.onCompleted: {
-                anchors.leftMargin = (_root.width - text.implicitWidth)/2
+                anchors.leftMargin = (root.width - text.implicitWidth)/2
                 dotTimer.start()
             }
             color: Style.gray

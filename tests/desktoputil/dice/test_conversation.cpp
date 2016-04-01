@@ -36,21 +36,25 @@ public:
         switch(id)
         {
         case 0:
+            msgDao->setDateReceived("2024-01-01T19:30:04+02:00");
             msgDao->setDateSent("2024-01-01T19:30:04+02:00");
             msgDao->setState(Dao::MessageState::Read, false);
             msgDao->setState(Dao::MessageState::Done, false);
             break;
         case 1:
-            msgDao->setDateSent("2024-01-01T19:30:05+02:00");
+            msgDao->setDateReceived("2024-01-01T19:30:05+02:00");
+            msgDao->setDateSent("2024-01-01T19:30:03+02:00");
             msgDao->setState(Dao::MessageState::Read, true);
             msgDao->setState(Dao::MessageState::Done, false);
             break;
         case 20:
+            msgDao->setDateReceived("2024-01-01T18:30:05+01:00");
             msgDao->setDateSent("2024-01-01T18:30:05+01:00");
             msgDao->setState(Dao::MessageState::Read, false);
             msgDao->setState(Dao::MessageState::Done, true);
             break;
         case Kullo::ID_MAX:
+            msgDao->setDateReceived("2024-01-01T18:30:06+01:00");
             msgDao->setDateSent("2024-01-01T18:30:06+01:00");
             msgDao->setState(Dao::MessageState::Read, true);
             msgDao->setState(Dao::MessageState::Done, true);
@@ -75,8 +79,9 @@ public:
 
 TEST_F(ConversationModel, compareConversations)
 {
-    // msg1 < msg2 = msg3 < msg4
-    // conv1 < conv2 = conv3 < conv4
+    // sent:     msg2 < msg1 < msg3 < msg4
+    // received: msg1 < msg2 = msg3 < msg4
+    //           conv1 < conv2 = conv3 < conv4
 
     {
         auto partDao1 = make_unique<Dao::ParticipantDao>(addrA_, session_);

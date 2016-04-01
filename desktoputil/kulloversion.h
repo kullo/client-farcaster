@@ -4,6 +4,10 @@
 #include <cstdint>
 #include <string>
 
+// http://stackoverflow.com/questions/22240973/major-and-minor-macros-defined-in-sys-sysmacros-h-pulled-in-by-iterator
+#undef major
+#undef minor
+
 namespace DesktopUtil {
 
 class KulloVersion
@@ -18,6 +22,9 @@ public:
     bool isMajorUpgradeOf(const KulloVersion &other) const;
     bool isMinorUpgradeOf(const KulloVersion &other) const;
     bool isPatchUpgradeOf(const KulloVersion &other) const;
+    int major() const;
+    int minor() const;
+    int patch() const;
 
     friend std::ostream &operator<<(std::ostream &out, const KulloVersion &version);
 

@@ -4,24 +4,11 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QStandardPaths>
-#include <desktoputil/osdetection.h>
 #include <kulloclient/util/assert.h>
 
-namespace KulloDesktop {
-namespace Util {
+#include "desktoputil/osdetection.h"
 
-QString logfileDir()
-{
-    QString out;
-#if defined K_OS_WINDOWS
-    out = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/Kullo";
-#elif defined K_OS_OSX
-    out = QDir::home().absolutePath() + "/.kullo";
-#elif defined K_OS_LINUX
-    out = QDir::home().absolutePath() + "/.kullo";
-#endif
-    return out;
-}
+namespace DesktopUtil {
 
 Paths::Paths()
     #if defined K_OS_WINDOWS
@@ -60,5 +47,24 @@ Paths& kulloPaths() {
     return instance;
 }
 
+QString logfileDir()
+{
+    QString out;
+#if defined K_OS_WINDOWS
+    out = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/Kullo";
+#elif defined K_OS_OSX
+    out = QDir::home().absolutePath() + "/.kullo";
+#elif defined K_OS_LINUX
+    out = QDir::home().absolutePath() + "/.kullo";
+#endif
+    return out;
 }
+
+QString defaultSaveAttachmentsDir()
+{
+    QString out;
+    out = QDir::home().absolutePath();
+    return out;
+}
+
 }

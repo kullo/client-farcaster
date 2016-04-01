@@ -7,18 +7,18 @@ import QtQuick.Controls.Private 1.0
 // Tested on: Qt 5.4.1
 
 MouseArea {
-    id: _root
     property string text: ""
 
+    id: root
     anchors.fill: parent
-    hoverEnabled: _root.enabled
+    hoverEnabled: root.enabled
 
     onExited: Tooltip.hideText()
     onCanceled: Tooltip.hideText()
 
     Timer {
         interval: 1000
-        running: _root.enabled && _root.containsMouse && _root.text.length
-        onTriggered: Tooltip.showText(_root, Qt.point(_root.mouseX, _root.mouseY), _root.text)
+        running: root.enabled && root.containsMouse && root.text.length
+        onTriggered: Tooltip.showText(root, Qt.point(root.mouseX, root.mouseY), root.text)
     }
 }

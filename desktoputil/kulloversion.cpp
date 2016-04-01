@@ -128,6 +128,21 @@ bool KulloVersion::isPatchUpgradeOf(const KulloVersion &other) const
     return this->patch_ > other.patch_;
 }
 
+int KulloVersion::major() const
+{
+    return major_;
+}
+
+int KulloVersion::minor() const
+{
+    return minor_;
+}
+
+int KulloVersion::patch() const
+{
+    return patch_;
+}
+
 std::ostream &operator<<(std::ostream &out, const KulloVersion &version)
 {
     out << version.toString();

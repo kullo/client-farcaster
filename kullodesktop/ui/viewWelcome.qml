@@ -11,9 +11,6 @@ import "native"
 FocusScope {
     anchors.fill: parent
 
-    property string userIdentifier: (Client.userSettings.name && Client.userSettings.name != "")
-                                    ? Client.userSettings.name : Client.userSettings.address
-
     Rectangle {
         anchors.fill: parent
         color: Style.baigeLight

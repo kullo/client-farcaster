@@ -21,12 +21,13 @@ SOURCES += \
     asynchttpgetmanager.cpp \
     asynchttppostmanager.cpp \
     asynctask.cpp \
+    breakpadsetup.cpp \
     filesystem.cpp \
-    httpmultipart.cpp \
     kulloaddresshelper.cpp \
     kulloclient2qt.cpp \
     kulloversion.cpp \
     osdetection.cpp \
+    paths.cpp \
     qtypestreamers.cpp \
     stlqt.cpp \
     versions.cpp
@@ -48,13 +49,14 @@ HEADERS += \
     asynchttpgetmanager.h \
     asynchttppostmanager.h \
     asynctask.h \
+    breakpadsetup.h \
     filesystem.h \
-    httpmultipart.h \
     kulloaddresshelper.h \
     kulloclient2qt.h \
     kulloversion.h \
     metatypes.h \
     osdetection.h \
+    paths.h \
     qtypestreamers.h \
     stlqt.h \
     versions.h

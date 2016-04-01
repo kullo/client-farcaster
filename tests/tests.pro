@@ -7,21 +7,21 @@ CONFIG -= app_bundle
 QT = core gui
 
 SOURCES += \
-    dice/modeltest.cpp \
-    dice/test_conversation.cpp \
-    dice/test_message.cpp \
-    util/test_filesystem.cpp \
-    util/test_httpmultipart.cpp \
-    util/test_kulloaddresshelper.cpp \
-    util/test_kulloclient2qt.cpp \
-    util/test_kulloversion.cpp \
-    util/test_osdetection.cpp \
-    util/test_qtypestreamers.cpp \
+    desktoputil/dice/modeltest.cpp \
+    desktoputil/dice/test_conversation.cpp \
+    desktoputil/dice/test_message.cpp \
+    desktoputil/test_filesystem.cpp \
+    desktoputil/test_kulloaddresshelper.cpp \
+    desktoputil/test_kulloclient2qt.cpp \
+    desktoputil/test_kulloversion.cpp \
+    desktoputil/test_osdetection.cpp \
+    desktoputil/test_paths.cpp \
+    desktoputil/test_qtypestreamers.cpp \
     test_misc.cpp \
     main.cpp
 
 HEADERS += \
-    dice/modeltest.h \
+    desktoputil/dice/modeltest.h \
     kullodesktoptest.h
 
 # BEGIN desktoputil

@@ -123,8 +123,8 @@ void ClientModel::logIn()
     client_->logIn();
     Log.i() << "Logged in.";
 
-    conversationsSource_ = std::make_shared<Qml::ConversationListSource>(this, nullptr);
-    conversationsSource_->refresh();
+    // explicitly use getter to create it if necessary
+    conversationsListSource()->refresh();
     conversationsProxy_ = std::make_shared<Qml::ConversationListModel>(conversationsSource_, nullptr);
     emit conversationsChanged();
 
@@ -170,6 +170,10 @@ UserSettingsModel *ClientModel::userSettings()
 
 std::shared_ptr<ConversationListSource> ClientModel::conversationsListSource()
 {
+    if (!conversationsSource_)
+    {
+        conversationsSource_ = std::make_shared<Qml::ConversationListSource>(this, nullptr);
+    }
     return conversationsSource_;
 }
 

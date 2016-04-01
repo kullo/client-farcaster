@@ -1,14 +1,33 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import QtQuick.Dialogs 1.2
 
 import "../dialogs"
 
 Item {
+    /* public */
+    property int conversationId
+    property int messageId
+    property bool attachmentsReady
+
+    id: root
 
     implicitHeight: attachmentsList.anchors.topMargin
                     + attachmentsList.height
                     + attachmentsList.anchors.bottomMargin
+
+    FileDialog {
+        id: saveFilesDialog
+        selectFolder: true
+        title: qsTr("Save all")
+        folder: Utils.defaultSaveAttachmentsDir()
+
+        onAccepted: {
+            console.log("Save all attachments of message " + root.messageId + " " + saveFilesDialog.fileUrl)
+            attachments_.saveAllTo(saveFilesDialog.fileUrl)
+        }
+    }
 
     GridView {
         id: attachmentsList
@@ -34,9 +53,9 @@ Item {
             width: attachmentsList.cellWidth
             onImplicitHeightChanged: attachmentsList.cellHeight = implicitHeight
 
-            conversationId: _root.conversationId
-            messageId: _root.messageId
-            attachmentsReady: _root.attachmentsReady
+            conversationId: root.conversationId
+            messageId: root.messageId
+            attachmentsReady: root.attachmentsReady
 
             AdvancedFileSaveDialog {
                 id: saveFileDialog
@@ -62,6 +81,16 @@ Item {
                 MenuItem {
                     text: qsTr('Save as')
                     onTriggered: saveFileDialog.openDialog()
+                }
+
+                MenuSeparator {
+                    visible: attachments_.count() > 1
+                }
+
+                MenuItem {
+                    text: qsTr('Save all')
+                    onTriggered: saveFilesDialog.open()
+                    visible: attachments_.count() > 1
                 }
             }
 

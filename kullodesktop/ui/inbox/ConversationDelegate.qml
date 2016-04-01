@@ -10,14 +10,14 @@ Item {
     property int conversationId: id_
     property bool hasSecondaryHighlight: false
 
-    id: listItem
+    id: root
     width: 230
     height: 2 + avatar.height + 2
     state: "current"
 
     Rectangle {
         id: row1
-        height: listItem.height
+        height: root.height
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 4

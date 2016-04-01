@@ -48,20 +48,28 @@ Window {
         visible = false
     }
 
-    // CTRL + W (Win, Mac, KDE, Gnome)
-    function handleCtrlW(event)
+    function handleNativeWindowShortcuts(event)
     {
         if (event.accepted) return false
 
+        // CTRL + W (Win, OS X, KDE, Gnome)
         if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_W)
         {
             event.accepted = true
             _root.closeWindow()
             return true
         }
-        else
+        // CTRL + M (OS X)
+        else if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_M)
         {
-            return false
+            if (Os.osx && !windowTypeModalWindow)
+            {
+                event.accepted = true
+                _root.showMinimized()
+                return true
+            }
         }
+
+        return false
     }
 }

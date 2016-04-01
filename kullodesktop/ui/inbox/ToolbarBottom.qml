@@ -5,7 +5,6 @@ import "../buttons"
 import "../js/shortcut.js" as SC
 
 Rectangle {
-    id: background
     height: borderTop.height
             + theContentRow.implicitHeight
             + 2*theContentRow.anchors.topMargin

@@ -13,7 +13,7 @@ namespace KulloDesktop {
 namespace Qml {
 
 namespace {
-const auto SORT_ROLE = MessageListSource::MessageDateSentRole;
+const auto SORT_ROLE = MessageListSource::MessageDateReceivedRole;
 }
 
 MessageListModel::MessageListModel(QObject *parent)

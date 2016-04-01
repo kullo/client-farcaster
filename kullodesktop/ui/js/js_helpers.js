@@ -10,3 +10,7 @@ function removeFromArray(array, what)
         array.splice(pos, 1);
     }
 }
+
+function sizeOfMapObject(obj) {
+    return Object.keys(obj).length;
+}

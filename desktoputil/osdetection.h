@@ -1,7 +1,7 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #pragma once
 
-#include <qglobal.h>
+#include <QtGlobal>
 
 #if defined Q_OS_LINUX
     #define K_OS_LINUX 1

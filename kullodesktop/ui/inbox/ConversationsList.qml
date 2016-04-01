@@ -4,9 +4,11 @@ import QtQuick.Controls 1.3
 import Kullo 1.0
 
 ListView {
-    id: _conversationsList
-    property int currentSecondaryIndex: -1
-    property int lastSelectedConversationId: -1
+    /* private */
+    property int _currentSecondaryIndex: -1
+    property int _lastSelectedConversationId: -1
+
+    id: root
     interactive: true
 
     focus: true
@@ -18,7 +20,7 @@ ListView {
         if (convId)
         {
             console.info("Conversation ID stored to be opened: " + convId);
-            currentIndex = find(convId)
+            currentIndex = model.find(convId)
             inbox.openAnswer()
             return true
         }
@@ -27,13 +29,13 @@ ListView {
 
     onCurrentIndexChanged: {
         // Reset secondary highlight when main highlight changes
-        currentSecondaryIndex = -1
+        _currentSecondaryIndex = -1
     }
 
     function openConversation(convId)
     {
-        var pos = find(convId)
-        _conversationsList.currentIndex = pos
+        var pos = model.find(convId)
+        root.currentIndex = pos
     }
 
     function openFirstConversationCheck()
@@ -51,32 +53,32 @@ ListView {
     onCountChanged: openFirstConversationCheck()
 
     onCurrentItemChanged: {
-        if (_conversationsList.currentItem)
+        if (root.currentItem)
         {
-            if (lastSelectedConversationId !== _conversationsList.currentItem.conversationId)
+            if (_lastSelectedConversationId !== root.currentItem.conversationId)
             {
                 // lastSelectedConversationId must be set first because
                 // inbox.openConversation() will trigger postConversationsChanged()
                 // if messages are marked as read.
-                lastSelectedConversationId = _conversationsList.currentItem.conversationId
-                inbox.openConversation(_conversationsList.currentItem.conversationId)
+                _lastSelectedConversationId = root.currentItem.conversationId
+                inbox.openConversation(root.currentItem.conversationId)
             }
         }
     }
 
     function postConversationsChanged()
     {
-        if (lastSelectedConversationId == -1) return
+        if (_lastSelectedConversationId == -1) return
         if (checkOpenWhenCreated()) return
-        var pos = find(lastSelectedConversationId);
+        var pos = model.find(_lastSelectedConversationId);
         if (pos !== -1)
         {
-            _conversationsList.currentIndex = pos
+            root.currentIndex = pos
         }
         else
         {
-            _conversationsList.lastSelectedConversationId = -1
-            _conversationsList.currentIndex = -1
+            _lastSelectedConversationId = -1
+            root.currentIndex = -1
             openFirstConversationCheck()
         }
     }
@@ -84,22 +86,6 @@ ListView {
     Connections {
         target: model
         onConversationsChanged: postConversationsChanged()
-    }
-
-    function find(convId)
-    {
-        if (count > 0)
-        {
-            for (var i = 0; i < count; ++i)
-            {
-                if (model.at(i)["id_"] === convId)
-                {
-                    return i;
-                }
-            }
-        }
-        console.warn("Conversation not found: id = " + convId)
-        return -1;
     }
 
     property string quickKeySearchLastCharacter: ""
@@ -148,7 +134,7 @@ ListView {
             resetQuickKeySearch()
             if (Client.conversations.count() > 0)
             {
-                _conversationsList.currentIndex = 0
+                root.currentIndex = 0
             }
         }
         else if (event.modifiers === 0 && event.key === Qt.Key_End) {
@@ -156,7 +142,7 @@ ListView {
             resetQuickKeySearch()
             if (Client.conversations.count() > 0)
             {
-                _conversationsList.currentIndex = _conversationsList.count-1
+                root.currentIndex = root.count-1
             }
         }
 
@@ -200,7 +186,7 @@ ListView {
 
                     if (skipsRemaining == 0)
                     {
-                        _conversationsList.currentIndex = p
+                        root.currentIndex = p
                         return
                     }
                     else if (skipsRemaining > 0)
@@ -219,7 +205,7 @@ ListView {
             }
             else if (reverseDirection)
             {
-                _conversationsList.currentIndex = posLastFind
+                root.currentIndex = posLastFind
                 quickKeySearchLastCharacterPosition = hitsCount
             }
             else
@@ -227,24 +213,24 @@ ListView {
                 // not found anymore after skipping too many results:
                 // Loop back to the top
                 quickKeySearchLastCharacterPosition = 1
-                _conversationsList.currentIndex = posFirstFind
+                root.currentIndex = posFirstFind
             }
         }
     }
 
     Menu {
-        id: _contextMenu
+        id: contextMenu
         property int selectedConversationId: -1
         property var participantsAddresses: (selectedConversationId != -1)
-                ? _conversationsList.model.get(selectedConversationId).participantsAddresses
+                ? root.model.get(selectedConversationId).participantsAddresses
                 : null
 
         MenuItem {
             text: qsTr("Info")
             onTriggered: {
-                conversationInfoWindow.conversationId = _contextMenu.selectedConversationId
-                conversationInfoWindow.participantsAddresses = _conversationsList.model.get(_contextMenu.selectedConversationId).participantsAddresses
-                conversationInfoWindow.participants = _conversationsList.model.get(_contextMenu.selectedConversationId).participants
+                conversationInfoWindow.conversationId = contextMenu.selectedConversationId
+                conversationInfoWindow.participantsAddresses = root.model.get(contextMenu.selectedConversationId).participantsAddresses
+                conversationInfoWindow.participants = root.model.get(contextMenu.selectedConversationId).participants
                 conversationInfoWindow.openWindow()
             }
         }
@@ -252,11 +238,11 @@ ListView {
         MenuItem {
             text: qsTr("Copy Kullo address")
 
-            visible: _contextMenu.participantsAddresses
-                     && _contextMenu.participantsAddresses.length === 1
+            visible: contextMenu.participantsAddresses
+                     && contextMenu.participantsAddresses.length === 1
 
             onTriggered: {
-                var address = _contextMenu.participantsAddresses[0];
+                var address = contextMenu.participantsAddresses[0];
                 Utils.setClipboardText(address)
             }
         }
@@ -264,15 +250,17 @@ ListView {
         Menu {
             id: addressEntries
             title: qsTr("Copy Kullo address")
-            visible: _contextMenu.participantsAddresses
-                     && _contextMenu.participantsAddresses.length > 1
+            visible: contextMenu.participantsAddresses
+                     && contextMenu.participantsAddresses.length > 1
 
             Instantiator {
-                model: _contextMenu.participantsAddresses
+                model: contextMenu.participantsAddresses
                 MenuItem {
-                    property string address: model.modelData
-                    text: address
-                    onTriggered: Utils.setClipboardText(address)
+                    /* private */
+                    property string _address: model.modelData
+
+                    text: _address
+                    onTriggered: Utils.setClipboardText(_address)
                 }
                 onObjectAdded: addressEntries.insertItem(index, object)
                 onObjectRemoved: addressEntries.removeItem(object)
@@ -281,10 +269,10 @@ ListView {
 
         MenuItem {
             text: qsTr("Remove")
-            enabled: _contextMenu.selectedConversationId != -1
-                     && _conversationsList.model.get(_contextMenu.selectedConversationId).count === 0
+            enabled: contextMenu.selectedConversationId != -1
+                     && root.model.get(contextMenu.selectedConversationId).count === 0
             onTriggered: {
-                var convId = _contextMenu.selectedConversationId
+                var convId = contextMenu.selectedConversationId
                 if (Client.removeConversation(convId)) {
                     console.debug("Conversation removed: " + convId)
                 }
@@ -302,7 +290,7 @@ ListView {
 
     delegate: ConversationDelegate {
         id: listItem
-        hasSecondaryHighlight: _conversationsList.currentSecondaryIndex === index
+        hasSecondaryHighlight: root._currentSecondaryIndex === index
 
         MouseArea {
             anchors.fill: parent
@@ -311,14 +299,14 @@ ListView {
                 if (mouse.button == Qt.LeftButton)
                 {
                     inbox.closeAnswer()
-                    _conversationsList.currentIndex = index
-                    _conversationsList.forceActiveFocus()
+                    root.currentIndex = index
+                    root.forceActiveFocus()
                 }
                 else if (mouse.button == Qt.RightButton)
                 {
-                    _conversationsList.currentSecondaryIndex = index
-                    _contextMenu.selectedConversationId = id_
-                    _contextMenu.popup()
+                    root._currentSecondaryIndex = index
+                    contextMenu.selectedConversationId = id_
+                    contextMenu.popup()
                 }
             }
         }

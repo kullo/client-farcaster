@@ -40,12 +40,12 @@ void Scheduler::start()
 {
     if (timer_.isActive())
     {
-        Log.e() << "Schedeuler is already running. Must not be started again.";
+        Log.e() << "Scheduler is already running. Must not be started again.";
         return;
     }
 
     // Pause for X minutes at program start to prioritize client update.
-    // Than run evey X minuts.
+    // Then run every X minutes.
     connect(&timer_, &QTimer::timeout, this, &Scheduler::run);
     timer_.setTimerType(Qt::VeryCoarseTimer);
     timer_.start(RUN_INTERVAL_MS);
@@ -56,7 +56,7 @@ void Scheduler::run()
     // User tasks
     if (user_)
     {
-        // MasteKey backup reminder
+        // MasterKey backup reminder
         if (!user_->masterKeyBackupConfirmed())
         {
             auto dontRemindBeforeStr = user_->masterKeyBackupDontRemindBefore().toStdString();

@@ -2,7 +2,9 @@
 #include "filesystem.h"
 
 #include <string>
+#include <QDir>
 #include <QRegularExpression>
+#include <kulloclient/util/assert.h>
 
 #include "desktoputil/qtypestreamers.h"
 #include "desktoputil/osdetection.h"
@@ -53,6 +55,32 @@ std::string Filesystem::shortenSourcePath(const std::string &filepath)
     {
         return filepath;
     }
+}
+
+QUrl Filesystem::increaseFilenameCounter(const QUrl &file)
+{
+    kulloAssert(file.isLocalFile());
+
+    QFileInfo fi(file.toLocalFile());
+
+    QString base = fi.baseName();
+
+    QRegularExpression re(R"((.*) \(([1-9][0-9]*)\))");
+    auto match = re.match(base);
+    if (match.hasMatch())
+    {
+        QString number = match.captured(2);
+        QString newNumber = QString::number(number.toInt() + 1);
+        base = match.captured(1) + " (" + newNumber + ")";
+    }
+    else
+    {
+        base = base + " (1)";
+    }
+
+    QString filename = base + "." + fi.completeSuffix();
+
+    return QUrl::fromLocalFile(fi.dir().filePath(filename));
 }
 
 }

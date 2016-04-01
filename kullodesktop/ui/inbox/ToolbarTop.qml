@@ -7,7 +7,6 @@ import "../formelements"
 import "../js/shortcut.js" as SC
 
 Rectangle {
-    id: background
     height: theButtonsRow.implicitHeight
             + 2*theButtonsRow.anchors.topMargin
             + borderbottom.height

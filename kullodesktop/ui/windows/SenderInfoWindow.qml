@@ -27,7 +27,7 @@ NativeWindow {
         anchors.fill: parent
 
         Keys.onEscapePressed: _root.closeWindow()
-        Keys.onPressed: handleCtrlW(event)
+        Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Image {
             id: avatar

@@ -33,7 +33,9 @@ public:
     Q_INVOKABLE void setClipboardText(QString txt) const;
     Q_INVOKABLE QUrl makeFileUrl(const QString &path) const;
     Q_INVOKABLE QColor setSaturation(const QColor &in, const qreal saturation) const;
+    Q_INVOKABLE QColor setAlpha(const QColor &in, const qreal alpha) const;
     Q_INVOKABLE QString urlencode(const QString &in) const;
+    Q_INVOKABLE QUrl defaultSaveAttachmentsDir() const;
 };
 
 }

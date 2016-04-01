@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 
-#include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/clientmodel.h"
 
 class QAction;

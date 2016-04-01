@@ -32,7 +32,7 @@ NativeWindow {
 
         Keys.onEscapePressed: _root.closeWindow()
         Keys.onPressed: {
-            handleCtrlW(event)
+            handleNativeWindowShortcuts(event)
 
             // CTRL + P
             if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_P) {

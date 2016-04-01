@@ -13,6 +13,7 @@
 
 #include <desktoputil/osdetection.h>
 
+#include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/conversationlistsource.h"
 
 namespace KulloDesktop {
@@ -33,7 +34,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
     , trayIcon_(Kullo::make_unique<QSystemTrayIcon>(nullptr))
 {
     trayIcon_->setToolTip(app_.applicationName());
-    setIcon(ICON_STATE_LOGGEDOUT);
+    onLoggedInChanged(clientModel_.loggedIn());
 
     if (QSystemTrayIcon::supportsMessages())
     {

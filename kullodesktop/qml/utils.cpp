@@ -5,7 +5,9 @@
 #include <QClipboard>
 #include <QFileInfo>
 
+#include <desktoputil/paths.h>
 #include <desktoputil/stlqt.h>
+#include <kulloclient/util/assert.h>
 #include <kulloclient/util/masterkey.h>
 
 namespace KulloDesktop {
@@ -50,9 +52,23 @@ QColor Utils::setSaturation(const QColor &in, const qreal saturation) const
     return out;
 }
 
+QColor Utils::setAlpha(const QColor &in, const qreal alpha) const
+{
+    const int alphaInt = qRound(alpha * 255);
+    kulloAssert(alphaInt >= 0);
+    kulloAssert(alphaInt <= 255);
+    const QColor out(in.red(), in.green(), in.blue(), alphaInt);
+    return out;
+}
+
 QString Utils::urlencode(const QString &in) const
 {
     return QString(QUrl::toPercentEncoding(in));
+}
+
+QUrl Utils::defaultSaveAttachmentsDir() const
+{
+    return QUrl::fromLocalFile(DesktopUtil::defaultSaveAttachmentsDir());
 }
 
 }

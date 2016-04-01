@@ -64,7 +64,7 @@ NativeModalWindow {
         }
 
         Keys.onEscapePressed: _root.closeWindow()
-        Keys.onPressed: handleCtrlW(event)
+        Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Rectangle {
             id: header

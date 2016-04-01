@@ -6,18 +6,23 @@ import "../../native"
 
 Rectangle {
     id: _root
-    property bool showBanner: false
+    /* private */
+    property bool _showBanner: false
+    property int _paddingV: 8
+    property int _paddingH: 15
     anchors.horizontalCenter: parent.horizontalCenter
-    width: Math.max(250, bannerText.contentWidth) + 2*15
-    height: 40
-    radius: 7
+    width: Math.max(250, bannerText.contentWidth) + 2*_paddingH
+    height: bannerText.implicitHeight
+            + radius
+            + 2*_paddingV
+    radius: Style.bannerBorderRadius
     color: Style.errorBannerBackground
     z: 3
 
-    function show(errmsg) { bannerText.text = errmsg; showBanner = true }
-    function hide() { showBanner = false }
+    function show(errmsg) { bannerText.text = errmsg; _showBanner = true }
+    function hide() { _showBanner = false }
 
-    y: showBanner ? -radius : -height
+    y: _showBanner ? -radius : -height
 
     NativeText {
         id: bannerText
@@ -25,7 +30,7 @@ Rectangle {
             top: parent.top
             left: parent.left
             right: parent.right
-            topMargin: 15
+            topMargin: radius + _paddingV
         }
         color: Style.errorBannerTextColor
         horizontalAlignment: Text.AlignHCenter

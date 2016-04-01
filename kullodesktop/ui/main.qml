@@ -44,7 +44,16 @@ ApplicationWindow {
             else if (SC.isCtrlAndKey(Qt.Key_W, event))
             {
                 event.accepted = true
-                appWindow.hide()
+                appWindow.close()
+            }
+
+            if (Os.osx) // OS X only shortcuts
+            {
+                if (SC.isCtrlAndKey(Qt.Key_M, event))
+                {
+                    event.accepted = true
+                    appWindow.showMinimized()
+                }
             }
         }
 

@@ -24,6 +24,7 @@ public:
 
     Q_INVOKABLE KulloDesktop::Qml::ConversationModel *get(quint32 conversationId) const;
     Q_INVOKABLE int count() const;
+    Q_INVOKABLE int find(quint32 conversationId) const;
     Q_INVOKABLE QVariantMap at(int row);
 
     Q_INVOKABLE quint32 openWhenCreated();

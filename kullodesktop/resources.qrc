@@ -42,6 +42,7 @@
         <file>resources/scalable/user_b.svg</file>
         <file>resources/scalable/write_w.svg</file>
         <file>resources/sounds/new_message.wav</file>
+        <file>resources/empty_avatar.png</file>
         <file>resources/working-indicator.gif</file>
     </qresource>
 </RCC>

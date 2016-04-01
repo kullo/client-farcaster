@@ -59,6 +59,20 @@ int ConversationListModel::count() const
     return source_->rowCount();
 }
 
+int ConversationListModel::find(quint32 conversationId) const
+{
+    for (int row = 0; row < rowCount(); ++row)
+    {
+        QModelIndex idx = index(row, 0);
+        if (idx.data(ConversationListSource::IdRole).toUInt() == conversationId)
+        {
+            return row;
+        }
+    }
+
+    return -1;
+}
+
 QVariantMap ConversationListModel::at(int row)
 {
     QHash<int, QByteArray> roles = roleNames();

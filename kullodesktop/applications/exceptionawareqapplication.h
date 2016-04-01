@@ -12,6 +12,8 @@ class ExceptionAwareQApplication : public QApplication
 
 public:
     explicit ExceptionAwareQApplication(int &argc, char **argv);
+    virtual ~ExceptionAwareQApplication() = default;
+
     virtual bool notify(QObject *receiver, QEvent *event);
 };
 

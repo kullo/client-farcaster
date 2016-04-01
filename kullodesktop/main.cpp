@@ -6,8 +6,12 @@
 
 #include <QtQml>
 #include <QQuickWindow>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
 
+#include <desktoputil/breakpadsetup.h>
 #include <desktoputil/metatypes.h>
+#include <desktoputil/paths.h>
 #include <desktoputil/qtypestreamers.h>
 
 #include <apimirror/Client.h>
@@ -26,7 +30,6 @@
 #include "kullodesktop/applications/kulloapplication.h"
 #endif
 
-#include "kullodesktop/osintegration/kullotrayicon.h"
 #include "kullodesktop/osintegration/programoptions.h"
 #include "kullodesktop/osintegration/singleinstanceerrorbox.h"
 #include "kullodesktop/osintegration/singleinstancelock.h"
@@ -39,12 +42,10 @@
 #include "kullodesktop/qml/softwareversions.h"
 #include "kullodesktop/qml/utils.h"
 
-#include "kullodesktop/util/breakpadsetup.h"
 #include "kullodesktop/util/consoleextendedloglistener.h"
 #include "kullodesktop/util/htmlfileloglistener.h"
 #include "kullodesktop/util/kullofoldersetup.h"
 #include "kullodesktop/util/logfilecleaner.h"
-#include "kullodesktop/util/paths.h"
 #include "kullodesktop/util/qdebugmessagehandler.h"
 #include "kullodesktop/util/qmlsetup.h"
 
@@ -81,11 +82,6 @@ int main(int argc, char *argv[])
         Applications::KulloApplication app(argc, argv);
         #endif
 
-        // force use of ANGLE instead of OpenGL on Windows
-        #ifdef Q_OS_WIN
-        app.setAttribute(Qt::AA_UseOpenGLES, true);
-        #endif
-
         app.setOrganizationName("Kullo");
         app.setOrganizationDomain("kullo.net");
         #ifdef QT_NO_DEBUG
@@ -97,10 +93,8 @@ int main(int argc, char *argv[])
         int retPost = programOptions.postApplicationActions(app);
         if (retPost != OsIntegration::ProgramOptions::NA) return retPost;
 
-        app.secondStageSetup();
-
         // this should be called as soon as possible, but after instantiation of a QCoreApplication
-        Util::BreakpadSetup::setup(Applications::KulloApplication::TEST_MODE);
+        DesktopUtil::BreakpadSetup::setup(Applications::KulloApplication::TEST_MODE);
 
         programOptions.crashtestActions();
 
@@ -170,9 +164,10 @@ int main(int argc, char *argv[])
          * Create Client
          */
         Util::LogfileCleaner::clean();
-        Util::KulloFolderSetup::perpareKulloFolder(Util::kulloPaths().KULLO_DIR);
+        Util::KulloFolderSetup::perpareKulloFolder(DesktopUtil::kulloPaths().KULLO_DIR);
 
-        Qml::ClientModel clientModel(Util::kulloPaths().DATABASE_DIR + QStringLiteral("/libkulloclient-%1.db"), app);
+        Qml::ClientModel clientModel(DesktopUtil::kulloPaths().DATABASE_DIR + QStringLiteral("/libkulloclient-%1.db"), app);
+        app.setClientModel(&clientModel);
 
         /*
          * Create GUI Engine
@@ -231,15 +226,23 @@ int main(int argc, char *argv[])
             return -1;
         }
 
-        std::unique_ptr<OsIntegration::KulloTrayIcon> icon;
-        if (!Applications::KulloApplication::NO_TRAY_ICON)
-        {
-            icon = Kullo::make_unique<OsIntegration::KulloTrayIcon>(app, *window, clientModel);
-            Log.i() << "Done building tray icon.";
-        }
+        // this connection must be established before show() is called
+        QObject::connect(window, &QQuickWindow::sceneGraphInitialized,
+                         [=] () -> void {
+            auto context = window->openglContext();
+            auto functions = context->functions();
+            const std::string vendor   = reinterpret_cast<const char*>(functions->glGetString(GL_VENDOR));
+            const std::string renderer = reinterpret_cast<const char*>(functions->glGetString(GL_RENDERER));
+            const std::string version  = reinterpret_cast<const char*>(functions->glGetString(GL_VERSION));
+            Log.i() << "OpenGL vendor: " << vendor << " "
+                    << "renderer: " << renderer << " "
+                    << "version: " << version;
+        });
 
+        app.setMainWindow(window);
         window->show();
 
+        app.secondStageSetup();
         execStatus = app.exec();
         tr->wait();
         lock.release();

@@ -35,23 +35,24 @@ MessageListSource::~MessageListSource()
 QHash<int, QByteArray> MessageListSource::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[MessageIdRole]          = QByteArrayLiteral("id_");
-    roles[MessageTextRole]        = QByteArrayLiteral("text_");
-    roles[MessageTextAsHtmlRole]  = QByteArrayLiteral("textAsHtml_");
-    roles[MessageDateSentRole]    = QByteArrayLiteral("dateSent_");
-    roles[MessageReadRole]        = QByteArrayLiteral("read_");
-    roles[MessageDoneRole]        = QByteArrayLiteral("done_");
-    roles[ConversationIdRole]     = QByteArrayLiteral("conversationId_");
-    roles[SenderAddressRole]      = QByteArrayLiteral("senderAddress_");
-    roles[SenderNameRole]         = QByteArrayLiteral("senderName_");
-    roles[SenderOrganizationRole] = QByteArrayLiteral("senderOrganization_");
-    roles[AttachmentsRole]        = QByteArrayLiteral("attachments_");
-    roles[AttachmentsReadyRole]   = QByteArrayLiteral("attachmentsReady_");
-    roles[FooterRole]             = QByteArrayLiteral("footer_");
-    roles[DeliveryStatusRole]     = QByteArrayLiteral("deliveryStatus_");
+    roles[MessageIdRole]           = QByteArrayLiteral("id_");
+    roles[MessageTextRole]         = QByteArrayLiteral("text_");
+    roles[MessageTextAsHtmlRole]   = QByteArrayLiteral("textAsHtml_");
+    roles[MessageDateSentRole]     = QByteArrayLiteral("dateSent_");
+    roles[MessageDateReceivedRole] = QByteArrayLiteral("dateReceived_");
+    roles[MessageReadRole]         = QByteArrayLiteral("read_");
+    roles[MessageDoneRole]         = QByteArrayLiteral("done_");
+    roles[ConversationIdRole]      = QByteArrayLiteral("conversationId_");
+    roles[SenderAddressRole]       = QByteArrayLiteral("senderAddress_");
+    roles[SenderNameRole]          = QByteArrayLiteral("senderName_");
+    roles[SenderOrganizationRole]  = QByteArrayLiteral("senderOrganization_");
+    roles[AttachmentsRole]         = QByteArrayLiteral("attachments_");
+    roles[AttachmentsReadyRole]    = QByteArrayLiteral("attachmentsReady_");
+    roles[FooterRole]              = QByteArrayLiteral("footer_");
+    roles[DeliveryStatusRole]      = QByteArrayLiteral("deliveryStatus_");
 
     // convenience roles
-    roles[IncomingRole]           = QByteArrayLiteral("incoming_");
+    roles[IncomingRole] = QByteArrayLiteral("incoming_");
     return roles;
 }
 
@@ -76,6 +77,8 @@ QVariant MessageListSource::data(const QModelIndex &index, int role) const
         return QVariant(messageModels_.at(index.row())->conversationId());
     case MessageDateSentRole:
         return QVariant(messageModels_.at(index.row())->dateSent());
+    case MessageDateReceivedRole:
+        return QVariant(messageModels_.at(index.row())->dateReceived());
     case MessageReadRole:
         return QVariant(messageModels_.at(index.row())->read());
     case MessageDoneRole:

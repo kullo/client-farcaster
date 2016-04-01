@@ -4,7 +4,6 @@ import QtQuick 2.4
 import "../"
 
 Rectangle {
-    id: highlighter
     z: -1
     color: Style.messagesListBackground
 }

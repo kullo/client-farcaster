@@ -496,6 +496,10 @@ sind deine Nachrichten verloren.</translation>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
+    <message>
+        <source>Save all</source>
+        <translation>Alle speichern</translation>
+    </message>
 </context>
 <context>
     <name>MessageHeader</name>
@@ -844,7 +848,7 @@ sind deine Nachrichten verloren.</translation>
     </message>
     <message>
         <source>Switch todo mode off</source>
-        <translation>Todo-Mudus deaktivieren</translation>
+        <translation>Todo-Modus deaktivieren</translation>
     </message>
     <message>
         <source>Switch todo mode on</source>

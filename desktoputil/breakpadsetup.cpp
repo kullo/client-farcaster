@@ -1,20 +1,19 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
-#include "kullodesktop/util/breakpadsetup.h"
+#include "breakpadsetup.h"
 
 #include <iostream>
-#include <desktoputil/osdetection.h>
-#include <desktoputil/versions.h>
 #include <kulloclient/util/exceptions.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/util/paths.h"
+#include "desktoputil/osdetection.h"
+#include "desktoputil/paths.h"
+#include "desktoputil/versions.h"
 
 #ifdef K_HAS_BREAKPAD
     #include <breakpadwrapper/breakpad_all.h>
 #endif // K_HAS_BREAKPAD
 
-namespace KulloDesktop {
-namespace Util {
+namespace DesktopUtil {
 
 namespace {
 #ifdef K_HAS_BREAKPAD
@@ -37,7 +36,7 @@ void BreakpadSetup::setup(const bool kulloTestMode)
               << " --upload_url https://kullo.kullo.net:8443/upload"
               << " --product_name KulloClient"
               << " --product_version "
-              << DesktopUtil::Versions::kullodesktopVersion().toString()
+              << Versions::kullodesktopVersion().toString()
               << " --client_guid abcde" //FIXME
               << " --dump_path ";
     crashreporterCmd_ = cmdStream.str();
@@ -90,5 +89,4 @@ void BreakpadSetup::setup(const bool kulloTestMode)
 #endif // K_HAS_BREAKPAD
 }
 
-}
 }

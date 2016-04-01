@@ -28,18 +28,18 @@ Item {
     property bool attachmentsReady: false
 
     implicitHeight: paddingTop
-                    + _bodyContent.implicitHeight
+                    + bodyContent.implicitHeight
                     + paddingBottom
 
-    id: _root
+    id: root
 
     SystemPalette {
-        id: _palette
-        colorGroup: _root.enabled ? SystemPalette.Active : SystemPalette.Disabled
+        id: palette
+        colorGroup: root.enabled ? SystemPalette.Active : SystemPalette.Disabled
     }
 
     Rectangle {
-        id: _body
+        id: body
         anchors {
             top: parent.top
             left: parent.left
@@ -48,13 +48,13 @@ Item {
         }
         radius: 3
         color: selected ?
-                   listHasActiveFocus ? _palette.highlight : _palette.alternateBase : "transparent"
+                   listHasActiveFocus ? palette.highlight : palette.alternateBase : "transparent"
 
         TooltipArea {
             text: filename
 
             Column {
-                id: _bodyContent
+                id: bodyContent
 
                 anchors {
                     fill: parent
@@ -109,7 +109,7 @@ Item {
                     maximumLineCount: 1
 
                     color: (selected && listHasActiveFocus) ?
-                               _palette.highlightedText : _palette.text
+                               palette.highlightedText : palette.text
                 }
 
                 NativeText {
@@ -122,7 +122,7 @@ Item {
                     font.pointSize: Style.fontSize.attachmentFilesize
                     horizontalAlignment: Text.AlignHCenter
                     color: (selected && listHasActiveFocus) ?
-                               _palette.midlight : _palette.mid
+                               palette.midlight : palette.mid
                 }
             }
         }

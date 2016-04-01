@@ -28,5 +28,10 @@ QString SoftwareVersions::version()
     return QString::fromStdString(DesktopUtil::Versions::kullodesktopVersion().toString());
 }
 
+QString SoftwareVersions::versionSimplified()
+{
+    return QString::number(DesktopUtil::Versions::kullodesktopVersion().major());
+}
+
 }
 }

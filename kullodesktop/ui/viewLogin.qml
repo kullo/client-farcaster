@@ -14,7 +14,7 @@ import "windows"
 import "js/format.js" as Format
 
 FForm {
-    id: _root
+    id: root
     anchors.fill: parent
 
     onSubmitted: {
@@ -207,7 +207,7 @@ FForm {
                     source: "/resources/scalable/login_w.svg"
                 }
                 enabled: !loginChecker.locked
-                onClicked: _root.submit()
+                onClicked: root.submit()
             }
         }
     }

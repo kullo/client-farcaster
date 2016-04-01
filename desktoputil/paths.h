@@ -3,10 +3,7 @@
 
 #include <QString>
 
-namespace KulloDesktop {
-namespace Util {
-
-QString logfileDir();
+namespace DesktopUtil {
 
 struct Paths {
     Paths();
@@ -19,5 +16,8 @@ struct Paths {
 
 Paths& kulloPaths();
 
-}
+// paths independent of QApplication
+QString logfileDir();
+QString defaultSaveAttachmentsDir();
+
 }

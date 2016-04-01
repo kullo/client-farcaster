@@ -7,16 +7,16 @@ NativeButton {
     property url source
     property color backgroundColor: "transparent"
     property color hoverColor: "#22000000"
-    id: _root
+    id: root
     width: 36
     height: 36
 
     style: KulloButtonStyle {
-        source: _root.source
+        source: root.source
         paddingH: 8
         paddingV: 8
         borderRadius: 3
-        backgroundColor: _root.backgroundColor
-        hoverColor: _root.hoverColor
+        backgroundColor: root.backgroundColor
+        hoverColor: root.hoverColor
     }
 }

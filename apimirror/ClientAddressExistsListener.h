@@ -15,23 +15,24 @@ class ClientAddressExistsListener
     Q_OBJECT
 
 public:
-    explicit ClientAddressExistsListener(QObject *parent = nullptr) : QObject(parent)
+    explicit ClientAddressExistsListener(QObject *parent = nullptr)
+        : QObject(parent)
     {
         qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
     }
 
-    void finished(const std::shared_ptr<Kullo::Api::Address> & address, bool exists) override
+    void finished(const std::shared_ptr<Kullo::Api::Address> &address, bool exists) override
     {
-        emit _existenceChecked(address->toString(), exists);
+        emit _finished(address->toString(), exists);
     }
 
-    void error(const std::shared_ptr<Kullo::Api::Address> & address, Kullo::Api::NetworkError e) override
+    void error(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::NetworkError e) override
     {
         emit _error(address->toString(), e);
     }
 
 signals:
-    void _existenceChecked(std::string address, bool exists);
+    void _finished(std::string address, bool exists);
     void _error(std::string address, Kullo::Api::NetworkError error);
 };
 

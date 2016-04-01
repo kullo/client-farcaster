@@ -6,7 +6,8 @@ import "../misc"
 import "../native"
 
 Rectangle {
-    property date dateSent
+    /* public */
+    property date date
     property bool read
     property bool done
     property string name
@@ -17,26 +18,26 @@ Rectangle {
     property bool showMessageDeliveryStatus: false
     property string messageDeliveryStatus
 
-    property string textRow1: organization.trim() == "" ? name
-                                                        : name + " (" + organization + ")"
-    property string textRow2: address
-
     /* private */
     property int _PADDING_VERTICAL: 5
     property int _PADDING_HORIZONTAL: 5
+    property string _textRow1: organization.trim() == ""
+                               ? name
+                               : name + " (" + organization + ")"
+    property string _textRow2: address
 
-    id: _header
+    id: root
     color: Style.messageHeaderBackground
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    height: _content.height
+    height: content.height
 
     signal avatarClicked();
     signal avatarDoubleClicked();
 
     Item {
-        id: _content
+        id: content
         anchors {
             top: parent.top
             left: parent.left
@@ -58,8 +59,8 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
 
-                onClicked: _header.avatarClicked()
-                onDoubleClicked: _header.avatarDoubleClicked()
+                onClicked: root.avatarClicked()
+                onDoubleClicked: root.avatarDoubleClicked()
             }
         }
 
@@ -83,7 +84,7 @@ Rectangle {
                 elide: Text.ElideRight
                 color: Style.messageHeaderForeground
                 font.pointSize: Style.fontSize.messageHeaderPrimary
-                text: textRow1
+                text: _textRow1
             }
 
             NativeText {
@@ -97,7 +98,7 @@ Rectangle {
                 color: Style.messageHeaderForegroundSecondary
                 font.pointSize: Style.fontSize.messageHeaderSecondary
                 visible: text != ""
-                text: textRow2
+                text: _textRow2
             }
         }
 
@@ -109,7 +110,7 @@ Rectangle {
                 rightMargin: 5
             }
             wrapMode: Text.NoWrap
-            enabled: dateSent
+            enabled: date
 
             color: Style.messageHeaderForeground
             font.pointSize: Style.fontSize.messageHeaderSecondary
@@ -124,24 +125,25 @@ Rectangle {
                 var todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate())
                 var yesterdayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() -1)
 
-                if (dateSent.getTime() > todayAtMidnight.getTime())
+                if (date.getTime() > todayAtMidnight.getTime())
                 {
-                    return dateSent.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+                    return date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
                 }
-                else if (dateSent.getTime() > yesterdayAtMidnight.getTime())
+                else if (date.getTime() > yesterdayAtMidnight.getTime())
                 {
-                    return qsTr("yesterday")
+                    return qsTr("yesterday") + ", "
+                            + date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
                 }
                 else
                 {
-                    return dateSent.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+                    return date.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
                 }
             }
 
             TooltipArea {
-                text: dateSent.toLocaleDateString(Qt.locale())
+                text: date.toLocaleDateString(Qt.locale())
                       + " "
-                      + dateSent.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+                      + date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
             }
         }
 

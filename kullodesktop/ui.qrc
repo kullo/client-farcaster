@@ -42,6 +42,7 @@
         <file alias="banners/SyncErrorBanner.qml">ui/inbox/banners/SyncErrorBanner.qml</file>
         <file alias="banners/SyncingBanner.qml">ui/inbox/banners/SyncingBanner.qml</file>
         <file alias="AnswerBox.qml">ui/inbox/AnswerBox.qml</file>
+        <file alias="AnswerBoxHeader.qml">ui/inbox/AnswerBoxHeader.qml</file>
         <file alias="AttachmentDelegate.qml">ui/inbox/AttachmentDelegate.qml</file>
         <file alias="ConversationDelegate.qml">ui/inbox/ConversationDelegate.qml</file>
         <file alias="ConversationIntro.qml">ui/inbox/ConversationIntro.qml</file>

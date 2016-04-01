@@ -10,36 +10,37 @@ import "../native"
 import "../js/shortcut.js" as SC
 
 Item {
-    id: _root
-
+    /* public */
+    property var messagesList
     property int paddingTop: 10
     property int paddingRight: 10
     property int paddingBottom: 10
     property int paddingLeft: 10
+    property var conversationParticipantsAddresses: [] // stringlist
+    property int conversationId: conversationId_
+    property int messageId: id_
+    property bool attachmentsReady: attachmentsReady_
+    property string highlightColor: "#bbbbbb"
+
+    /* private */
+    property bool _selected: index === root.currentIndex
+    property bool _showFooter: false
+    property bool _hasFooter: footer_.trim() !== ""
+
+    signal avatarClicked();
+    signal avatarDoubleClicked();
+
+    id: root
 
     anchors.left: parent.left
     anchors.right: parent.right
     height: paddingTop + messageBorder.height + paddingBottom + intro.height
     clip: true
 
-    property var conversationParticipantsAddresses: [] // stringlist
-    property int conversationId: conversationId_
-    property int messageId: id_
-    property bool attachmentsReady: attachmentsReady_
-
-    property bool selected: index == messagesList.currentIndex
-    property string highlightColor: "#bbbbbb"
-
-    property bool showFooter: false
-    property bool hasFooter: footer_.trim() !== ""
-
-    signal avatarClicked();
-    signal avatarDoubleClicked();
-
     states: State {
         name: "deleting"
         PropertyChanges {
-            target: _root
+            target: root
             opacity: 0
             height: 0
         }
@@ -49,8 +50,8 @@ Item {
         NumberAnimation { properties: "opacity,height"; duration: deleteTimer.interval }
     }
 
-    onSelectedChanged: {
-        if (selected) {
+    on_SelectedChanged: {
+        if (_selected) {
             if (!read_) markAsRad()
         }
     }
@@ -96,7 +97,7 @@ Item {
     Rectangle {
         id: messageBorder
         color: "transparent"
-        border.color: selected ? highlightColor : "transparent"
+        border.color: _selected ? highlightColor : "transparent"
         border.width: 1
 
         y: paddingTop
@@ -120,7 +121,7 @@ Item {
                 leftMargin: 1
                 rightMargin: 1
             }
-            height: _header.height + _body.height + _footer.height
+            height: header.height + body.height + footer.height
 
             MouseArea {
                 anchors.fill: parent
@@ -131,8 +132,8 @@ Item {
             }
 
             MessageHeader {
-                id: _header
-                dateSent: dateSent_
+                id: header
+                date: dateReceived_
                 showMessageState: incoming_
                 showMessageDeliveryStatus: !incoming_
                 messageDeliveryStatus: deliveryStatus_
@@ -143,24 +144,24 @@ Item {
                 address: senderAddress_
                 avatarSource: "image://messageavatars/" + Utils.urlencode(Client.userSettings.address) + "/" + conversationId_ + "/" + id_
 
-                onAvatarClicked: _root.avatarClicked()
-                onAvatarDoubleClicked: _root.avatarDoubleClicked()
+                onAvatarClicked: root.avatarClicked()
+                onAvatarDoubleClicked: root.avatarDoubleClicked()
             }
 
             Item {
-                id: _body
+                id: body
                 anchors {
-                    top: _header.bottom
+                    top: header.bottom
                     left: parent.left
                     right: parent.right
                 }
-                height: _messageTextBox.anchors.topMargin
-                      + _messageTextBox.height
-                      + _messageTextBox.anchors.bottomMargin
-                      + _attachmentsBox.height
+                height: messageTextBox.anchors.topMargin
+                        + messageTextBox.height
+                        + messageTextBox.anchors.bottomMargin
+                        + attachmentsBox.height
 
                 NativeSelectableText {
-                    id: _messageTextBox
+                    id: messageTextBox
                     text: "<div style='white-space: pre-wrap;'>" + textAsHtml_ + "</div>"
                     anchors {
                         top: parent.top
@@ -169,7 +170,7 @@ Item {
                         leftMargin: 15
                         bottomMargin: 20
                     }
-                    width: (_body.width-2*anchors.leftMargin) < 600 ? (_body.width-2*anchors.leftMargin) : 600
+                    width: (body.width-2*anchors.leftMargin) < 600 ? (body.width-2*anchors.leftMargin) : 600
                     font.family: Devicesettings.messagesFontPreview.family
                     font.italic: Devicesettings.messagesFontPreview.italic
                     font.weight: Devicesettings.messagesFontPreview.weight
@@ -179,33 +180,33 @@ Item {
                     onLinkActivated: Qt.openUrlExternally(link)
 
                     function quoteSelectedText() {
-                        var quoteText = _messageTextBox.selectedText.trim()
+                        var quoteText = messageTextBox.selectedText.trim()
                         inbox.openAnswer()
                         rightColumn.addQuoteToAnswer(quoteText)
                     }
 
                     Menu {
-                        id: _contextMenu
+                        id: contextMenu
 
                         MenuItem {
                             text: qsTr("Copy")
                                   + " (%1)".arg(SC.nameOfCtrlAndKey("C", Os.osx))
-                            onTriggered: _messageTextBox.copy()
+                            onTriggered: messageTextBox.copy()
                         }
                         MenuItem {
                             text: qsTr("Quote")
                                   + " (%1)".arg(SC.nameOfCtrlAndKey("B", Os.osx))
-                            onTriggered: _messageTextBox.quoteSelectedText()
+                            onTriggered: messageTextBox.quoteSelectedText()
                         }
                     }
 
                     Menu {
-                        id: _linkMenu
+                        id: linkMenu
                         property string link: ""
 
                         MenuItem {
                             text: qsTr("Copy link address")
-                            onTriggered: Utils.setClipboardText(_linkMenu.link)
+                            onTriggered: Utils.setClipboardText(linkMenu.link)
                         }
                     }
 
@@ -222,17 +223,17 @@ Item {
                         anchors.fill: parent
                         acceptedButtons: Qt.RightButton
                         onClicked: {
-                            if (_messageTextBox.selectionStart != _messageTextBox.selectionEnd)
+                            if (messageTextBox.selectionStart != messageTextBox.selectionEnd)
                             {
-                                _contextMenu.popup()
+                                contextMenu.popup()
                             }
                             else
                             {
-                                var link = _messageTextBox.linkAt(mouseX, mouseY)
+                                var link = messageTextBox.linkAt(mouseX, mouseY)
                                 if (link !== "")
                                 {
-                                    _linkMenu.link = link
-                                    _linkMenu.popup()
+                                    linkMenu.link = link
+                                    linkMenu.popup()
                                 }
                             }
                         }
@@ -240,10 +241,13 @@ Item {
                 }
 
                 MessageDelegateAttachmentsBox {
-                    id: _attachmentsBox
+                    id: attachmentsBox
+                    conversationId: root.conversationId
+                    messageId: root.messageId
+                    attachmentsReady: root.attachmentsReady
 
                     anchors {
-                        top: _messageTextBox.bottom
+                        top: messageTextBox.bottom
                         left: parent.left
                         right: parent.right
                     }
@@ -251,26 +255,26 @@ Item {
                             ? 0
                             : implicitHeight
 
-                    opacity: attachmentsReady_ ? 1 : 0.3
+                    opacity: root.attachmentsReady ? 1 : 0.3
                 }
             }
 
             Rectangle {
-                id: _footer
+                id: footer
                 color: "transparent"
 
                 anchors {
-                    top: _body.bottom
+                    top: body.bottom
                     left: parent.left
                     right: parent.right
                 }
 
-                height: _footerBorderTop.height
-                        + Math.max(_footerText.height, deleteBottom.height)
+                height: footerBorderTop.height
+                        + Math.max(footerText.height, deleteBottom.height)
                         + 2*deleteBottom.anchors.topMargin
 
                 Rectangle {
-                    id: _footerBorderTop
+                    id: footerBorderTop
                     anchors {
                         top: parent.top
                         left: parent.left
@@ -284,15 +288,15 @@ Item {
 
                 Item {
                     id: toggleFooterButton
-                    visible: hasFooter
+                    visible: _hasFooter
                     anchors {
                         left: parent.left
                         leftMargin: 15
-                        top: _footerBorderTop.bottom
+                        top: footerBorderTop.bottom
                         topMargin: 5
                     }
 
-                    width: showFooter
+                    width: _showFooter
                            ? img.width
                            : img.width + txt.anchors.leftMargin + txt.width
                     height: txt.contentHeight
@@ -306,9 +310,9 @@ Item {
                             top: parent.top
                             topMargin: Math.floor((parent.height-height) / 2)
                         }
-                        source: showFooter ?
-                                    "/resources/scalable/chevron-circle-bottom_b.svg"
-                                  : "/resources/scalable/chevron-circle-right_b.svg"
+                        source: _showFooter
+                                ? "/resources/scalable/chevron-circle-bottom_b.svg"
+                                : "/resources/scalable/chevron-circle-right_b.svg"
                     }
 
                     NativeText {
@@ -321,7 +325,7 @@ Item {
                             top: parent.top
                         }
                         text: qsTr("Footer")
-                        visible: !showFooter
+                        visible: !_showFooter
                         color: Style.messageFooter
                     }
 
@@ -329,21 +333,21 @@ Item {
                         anchors.fill: parent
 
                         onClicked: {
-                            showFooter = !showFooter
+                            _showFooter = !_showFooter
                         }
                     }
                 }
 
                 NativeSelectableText {
-                    id: _footerText
+                    id: footerText
                     text: footer_
 
                     color: Style.messageFooter
-                    height: showFooter ? implicitHeight : 0
+                    height: _showFooter ? implicitHeight : 0
                     clip: true
 
                     anchors {
-                        top: _footerBorderTop.bottom
+                        top: footerBorderTop.bottom
                         topMargin: deleteBottom.anchors.topMargin
                         left: parent.left
                         leftMargin: 35
@@ -356,8 +360,8 @@ Item {
                         hasCut: false
                         hasSelectAll: true
 
-                        onCopy: _footerText.copy()
-                        onSelectAll: _footerText.selectAll()
+                        onCopy: footerText.copy()
+                        onSelectAll: footerText.selectAll()
                     }
                 }
 
@@ -366,7 +370,7 @@ Item {
                     anchors {
                         right: parent.right
                         rightMargin: 5
-                        top: _footerBorderTop.bottom
+                        top: footerBorderTop.bottom
                         topMargin: 5
                     }
                     tooltip: qsTr("Delete message")
@@ -381,7 +385,7 @@ Item {
                     }
 
                     onClicked: {
-                        _root.state = "deleting"
+                        root.state = "deleting"
                         deleteTimer.start()
                     }
                 }

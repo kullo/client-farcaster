@@ -27,7 +27,7 @@ NativeWindow {
         color: Style.baigeLight
 
         Keys.onEscapePressed: _root.closeWindow()
-        Keys.onPressed: handleCtrlW(event)
+        Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Column {
             id: windowContent

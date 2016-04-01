@@ -8,7 +8,3 @@ qmlformelements-github2farcaster:
 
 qmlformelements-farcaster2github:
 	cp ./kullodesktop/ui/formelements/F* ~/nobackup/QmlFormElements/
-
-test:
-	./check_qmllint.sh
-	./check_qinvokable_namespaces.sh

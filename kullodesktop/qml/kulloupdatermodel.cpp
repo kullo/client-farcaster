@@ -7,12 +7,12 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QDesktopServices>
+#include <desktoputil/paths.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/os.h"
-#include "kullodesktop/util/paths.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -62,7 +62,7 @@ void KulloUpdaterModel::run(const QUrl &url)
     }
     filename_ = url.fileName();
     filenameTmp_ = filename_ + ".part";
-    downloadUrl(url, Util::kulloPaths().UPDATES_DIR, filenameTmp_);
+    downloadUrl(url, DesktopUtil::kulloPaths().UPDATES_DIR, filenameTmp_);
 }
 
 void KulloUpdaterModel::cancel()
@@ -73,8 +73,8 @@ void KulloUpdaterModel::cancel()
 void KulloUpdaterModel::openTarget()
 {
     QUrl target = canRunInstaller()
-            ? QUrl::fromLocalFile(Util::kulloPaths().UPDATES_DIR + "/" + filename_)
-            : QUrl::fromLocalFile(Util::kulloPaths().UPDATES_DIR);
+            ? QUrl::fromLocalFile(DesktopUtil::kulloPaths().UPDATES_DIR + "/" + filename_)
+            : QUrl::fromLocalFile(DesktopUtil::kulloPaths().UPDATES_DIR);
     Log.i() << "Opening " << target;
     QDesktopServices::openUrl(target);
 }
@@ -146,7 +146,7 @@ void KulloUpdaterModel::downloadUrl(const QUrl &url, const QString &dir, const Q
 
 void KulloUpdaterModel::cleanOldDownloads()
 {
-    QDirIterator it(Util::kulloPaths().UPDATES_DIR);
+    QDirIterator it(DesktopUtil::kulloPaths().UPDATES_DIR);
     while (it.hasNext())
     {
         QFileInfo fi(it.next());
@@ -167,7 +167,7 @@ void KulloUpdaterModel::cleanOldDownloads()
 void KulloUpdaterModel::postDownloadChecks()
 {
     // TODO: check sha256 sum
-    QDir::setCurrent(Util::kulloPaths().UPDATES_DIR);
+    QDir::setCurrent(DesktopUtil::kulloPaths().UPDATES_DIR);
     QFile::remove(filename_);
     QFile::rename(filenameTmp_, filename_);
 
@@ -182,7 +182,7 @@ void KulloUpdaterModel::postDownloadChecks()
     }
 
     Log.i() << "Update successfully downloaded to "
-            << QFileInfo(Util::kulloPaths().UPDATES_DIR, filename_).absoluteFilePath();
+            << QFileInfo(DesktopUtil::kulloPaths().UPDATES_DIR, filename_).absoluteFilePath();
     emit done();
 }
 

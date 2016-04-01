@@ -21,6 +21,7 @@ public:
         MessageTextRole,
         MessageTextAsHtmlRole,
         MessageDateSentRole,
+        MessageDateReceivedRole,
         MessageReadRole,
         MessageDoneRole,
         ConversationIdRole,

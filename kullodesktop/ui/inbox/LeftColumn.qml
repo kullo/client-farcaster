@@ -7,8 +7,6 @@ import "../"
 import "../windows"
 
 FocusScope {
-    id: scope
-
     function openConversation(convId)
     {
         conversationsList.openConversation(convId)

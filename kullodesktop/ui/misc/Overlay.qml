@@ -10,12 +10,12 @@ Rectangle {
     property bool active
 
     function show() {
-        _root.state = "visible"
+        root.state = "visible"
         timer.restart()
     }
 
     /* private */
-    id: _root
+    id: root
     width: 150
     height: 150
     visible: true
@@ -25,17 +25,17 @@ Rectangle {
     state: "hidden"
 
     function _fadeOut() {
-        _root.state = "hidden"
+        root.state = "hidden"
     }
 
     states: [
         State {
             name: "visible"
-            PropertyChanges { target: _root; opacity: 1}
+            PropertyChanges { target: root; opacity: 1 }
         },
         State {
             name: "hidden"
-            PropertyChanges { target: _root; opacity: 0}
+            PropertyChanges { target: root; opacity: 0 }
         }
     ]
 
@@ -44,7 +44,7 @@ Rectangle {
             from: "visible"
             to: "hidden"
             NumberAnimation {
-                target: _root;
+                target: root;
                 properties: "opacity";
                 easing.type: Easing.InCubic;
                 duration: 150
@@ -66,7 +66,7 @@ Rectangle {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pointSize: Style.fontSize.overlay
-        text: _root.text
+        text: root.text
         // if this text wraps, layout is destroyed entirely
         wrapMode: Text.NoWrap
         color: "white"

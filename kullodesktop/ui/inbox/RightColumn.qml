@@ -8,10 +8,7 @@ import "../native"
 import "../js/shortcut.js" as SC
 
 FocusScope {
-    id: _root
-
-    clip: false
-
+    /* public */
     property alias conversationId: answer.conversationId
     property alias buttonBoxState: buttonBox.state
     property alias animationEnabled: fadeInOutAnimation.enabled
@@ -23,6 +20,9 @@ FocusScope {
     function refreshAvatar() {
         answer.refreshAvatar()
     }
+
+    /* private */
+    clip: false
 
     Behavior on width {
         id: fadeInOutAnimation
@@ -96,7 +96,7 @@ FocusScope {
 
             anchors {
                 fill: parent
-                topMargin: 5
+                topMargin: 10
                 rightMargin: 15
                 bottomMargin: 10
                 leftMargin: 15

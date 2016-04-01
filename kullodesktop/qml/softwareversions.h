@@ -20,10 +20,14 @@ public:
     Q_PROPERTY(QString version READ version NOTIFY versionChanged)
     static QString version();
 
+    Q_PROPERTY(QString versionSimplified READ versionSimplified NOTIFY versionSimplifiedChanged)
+    static QString versionSimplified();
+
 signals:
     // unused signals
     void listChanged();
     void versionChanged();
+    void versionSimplifiedChanged();
 };
 
 }

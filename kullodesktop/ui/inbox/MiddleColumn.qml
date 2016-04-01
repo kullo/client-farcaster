@@ -10,8 +10,6 @@ import "../windows"
 import "../js/shortcut.js" as SC
 
 FocusScope {
-    id: middleColumn
-
     property var participantsAddresses: [] // stringlist
 
     function setModel(m) {

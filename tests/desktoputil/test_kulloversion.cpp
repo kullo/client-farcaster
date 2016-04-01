@@ -5,6 +5,8 @@
 
 #include "tests/kullotest.h"
 
+using namespace testing;
+
 class KulloVersion : public KulloTest
 {
 };
@@ -117,4 +119,12 @@ K_TEST_F(KulloVersion, isPatchUpgradeOf)
 
     EXPECT_TRUE(DesktopUtil::KulloVersion("0.12.3").isPatchUpgradeOf(DesktopUtil::KulloVersion("0.12.2"))); // patch bigger
     EXPECT_FALSE(DesktopUtil::KulloVersion("0.12.3").isPatchUpgradeOf(DesktopUtil::KulloVersion("0.12.4"))); // patch lower
+}
+
+K_TEST_F(KulloVersion, getters)
+{
+    auto version = DesktopUtil::KulloVersion("1.12.3");
+    EXPECT_THAT(version.major(), Eq(1));
+    EXPECT_THAT(version.minor(), Eq(12));
+    EXPECT_THAT(version.patch(), Eq(3));
 }

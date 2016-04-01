@@ -13,15 +13,17 @@ import "../native"
 import "../js/shortcut.js" as SC
 
 FocusScope {
-    anchors.fill: parent
-
-    id: answer
-
+    /* public */
     property int conversationId: -1
 
-    property bool enabled: conversationId != -1 && Client.conversations.get(conversationId).draft.state === "editing"
-    property bool empty: conversationId == -1
-                         || Client.conversations.get(conversationId).draft.empty
+    /* private */
+    readonly property bool _enabled: conversationId != -1
+                                     && Client.conversations.get(conversationId).draft.state === "editing"
+    readonly property bool _empty: conversationId == -1
+                                   || Client.conversations.get(conversationId).draft.empty
+
+    id: root
+    anchors.fill: parent
 
     onConversationIdChanged: {
         messageText.reloadTextFromDraftModel()
@@ -47,7 +49,7 @@ FocusScope {
 
     function tryToSend()
     {
-        if (!empty)
+        if (!_empty)
         {
             console.debug("Send message ...")
             Client.conversations.get(conversationId).draft.prepareToSend()
@@ -60,12 +62,12 @@ FocusScope {
     }
 
     function refreshAvatar() {
-        messageHeader.avatarSource = "image://senderavatars/" + Client.userSettings.address + "?" + Date.now()
+        header.avatarSource = "image://senderavatars/" + Client.userSettings.address + "?" + Date.now()
     }
 
     SystemPalette {
         id: palette
-        colorGroup: answer.enabled ? SystemPalette.Active : SystemPalette.Disabled
+        colorGroup: root._enabled ? SystemPalette.Active : SystemPalette.Disabled
     }
 
     SaveUnit {
@@ -108,40 +110,40 @@ FocusScope {
             id: body
             anchors {
                 top: parent.top
-                topMargin: 5
                 left: parent.left
                 right: parent.right
                 bottom: footer.top
                 bottomMargin: 5
             }
             color: "white"
+            radius: messageText.anchors.margins * 0.666
 
-            MessageHeader {
-                id: messageHeader
+            property int _padding: 8
+
+            AnswerBoxHeader {
+                id: header
                 anchors {
                     top: parent.top
                     left: parent.left
                     right: parent.right
+                    topMargin: body._padding
+                    leftMargin: body._padding
+                    rightMargin: body._padding
                 }
-                showMessageState: false
-
-                name: Client.userSettings.name
-                organization: Client.userSettings.organization
-                address: Client.userSettings.address
-                avatarSource: "image://senderavatars/" + Client.userSettings.address
+                conversationId: root.conversationId
             }
 
             TextArea {
                 id: messageText
                 anchors {
-                    top: messageHeader.bottom
+                    top: header.bottom
                     left: parent.left;
                     right: parent.right
                     bottom: attachmentsBox.top
-                    margins: 5
+                    margins: body._padding
                 }
                 focus: true
-                enabled: answer.enabled
+                enabled: root._enabled
                 textColor: palette.text
                 font.pointSize: Style.fontSize.answerTextInput
                 font.family: FontList.SerifFamily
@@ -194,9 +196,9 @@ FocusScope {
                     bottom: parent.bottom
                     left: parent.left
                     right: parent.right
-                    leftMargin: 5
-                    rightMargin: 5
-                    bottomMargin: 5
+                    leftMargin: body._padding
+                    rightMargin: body._padding
+                    bottomMargin: body._padding
                 }
                 height: Math.max(addAttachmentsBox.height, attachmentsList.height)
 
@@ -287,7 +289,7 @@ FocusScope {
                     delegate: DraftAttachmentDelegate {
                         width: attachmentsList.cellWidth
                         height: attachmentsList.cellHeight
-                        conversationId: answer.conversationId
+                        conversationId: root.conversationId
 
                         function removeAttachment() {
                             Client.conversations.get(conversationId).draft.removeAttachment(attachmentIndex_)
@@ -344,8 +346,8 @@ FocusScope {
                 tooltip: qsTr("Send message")
                          //: Name of the big key below backspace
                          + " (%1)".arg(SC.nameOfCtrlAndKey(qsTr("Return"), Os.osx))
-                enabled: answer.enabled && !answer.empty
-                onClicked: answer.tryToSend()
+                enabled: root._enabled && !root._empty
+                onClicked: root.tryToSend()
                 style: KulloButtonStyle {
                     source: "/resources/scalable/send_w.svg"
                 }

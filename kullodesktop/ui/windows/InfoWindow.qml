@@ -6,6 +6,7 @@ import Kullo 1.0
 
 import ".."
 import "../buttons"
+import "../misc"
 import "../native"
 import "../js/shortcut.js" as SC
 
@@ -29,7 +30,7 @@ NativeModalWindow {
         }
 
         Keys.onEscapePressed: _root.closeWindow()
-        Keys.onPressed: handleCtrlW(event)
+        Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Column {
             anchors {
@@ -60,12 +61,16 @@ NativeModalWindow {
                         left: parent.left
                         right: parent.right
                     }
-                    text: SoftwareVersions.version
+                    text: SoftwareVersions.versionSimplified
                     horizontalAlignment: Text.AlignHCenter
                     // if this text wraps, layout is destroyed entirely
                     wrapMode: Text.NoWrap
                     font.pointSize: Style.fontSize.kulloVersion
                     font.bold: true
+
+                    TooltipArea {
+                        text: SoftwareVersions.version
+                    }
                 }
             }
 

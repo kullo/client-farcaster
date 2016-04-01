@@ -15,7 +15,8 @@ class ClientGenerateKeysListener
     Q_OBJECT
 
 public:
-    explicit ClientGenerateKeysListener(QObject *parent = nullptr) : QObject(parent)
+    explicit ClientGenerateKeysListener(QObject *parent = nullptr)
+        : QObject(parent)
     {
         qRegisterMetaType<std::shared_ptr<Kullo::Api::Registration>>("std::shared_ptr<Kullo::Api::Registration>");
     }
@@ -25,14 +26,14 @@ public:
         emit _progress(progress);
     }
 
-    void finished(const std::shared_ptr<Kullo::Api::Registration> & registration) override
+    void finished(const std::shared_ptr<Kullo::Api::Registration> &registration) override
     {
         emit _finished(registration);
     }
 
 signals:
     void _progress(int progress);
-    void _finished(const std::shared_ptr<Kullo::Api::Registration> & registration);
+    void _finished(const std::shared_ptr<Kullo::Api::Registration> &registration);
 };
 
 }

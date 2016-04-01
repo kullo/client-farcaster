@@ -2,10 +2,10 @@
 #include "uploader.h"
 
 #include <QUrl>
-#include <desktoputil/httpmultipart.h>
 #include <desktoputil/kulloclient2qt.h>
 #include <kulloclient/util/binary.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/mimemultipart.h>
 
 Uploader::Uploader(QObject *parent)
     : QObject(parent)
@@ -22,14 +22,14 @@ void Uploader::upload(const Metadata &meta)
 {
     auto url = QUrl(QString::fromStdString(meta.uploadUrl));
 
-    DesktopUtil::HttpMultipart mp;
-    mp.addTextPart("prod", meta.productName);
-    mp.addTextPart("ver", meta.productVersion);
-    mp.addTextPart("guid", meta.clientGuid);
-    mp.addTextPart("ptime", meta.processUptime);
-    mp.addTextPart("ctime", meta.cumulativeUptime);
-    mp.addTextPart("email", meta.email);
-    mp.addTextPart("comments", meta.comments);
+    Kullo::Util::MimeMultipart mp;
+    mp.addPart("prod", meta.productName);
+    mp.addPart("ver", meta.productVersion);
+    mp.addPart("guid", meta.clientGuid);
+    mp.addPart("ptime", meta.processUptime);
+    mp.addPart("ctime", meta.cumulativeUptime);
+    mp.addPart("email", meta.email);
+    mp.addPart("comments", meta.comments);
     mp.addFilePart("upload_file_minidump", meta.dumpPath);
 
     manager_.post(url, mp.boundary(), Kullo::Util::to_vector(mp.toString()));

@@ -4,7 +4,7 @@ import QtQuick 2.4
 import "../windows"
 
 ListView {
-    id: messagesList
+    id: root
     anchors {
         left: parent.left
         right: parent.right
@@ -79,12 +79,13 @@ ListView {
     }
 
     delegate: MessageDelegate {
+        messagesList: root
         paddingTop: 5
         paddingRight: 5
         paddingBottom: 5
         paddingLeft: 5
         conversationParticipantsAddresses: participantsAddresses
-        highlightColor: messagesList.activeFocus ? "#999999" : "#bbbbbb"
+        highlightColor: root.activeFocus ? "#999999" : "#bbbbbb"
 
         onAvatarDoubleClicked: {
             senderInfoWindow.conversationId = conversationId_

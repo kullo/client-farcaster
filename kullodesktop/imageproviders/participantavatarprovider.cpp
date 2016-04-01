@@ -42,12 +42,12 @@ QPixmap ParticipantAvatarProvider::drawAvatar(const QString &url, const QSize &r
 
     if (!participantsList.count(*address))
     {
-        Log.e() << "Participant address not found: " << *address;
-        return QPixmap();
+        Log.d() << "Participant address not found: " << *address;
+        return rounded(getEmptyAvatar(renderSize));
     }
 
     auto participant = participantsList[*address];
-    return getParticipantAvatar(*participant, renderSize);
+    return rounded(getParticipantAvatar(*participant, renderSize));
 }
 
 }

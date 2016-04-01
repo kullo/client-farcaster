@@ -3,19 +3,18 @@
 
 #include <QDir>
 #include <desktoputil/kulloversion.h>
+#include <desktoputil/paths.h>
 #include <desktoputil/qtypestreamers.h>
 #include <desktoputil/versions.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/version.h>
-
-#include "kullodesktop/util/paths.h"
 
 namespace KulloDesktop {
 namespace Util {
 
 void LogfileCleaner::clean()
 {
-    auto dir = QDir(Util::logfileDir());
+    auto dir = QDir(DesktopUtil::logfileDir());
 
     QFile::remove(QFileInfo(dir, "kullo_log.html").absoluteFilePath());
 

@@ -6,26 +6,32 @@ import "../../native"
 
 Rectangle {
     id: _root
-    property bool showBanner: false
+
     property string progressText: ""
+    /* private */
+    property bool _showBanner: false
+    property int _paddingV: 8
+
     anchors.horizontalCenter: parent.horizontalCenter
     width: 250
-    height: 40
-    radius: 7
+    height: syncingText.implicitHeight
+            + radius
+            + 2*_paddingV
+    radius: Style.bannerBorderRadius
     color: Style.bannerBackground
     z: 3
 
-    function show() { showBanner = true }
-    function hide() { showBanner = false }
+    function show() { _showBanner = true }
+    function hide() { _showBanner = false }
 
-    y: showBanner ? -radius : -height
+    y: _showBanner ? -radius : -height
 
     NativeText {
         id: syncingText
         anchors {
             top: parent.top
             left: parent.left
-            topMargin: 15
+            topMargin: radius + _paddingV
         }
         Component.onCompleted: {
             anchors.leftMargin = (_root.width - syncingText.implicitWidth)/2
@@ -37,7 +43,7 @@ Rectangle {
               + "...".slice(0, dotCount);
 
         Timer {
-            running: _root.showBanner
+            running: _showBanner
             interval: 800
             repeat: true
             triggeredOnStart: false

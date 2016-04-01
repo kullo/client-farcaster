@@ -6,20 +6,23 @@ import "../../native"
 
 Rectangle {
     id: _root
-    property bool showBanner: false
+    /* private */
+    property bool _showBanner: false
+    property int _paddingV: 8
+    property int _paddingH: 15
     anchors.horizontalCenter: parent.horizontalCenter
-    width: 400
-    radius: 7
+    width: Math.max(parent.width*0.4, 400)
+    radius: Style.bannerBorderRadius
     height: syncingText.implicitHeight
             + syncingText.anchors.topMargin
             + syncingText.anchors.bottomMargin
     color: Style.errorBannerBackground
     z: 3
 
-    function show() { showBanner = true }
-    function hide() { showBanner = false }
+    function show() { _showBanner = true }
+    function hide() { _showBanner = false }
 
-    y: showBanner ? -radius : -height
+    y: _showBanner ? -radius : -height
 
     NativeText {
         id: syncingText
@@ -27,10 +30,10 @@ Rectangle {
             top: parent.top
             left: parent.left
             right: parent.right
-            leftMargin: 2*_root.radius
-            rightMargin: 2*_root.radius
-            topMargin: 2*_root.radius
-            bottomMargin: 1.5*_root.radius
+            leftMargin: _paddingH
+            rightMargin: _paddingH
+            topMargin: radius + _paddingV
+            bottomMargin: _paddingV
         }
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         color: Style.errorBannerTextColor

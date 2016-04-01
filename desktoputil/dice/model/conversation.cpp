@@ -265,7 +265,7 @@ void Conversation::reloadLatestMessageTimestamp()
 
 void Conversation::updateLatestMessageTimestamp(std::shared_ptr<Message> msg)
 {
-    latestMessageTimestamp_ = std::max(msg->dateSent(), latestMessageTimestamp_);
+    latestMessageTimestamp_ = std::max(msg->dateReceived(), latestMessageTimestamp_);
 }
 
 void Conversation::reloadMessageCounts()

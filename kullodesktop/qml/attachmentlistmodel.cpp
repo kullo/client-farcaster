@@ -2,9 +2,12 @@
 #include "attachmentlistmodel.h"
 
 #include <QQmlEngine>
+#include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include <desktoputil/dice/model/message.h>
+#include <desktoputil/filesystem.h>
+#include <desktoputil/qtypestreamers.h>
 
 #include "kullodesktop/qml/attachmentmodel.h"
 
@@ -80,6 +83,25 @@ AttachmentModel *AttachmentListModel::get(quint32 position) const
 int AttachmentListModel::count() const
 {
     return attachmentModels_.size();
+}
+
+bool AttachmentListModel::saveAllTo(const QUrl &directory) const
+{
+    kulloAssert(directory.isLocalFile());
+    auto localDirectory = directory.toLocalFile();
+
+    for (auto &attachment : attachmentModels_)
+    {
+        auto target = localDirectory + "/" + attachment->filename();
+        while (QFileInfo(target).exists())
+        {
+            target = DesktopUtil::Filesystem::increaseFilenameCounter(QUrl::fromLocalFile(target)).toLocalFile();
+        }
+        Log.d() << "Save to " << target;
+        if (!attachment->saveTo(QUrl::fromLocalFile(target))) return false;
+    }
+
+    return true;
 }
 
 void AttachmentListModel::refreshAttachmentModels()
