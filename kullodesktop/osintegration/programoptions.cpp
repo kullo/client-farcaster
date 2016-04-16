@@ -3,13 +3,13 @@
 
 #include <iostream>
 
+#include <boost/program_options.hpp>
 #include <QTimer>
 
 #include <kulloclient/crypto/info.h>
 #include <kulloclient/util/crash.h>
 #include <kulloclient/util/misc.h>
 #include <kulloclient/util/formatstring.h>
-#include <boost/program_options.hpp>
 
 #include <desktoputil/osdetection.h>
 #include <desktoputil/qtypestreamers.h>
@@ -39,6 +39,8 @@ const char* O_PATHS               = "paths";
 const char* O_FAKE_LONG_MIGRATION = "fake-long-migration";
 const char* O_CRASHTEST_NULLPTR   = "crashtest-nullptr";
 const char* O_CRASHTEST_THROW     = "crashtest-throw";
+// must not be changed, Qt Creator passes this argument when debugging QML
+const char* O_QMLDEBUGGING        = "qmljsdebugger";
 
 ProgramOptions::ProgramOptions()
     : vm_(Kullo::make_unique<po::variables_map>())
@@ -65,6 +67,7 @@ ProgramOptions::ProgramOptions()
             (O_FAKE_LONG_MIGRATION, "Fake long running database migration")
             (O_CRASHTEST_NULLPTR,   "Let Kullo crash because of nullpointer dereference")
             (O_CRASHTEST_THROW,     "Let Kullo crash because uncaught exception")
+            (O_QMLDEBUGGING, po::value<std::string>(), "Enable QML debugging")
     ;
 
     optionsAll_->add(*optionsUser_);
@@ -78,7 +81,11 @@ ProgramOptions::~ProgramOptions()
 int ProgramOptions::parse(int argc, char *argv[])
 {
     try {
-        auto parserResult = po::parse_command_line(argc, argv, *optionsAll_);
+        auto parserResult = po::parse_command_line(
+                    argc, argv, *optionsAll_,
+                    po::command_line_style::unix_style
+                    // this is necessary for QML debugging ("-qmljsdebugger" with only one dash)
+                    | po::command_line_style::allow_long_disguise);
         po::store(parserResult, *vm_);
         po::notify(*vm_);
     }

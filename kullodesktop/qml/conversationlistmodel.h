@@ -4,6 +4,8 @@
 #include <memory>
 #include <QSortFilterProxyModel>
 
+#include <kulloclient/types.h>
+
 #include "kullodesktop/farcaster-forwards.h"
 
 namespace KulloDesktop {
@@ -22,12 +24,12 @@ public:
     bool todoMode() const;
     void setTodoMode(bool active);
 
-    Q_INVOKABLE KulloDesktop::Qml::ConversationModel *get(quint32 conversationId) const;
+    Q_INVOKABLE KulloDesktop::Qml::ConversationModel *get(Kullo::id_type conversationId) const;
     Q_INVOKABLE int count() const;
-    Q_INVOKABLE int find(quint32 conversationId) const;
+    Q_INVOKABLE int find(Kullo::id_type conversationId) const;
     Q_INVOKABLE QVariantMap at(int row);
 
-    Q_INVOKABLE quint32 openWhenCreated();
+    Q_INVOKABLE Kullo::id_type openWhenCreated();
 
 signals:
     void conversationsChanged();

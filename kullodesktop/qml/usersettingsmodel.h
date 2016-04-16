@@ -2,15 +2,17 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 #include <utility>
 #include <QDateTime>
 #include <QObject>
 #include <QStringList>
 #include <QUrl>
 #include <QVariant>
+#include <boost/optional.hpp>
 
-#include <desktoputil/dice/dice-forwards.h>
 #include <kulloclient/kulloclient-forwards.h>
+#include <kulloclient/api/DateTime.h>
 
 class QSettings;
 
@@ -28,8 +30,8 @@ public:
         Yes
     };
 
-    explicit UserSettingsModel(QObject *parent = 0);
-    explicit UserSettingsModel(Kullo::Util::UserSettings *userSettings, QObject *parent);
+    explicit UserSettingsModel(QObject *parent = nullptr);
+    void setUserSettings(const std::shared_ptr<Kullo::Api::UserSettings> &userSettings);
 
     Q_INVOKABLE void load(const QString &address);
 
@@ -37,9 +39,8 @@ public:
     QString name() const;
     void setName(QString name);
 
-    Q_PROPERTY(QString address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(QString address READ address NOTIFY addressChanged)
     QString address() const;
-    void setAddress(QString address);
 
     Q_PROPERTY(QString organization READ organization WRITE setOrganization NOTIFY organizationChanged)
     QString organization() const;
@@ -59,9 +60,8 @@ public:
     QString footer() const;
     void setFooter(QString footer);
 
-    Q_PROPERTY(QString masterKeyPem READ masterKeyPem WRITE setMasterKeyPem NOTIFY masterKeyPemChanged)
+    Q_PROPERTY(QString masterKeyPem READ masterKeyPem NOTIFY masterKeyPemChanged)
     QString masterKeyPem() const;
-    void setMasterKeyPem(const QString &key);
 
     /// Set masterKeyBackupConfirmed to true and save to disc
     /// In QML, use this function instead of masterKeyBackupConfirmed = true
@@ -77,7 +77,7 @@ public:
 
     Q_INVOKABLE bool loginCredentialsStored() const;
 
-    Q_INVOKABLE void reset(const QString &address, const QString &masterKeyPem = "");
+    Q_INVOKABLE void reset(const QString &address, const QString &masterKeyPem);
 
     QPixmap avatar() const;
 
@@ -97,7 +97,7 @@ public:
 
     static bool loadAvatarFile(QByteArray &avatarData, QString &avatarMimeType, const QUrl &filename);
 
-    Kullo::Util::UserSettings *rawUserSettings() const;
+    std::shared_ptr<Kullo::Api::UserSettings> rawUserSettings() const;
 
 signals:
     void nameChanged();
@@ -108,7 +108,6 @@ signals:
     void tmpAvatarFileUrlChanged();
     void footerChanged();
     void masterKeyPemChanged();
-    void mutedChanged();
 
 public slots:
     void save();
@@ -121,7 +120,7 @@ private:
     void setAvatarData(const QByteArray &data);
     void setAvatarMimeType(const QString &mime);
 
-    Kullo::Util::UserSettings *settings_ = nullptr;
+    std::shared_ptr<Kullo::Api::UserSettings> settings_;
     std::atomic<bool> currentlyLoading_;
 
     QUrl tmpAvatarFileUrl_;

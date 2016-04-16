@@ -40,11 +40,10 @@ TabContent {
             name: qsTr("Kullo server")
             buttonText: qsTr("Open account settings")
 
-            onClicked: settingsLocation.openUrl()
+            onClicked: settingsLocation.openUrl(Client)
 
             SettingsLocation {
                 id: settingsLocation
-                userSettings: Client.userSettings
             }
         }
     }

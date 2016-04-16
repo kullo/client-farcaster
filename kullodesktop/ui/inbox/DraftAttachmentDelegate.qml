@@ -5,7 +5,7 @@ AttachmentDelegate {
     selected: attachmentsList.currentIndex == index
     listHasActiveFocus: attachmentsList.activeFocus
 
-    messageId: 0
+    messageId: -1
     attachmentsReady: true
     attachmentId: attachmentIndex_
 

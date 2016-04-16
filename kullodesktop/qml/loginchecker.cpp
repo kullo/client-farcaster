@@ -4,19 +4,14 @@
 #include <QQmlEngine>
 #include <QStringList>
 
-#include <desktoputil/stlqt.h>
-
 #include <apimirror/Client.h>
 #include <apimirror/ClientCheckCredentialsListener.h>
-
+#include <desktoputil/stlqt.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/MasterKey.h>
 #include <kulloclient/api/NetworkError.h>
-
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/kulloaddress.h>
 #include <kulloclient/util/librarylogger.h>
-#include <kulloclient/util/masterkey.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -89,14 +84,16 @@ void LoginChecker::run(const QString &addr, const QStringList &masterKeyBlocks)
 
     auto masterKeyBlocksStd = DesktopUtil::StlQt::toVector(masterKeyBlocks);
 
-    if (!Kullo::Util::KulloAddress::isValid(addr.toStdString()))
+    auto address = Kullo::Api::Address::create(addr.toStdString());
+    if (!address)
     {
         emit invalidKulloAddress();
         setLocked(false);
         return;
     }
 
-    if (!Kullo::Util::MasterKey::isValid(masterKeyBlocksStd))
+    auto masterKey = Kullo::Api::MasterKey::createFromDataBlocks(masterKeyBlocksStd);
+    if (!masterKey)
     {
         emit invalidMasterKey();
         setLocked(false);
@@ -104,8 +101,8 @@ void LoginChecker::run(const QString &addr, const QStringList &masterKeyBlocks)
     }
 
     bgTask_ = client_->raw()->checkCredentialsAsync(
-                Kullo::Api::Address::create(addr.toStdString()),
-                Kullo::Api::MasterKey::createFromDataBlocks(masterKeyBlocksStd),
+                address,
+                masterKey,
                 listener_);
 }
 

@@ -40,7 +40,7 @@ private slots:
     void onDoneAddingAttachments();
 
 private:
-    DraftModel* draftModel_;
+    DraftModel* draftModel_ = nullptr;
     std::mutex working_;
     std::atomic<bool> cancel_;
     std::thread backgroundJob_;

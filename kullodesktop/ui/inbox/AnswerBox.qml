@@ -14,36 +14,28 @@ import "../js/shortcut.js" as SC
 
 FocusScope {
     /* public */
-    property int conversationId: -1
+    property Conversation conversation
 
     /* private */
-    readonly property bool _enabled: conversationId != -1
-                                     && Client.conversations.get(conversationId).draft.state === "editing"
-    readonly property bool _empty: conversationId == -1
-                                   || Client.conversations.get(conversationId).draft.empty
+    readonly property bool _enabled: conversation && conversation.draft.state === "editing"
+    readonly property bool _empty: !conversation || conversation.draft.empty
 
     id: root
     anchors.fill: parent
 
-    onConversationIdChanged: {
-        messageText.reloadTextFromDraftModel()
-    }
-
     AttachmentsAdder {
         id: attachmentsAdder
-        target: conversationId != -1
-            ? Client.conversations.get(conversationId).draft
-            : null
+        target: root.conversation ? root.conversation.draft : null
         onAddingAttachmentsStarted: workingIndicator.visible = true
         onAddingAttachmentsFinished: workingIndicator.visible = false
     }
 
     function addQuoteToAnswer(quoteText) {
-        var drafText = messageText.text.toString()
+        var draftText = messageText.text.toString()
         var cursorPos = messageText.cursorPosition
         var len = messageText.text.toString().length
-        var pre = drafText.substring(0, cursorPos)
-        var post = drafText.substring(cursorPos)
+        var pre = draftText.substring(0, cursorPos)
+        var post = draftText.substring(cursorPos)
         messageText.text = pre + '"' + quoteText + '"' + post
     }
 
@@ -52,7 +44,7 @@ FocusScope {
         if (!_empty)
         {
             console.debug("Send message ...")
-            Client.conversations.get(conversationId).draft.prepareToSend()
+            conversation.draft.prepareToSend()
             heartbeat.syncAsap()
         }
         else
@@ -72,7 +64,7 @@ FocusScope {
 
     SaveUnit {
         id: saveUnit
-        onSave: Client.conversations.get(conversationId).draft.save()
+        onSave: root.conversation.draft.save()
     }
 
     Keys.onPressed: {
@@ -130,7 +122,7 @@ FocusScope {
                     leftMargin: body._padding
                     rightMargin: body._padding
                 }
-                conversationId: root.conversationId
+                conversation: root.conversation
             }
 
             TextArea {
@@ -148,35 +140,13 @@ FocusScope {
                 font.pointSize: Style.fontSize.answerTextInput
                 font.family: FontList.SerifFamily
                 wrapMode: TextEdit.Wrap
-
-                function reloadTextFromDraftModel()
-                {
-                    var modelText = (conversationId != -1)
-                            ? Client.conversations.get(conversationId).draft.text
-                            : ""
-                    if (text !== modelText)
-                    {
-                        text = modelText
-                    }
-                }
+                text: root.conversation ? root.conversation.draft.text : ""
 
                 onTextChanged: {
-                    console.debug("TextArea.textChanged(\"" + text + "\")")
-                    var conv = Client.conversations.get(conversationId)
-                    if (!conv) return
-
-                    if (!conv.draft) console.warn("draft is null in AnswerBox");
-
-                    conv.draft.text = text
+                    if (root.conversation) {
+                        root.conversation.draft.text = text
+                    }
                     saveUnit.count()
-                }
-
-                Connections {
-                    target: conversationId != -1
-                        ? Client.conversations.get(conversationId).draft
-                        : null
-                    onTextCleared: messageText.text = ""
-                    onTextPrepared: messageText.reloadTextFromDraftModel()
                 }
 
                 CutCopyPasteMenu {
@@ -209,14 +179,14 @@ FocusScope {
                     MenuItem {
                         text: qsTr("Open")
                         onTriggered: {
-                            Client.conversations.get(conversationId).draft.attachments.get(contextMenu.attachmentIndex).open()
+                            root.conversation.draft.attachments.get(contextMenu.attachmentIndex).open()
                         }
                     }
 
                     MenuItem {
                         text: qsTr("Remove attachment")
                         onTriggered: {
-                            Client.conversations.get(conversationId).draft.removeAttachment(contextMenu.attachmentIndex)
+                            root.conversation.draft.removeAttachment(contextMenu.attachmentIndex)
                         }
                     }
                 }
@@ -284,15 +254,15 @@ FocusScope {
 
                     clip: true
                     interactive: false
-                    model: conversationId != -1 ? Client.conversations.get(conversationId).draft.attachments : null
+                    model: conversation ? root.conversation.draft.attachments : null
 
                     delegate: DraftAttachmentDelegate {
                         width: attachmentsList.cellWidth
                         height: attachmentsList.cellHeight
-                        conversationId: root.conversationId
+                        conversationId: root.conversation.id
 
                         function removeAttachment() {
-                            Client.conversations.get(conversationId).draft.removeAttachment(attachmentIndex_)
+                            root.conversation.draft.removeAttachment(attachmentIndex_)
                         }
 
                         Keys.onPressed: {
@@ -316,7 +286,7 @@ FocusScope {
                                 }
                             }
                             onDoubleClicked: {
-                                Client.conversations.get(conversationId).draft.attachments.get(attachmentIndex_).open()
+                                root.conversation.draft.attachments.get(attachmentIndex_).open()
                             }
                         }
                     }

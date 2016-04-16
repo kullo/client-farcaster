@@ -5,9 +5,7 @@
 #include <QMetaType>
 
 #include <kulloclient/types.h>
-#include <kulloclient/sync/definitions.h>
 
-Q_DECLARE_METATYPE(Kullo::Sync::SyncMode)
 Q_DECLARE_METATYPE(std::exception_ptr)
 
 namespace DesktopUtil {
@@ -19,8 +17,6 @@ inline void registerMetaTypes()
     qRegisterMetaType<Kullo::lastModified_type>("Kullo::lastModified_type");
     qRegisterMetaType<Kullo::timestamp_type>("Kullo::timestamp_type");
     qRegisterMetaType<Kullo::metaVersion_type>("Kullo::metaVersion_type");
-    qRegisterMetaType<Kullo::Sync::SyncMode>("Kullo::Sync::SyncMode");
-    qRegisterMetaType<Kullo::Sync::SyncProgress>("Kullo::Sync::SyncProgress");
 
     // std types
     qRegisterMetaType<std::exception_ptr>("std::exception_ptr");

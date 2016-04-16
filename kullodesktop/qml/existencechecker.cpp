@@ -6,14 +6,12 @@
 #include <apimirror/Client.h>
 #include <apimirror/ClientAddressExistsListener.h>
 
-#include <kulloclient/util/assert.h>
-#include <kulloclient/util/misc.h>
-#include <kulloclient/util/kulloaddress.h>
-#include <kulloclient/util/librarylogger.h>
-
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/NetworkError.h>
+#include <kulloclient/util/assert.h>
+#include <kulloclient/util/misc.h>
+#include <kulloclient/util/librarylogger.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -57,17 +55,17 @@ bool ExistenceChecker::checkExistence(const QString &addr)
     if (locked_) return false;
     setLocked(true);
 
-    auto address = addr.toStdString();
-    if (!Kullo::Util::KulloAddress::isValid(address))
+    auto address = Kullo::Api::Address::create(addr.toStdString());
+    if (!address)
     {
-        Log.e() << "Existence check run with invalid Kullo address: " << address;
+        Log.e() << "Existence check run with invalid Kullo address: "
+                << addr.toStdString();
         emit invalidKulloAddress();
         setLocked(false);
         return true;
     }
 
-    bgTask_ = client_->raw()->addressExistsAsync(Kullo::Api::Address::create(address), listener_);
-
+    bgTask_ = client_->raw()->addressExistsAsync(address, listener_);
     return true;
 }
 

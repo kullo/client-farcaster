@@ -196,7 +196,7 @@ BaseDialog {
 
                     ExistenceChecker {
                         id: existenceChecker
-                        client: ClientNewApi
+                        client: Client.client()
 
                         onExistenceChecked: {
                             if (ok) {

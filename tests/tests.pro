@@ -7,10 +7,8 @@ CONFIG -= app_bundle
 QT = core gui
 
 SOURCES += \
-    desktoputil/dice/modeltest.cpp \
-    desktoputil/dice/test_conversation.cpp \
-    desktoputil/dice/test_message.cpp \
     desktoputil/test_filesystem.cpp \
+    desktoputil/test_initials.cpp \
     desktoputil/test_kulloaddresshelper.cpp \
     desktoputil/test_kulloclient2qt.cpp \
     desktoputil/test_kulloversion.cpp \
@@ -21,7 +19,6 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
-    desktoputil/dice/modeltest.h \
     kullodesktoptest.h
 
 # BEGIN desktoputil

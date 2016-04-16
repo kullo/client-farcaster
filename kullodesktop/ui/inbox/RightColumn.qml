@@ -9,7 +9,7 @@ import "../js/shortcut.js" as SC
 
 FocusScope {
     /* public */
-    property alias conversationId: answer.conversationId
+    property alias conversation: answer.conversation
     property alias buttonBoxState: buttonBox.state
     property alias animationEnabled: fadeInOutAnimation.enabled
 

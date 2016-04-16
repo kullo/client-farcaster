@@ -9,6 +9,7 @@ import "../js/format.js" as Format
 import "../js/mime.js" as Mime
 
 Item {
+    /* public */
     property int paddingTop: 3
     property int paddingBottom: 3
     property int paddingLeft: 3
@@ -17,7 +18,6 @@ Item {
     property bool selected: false
     property bool listHasActiveFocus: false
 
-    /* model data */
     property int size
     property string filename
     property string hash
@@ -65,7 +65,7 @@ Item {
                 spacing: 2
 
                 Image {
-                    id: _fileIcon
+                    id: fileIcon
 
                     function isImage(mime)
                     {
@@ -96,7 +96,7 @@ Item {
                 }
 
                 NativeText {
-                    id: _textFilename
+                    id: textFilename
                     anchors {
                         left: parent.left
                         right: parent.right
@@ -113,7 +113,7 @@ Item {
                 }
 
                 NativeText {
-                    id: _textFilesize
+                    id: textFilesize
                     anchors {
                         left: parent.left
                         right: parent.right

@@ -19,7 +19,7 @@ FocusScope {
 
     Rectangle {
         anchors.fill: parent
-        color: Style.baigeLight
+        color: Style.beigeLight
 
         Logo {
             id: logo

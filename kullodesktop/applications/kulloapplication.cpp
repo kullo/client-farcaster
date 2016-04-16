@@ -5,6 +5,7 @@
 #include <cstring>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 namespace KulloDesktop {
 namespace Applications {
@@ -37,7 +38,8 @@ void KulloApplication::secondStageSetup()
     else
     {
         setCloseToTray(settings_.closeToTray());
-        connect(&settings_, &Qml::DeviceSettings::closeToTrayChanged, [this](bool value)
+        connect(&settings_, &Qml::DeviceSettings::closeToTrayChanged,
+                this, [this](bool value)
         {
             this->setCloseToTray(value);
         });

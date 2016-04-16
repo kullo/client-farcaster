@@ -7,14 +7,25 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += \
-    Client.cpp
+    Client.cpp \
+    eventdispatcher.cpp
 
 HEADERS += \
     apimirror-forwards.h \
     Client.h \
     ClientAddressExistsListener.h \
     ClientCheckCredentialsListener.h \
+    ClientCreateSessionListener.h \
     ClientGenerateKeysListener.h \
-    RegistrationRegisterAccountListener.h
+    DraftAttachmentsAddListener.h \
+    DraftAttachmentsContentListener.h \
+    DraftAttachmentsSaveToListener.h \
+    eventdispatcher.h \
+    MessageAttachmentsContentListener.h \
+    MessageAttachmentsSaveToListener.h \
+    RegistrationRegisterAccountListener.h \
+    SessionAccountInfoListener.h \
+    SessionListener.h \
+    SyncerListener.h
 
 include(../common_post.pri)

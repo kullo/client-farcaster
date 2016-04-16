@@ -1,17 +1,24 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "draftattachmentmodel.h"
 
+#include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
 #include <QUrl>
-#include <desktoputil/dice/model/draftattachment.h>
+
+#include <apimirror/DraftAttachmentsContentListener.h>
+#include <apimirror/DraftAttachmentsSaveToListener.h>
 #include <desktoputil/filesystem.h>
 #include <desktoputil/stlqt.h>
 #include <desktoputil/qtypestreamers.h>
+#include <kulloclient/api/AsyncTask.h>
+#include <kulloclient/api/DraftAttachments.h>
+#include <kulloclient/api_impl/debug.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/exceptions.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -19,67 +26,53 @@ namespace Qml {
 DraftAttachmentModel::DraftAttachmentModel(QObject *parent)
     : QObject(parent)
 {
-    Log.e() << "Don't instantiate DraftAttachment in QML.";
+    Log.f() << "Don't instantiate DraftAttachment in QML.";
 }
 
-DraftAttachmentModel::DraftAttachmentModel(Kullo::Model::DraftAttachment *att, QObject *parent)
+DraftAttachmentModel::DraftAttachmentModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        Kullo::id_type convId,
+        Kullo::id_type attId,
+        QObject *parent)
     : QObject(parent)
-    , draftAttachment_(att)
+    , session_(session)
+    , convId_(convId)
+    , attId_(attId)
 {
-    kulloAssert(draftAttachment_);
-    kulloAssert(parent == nullptr);
-
-    connect(draftAttachment_, &Kullo::Model::DraftAttachment::changed,         this, &DraftAttachmentModel::changed);
-    connect(draftAttachment_, &Kullo::Model::DraftAttachment::filenameChanged, this, &DraftAttachmentModel::filenameChanged);
-    connect(draftAttachment_, &Kullo::Model::DraftAttachment::mimeTypeChanged, this, &DraftAttachmentModel::mimeTypeChanged);
-    connect(draftAttachment_, &Kullo::Model::DraftAttachment::noteChanged,     this, &DraftAttachmentModel::noteChanged);
+    kulloAssert(session_);
 }
 
 QString DraftAttachmentModel::filename() const
 {
-    return QString::fromStdString(draftAttachment_->filename());
+    return QString::fromStdString(session_->draftAttachments()->filename(convId_, attId_));
 }
 
-quint32 DraftAttachmentModel::index() const
+Kullo::id_type DraftAttachmentModel::index() const
 {
-    return draftAttachment_->index();
+    return attId_;
 }
 
 QString DraftAttachmentModel::mimeType() const
 {
-    return QString::fromStdString(draftAttachment_->mimeType());
+    return QString::fromStdString(session_->draftAttachments()->mimeType(convId_, attId_));
 }
 
 QString DraftAttachmentModel::hash() const
 {
-    return QString::fromStdString(draftAttachment_->hash());
+    return QString::fromStdString(session_->draftAttachments()->hash(convId_, attId_));
 }
 
-quint32 DraftAttachmentModel::size() const
+Kullo::id_type DraftAttachmentModel::size() const
 {
-    return draftAttachment_->size();
-}
-
-QString DraftAttachmentModel::note() const
-{
-    return QString::fromStdString(draftAttachment_->note());
-}
-
-void DraftAttachmentModel::setNote(QString note)
-{
-    draftAttachment_->setNote(note.toStdString());
-}
-
-void DraftAttachmentModel::save()
-{
-    draftAttachment_->save();
+    return session_->draftAttachments()->size(convId_, attId_);
 }
 
 void DraftAttachmentModel::deletePermanently()
 {
-    draftAttachment_->deletePermanently();
+    session_->draftAttachments()->remove(convId_, attId_);
 }
 
+//TODO make DraftAttachmentModel::open asynchronous
 bool DraftAttachmentModel::open()
 {
     QString tmpFilename = DesktopUtil::Filesystem::prepareTmpFilename(filename());
@@ -104,15 +97,7 @@ bool DraftAttachmentModel::open()
         return false;
     }
 
-    try
-    {
-        draftAttachment_->saveTo(tmpFileInfo.absoluteFilePath().toStdString());
-    }
-    catch (Kullo::Util::FilesystemError)
-    {
-        Log.e() << "File could not be saved to: " << tmpFileInfo.absoluteFilePath();
-        return false;
-    }
+    if (!doSaveTo(tmpFileInfo.absoluteFilePath().toStdString())) return false;
 
     QUrl tmpFileUrl = QUrl::fromLocalFile(tmpFileInfo.absoluteFilePath());
     return QDesktopServices::openUrl(tmpFileUrl);
@@ -120,7 +105,43 @@ bool DraftAttachmentModel::open()
 
 QByteArray DraftAttachmentModel::content() const
 {
-    return DesktopUtil::StlQt::toQByteArray(draftAttachment_->content());
+    auto listener = std::make_shared<ApiMirror::DraftAttachmentsContentListener>();
+    std::vector<unsigned char> data;
+    connect(listener.get(), &ApiMirror::DraftAttachmentsContentListener::_finished,
+            [&data](int64_t convId, int64_t attId, const std::vector<uint8_t> &content)
+    {
+        K_UNUSED(convId);
+        K_UNUSED(attId);
+        data = content;
+    });
+
+    // Synchronous operation is no problem here, as content() is only used for
+    // ImageProviders which operate asynchronously.
+    session_->draftAttachments()->contentAsync(convId_, attId_, listener)->waitUntilDone();
+    return DesktopUtil::StlQt::toQByteArray(data);
+}
+
+bool DraftAttachmentModel::doSaveTo(const std::string &path) const
+{
+    auto listener = std::make_shared<ApiMirror::DraftAttachmentsSaveToListener>();
+    boost::optional<Kullo::Api::LocalError> saveErr;
+    connect(listener.get(), &ApiMirror::DraftAttachmentsSaveToListener::_error,
+            [&saveErr](int64_t convId, int64_t attId, const std::string &path, Kullo::Api::LocalError error)
+    {
+        K_UNUSED(convId);
+        K_UNUSED(attId);
+        K_UNUSED(path);
+        saveErr = error;
+    });
+
+    session_->draftAttachments()->saveToAsync(convId_, attId_, path, listener)->waitUntilDone();
+
+    if (saveErr)
+    {
+        Log.e() << "File could not be saved to " << path << ", error " << saveErr;
+        return false;
+    }
+    return true;
 }
 
 }

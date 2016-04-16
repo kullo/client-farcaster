@@ -53,7 +53,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
     {
         // Restore on icon click
         connect(trayIcon_.get(), &QSystemTrayIcon::activated,
-                [this](QSystemTrayIcon::ActivationReason reason)
+                this, [this](QSystemTrayIcon::ActivationReason reason)
         {
             if (reason == QSystemTrayIcon::Trigger)
             {
@@ -71,7 +71,8 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
     }
 
     trayIconMenuActions_.emplace_back(Kullo::make_unique<QAction>(trUtf8("Quit"), nullptr));
-    connect(trayIconMenuActions_.back().get(), &QAction::triggered, [this]()
+    connect(trayIconMenuActions_.back().get(), &QAction::triggered,
+            this, [this]()
     {
         Log.i() << "Quit now!";
         app_.quit();
@@ -88,7 +89,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
             this, &KulloTrayIcon::showMainWindow);
 
     connect(&clientModel_, &Qml::ClientModel::syncFinished,
-            [this](bool success, int countMessagesNew, int countMessagesNewUnread, int countMessagesModified, int countMessagesDeleted)
+            this, [this](bool success, int countMessagesNew, int countMessagesNewUnread, int countMessagesModified, int countMessagesDeleted)
     {
         K_UNUSED(countMessagesNew);
         K_UNUSED(countMessagesDeleted);
@@ -137,7 +138,7 @@ void KulloTrayIcon::onLoggedInChanged(bool loggedIn)
 
         connect(clientModel_.conversationsListSource().get(),
                 &Qml::ConversationListSource::unreadMessagesCountChanged,
-                update);
+                this, update);
         update();
     }
     else
@@ -170,9 +171,12 @@ void KulloTrayIcon::setIcon(IconState state)
     static const auto loggedOutIcon    = QIcon(":/resources/scalable/trayicon_windows_loggedout.svg");
     static const auto notificationIcon = QIcon(":/resources/scalable/trayicon_windows_notification.svg");
 #elif K_OS_OSX
-    static const auto defaultIcon      = QIcon(":/resources/scalable/trayicon_osx_default.svg");
-    static const auto loggedOutIcon    = QIcon(":/resources/scalable/trayicon_osx_loggedout.svg");
-    static const auto notificationIcon = QIcon(":/resources/scalable/trayicon_osx_notification.svg");
+    static auto defaultIcon      = QIcon(":/resources/scalable/trayicon_osx_default.svg");
+    static auto loggedOutIcon    = defaultIcon;
+    static auto notificationIcon = QIcon(":/resources/scalable/trayicon_osx_notification.svg");
+    defaultIcon.setIsMask(true);
+    loggedOutIcon.setIsMask(true);
+    notificationIcon.setIsMask(true);
 #else
     static const auto defaultIcon      = QIcon(":/resources/scalable/trayicon_linux_orange.svg");
     static const auto loggedOutIcon    = QIcon(":/resources/scalable/trayicon_linux_gray.svg");

@@ -1,10 +1,12 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #pragma once
 
+#include <memory>
 #include <QSortFilterProxyModel>
 
-#include <desktoputil/dice/dice-forwards.h>
-#include <desktoputil/dice/model/conversation.h>
+#include <apimirror/eventdispatcher.h>
+#include <kulloclient/types.h>
+#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 
@@ -16,8 +18,12 @@ class MessageListModel : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    explicit MessageListModel(QObject *parent = 0);
-    explicit MessageListModel(std::shared_ptr<Kullo::Model::Conversation> conv, QObject *parent);
+    explicit MessageListModel(QObject *parent = nullptr);
+    explicit MessageListModel(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            ApiMirror::EventDispatcher &eventDispatcher,
+            Kullo::id_type convId,
+            QObject *parent = nullptr);
     ~MessageListModel();
 
     Q_PROPERTY(bool todoMode READ todoMode WRITE setTodoMode NOTIFY todoModeChanged)
@@ -28,8 +34,8 @@ public:
     Q_INVOKABLE void markAllMessagesAsDone();
     Q_INVOKABLE void markAllMessagesAsReadAndDone();
 
-    Q_INVOKABLE KulloDesktop::Qml::MessageModel *get(quint32 messageId) const;
-    Q_INVOKABLE void deleteMessage(quint32 messageId);
+    Q_INVOKABLE KulloDesktop::Qml::MessageModel *get(Kullo::id_type messageId) const;
+    Q_INVOKABLE void deleteMessage(Kullo::id_type messageId);
 
 signals:
     void todoModeChanged();

@@ -28,9 +28,11 @@ Rectangle {
 
     id: root
     color: Style.messageHeaderBackground
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
+    anchors {
+        top: parent.top
+        left: parent.left
+        right: parent.right
+    }
     height: content.height
 
     signal avatarClicked();

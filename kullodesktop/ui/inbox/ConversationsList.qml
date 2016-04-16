@@ -17,14 +17,12 @@ ListView {
     function checkOpenWhenCreated()
     {
         var convId = Client.conversations.openWhenCreated();
-        if (convId)
-        {
-            console.info("Conversation ID stored to be opened: " + convId);
-            currentIndex = model.find(convId)
-            inbox.openAnswer()
-            return true
-        }
-        return false
+        if (convId < 0) return false;
+
+        console.info("Conversation ID stored to be opened: " + convId);
+        currentIndex = model.find(convId)
+        inbox.openAnswer()
+        return true
     }
 
     onCurrentIndexChanged: {
@@ -273,12 +271,7 @@ ListView {
                      && root.model.get(contextMenu.selectedConversationId).count === 0
             onTriggered: {
                 var convId = contextMenu.selectedConversationId
-                if (Client.removeConversation(convId)) {
-                    console.debug("Conversation removed: " + convId)
-                }
-                else {
-                    console.error("Conversation couldn't be removed: " + convId)
-                }
+                Client.removeConversation(convId)
                 inbox.closeAnswer()
             }
         }

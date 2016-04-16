@@ -3,7 +3,10 @@
 
 #include <QDateTime>
 #include <QObject>
-#include <desktoputil/dice/dice-forwards.h>
+
+#include <apimirror/eventdispatcher.h>
+#include <kulloclient/types.h>
+#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/qml/attachmentlistmodel.h"
 #include "kullodesktop/qml/participantmodel.h"
@@ -16,14 +19,18 @@ class MessageModel : public QObject
     Q_OBJECT
 
 public:
-    explicit MessageModel(QObject *parent = 0);
-    explicit MessageModel(std::shared_ptr<Kullo::Model::Message> msg, QObject *parent);
+    explicit MessageModel(QObject *parent = nullptr);
+    MessageModel(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            ApiMirror::EventDispatcher &eventDispatcher,
+            Kullo::id_type msgId,
+            QObject *parent = nullptr);
 
-    Q_PROPERTY(quint32 id READ id NOTIFY idChanged)
-    quint32 id() const;
+    Q_PROPERTY(Kullo::id_type id READ id NOTIFY idChanged)
+    Kullo::id_type id() const;
 
-    Q_PROPERTY(quint32 conversationId READ conversationId NOTIFY conversationIdChanged)
-    quint32 conversationId() const;
+    Q_PROPERTY(Kullo::id_type conversationId READ conversationId NOTIFY conversationIdChanged)
+    Kullo::id_type conversationId() const;
 
     Q_PROPERTY(ParticipantModel *sender READ sender NOTIFY senderChanged)
     ParticipantModel *sender();
@@ -41,9 +48,6 @@ public:
 
     Q_PROPERTY(QDateTime dateReceived READ dateReceived NOTIFY dateReceivedChanged)
     QDateTime dateReceived() const;
-
-    Q_PROPERTY(bool deleted READ deleted NOTIFY deletedChanged)
-    bool deleted() const;
 
     Q_PROPERTY(QString text READ text NOTIFY textChanged)
     QString text() const;
@@ -68,14 +72,12 @@ public:
     bool operator<(const MessageModel &other) const;
     bool operator>(const MessageModel &other) const;
 
-    void markAsReadAndDone();
-
 signals:
     // Add message ID parameter for MessageListModel
-    void attachmentsDownloaded(quint32);
+    void attachmentsDownloaded(Kullo::id_type);
     // Forward signal from Model::Message to MessageListModel
-    void stateChanged(quint32);
-    void deliveryStatusChanged(quint32);
+    void stateChanged(Kullo::id_type);
+    void deliveryStatusChanged(Kullo::id_type);
 
     void idChanged();
     void conversationIdChanged();
@@ -84,7 +86,6 @@ signals:
     void doneChanged();
     void dateSentChanged();
     void dateReceivedChanged();
-    void deletedChanged();
     void textChanged();
     void footerChanged();
     void attachmentsChanged();
@@ -94,7 +95,8 @@ private slots:
     void onAttachmentsDownloaded();
 
 private:
-    std::shared_ptr<Kullo::Model::Message> msg_;
+    std::shared_ptr<Kullo::Api::Session> session_;
+    Kullo::id_type msgId_ = -1;
     ParticipantModel sender_;
     AttachmentListModel attachments_;
     QVariant attachmentsDownloaded_;

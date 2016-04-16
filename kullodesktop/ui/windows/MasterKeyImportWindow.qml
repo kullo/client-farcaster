@@ -24,7 +24,7 @@ NativeWindow {
         anchors {
             fill: parent
         }
-        color: Style.baigeLight
+        color: Style.beigeLight
 
         Keys.onEscapePressed: _root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)

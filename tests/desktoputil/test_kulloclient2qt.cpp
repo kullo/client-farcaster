@@ -3,7 +3,6 @@
 
 #include <QDateTime>
 #include <desktoputil/kulloclient2qt.h>
-#include <kulloclient/util/datetime.h>
 
 using namespace testing;
 
@@ -15,22 +14,11 @@ TEST_F(KulloClient2Qt, toQDateTime)
 {
     QDateTime qdt1(QDate(2024, 1, 1), QTime(0, 0), Qt::UTC);
     QDateTime qdt2(QDate(2024, 1, 1), QTime(18, 45, 12), Qt::UTC);
-    QDateTime qdt3(QDate(2024, 1, 1), QTime(12, 4, 8, 0), Qt::UTC); // ms is null
+    QDateTime qdt3(QDate(2024, 1, 1), QTime(12, 4, 8, 0), Qt::UTC); // ms is zero
 
-    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toQDateTime(Kullo::Util::DateTime("2024-01-01T00:00:00Z")), Eq(qdt1));
-    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toQDateTime(Kullo::Util::DateTime("2024-01-01T18:45:12Z")), Eq(qdt2));
-    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toQDateTime(Kullo::Util::DateTime("2024-01-01T12:04:08Z")), Eq(qdt3));
-}
-
-TEST_F(KulloClient2Qt, toDateTime)
-{
-    QDateTime qdt1(QDate(2024, 1, 1), QTime(0, 0), Qt::UTC);
-    QDateTime qdt2(QDate(2024, 1, 1), QTime(18, 45, 12), Qt::UTC);
-    QDateTime qdt3(QDate(2024, 1, 1), QTime(12, 4, 8, 0), Qt::UTC); // ms is null
-
-    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toDateTime(qdt1), Eq(Kullo::Util::DateTime("2024-01-01T00:00:00Z")));
-    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toDateTime(qdt2), Eq(Kullo::Util::DateTime("2024-01-01T18:45:12Z")));
-    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toDateTime(qdt3), Eq(Kullo::Util::DateTime("2024-01-01T12:04:08Z")));
+    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toQDateTime(Kullo::Api::DateTime(2024, 1, 1,  0,  0,  0, 0)), Eq(qdt1));
+    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toQDateTime(Kullo::Api::DateTime(2024, 1, 1, 18, 45, 12, 0)), Eq(qdt2));
+    EXPECT_THAT(DesktopUtil::KulloClient2Qt::toQDateTime(Kullo::Api::DateTime(2024, 1, 1, 12,  4,  8, 0)), Eq(qdt3));
 }
 
 TEST_F(KulloClient2Qt, fromUtf8)

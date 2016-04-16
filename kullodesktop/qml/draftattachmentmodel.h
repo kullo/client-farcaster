@@ -2,7 +2,9 @@
 #pragma once
 
 #include <QObject>
-#include <desktoputil/dice/dice-forwards.h>
+
+#include <kulloclient/types.h>
+#include <kulloclient/api/Session.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -12,14 +14,18 @@ class DraftAttachmentModel : public QObject
     Q_OBJECT
 
 public:
-    explicit DraftAttachmentModel(QObject *parent = 0);
-    explicit DraftAttachmentModel(Kullo::Model::DraftAttachment *att, QObject *parent);
+    explicit DraftAttachmentModel(QObject *parent = nullptr);
+    DraftAttachmentModel(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            Kullo::id_type convId,
+            Kullo::id_type attId,
+            QObject *parent = nullptr);
 
     Q_PROPERTY(QString filename READ filename NOTIFY filenameChanged)
     QString filename() const;
 
-    Q_PROPERTY(QString index READ index)
-    quint32 index() const;
+    Q_PROPERTY(Kullo::id_type index READ index)
+    Kullo::id_type index() const;
 
     Q_PROPERTY(QString mimeType READ mimeType NOTIFY mimeTypeChanged)
     QString mimeType() const;
@@ -27,12 +33,8 @@ public:
     Q_PROPERTY(QString hash READ hash NOTIFY hashChanged)
     QString hash() const;
 
-    Q_PROPERTY(quint32 size READ size NOTIFY sizeChanged)
-    quint32 size() const;
-
-    Q_PROPERTY(QString note READ note WRITE setNote NOTIFY noteChanged)
-    QString note() const;
-    void setNote(QString note);
+    Q_PROPERTY(Kullo::id_type size READ size NOTIFY sizeChanged)
+    Kullo::id_type size() const;
 
     Q_INVOKABLE void deletePermanently();
     Q_INVOKABLE bool open();
@@ -40,19 +42,17 @@ public:
     QByteArray content() const;
 
 signals:
-    /// Emitted when (potentially) everything has changed and should be reloaded
-    void changed();
-
     void filenameChanged();
     void mimeTypeChanged();
     void hashChanged();
     void sizeChanged();
-    void noteChanged();
 
 private:
-    void save();
+    bool doSaveTo(const std::string &path) const;
 
-    Kullo::Model::DraftAttachment *draftAttachment_ = nullptr;
+    std::shared_ptr<Kullo::Api::Session> session_;
+    Kullo::id_type convId_ = -1;
+    Kullo::id_type attId_ = -1;
 };
 
 }

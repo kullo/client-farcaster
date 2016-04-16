@@ -32,7 +32,7 @@ private slots:
     void run();
 
 private:
-    UserSettingsModel *user_;
+    UserSettingsModel *user_ = nullptr;
     QTimer timer_;
 };
 

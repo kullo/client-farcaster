@@ -1,12 +1,13 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "draftattachmentlistmodel.h"
 
-#include <kulloclient/util/assert.h>
-#include <kulloclient/util/librarylogger.h>
 #include <QAbstractItemModel>
 #include <QQmlEngine>
 
-#include <desktoputil/dice/model/draft.h>
+#include <kulloclient/api/DraftAttachments.h>
+#include <kulloclient/util/assert.h>
+#include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 #include "kullodesktop/qml/draftattachmentmodel.h"
 
@@ -16,17 +17,24 @@ namespace Qml {
 DraftAttachmentListModel::DraftAttachmentListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    Log.e() << "Don't instantiate DraftAttachmentList in QML.";
+    Log.f() << "Don't instantiate DraftAttachmentList in QML.";
 }
 
-DraftAttachmentListModel::DraftAttachmentListModel(std::shared_ptr<Kullo::Model::Draft> draft, QObject *parent)
+DraftAttachmentListModel::DraftAttachmentListModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        ApiMirror::EventDispatcher &eventDispatcher,
+        Kullo::id_type convId,
+        QObject *parent)
     : QAbstractListModel(parent)
-    , draft_(draft)
+    , session_(session)
+    , convId_(convId)
 {
-    kulloAssert(draft_);
+    kulloAssert(session_);
     loadAttachmentModels();
 
-    connect(draft_.get(), &Kullo::Model::Draft::attachmentsChanged,
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::draftAttachmentAdded,
+            this, &DraftAttachmentListModel::onAttachmentsChanged);
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::draftAttachmentRemoved,
             this, &DraftAttachmentListModel::onAttachmentsChanged);
 }
 
@@ -40,7 +48,6 @@ QHash<int, QByteArray> DraftAttachmentListModel::roleNames() const
     roles[AttachmentIndexRole] = QByteArrayLiteral("attachmentIndex_");
     roles[FilenameRole]        = QByteArrayLiteral("filename_");
     roles[SizeRole]            = QByteArrayLiteral("size_");
-    roles[NoteRole]            = QByteArrayLiteral("note_");
     roles[MimeTypeRole]        = QByteArrayLiteral("mimeType_");
     roles[HashRole]            = QByteArrayLiteral("hash_");
     return roles;
@@ -48,7 +55,8 @@ QHash<int, QByteArray> DraftAttachmentListModel::roleNames() const
 
 QVariant DraftAttachmentListModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || static_cast<unsigned int>(index.row()) >= attachmentModels_.size())
+    auto row = static_cast<unsigned int>(index.row());
+    if (index.row() < 0 || row >= attachmentModels_.size())
     {
         return QVariant();
     }
@@ -56,32 +64,18 @@ QVariant DraftAttachmentListModel::data(const QModelIndex &index, int role) cons
     switch (role)
     {
     case AttachmentIndexRole:
-        return QVariant(attachmentModels_[index.row()]->index());
+        return QVariant::fromValue(attachmentModels_[row]->index());
     case FilenameRole:
-        return QVariant(attachmentModels_[index.row()]->filename());
+        return attachmentModels_[row]->filename();
     case SizeRole:
-        return QVariant(attachmentModels_[index.row()]->size());
-    case NoteRole:
-        return QVariant(attachmentModels_[index.row()]->note());
+        return QVariant::fromValue(attachmentModels_[row]->size());
     case MimeTypeRole:
-        return QVariant(attachmentModels_[index.row()]->mimeType());
+        return attachmentModels_[row]->mimeType();
     case HashRole:
-        return QVariant(attachmentModels_[index.row()]->hash());
+        return attachmentModels_[row]->hash();
     default:
         Log.e() << "DraftAttachmentListModel: Invalid role requested: " << role;
         return QVariant();
-    }
-}
-
-bool DraftAttachmentListModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    switch (role) {
-    case NoteRole:
-        attachmentModels_[index.row()]->setNote(value.toString());
-        return true;
-    default:
-        Log.e() << "DraftAttachmentListModel: Couldn't save model property for role: " << role;
-        return false;
     }
 }
 
@@ -93,9 +87,9 @@ int DraftAttachmentListModel::rowCount(const QModelIndex &parent) const
 
 void DraftAttachmentListModel::loadAttachmentModels()
 {
-    for (auto att : draft_->attachments())
+    for (auto attId : session_->draftAttachments()->allForDraft(convId_))
     {
-        attachmentModels_.emplace_back(new DraftAttachmentModel(att.get(), nullptr));
+        attachmentModels_.emplace_back(new DraftAttachmentModel(session_, convId_, attId));
     }
 }
 
@@ -109,7 +103,7 @@ void DraftAttachmentListModel::reloadModel()
     endResetModel();
 }
 
-DraftAttachmentModel *DraftAttachmentListModel::get(quint32 index) const
+DraftAttachmentModel *DraftAttachmentListModel::get(Kullo::id_type index) const
 {
     int pos = getPositionForIndex(index);
     if (pos == -1)
@@ -125,7 +119,7 @@ DraftAttachmentModel *DraftAttachmentListModel::get(quint32 index) const
     }
 }
 
-int DraftAttachmentListModel::getPositionForIndex(size_t index) const
+int DraftAttachmentListModel::getPositionForIndex(Kullo::id_type index) const
 {
     for (size_t i = 0; i < attachmentModels_.size(); ++i)
     {
@@ -142,10 +136,14 @@ int DraftAttachmentListModel::count() const
     return rowCount();
 }
 
-void DraftAttachmentListModel::onAttachmentsChanged()
+void DraftAttachmentListModel::onAttachmentsChanged(Kullo::id_type conversationId, Kullo::id_type attachmentId)
 {
-    Log.i() << "Attachments have changed. Reset model ...";
-    reloadModel();
+    K_UNUSED(attachmentId);
+
+    if (conversationId == convId_) {
+        Log.i() << "Attachments have changed. Reset model ...";
+        reloadModel();
+    }
 }
 
 }

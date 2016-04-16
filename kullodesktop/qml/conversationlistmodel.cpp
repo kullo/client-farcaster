@@ -16,7 +16,7 @@ const auto SORT_ROLE = ConversationListSource::LatestMessageTimestampRole;
 ConversationListModel::ConversationListModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    Log.e() << "Don't instantiate ConversationListModel in QML.";
+    Log.f() << "Don't instantiate ConversationListModel in QML.";
 }
 
 ConversationListModel::ConversationListModel(std::shared_ptr<ConversationListSource> conversations, QObject *parent)
@@ -49,7 +49,7 @@ void ConversationListModel::setTodoMode(bool active)
     emit todoModeChanged();
 }
 
-ConversationModel *ConversationListModel::get(quint32 conversationId) const
+ConversationModel *ConversationListModel::get(Kullo::id_type conversationId) const
 {
     return source_->get(conversationId);
 }
@@ -59,7 +59,7 @@ int ConversationListModel::count() const
     return source_->rowCount();
 }
 
-int ConversationListModel::find(quint32 conversationId) const
+int ConversationListModel::find(Kullo::id_type conversationId) const
 {
     for (int row = 0; row < rowCount(); ++row)
     {
@@ -88,7 +88,7 @@ QVariantMap ConversationListModel::at(int row)
     return out;
 }
 
-quint32 ConversationListModel::openWhenCreated()
+Kullo::id_type ConversationListModel::openWhenCreated()
 {
     return source_->openWhenCreated();
 }

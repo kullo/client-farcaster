@@ -485,10 +485,6 @@ sind deine Nachrichten verloren.</translation>
 <context>
     <name>MessageDelegateAttachmentsBox</name>
     <message>
-        <source>Save attachment</source>
-        <translation>Anhang speichern</translation>
-    </message>
-    <message>
         <source>Save as</source>
         <translation>Speichern unter</translation>
     </message>
@@ -990,10 +986,6 @@ sind deine Nachrichten verloren.</translation>
         <translation>Bitte bearbeite die Nachricht und sende sie erneut.</translation>
     </message>
     <message>
-        <source>Attachments size: %1 MiB (allowed %2 MiB).</source>
-        <translation>Größe der Anhänge: %1 MiB (erlaubt sind %2 MiB).</translation>
-    </message>
-    <message>
         <source>Todo
 mode</source>
         <translation>Todo-
@@ -1004,6 +996,14 @@ Modus</translation>
 active</source>
         <translation>Ton
 aktiv</translation>
+    </message>
+    <message>
+        <source>Save attachment</source>
+        <translation>Anhang speichern</translation>
+    </message>
+    <message>
+        <source>Save all</source>
+        <translation>Alle speichern</translation>
     </message>
 </context>
 <context>

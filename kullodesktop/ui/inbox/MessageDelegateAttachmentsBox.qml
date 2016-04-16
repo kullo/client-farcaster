@@ -1,9 +1,6 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-import QtQuick.Dialogs 1.2
-
-import "../dialogs"
 
 Item {
     /* public */
@@ -16,18 +13,6 @@ Item {
     implicitHeight: attachmentsList.anchors.topMargin
                     + attachmentsList.height
                     + attachmentsList.anchors.bottomMargin
-
-    FileDialog {
-        id: saveFilesDialog
-        selectFolder: true
-        title: qsTr("Save all")
-        folder: Utils.defaultSaveAttachmentsDir()
-
-        onAccepted: {
-            console.log("Save all attachments of message " + root.messageId + " " + saveFilesDialog.fileUrl)
-            attachments_.saveAllTo(saveFilesDialog.fileUrl)
-        }
-    }
 
     GridView {
         id: attachmentsList
@@ -57,19 +42,6 @@ Item {
             messageId: root.messageId
             attachmentsReady: root.attachmentsReady
 
-            AdvancedFileSaveDialog {
-                id: saveFileDialog
-                filename: filename_
-                title: qsTr("Save attachment")
-
-                onAccepted: {
-                    if (!attachments_.get(index).saveTo(fileUrl))
-                    {
-                        console.error("Error while saving file: " + fileUrl);
-                    }
-                }
-            }
-
             Menu {
                 id: contextMenu
 
@@ -80,7 +52,10 @@ Item {
 
                 MenuItem {
                     text: qsTr('Save as')
-                    onTriggered: saveFileDialog.openDialog()
+                    onTriggered: {
+                        globalSaveAttachmentDialog.attachment = attachments_.get(index)
+                        globalSaveAttachmentDialog.openDialog()
+                    }
                 }
 
                 MenuSeparator {
@@ -89,8 +64,11 @@ Item {
 
                 MenuItem {
                     text: qsTr('Save all')
-                    onTriggered: saveFilesDialog.open()
                     visible: attachments_.count() > 1
+                    onTriggered: {
+                        globalSaveAttachmentsDialog.attachments = attachments_
+                        globalSaveAttachmentsDialog.open()
+                    }
                 }
             }
 

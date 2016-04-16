@@ -19,9 +19,8 @@ public:
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
 
 protected:
-    static QString initialsFromName(const QString &name);
     virtual QPixmap drawAvatar(const QString &url, const QSize &renderSize) = 0;
-    QPixmap getParticipantAvatar(const Qml::ParticipantModel &part, const QSize &renderSize);
+    QPixmap getAvatarForAddress(const QString &address, const QSize &renderSize);
     QPixmap getFallbackAvatar(const QString name, const QSize &renderSize);
     QPixmap getEmptyAvatar(const QSize &renderSize);
     QPixmap rounded(const QPixmap &in);

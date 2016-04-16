@@ -5,8 +5,12 @@
 #include <QStringList>
 
 #include <desktoputil/kulloclient2qt.h>
-#include <desktoputil/dice/dice-forwards.h>
-#include <desktoputil/dice/model/participant.h>
+#include <kulloclient/api/Address.h>
+#include <kulloclient/api/Conversations.h>
+#include <kulloclient/api/DateTime.h>
+#include <kulloclient/api/Messages.h>
+#include <kulloclient/api/Senders.h>
+#include <kulloclient/api/Session.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -18,48 +22,35 @@ namespace Qml {
 ConversationModel::ConversationModel(QObject *parent)
     : QObject(parent)
 {
-    Log.e() << "Don't instantiate Conversation in QML.";
+    Log.f() << "Don't instantiate Conversation in QML.";
 }
 
-ConversationModel::ConversationModel(std::shared_ptr<Kullo::Model::Conversation> conv, QObject *parent)
+ConversationModel::ConversationModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        ApiMirror::EventDispatcher &eventDispatcher,
+        Kullo::id_type convId,
+        QObject *parent)
     : QObject(parent)
-    , conv_(conv)
-    , draft_(conv->draft(), nullptr)
+    , session_(session)
+    , eventDispatcher_(&eventDispatcher)
+    , convId_(convId)
+    , draft_(session_, *eventDispatcher_, convId_)
 {
-    kulloAssert(conv_);
-    kulloAssert(parent == nullptr);
-
-    // Emit signals so that the ConversationListModel can do resorting
-    connect(conv_.get(), &Kullo::Model::Conversation::messageAdded,   this, &ConversationModel::onMessageAdded);
-    connect(conv_.get(), &Kullo::Model::Conversation::messageDeleted, this, &ConversationModel::onMessageDeleted);
-
-    // Conversation infos changed (e.g. countRead, countDone, count, draft status)
-    connect(conv_.get(), &Kullo::Model::Conversation::messageAdded,        this, &ConversationModel::onConversationModified);
-    connect(conv_.get(), &Kullo::Model::Conversation::messageDeleted,      this, &ConversationModel::onConversationModified);
-    connect(conv_.get(), &Kullo::Model::Conversation::messageStateChanged, this, &ConversationModel::onConversationModified);
-    connect(conv_.get(), &Kullo::Model::Conversation::modified,            this, &ConversationModel::onConversationModified);
-    connect(&draft_,     &DraftModel::emptyChanged,                  this, &ConversationModel::onConversationModified);
-
-    for (const auto &addrParticipantPair : conv_->participants())
-    {
-        std::shared_ptr<Kullo::Model::Participant> part = addrParticipantPair.second;
-        connect(part.get(), &Kullo::Model::Participant::changed,
-                this, &ConversationModel::onParticipantChanged);
-    }
+    kulloAssert(session_);
+    kulloAssert(eventDispatcher_);
 }
 
-quint32 ConversationModel::id() const
+Kullo::id_type ConversationModel::id() const
 {
-    return conv_->id();
+    return convId_;
 }
 
 QStringList ConversationModel::participantsAddresses() const
 {
     QStringList addresses;
-    for (const auto &addrParticipantPair : conv_->participants())
+    for (const auto &addr : session_->conversations()->participants(convId_))
     {
-        auto part = addrParticipantPair.second;
-        addresses << QString::fromStdString(part->address().toString());
+        addresses << QString::fromStdString(addr->toString());
     }
     addresses.sort();
     return addresses;
@@ -68,11 +59,14 @@ QStringList ConversationModel::participantsAddresses() const
 QString ConversationModel::participantsList() const
 {
     QStringList names;
-    for (const auto &addrParticipantPair : conv_->participants())
+    // Can't rewrite this to use a modern for loop because we need iter.key(),
+    // not iter->key(). Here, QMap differs from std::map.
+    auto ps = participants();
+    for (auto iter = ps.begin(); iter != ps.end(); ++iter)
     {
-        auto part = addrParticipantPair.second;
-        std::string name = !part->name().empty() ? part->name() : part->address().toString();
-        names << QString::fromStdString(name);
+        auto address = iter.key();
+        auto name = iter.value().toString();
+        names << (!name.isEmpty() ? name : address);
     }
     return names.join(", ");
 }
@@ -80,38 +74,42 @@ QString ConversationModel::participantsList() const
 QVariantMap ConversationModel::participants() const
 {
     QVariantMap out;
-    for (const auto &addrParticipantPair : conv_->participants())
+    for (const auto &addr : session_->conversations()->participants(convId_))
     {
-        auto address = QString::fromStdString(addrParticipantPair.first.toString());
-        auto name    = QString::fromStdString(addrParticipantPair.second->name());
-        out.insert(address, name);
+        auto senderMsgId = session_->messages()->latestForSender(addr);
+        std::string senderName;
+        if (senderMsgId >= 0)
+        {
+            senderName = session_->senders()->name(senderMsgId);
+        }
+        out.insert(QString::fromStdString(addr->toString()), QString::fromStdString(senderName));
     }
     return out;
 }
 
-quint32 ConversationModel::count() const
+qint32 ConversationModel::count() const
 {
-    const size_t any = conv_->countMessages(Kullo::Dao::MessageState::Any);
-    return any;
+    return session_->conversations()->totalMessages(convId_);
 }
 
-quint32 ConversationModel::countUnread() const
+qint32 ConversationModel::countUnread() const
 {
-    const size_t unread  = conv_->countMessages(Kullo::Dao::MessageState::Unread);
+    auto unread = session_->conversations()->unreadMessages(convId_);
     kulloAssert(unread <= 1000000);
     return unread;
 }
 
-quint32 ConversationModel::countUndone() const
+qint32 ConversationModel::countUndone() const
 {
-    const size_t undone  = conv_->countMessages(Kullo::Dao::MessageState::Undone);
+    auto undone = session_->conversations()->undoneMessages(convId_);
     kulloAssert(undone <= 1000000);
     return undone;
 }
 
 QDateTime ConversationModel::latestMessageTimestamp() const
 {
-    return DesktopUtil::KulloClient2Qt::toQDateTime(conv_->latestMessageTimestamp());
+    auto timestamp = session_->conversations()->latestMessageTimestamp(convId_);
+    return DesktopUtil::KulloClient2Qt::toQDateTime(timestamp);
 }
 
 MessageListModel *ConversationModel::messages()
@@ -119,11 +117,11 @@ MessageListModel *ConversationModel::messages()
     // lazy loading
     if (!messages_)
     {
-        messages_.reset(new MessageListModel(conv_, nullptr));
+        messages_.reset(new MessageListModel(session_, *eventDispatcher_, convId_, nullptr));
         kulloAssert(messages_);
     }
 
-    auto *out = messages_.get();
+    auto out = messages_.get();
     QQmlEngine::setObjectOwnership(out, QQmlEngine::CppOwnership);
     return out;
 }
@@ -150,40 +148,12 @@ void ConversationModel::markAllMessagesAsDone()
     messages()->markAllMessagesAsDone();
 }
 
-std::vector<std::unique_ptr<ParticipantModel>> ConversationModel::participantsModels() const
+void ConversationModel::notifyChanged()
 {
-    std::vector<std::unique_ptr<ParticipantModel>> participants;
-    for (const auto &addrParticipantPair : conv_->participants())
-    {
-        auto part = addrParticipantPair.second;
-        participants.emplace_back(new ParticipantModel(part, nullptr));
-    }
-    return participants;
-}
-
-void ConversationModel::onParticipantChanged()
-{
-    emit participantChanged(id());
-}
-
-void ConversationModel::onConversationModified()
-{
-    quint32 conversationId = id();
-    emit conversationModified(conversationId);
     emit countChanged();
     emit countUnreadChanged();
     emit countUndoneChanged();
     emit draftEmptyChanged();
-}
-
-void ConversationModel::onMessageAdded(quint32 messageId)
-{
-    emit messageAdded(id(), messageId);
-}
-
-void ConversationModel::onMessageDeleted(quint32 messageId)
-{
-    emit messageDeleted(id(), messageId);
 }
 
 }

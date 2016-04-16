@@ -16,13 +16,13 @@
 #include <desktoputil/stlqt.h>
 #include <desktoputil/kulloclient2qt.h>
 #include <desktoputil/qtypestreamers.h>
+#include <kulloclient/api/Address.h>
+#include <kulloclient/api/DateTime.h>
+#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/UserSettings.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/datetime.h>
-#include <kulloclient/util/kulloaddress.h>
 #include <kulloclient/util/librarylogger.h>
-#include <kulloclient/util/masterkey.h>
 #include <kulloclient/util/misc.h>
-#include <kulloclient/util/usersettings.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -36,13 +36,6 @@ const auto SETTING_DOESNT_EXIST = std::numeric_limits<int>::max();
 
 UserSettingsModel::UserSettingsModel(QObject *parent)
     : QObject(parent)
-{
-    Log.e() << "Don't instantiate UserSettings in QML, use the client.userSettings property.";
-}
-
-UserSettingsModel::UserSettingsModel(Kullo::Util::UserSettings *userSettings, QObject *parent)
-    : QObject(parent)
-    , settings_(userSettings)
     , currentlyLoading_(false)
 {
     // save settings each time a setting is modified
@@ -58,51 +51,56 @@ UserSettingsModel::UserSettingsModel(Kullo::Util::UserSettings *userSettings, QO
             this, &UserSettingsModel::save);
 }
 
+void UserSettingsModel::setUserSettings(
+        const std::shared_ptr<Kullo::Api::UserSettings> &userSettings)
+{
+    settings_ = userSettings;
+    save();
+
+    emit nameChanged();
+    emit addressChanged();
+    emit organizationChanged();
+    emit avatarMimeTypeChanged();
+    emit footerChanged();
+    emit masterKeyPemChanged();
+}
+
 QString UserSettingsModel::name() const
 {
-    return QString::fromStdString(settings_->name);
+    return QString::fromStdString(settings_->name());
 }
 
 void UserSettingsModel::setName(QString name)
 {
-    if (settings_->name == name.toStdString()) return;
+    if (settings_->name() == name.toStdString()) return;
 
-    settings_->name = name.toStdString();
+    settings_->setName(name.toStdString());
     emit nameChanged();
 }
 
 QString UserSettingsModel::address() const
 {
-    if (!settings_->address) return "";
+    if (!settings_->address()) return "";
 
-    return QString::fromStdString(settings_->address->toString());
-}
-
-void UserSettingsModel::setAddress(QString address)
-{
-    if (settings_->address
-            && settings_->address->toString() == address.toStdString()) return;
-
-    settings_->address.reset(new Kullo::Util::KulloAddress(address.toStdString()));
-    emit addressChanged();
+    return QString::fromStdString(settings_->address()->toString());
 }
 
 QString UserSettingsModel::organization() const
 {
-    return QString::fromStdString(settings_->organization);
+    return QString::fromStdString(settings_->organization());
 }
 
 void UserSettingsModel::setOrganization(QString organization)
 {
-    if (settings_->organization == organization.toStdString()) return;
+    if (settings_->organization() == organization.toStdString()) return;
 
-    settings_->organization = organization.toStdString();
+    settings_->setOrganization(organization.toStdString());
     emit organizationChanged();
 }
 
 QString UserSettingsModel::avatarMimeType() const
 {
-    QString mimeType = QString::fromStdString(settings_->avatarMimeType);
+    QString mimeType = QString::fromStdString(settings_->avatarMimeType());
     return mimeType;
 }
 
@@ -137,33 +135,22 @@ bool UserSettingsModel::setTmpAvatarFileUrl(const QUrl &tmpAvatarFileUrl)
 
 QString UserSettingsModel::footer() const
 {
-    return QString::fromStdString(settings_->footer);
+    return QString::fromStdString(settings_->footer());
 }
 
 void UserSettingsModel::setFooter(QString footer)
 {
-    if (settings_->footer == footer.toStdString()) return;
+    if (settings_->footer() == footer.toStdString()) return;
 
-    settings_->footer = footer.toStdString();
+    settings_->setFooter(footer.toStdString());
     emit footerChanged();
 }
 
 QString UserSettingsModel::masterKeyPem() const
 {
-    if (!settings_->masterKey) return "";
+    if (!settings_->masterKey()) return "";
 
-    return QString::fromStdString(settings_->masterKey->toPem());
-}
-
-void UserSettingsModel::setMasterKeyPem(const QString &key)
-{
-    if (settings_->masterKey && settings_->masterKey->toPem() == key.toStdString())
-    {
-        return;
-    }
-
-    settings_->masterKey = std::make_shared<Kullo::Util::MasterKey>(key.toStdString());
-    emit masterKeyPemChanged();
+    return QString::fromStdString(settings_->masterKey()->pem());
 }
 
 void UserSettingsModel::confirmMasterKeyBackup()
@@ -176,8 +163,8 @@ void UserSettingsModel::confirmMasterKeyBackup()
 void UserSettingsModel::postponeMasterKeyBackupDontRemindBefore(const int seconds)
 {
     auto delta = std::chrono::seconds{seconds};
-    auto dontRemindBefore = Kullo::Util::DateTime::nowUtc() + delta;
-    settings_->setMasterKeyBackupDontRemindBefore(dontRemindBefore);
+    auto dontRemindBefore = Kullo::Api::DateTime::nowUtc() + delta;
+    settings_->setKeyBackupDontRemindBefore(dontRemindBefore);
     save();
     Log.i() << "MasterKey backup: Don't remind before: " << dontRemindBefore;
 }
@@ -225,25 +212,17 @@ void UserSettingsModel::printMasterKey(const QString &introText) const
 
 bool UserSettingsModel::loginCredentialsStored() const
 {
-    if (settings_->address && settings_->masterKey)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return !!settings_;
 }
 
 void UserSettingsModel::reset(const QString &address, const QString &masterKeyPem)
 {
-    settings_->reset();
-    settings_->address = std::make_shared<Kullo::Util::KulloAddress>(address.toStdString());
-    if (!masterKeyPem.isEmpty())
-    {
-        settings_->masterKey = std::make_shared<Kullo::Util::MasterKey>(masterKeyPem.toStdString());
-    }
-    save();
+    setUserSettings(
+                Kullo::Api::UserSettings::create(
+                    Kullo::Api::Address::create(address.toStdString()),
+                    Kullo::Api::MasterKey::createFromPem(masterKeyPem.toStdString())
+                    )
+                );
 }
 
 QPixmap UserSettingsModel::avatar() const
@@ -309,8 +288,8 @@ bool UserSettingsModel::storeTmpAvatar()
 {
     if (!tmpAvatarActive()) return false;
 
-    settings_->avatarData = DesktopUtil::StlQt::toVector(tmpAvatarData_);
-    settings_->avatarMimeType = tmpAvatarMimeType_.toStdString();
+    settings_->setAvatar(DesktopUtil::StlQt::toVector(tmpAvatarData_));
+    settings_->setAvatarMimeType(tmpAvatarMimeType_.toStdString());
     emit avatarMimeTypeChanged();
 
     discardTmpAvatar();
@@ -321,8 +300,8 @@ bool UserSettingsModel::storeTmpAvatar()
 
 void UserSettingsModel::deleteAvatar()
 {
-    settings_->avatarData = std::vector<unsigned char>();
-    settings_->avatarMimeType = "";
+    settings_->setAvatar(std::vector<unsigned char>());
+    settings_->setAvatarMimeType("");
     emit avatarMimeTypeChanged();
 
     discardTmpAvatar();
@@ -415,39 +394,36 @@ std::pair<QByteArray, QString> UserSettingsModel::compressAvatar(const QImage &s
 
 bool UserSettingsModel::masterKeyBackupConfirmed() const
 {
-    return settings_->masterKeyBackupConfirmed();
+    return settings_->keyBackupConfirmed();
 }
 
 void UserSettingsModel::setMasterKeyBackupConfirmed(bool confirmed)
 {
-    if (masterKeyBackupConfirmed() == confirmed) return;
-
-    if (confirmed == true)
+    if (confirmed && !settings_->keyBackupConfirmed())
     {
-        settings_->setMasterKeyBackupConfirmed();
+        settings_->setKeyBackupConfirmed();
     }
 }
 
 QString UserSettingsModel::masterKeyBackupDontRemindBefore() const
 {
-    auto dt = settings_->masterKeyBackupDontRemindBefore();
-    if (dt.isNull())
+    if (!settings_->keyBackupDontRemindBefore())
     {
         return QString();
     }
     else
     {
-        return QString::fromStdString(dt.toString());
+        return QString::fromStdString(settings_->keyBackupDontRemindBefore()->toString());
     }
 }
 
 void UserSettingsModel::setMasterKeyBackupDontRemindBefore(const QString &rfc3339time)
 {
-    auto dt = Kullo::Util::DateTime(rfc3339time.toStdString());
+    auto dt = Kullo::Api::DateTime::fromRfc3339(rfc3339time.toStdString());
 
-    if (settings_->masterKeyBackupDontRemindBefore() != dt)
+    if (settings_->keyBackupDontRemindBefore() != dt)
     {
-        settings_->setMasterKeyBackupDontRemindBefore(dt);
+        settings_->setKeyBackupDontRemindBefore(dt);
     }
 }
 
@@ -530,9 +506,8 @@ bool UserSettingsModel::loadAvatarFile(QByteArray &avatarData, QString &avatarMi
     return true;
 }
 
-Kullo::Util::UserSettings *UserSettingsModel::rawUserSettings() const
+std::shared_ptr<Kullo::Api::UserSettings> UserSettingsModel::rawUserSettings() const
 {
-    kulloAssert(settings_);
     return settings_;
 }
 
@@ -545,9 +520,6 @@ void UserSettingsModel::load(const QString &address)
     QStringList allGroups = settings.childGroups();
     Log.i() << "Available configuration groups: " << allGroups;
 
-    // Reset Kullo::UserSettings object
-    reset(address);
-
     QString groupName = "usersettings-" + address;
     if (!allGroups.contains(groupName))
     {
@@ -556,9 +528,13 @@ void UserSettingsModel::load(const QString &address)
     settings.beginGroup(groupName);
     QVariant data;
 
-    // This is redundant since we know the address already ...
-    if (checkAndLoadSetting("address", QVariant::String, AllowEmpty::No, data, settings))
-        setAddress(data.toString());
+    auto masterKeyLoaded = checkAndLoadSetting(
+                "masterKey", QVariant::StringList, AllowEmpty::No, data, settings);
+    kulloAssert(masterKeyLoaded); //TODO properly handle missing masterKey
+    auto masterKey = Kullo::Api::MasterKey::createFromDataBlocks(
+                DesktopUtil::StlQt::toVector(data.toStringList()));
+
+    reset(address, QString::fromStdString(masterKey->pem()));
 
     if (checkAndLoadSetting("name", QVariant::String, AllowEmpty::No, data, settings))
         setName(data.toString());
@@ -574,13 +550,6 @@ void UserSettingsModel::load(const QString &address)
 
     if (checkAndLoadSetting("footer", QVariant::String, AllowEmpty::Yes, data, settings))
         setFooter(data.toString());
-
-    if (checkAndLoadSetting("masterKey", QVariant::StringList, AllowEmpty::No, data, settings))
-    {
-        auto blocks = DesktopUtil::StlQt::toVector(data.toStringList());
-        auto masterKey = Kullo::Util::MasterKey(blocks);
-        setMasterKeyPem(QString::fromStdString(masterKey.toPem()));
-    }
 
     if (checkAndLoadSetting("masterKeyBackupConfirmed", QVariant::Bool, AllowEmpty::NA, data, settings))
         setMasterKeyBackupConfirmed(data.toBool());
@@ -615,28 +584,28 @@ void UserSettingsModel::save()
 QStringList UserSettingsModel::masterKeyBlocks()
 {
     auto pem = masterKeyPem();
-    auto masterKey = Kullo::Util::MasterKey(pem.toStdString());
-    return DesktopUtil::StlQt::toQStringList(masterKey.dataBlocks());
+    auto masterKey = Kullo::Api::MasterKey::createFromPem(pem.toStdString());
+    return DesktopUtil::StlQt::toQStringList(masterKey->dataBlocks());
 }
 
 QByteArray UserSettingsModel::avatarData() const
 {
-    return DesktopUtil::StlQt::toQByteArray(settings_->avatarData);
+    return DesktopUtil::StlQt::toQByteArray(settings_->avatar());
 }
 
 void UserSettingsModel::setAvatarData(const QByteArray &data)
 {
     const std::vector<unsigned char> dataStd = DesktopUtil::StlQt::toVector(data);
-    if (settings_->avatarData == dataStd) return;
+    if (settings_->avatar() == dataStd) return;
 
-    settings_->avatarData = dataStd;
+    settings_->setAvatar(dataStd);
 }
 
 void UserSettingsModel::setAvatarMimeType(const QString &mime)
 {
-    if (settings_->avatarMimeType == mime.toStdString()) return;
+    if (settings_->avatarMimeType() == mime.toStdString()) return;
 
-    settings_->avatarMimeType = mime.toStdString();
+    settings_->setAvatarMimeType(mime.toStdString());
     emit avatarMimeTypeChanged();
 }
 

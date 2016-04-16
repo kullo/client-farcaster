@@ -37,7 +37,7 @@ void BreakpadSetup::setup(const bool kulloTestMode)
               << " --product_name KulloClient"
               << " --product_version "
               << Versions::kullodesktopVersion().toString()
-              << " --client_guid abcde" //FIXME
+              << " --client_guid abcde"
               << " --dump_path ";
     crashreporterCmd_ = cmdStream.str();
 

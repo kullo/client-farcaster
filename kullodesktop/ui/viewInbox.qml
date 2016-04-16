@@ -1,6 +1,7 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.1
 import QtMultimedia 5.0
 import Kullo 1.0
@@ -205,7 +206,7 @@ FocusScope {
             syncingBannerDelayTimer.restart()
             syncingBanner.progressText = ""
         }
-        onSyncProgressend: {
+        onSyncProgressed: {
             if (countMessagesTotal >= 10) {
                 var percent = 100.0 * countMessagesProcessed/countMessagesTotal
                 var progressText = Math.floor(percent) + "\u202F%";
@@ -255,15 +256,9 @@ FocusScope {
         onDraftAttachmentsTooBig: {
             console.debug("Could not send message from conversation: " + conversationId + ". Creating dialog ...")
 
-            var dialogMessageSize = size
-            var dialogMessageSizeAllowed = sizeAllowed
-
             var openErrorDialog = function(obj) {
-                var sizeHuman        = (dialogMessageSize        / 1024 / 1024).toLocaleString(Qt.locale(), 'f', 1)
-                var sizeAllowedHuman = (dialogMessageSizeAllowed / 1024 / 1024).toLocaleString(Qt.locale(), 'f', 1)
                 obj.title = qsTr("Message not sent")
                 obj.text = qsTr("Message could not be sent because attachments are too big.") + " "
-                        + qsTr("Attachments size: %1 MiB (allowed %2 MiB).").arg(sizeHuman).arg(sizeAllowedHuman) + " "
                         + qsTr("Please edit the message and sent again.")
                 obj.open()
             }
@@ -296,6 +291,35 @@ FocusScope {
         onAddressAccepted: {
             console.info("Start conversation with '" + result + "'")
             Client.addConversation(result)
+        }
+    }
+
+    AdvancedFileSaveDialog {
+        id: globalSaveAttachmentDialog
+        property var attachment: null // Qml::AttachmentModel
+
+        title: qsTr("Save attachment")
+        filename: attachment ? attachment.filename : ""
+
+        onAccepted: {
+            if (!attachment.saveTo(fileUrl))
+            {
+                console.error("Error while saving file: " + fileUrl);
+            }
+        }
+    }
+
+    FileDialog {
+        id: globalSaveAttachmentsDialog
+        property var attachments: null // Qml::AttachmentListModel
+
+        selectFolder: true
+        title: qsTr("Save all")
+        folder: Utils.defaultSaveAttachmentsDir()
+
+        onAccepted: {
+            console.log("Save all attachments to " + fileUrl)
+            attachments.saveAllTo(fileUrl)
         }
     }
 
@@ -350,7 +374,7 @@ FocusScope {
 
         middleColumn.setModel(conv.messages)
         middleColumn.participantsAddresses = conv.participantsAddresses
-        rightColumn.conversationId = convId
+        rightColumn.conversation = conv
 
         conv.markAllMessagesAsRead()
     }

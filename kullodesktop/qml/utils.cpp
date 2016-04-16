@@ -8,7 +8,6 @@
 #include <desktoputil/paths.h>
 #include <desktoputil/stlqt.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/masterkey.h>
 
 namespace KulloDesktop {
 namespace Qml {

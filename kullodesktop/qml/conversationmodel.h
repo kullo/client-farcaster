@@ -3,9 +3,9 @@
 
 #include <QDateTime>
 #include <QObject>
-#include <kulloclient/kulloclient-forwards.h>
 
-#include <desktoputil/dice/model/conversation.h>
+#include <apimirror/eventdispatcher.h>
+#include <kulloclient/kulloclient-forwards.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 #include "kullodesktop/qml/draftmodel.h"
@@ -19,11 +19,15 @@ class ConversationModel : public QObject
     Q_OBJECT
 
 public:
-    explicit ConversationModel(QObject *parent = 0);
-    explicit ConversationModel(std::shared_ptr<Kullo::Model::Conversation> conv, QObject *parent);
+    explicit ConversationModel(QObject *parent = nullptr);
+    ConversationModel(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            ApiMirror::EventDispatcher &eventDispatcher,
+            Kullo::id_type convId,
+            QObject *parent = nullptr);
 
-    Q_PROPERTY(quint32 id READ id NOTIFY idChanged)
-    quint32 id() const;
+    Q_PROPERTY(Kullo::id_type id READ id NOTIFY idChanged)
+    Kullo::id_type id() const;
 
     Q_PROPERTY(QStringList participantsAddresses READ participantsAddresses NOTIFY participantsAddressesChanged)
     QStringList participantsAddresses() const;
@@ -34,14 +38,14 @@ public:
     Q_PROPERTY(QVariantMap participants READ participants NOTIFY participantsChanged)
     QVariantMap participants() const;
 
-    Q_PROPERTY(quint32 count READ count NOTIFY countChanged)
-    quint32 count() const;
+    Q_PROPERTY(qint32 count READ count NOTIFY countChanged)
+    qint32 count() const;
 
-    Q_PROPERTY(quint32 countUnread READ countUnread NOTIFY countUnreadChanged)
-    quint32 countUnread() const;
+    Q_PROPERTY(qint32 countUnread READ countUnread NOTIFY countUnreadChanged)
+    qint32 countUnread() const;
 
-    Q_PROPERTY(quint32 countUndone READ countUndone NOTIFY countUndoneChanged)
-    quint32 countUndone() const;
+    Q_PROPERTY(qint32 countUndone READ countUndone NOTIFY countUndoneChanged)
+    qint32 countUndone() const;
 
     Q_PROPERTY(QDateTime latestMessageTimestamp READ latestMessageTimestamp NOTIFY latestMessageTimestampChanged)
     QDateTime latestMessageTimestamp() const;
@@ -60,18 +64,14 @@ public:
 
     // Non-QML methods
 
-    std::vector<std::unique_ptr<ParticipantModel>> participantsModels() const;
+    void notifyChanged();
 
 signals:
-    void participantChanged(quint32 conversationId);
-    void messageAdded(quint32 conversationId, quint32 messageId);
-    void messageDeleted(quint32 conversationId, quint32 messageId);
     void latestMessageTimestampChanged();
 
-    // These signals are emitted at once in onConversationModified()
+    // These signals are emitted at once in notifyChanged()
     // to properly update QML properties like in
     // conversationList.model.get(id).count
-    void conversationModified(quint32 conversationId);
     void countChanged();
     void countUnreadChanged();
     void countUndoneChanged();
@@ -85,14 +85,10 @@ signals:
     void draftChanged();                 // constant
     void messagesChanged();              // constant
 
-private slots:
-    void onConversationModified();
-    void onParticipantChanged();
-    void onMessageAdded(quint32 messageId);
-    void onMessageDeleted(quint32 messageId);
-
 private:
-    std::shared_ptr<Kullo::Model::Conversation> conv_;
+    std::shared_ptr<Kullo::Api::Session> session_;
+    ApiMirror::EventDispatcher *eventDispatcher_ = nullptr;
+    Kullo::id_type convId_ = -1;
     std::unique_ptr<MessageListModel> messages_;
     DraftModel draft_;
 };

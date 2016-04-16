@@ -14,10 +14,11 @@ public:
     ConversationAvatarProvider(Qml::ClientModel &clientModel);
 
 protected:
-    virtual QPixmap drawAvatar(const QString &url, const QSize &renderSize);
+    QPixmap drawAvatar(const QString &url, const QSize &renderSize) override;
 
 private:
-    QPixmap composeAvatar(const std::vector<std::unique_ptr<Qml::ParticipantModel>> &participants, const QSize &renderSize);
+    QPixmap avatarForAddress(QString &participantAddress, const QSize &renderSize);
+    QPixmap composeAvatar(const QStringList &participantsAddresses, const QSize &renderSize);
 };
 
 }

@@ -53,14 +53,15 @@ Item {
                     bottom: parent.bottom
                 }
 
-                property int size: Math.max(_text.implicitHeight, _text.implicitWidth)
+                property int size: Math.max(countUndoneTextbox.implicitHeight,
+                                            countUndoneTextbox.implicitWidth)
                 width: size + 3
                 height: size + 3
 
                 NativeText {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    id: _text
+                    id: countUndoneTextbox
                     text: countUndone_
                     font.bold: countUnread_ > 0 // bold if unread message exists
                     font.pointSize: Style.fontSize.conversationListCounter

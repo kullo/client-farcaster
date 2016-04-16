@@ -4,9 +4,11 @@
 #include <QPainter>
 #include <cmath>
 
+#include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 #include "kullodesktop/qml/clientmodel.h"
 #include "kullodesktop/qml/participantmodel.h"
@@ -61,34 +63,29 @@ QPixmap AbstractAvatarProvider::requestPixmap(const QString &id, QSize *size, co
     return drawAvatar(id, renderSize);
 }
 
-QString AbstractAvatarProvider::initialsFromName(const QString &name)
+QPixmap AbstractAvatarProvider::getAvatarForAddress(const QString &address, const QSize &renderSize)
 {
-    QStringList nameParts = name.split(' ', QString::SkipEmptyParts);
-    QString initials;
-    foreach (QString part, nameParts)
+    auto part = clientModel_.participantModel(Kullo::Api::Address::create(address.toStdString()));
+    if (!part)
     {
-        initials.append(part[0]);
+        return getEmptyAvatar(renderSize);
     }
-    return initials.left(3);
-}
 
-QPixmap AbstractAvatarProvider::getParticipantAvatar(const Qml::ParticipantModel &part, const QSize &renderSize)
-{
-    if (!part.avatar().isNull())
+    auto avatar = part->avatar();
+    if (!avatar.isNull())
     {
-        QPixmap avatar = part.avatar();
         if (avatar.width() != avatar.height())
         {
             Log.w() << "Participant avatar must be square at this point "
                     << "(" << QSize(avatar.width(), avatar.height()) << ")"
-                    << ": " << part.address();
+                    << ": " << part->address();
         }
 
         return avatar.scaled(renderSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
-    else if (!part.name().isEmpty())
+    else if (!part->name().isEmpty())
     {
-        return getFallbackAvatar(part.name(), renderSize);
+        return getFallbackAvatar(part->name(), renderSize);
     }
     else
     {
@@ -107,7 +104,7 @@ QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString name, const QSiz
     textPainter.setOpacity(FALLBACK_AVATAR_FOREGROUND_OPACITY);
     textPainter.setFont(QFont("Arial", fontSize, QFont::Bold));
     textPainter.setPen(QPen(FALLBACK_AVATAR_FOREGROUND_COLOR));
-    textPainter.drawText(rect, Qt::AlignCenter, initialsFromName(name));
+    textPainter.drawText(rect, Qt::AlignCenter, DesktopUtil::Initials::fromName(name));
 
     return pixmap;
 }

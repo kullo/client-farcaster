@@ -166,7 +166,10 @@ int main(int argc, char *argv[])
         Util::LogfileCleaner::clean();
         Util::KulloFolderSetup::perpareKulloFolder(DesktopUtil::kulloPaths().KULLO_DIR);
 
-        Qml::ClientModel clientModel(DesktopUtil::kulloPaths().DATABASE_DIR + QStringLiteral("/libkulloclient-%1.db"), app);
+        Qml::ClientModel clientModel(
+                    client,
+                    DesktopUtil::kulloPaths().DATABASE_DIR + QStringLiteral("/libkulloclient-%1.db"),
+                    app);
         app.setClientModel(&clientModel);
 
         /*
@@ -192,8 +195,6 @@ int main(int argc, char *argv[])
          */
         QQmlContext *context = engine.rootContext();
         context->setContextProperty("Client", &clientModel);
-        // Rename to 'Client' as soon as Qml::ClientModel died.
-        context->setContextProperty("ClientNewApi", &client);
         context->setContextProperty("KulloVersionChecker", &kulloVersionChecker);
         context->setContextProperty("Devicesettings", &app.deviceSettings());
         context->setContextProperty("FontList", &fontlist);

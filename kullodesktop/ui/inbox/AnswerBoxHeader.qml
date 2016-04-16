@@ -1,6 +1,7 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Layouts 1.2
+import Kullo 1.0
 
 import "../"
 import "../misc"
@@ -10,23 +11,33 @@ import "../js/js_helpers.js" as JSHelpers
 
 Rectangle {
     /* public */
-    property int conversationId: -1
+    property Conversation conversation: null
 
     /* private */
-    property int _participantsCount: conversationId != -1
-                                     ? JSHelpers.sizeOfMapObject(Client.conversations.get(conversationId).participants)
+    property int _participantsCount: conversation
+                                     ? JSHelpers.sizeOfMapObject(conversation.participants)
                                      : 0
 
-    onConversationIdChanged: {
-        if (conversationId != -1)
+    function rebuildReceiversList()
+    {
+        if (conversation)
         {
-            var participants = Client.conversations.get(conversationId).participants
+            var participants = conversation.participants
             participantsModel.clear()
             for (var address in participants)
             {
                 participantsModel.append({ address: address, name: participants[address] });
             }
         }
+    }
+
+    // conversation switched
+    onConversationChanged: rebuildReceiversList()
+
+    // currently selected conversation changed
+    Connections {
+        target: conversation
+        onCountChanged: rebuildReceiversList()
     }
 
     id: root

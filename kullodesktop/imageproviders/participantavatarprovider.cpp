@@ -4,7 +4,7 @@
 #include <QUrl>
 #include <boost/optional.hpp>
 #include <desktoputil/qtypestreamers.h>
-#include <kulloclient/util/kulloaddress.h>
+#include <kulloclient/api/Address.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/clientmodel.h"
@@ -27,10 +27,10 @@ QPixmap ParticipantAvatarProvider::drawAvatar(const QString &url, const QSize &r
     // Cut query string from URL
     QString path = url.split("?").at(0);
 
-    boost::optional<Kullo::Util::KulloAddress> address;
+    std::shared_ptr<Kullo::Api::Address> address;
     try {
         auto addressString = QUrl::fromPercentEncoding(path.toUtf8());;
-        address = Kullo::Util::KulloAddress(addressString.toStdString());
+        address = Kullo::Api::Address::create(addressString.toStdString());
     }
     catch (std::invalid_argument)
     {
@@ -38,16 +38,7 @@ QPixmap ParticipantAvatarProvider::drawAvatar(const QString &url, const QSize &r
         return QPixmap();
     }
 
-    auto participantsList = clientModel_.participantsModels();
-
-    if (!participantsList.count(*address))
-    {
-        Log.d() << "Participant address not found: " << *address;
-        return rounded(getEmptyAvatar(renderSize));
-    }
-
-    auto participant = participantsList[*address];
-    return rounded(getParticipantAvatar(*participant, renderSize));
+    return rounded(getAvatarForAddress(QString::fromStdString(address->toString()), renderSize));
 }
 
 }

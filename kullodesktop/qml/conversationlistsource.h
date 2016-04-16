@@ -2,9 +2,12 @@
 #pragma once
 
 #include <memory>
-#include <set>
+#include <unordered_set>
 #include <QAbstractListModel>
-#include <kulloclient/util/kulloaddress.h>
+
+#include <apimirror/eventdispatcher.h>
+#include <kulloclient/api/Address.h>
+#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 
@@ -29,40 +32,40 @@ public:
         AvatarSrcRole
     };
 
-    explicit ConversationListSource(ClientModel *clientModel, QObject *parent = 0);
+    explicit ConversationListSource(ApiMirror::EventDispatcher &eventDispatcher, QObject *parent = nullptr);
     ~ConversationListSource();
     QHash<int, QByteArray> roleNames() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
-    quint32 openWhenCreated();
-    void setOpenWhenCreated(std::set<Kullo::Util::KulloAddress> participants);
+    Kullo::id_type openWhenCreated();
+    void setOpenWhenCreated(std::unordered_set<std::shared_ptr<Kullo::Api::Address>> participants);
 
-    quint32 unreadMessagesCount();
+    qint32 unreadMessagesCount();
 
-    ConversationModel *get(quint32 conversationId) const;
+    ConversationModel *get(Kullo::id_type conversationId) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    int getIndexForId(quint32 conversationId) const;
+    int getIndexForId(Kullo::id_type conversationId) const;
 
-    /// Login status changed: Throw away everything.
-    void refresh();
+    void setSession(const std::shared_ptr<Kullo::Api::Session> &session);
 
 signals:
     void conversationsChanged();
     void unreadMessagesCountChanged();
 
 private slots:
-    void onConversationAdded(quint32 conversationId);
-    void onConversationRemoved(quint32 conversationId);
-    void onConversationModified(quint32 conversationId);
-    void onParticipantChanged(quint32 conversationId);
+    void onConversationAdded(Kullo::id_type conversationId);
+    void onConversationChanged(Kullo::id_type conversationId);
+    void onConversationRemoved(Kullo::id_type conversationId);
+    void onParticipantChanged(Kullo::id_type conversationId);
 
 private:
     void refreshConversations();
     void connectConversationModelToList(const std::unique_ptr<ConversationModel> &cm);
 
-    const ClientModel *clientModel_;
+    ApiMirror::EventDispatcher &eventDispatcher_;
+    std::shared_ptr<Kullo::Api::Session> session_;
     std::vector<std::unique_ptr<ConversationModel>> conversationModels_;
-    std::set<Kullo::Util::KulloAddress> openWhenCreated_;
+    std::unordered_set<std::shared_ptr<Kullo::Api::Address>> openWhenCreated_;
 };
 
 }

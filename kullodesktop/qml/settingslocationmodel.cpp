@@ -5,12 +5,11 @@
 #include <QUrl>
 #include <QDesktopServices>
 
-#include <kulloclient/protocol/exceptions.h>
-#include <kulloclient/util/librarylogger.h>
-#include <kulloclient/util/usersettings.h>
-
+#include <apimirror/SessionAccountInfoListener.h>
 #include <desktoputil/qtypestreamers.h>
-#include <desktoputil/dice/model/accountinfo.h>
+#include <kulloclient/api_impl/debug.h>
+#include <kulloclient/util/assert.h>
+#include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/usersettingsmodel.h"
 
@@ -27,32 +26,21 @@ SettingsLocationModel::~SettingsLocationModel()
 {
 }
 
-UserSettingsModel *SettingsLocationModel::userSettings() const
+void SettingsLocationModel::openUrl(ClientModel *clientModel)
 {
-    return userSettings_;
-}
+    kulloAssert(clientModel);
 
-void SettingsLocationModel::setUserSettings(UserSettingsModel *settings)
-{
-    if (userSettings_ != settings)
-    {
-        userSettings_ = settings;
-        emit userSettingsChanged();
-    }
-}
+    auto session = clientModel->session();
+    if (!session) return;
 
-void SettingsLocationModel::openUrl()
-{
     if (locked_) return;
     locked_ = true;
 
-    accountInfo_ = Kullo::make_unique<Kullo::Model::AccountInfo>(
-                *userSettings_->rawUserSettings()->address,
-                *userSettings_->rawUserSettings()->masterKey);
+    auto listener = std::make_shared<ApiMirror::SessionAccountInfoListener>();
 
     // success
-    connect(accountInfo_.get(), &Kullo::Model::AccountInfo::settingsUrlChanged,
-            [this](const std::string &settingsUrl)
+    connect(listener.get(), &ApiMirror::SessionAccountInfoListener::_finished,
+            this, [this](const std::string &settingsUrl)
     {
         auto url = QUrl(QString::fromStdString(settingsUrl));
         if (!url.isValid())
@@ -67,33 +55,17 @@ void SettingsLocationModel::openUrl()
 
         this->locked_ = false;
     });
+
     // error
-    connect(accountInfo_.get(), &Kullo::Model::AccountInfo::error,
-            [this](std::exception_ptr exception)
+    connect(listener.get(), &ApiMirror::SessionAccountInfoListener::_error,
+            this, [this](Kullo::Api::NetworkError error)
     {
-        try {
-            std::rethrow_exception(exception);
-        }
-        catch (Kullo::Protocol::ServerError &ex)
-        {
-            Log.e() << "Server Error: "
-                    << Kullo::Util::formatException(ex);
-        }
-        catch (Kullo::Protocol::ProtocolError &ex)
-        {
-            Log.e() << "ProtocolError: "
-                    << Kullo::Util::formatException(ex);
-        }
-        catch (Kullo::Protocol::NetworkError &ex)
-        {
-            Log.e() << "NetworkError: "
-                    << Kullo::Util::formatException(ex);
-        }
+        Log.e() << "Error while retrieving account info: " << error;
 
         this->locked_ = false;
     });
 
-    accountInfo_->update();
+    task_ = session->accountInfoAsync(listener);
 }
 
 }

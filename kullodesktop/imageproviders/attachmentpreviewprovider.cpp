@@ -72,9 +72,9 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     bool okConvId;
     bool okMsgId;
     bool okAttachmentId;
-    int convId       = pathParts[1].toInt(&okConvId);
-    int msgId        = pathParts[2].toInt(&okMsgId);
-    int attachmentId = pathParts[3].toInt(&okAttachmentId);
+    auto convId       = pathParts[1].toInt(&okConvId);
+    auto msgId        = pathParts[2].toInt(&okMsgId);
+    auto attachmentId = pathParts[3].toInt(&okAttachmentId);
     if (!okConvId || !okMsgId || !okAttachmentId || convId == -1)
     {
         Log.w() << "Invalid attachment preview string: " << url;
@@ -84,7 +84,7 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     if (attachmentId == -1) return QPixmap(); // empty delegate
 
     QByteArray imageData;
-    if (msgId == 0) // Draft
+    if (msgId < 0) // Draft
     {
         auto conversation = clientModel_.conversationsListSource()->get(convId);
         kulloAssert(conversation);

@@ -20,3 +20,6 @@ local.properties
 
 # build script tmp files
 *.tmp
+
+# OS X Finder
+.DS_Store

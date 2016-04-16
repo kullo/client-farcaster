@@ -6,9 +6,7 @@
 #include <apimirror/Client.h>
 #include <apimirror/ClientGenerateKeysListener.h>
 #include <apimirror/RegistrationRegisterAccountListener.h>
-
 #include <desktoputil/qtypestreamers.h>
-
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/AddressNotAvailableReason.h>
 #include <kulloclient/api/Challenge.h>
@@ -18,9 +16,7 @@
 #include <kulloclient/api/MasterKey.h>
 #include <kulloclient/api/NetworkError.h>
 #include <kulloclient/api/Registration.h>
-
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/kulloaddress.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
 
@@ -163,40 +159,36 @@ void Registerer::registerAccount(const QString &addr, const QString &challengeAn
 {
     kulloAssert(registration_);
 
-    const std::string address = addr.trimmed().toStdString();
+    const std::string addressStr = addr.trimmed().toStdString();
     const std::string answer = challengeAnswer.trimmed().toStdString();
 
-    Log.i() << "Trying to register " << address << " ...";
+    Log.i() << "Trying to register " << addressStr << " ...";
 
-    if (Kullo::Util::KulloAddress::isValid(address))
+    auto address = Kullo::Api::Address::create(addressStr);
+    if (address)
     {
-        if (!answer.empty())
+        if (!answer.empty() && !lastChallenge_)
         {
-            if (!lastChallenge_)
-            {
-                Log.f() << "Got challenge answer from users but no challenge is stored.";
-            }
+            Log.f() << "Got challenge answer from user but no challenge is stored.";
+        }
 
+        if (lastChallenge_)
+        {
             Log.i() << "With challenge: " << lastChallenge_->text();
-            taskRegister_ = registration_->registerAccountAsync(
-                        Kullo::Api::Address::create(address),
-                        lastChallenge_,
-                        answer,
-                        listenerRegistration_);
         }
         else
         {
             Log.i() << "No challenge used.";
-            taskRegister_ = registration_->registerAccountAsync(
-                        Kullo::Api::Address::create(address),
-                        nullptr,
-                        answer,
-                        listenerRegistration_);
         }
+        taskRegister_ = registration_->registerAccountAsync(
+                    address,
+                    lastChallenge_,
+                    answer,
+                    listenerRegistration_);
     }
     else
     {
-        emit invalidKulloAddress(QString::fromStdString(address));
+        emit invalidKulloAddress(QString::fromStdString(addressStr));
     }
 }
 

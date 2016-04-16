@@ -7,10 +7,10 @@ Window {
     property bool windowTypeModalWindow: false
 
     SystemPalette {
-        id: _palette
+        id: palette
         colorGroup: SystemPalette.Active
     }
-    color: _palette.window
+    color: palette.window
 
     function _validate() {
         if (windowTypeModalWindow)

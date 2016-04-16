@@ -1,13 +1,19 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "draftmodel.h"
 
-#include <desktoputil/dice/model/draft.h>
-#include <desktoputil/qtypestreamers.h>
-#include <kulloclient/util/assert.h>
-#include <kulloclient/util/librarylogger.h>
 #include <QMimeDatabase>
 #include <QQmlEngine>
 #include <QUrl>
+
+#include <apimirror/DraftAttachmentsAddListener.h>
+#include <desktoputil/qtypestreamers.h>
+#include <kulloclient/api/AsyncTask.h>
+#include <kulloclient/api/DraftAttachments.h>
+#include <kulloclient/api/Drafts.h>
+#include <kulloclient/api/DraftState.h>
+#include <kulloclient/util/assert.h>
+#include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 #include "kullodesktop/qml/draftattachmentlistmodel.h"
 
@@ -17,26 +23,46 @@ namespace Qml {
 DraftModel::DraftModel(QObject *parent)
     : QObject(parent)
 {
-    Log.e() << "Don't instantiate Draft in QML.";
+    Log.f() << "Don't instantiate Draft in QML.";
 }
 
-DraftModel::DraftModel(std::shared_ptr<Kullo::Model::Draft> draft, QObject *parent)
+DraftModel::DraftModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        ApiMirror::EventDispatcher &eventDispatcher,
+        Kullo::id_type convId,
+        QObject *parent)
     : QObject(parent)
-    , draft_(draft)
-    , attachments_(new DraftAttachmentListModel(draft, nullptr))
+    , session_(session)
+    , convId_(convId)
+    , attachments_(new DraftAttachmentListModel(session_, eventDispatcher, convId_))
     , draftEmptyCache_(empty())
 {
-    kulloAssert(draft_);
-    kulloAssert(parent == nullptr);
+    kulloAssert(session_);
 
-    connect(draft_.get(), &Kullo::Model::Draft::modified,           this, &DraftModel::onModified);
-    connect(draft_.get(), &Kullo::Model::Draft::modified,           this, &DraftModel::onDraftEmptyPotentiallyChanged);
-    connect(draft_.get(), &Kullo::Model::Draft::textChanged,        this, &DraftModel::onTextChanged);
-    connect(draft_.get(), &Kullo::Model::Draft::textChanged,        this, &DraftModel::onDraftEmptyPotentiallyChanged);
-    connect(draft_.get(), &Kullo::Model::Draft::footerChanged,      this, &DraftModel::footerChanged);
-    connect(draft_.get(), &Kullo::Model::Draft::attachmentsChanged, this, &DraftModel::attachmentsChanged);
-    connect(draft_.get(), &Kullo::Model::Draft::attachmentsChanged, this, &DraftModel::onDraftEmptyPotentiallyChanged);
-    connect(draft_.get(), &Kullo::Model::Draft::stateChanged,       this, &DraftModel::stateChanged);
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::draftTextChanged,
+            this, [this](Kullo::id_type conversationId)
+    {
+        if (conversationId == convId_) emit textChanged();
+    });
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::draftStateChanged,
+            this, [this](Kullo::id_type conversationId)
+    {
+        if (conversationId == convId_) emit stateChanged();
+    });
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::draftAttachmentAdded,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type attachmentId)
+    {
+        K_UNUSED(attachmentId);
+        if (conversationId == convId_) onDraftEmptyPotentiallyChanged();
+    });
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::draftAttachmentRemoved,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type attachmentId)
+    {
+        K_UNUSED(attachmentId);
+        if (conversationId == convId_) onDraftEmptyPotentiallyChanged();
+    });
+
+    connect(this, &DraftModel::textChanged, &DraftModel::onDraftEmptyPotentiallyChanged);
 }
 
 DraftModel::~DraftModel()
@@ -47,23 +73,18 @@ DraftModel::~DraftModel()
     save();
 }
 
-quint32 DraftModel::id() const
+Kullo::id_type DraftModel::id() const
 {
-    return draft_->id();
-}
-
-quint64 DraftModel::lastModified() const
-{
-    return draft_->lastModified();
+    return convId_;
 }
 
 QString DraftModel::state() const
 {
-    switch (draft_->state())
+    switch (session_->drafts()->state(convId_))
     {
-    case Kullo::Dao::DraftState::Editing:
+    case Kullo::Api::DraftState::Editing:
         return "editing";
-    case Kullo::Dao::DraftState::Sending:
+    case Kullo::Api::DraftState::Sending:
         return "sending";
     }
     throw std::logic_error("Invalid state");
@@ -71,54 +92,12 @@ QString DraftModel::state() const
 
 QString DraftModel::text() const
 {
-    return QString::fromStdString(draft_->text());
+    return QString::fromStdString(session_->drafts()->text(convId_));
 }
 
 void DraftModel::setText(QString text)
 {
-    Log.d() << "DraftModel::setText(" << text << ")";
-
-    // Workaround for
-    // https://bugreports.qt-project.org/browse/QTBUG-42773
-    if (draft_->state() == Kullo::Dao::DraftState::Editing)
-    {
-        Log.d() << "DraftModel::setText() state = EDITING, ok.";
-        draft_->setText(text.toStdString());
-    }
-    else
-    {
-        Log.d() << "DraftModel::setText() state = SENDING, ignored.";
-    }
-}
-
-QString DraftModel::footer() const
-{
-    return QString::fromStdString(draft_->footer());
-}
-
-void DraftModel::setFooter(QString footer)
-{
-    draft_->setFooter(footer.toStdString());
-}
-
-QString DraftModel::senderName() const
-{
-    return QString::fromStdString(draft_->senderName());
-}
-
-void DraftModel::setSenderName(QString name)
-{
-    draft_->setSenderName(name.toStdString());
-}
-
-QString DraftModel::senderOrganization() const
-{
-    return QString::fromStdString(draft_->senderOrganization());
-}
-
-void DraftModel::setSenderOrganization(QString organization)
-{
-    draft_->setSenderOrganization(organization.toStdString());
+    session_->drafts()->setText(convId_, text.toStdString());
 }
 
 DraftAttachmentListModel *DraftModel::attachments()
@@ -147,59 +126,40 @@ void DraftModel::addAttachment(const QUrl &url)
     QString mimeType = QMimeDatabase().mimeTypeForFile(localFile).name();
     Log.i() << "Adding " << localFile << " of type " << mimeType;
 
-    draft_->addAttachment(localFile.toStdString(), mimeType.toStdString());
+    //TODO use the asynchronity to kill AttachmentsAdderModel and call addAsync from the UI thread
+    auto listener = std::make_shared<ApiMirror::DraftAttachmentsAddListener>();
+    session_->draftAttachments()->addAsync(
+                convId_,
+                localFile.toStdString(),
+                mimeType.toStdString(),
+                listener)->waitUntilDone();
+    //TODO handle DraftAttachmentsAddListener::error
 }
 
-void DraftModel::removeAttachment(quint32 index)
+void DraftModel::removeAttachment(Kullo::id_type index)
 {
-    draft_->removeAttachment(index);
+    session_->draftAttachments()->remove(convId_, index);
 }
 
 void DraftModel::save()
 {
-    draft_->save();
+    //TODO implement cache for text changes that are committed when save() is called
 }
 
 void DraftModel::prepareToSend()
 {
-    Log.d() << "DraftModel::prepareToSend()";
     QString trimmedText = text().trimmed();
     if (trimmedText != text())
     {
         setText(trimmedText);
-        emit textPrepared();
+        save();
     }
-
-    draft_->prepareToSend();
-    Log.d() << "End DraftModel::prepareToSend()";
+    session_->drafts()->prepareToSend(convId_);
 }
 
 std::mutex &DraftModel::addingAttachmentsInProgress()
 {
     return addingAttachmentsInProgress_;
-}
-
-void DraftModel::onModified()
-{
-    Log.d() << "Model::Draft::modified(" << draft_->text() << ")";
-
-    // Model::Draft.modified is emitted from messages sender in bg thread only
-    //
-    // 1. Clear all
-    // 2. Set state to "editing" to unlock QML
-
-    attachments_->reloadModel();
-    emit footerChanged();
-    emit lastModifiedChanged();
-    if (draft_->text().empty()) emit textCleared();
-    else                        emit textChanged();
-    emit stateChanged();
-}
-
-void DraftModel::onTextChanged()
-{
-    Log.d() << "Model::Draft::textChanged(" << draft_->text() << ")";
-    emit textChanged();
 }
 
 void DraftModel::onDraftEmptyPotentiallyChanged()

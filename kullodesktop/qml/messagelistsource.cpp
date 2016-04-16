@@ -3,10 +3,9 @@
 
 #include <QQmlEngine>
 
-#include <desktoputil/dice/model/message.h>
-
+#include <kulloclient/api/Conversations.h>
+#include <kulloclient/api/Messages.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/kulloaddress.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/messagemodel.h"
@@ -14,16 +13,28 @@
 namespace KulloDesktop {
 namespace Qml {
 
-MessageListSource::MessageListSource(std::shared_ptr<Kullo::Model::Conversation> conv, QObject *parent)
+MessageListSource::MessageListSource(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        ApiMirror::EventDispatcher &eventDispatcher,
+        Kullo::id_type convId,
+        QObject *parent)
     : QAbstractListModel(parent)
-    , conversation_(conv)
+    , session_(session)
+    , eventDispatcher_(eventDispatcher)
+    , convId_(convId)
 {
-    kulloAssert(conversation_);
+    kulloAssert(session_);
 
-    connect(conversation_.get(), &Kullo::Model::Conversation::messageAdded,
-            this, &MessageListSource::onMessageAdded);
-    connect(conversation_.get(), &Kullo::Model::Conversation::messageDeleted,
-            this, &MessageListSource::onMessageDeleted);
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::messageAdded,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type messageId)
+    {
+        if (conversationId == convId_) onMessageAdded(messageId);
+    });
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::messageRemoved,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type messageId)
+    {
+        if (conversationId == convId_) onMessageRemoved(messageId);
+    });
 
     loadMessageModels();
 }
@@ -56,9 +67,23 @@ QHash<int, QByteArray> MessageListSource::roleNames() const
     return roles;
 }
 
+namespace {
+bool addressInParticipants(
+        const std::string &address,
+        const std::unordered_set<std::shared_ptr<Kullo::Api::Address>> &participants)
+{
+    for (const auto &addr : participants)
+    {
+        if (addr->toString() == address) return true;
+    }
+    return false;
+}
+}
+
 QVariant MessageListSource::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || static_cast<unsigned int>(index.row()) >= messageModels_.size())
+    auto row = static_cast<unsigned int>(index.row());
+    if (index.row() < 0 || row >= messageModels_.size())
     {
         return QVariant();
     }
@@ -68,47 +93,41 @@ QVariant MessageListSource::data(const QModelIndex &index, int role) const
     switch (role)
     {
     case MessageIdRole:
-        return QVariant(messageModels_.at(index.row())->id());
+        return QVariant::fromValue(messageModels_.at(row)->id());
     case MessageTextRole:
-        return QVariant(messageModels_.at(index.row())->text());
+        return messageModels_.at(row)->text();
     case MessageTextAsHtmlRole:
-        return QVariant(messageModels_.at(index.row())->textAsHtml());
+        return messageModels_.at(row)->textAsHtml();
     case ConversationIdRole:
-        return QVariant(messageModels_.at(index.row())->conversationId());
+        return QVariant::fromValue(messageModels_.at(row)->conversationId());
     case MessageDateSentRole:
-        return QVariant(messageModels_.at(index.row())->dateSent());
+        return messageModels_.at(row)->dateSent();
     case MessageDateReceivedRole:
-        return QVariant(messageModels_.at(index.row())->dateReceived());
+        return messageModels_.at(row)->dateReceived();
     case MessageReadRole:
-        return QVariant(messageModels_.at(index.row())->read());
+        return messageModels_.at(row)->read();
     case MessageDoneRole:
-        return QVariant(messageModels_.at(index.row())->done());
+        return messageModels_.at(row)->done();
     case SenderAddressRole:
-        return QVariant(messageModels_.at(index.row())->sender()->address());
+        return messageModels_.at(row)->sender()->address();
     case SenderNameRole:
-        return QVariant(messageModels_.at(index.row())->sender()->name());
+        return messageModels_.at(row)->sender()->name();
     case SenderOrganizationRole:
-        return QVariant(messageModels_.at(index.row())->sender()->organization());
+        return messageModels_.at(row)->sender()->organization();
     case AttachmentsRole:
-        alm = messageModels_.at(index.row())->attachments();
+        alm = messageModels_.at(row)->attachments();
         QQmlEngine::setObjectOwnership(alm, QQmlEngine::CppOwnership);
         return QVariant::fromValue(alm);
     case AttachmentsReadyRole:
-        return QVariant(messageModels_.at(index.row())->attachmentsReady());
+        return messageModels_.at(row)->attachmentsReady();
     case FooterRole:
-        return QVariant(messageModels_.at(index.row())->footer());
+        return messageModels_.at(row)->footer();
     case DeliveryStatusRole:
-        return QVariant(messageModels_.at(index.row())->deliveryStatus());
+        return messageModels_.at(row)->deliveryStatus();
     case IncomingRole:
-        if (conversation_->participants().count(
-                    Kullo::Util::KulloAddress(messageModels_.at(index.row())->sender()->address().toStdString())
-                    ))
-        {
-            return QVariant(true);
-        }
-        else {
-            return QVariant(false);
-        }
+        return addressInParticipants(
+                    messageModels_.at(row)->sender()->address().toStdString(),
+                    session_->conversations()->participants(convId_));
     default:
         Log.e() << "MessageListModel: Invalid role requested: " << role;
         return QVariant();
@@ -158,11 +177,12 @@ void MessageListSource::markAllMessagesAsReadAndDone()
 {
     for (const std::unique_ptr<MessageModel> &m : messageModels_)
     {
-        m->markAsReadAndDone();
+        m->setRead(true);
+        m->setDone(true);
     }
 }
 
-MessageModel *MessageListSource::get(quint32 messageId) const
+MessageModel *MessageListSource::get(Kullo::id_type messageId) const
 {
     int position = getIndexForId(messageId);
     if (position == -1)
@@ -176,7 +196,7 @@ MessageModel *MessageListSource::get(quint32 messageId) const
     return out;
 }
 
-void MessageListSource::deleteMessage(quint32 messageId)
+void MessageListSource::deleteMessage(Kullo::id_type messageId)
 {
     int position = getIndexForId(messageId);
     if (position == -1) return;
@@ -184,15 +204,14 @@ void MessageListSource::deleteMessage(quint32 messageId)
     messageModels_.at(position)->deletePermanently();
 }
 
-void MessageListSource::onMessageAdded(quint32 messageId)
+void MessageListSource::onMessageAdded(Kullo::id_type messageId)
 {
-    auto msg = conversation_->messages()[messageId];
-    std::unique_ptr<MessageModel> mm(new MessageModel(msg, nullptr));
+    std::unique_ptr<MessageModel> mm(new MessageModel(session_, eventDispatcher_, messageId));
     connectMessageModelToList(mm);
     insertMessage(0, std::move(mm));
 }
 
-void MessageListSource::onMessageDeleted(quint32 messageId)
+void MessageListSource::onMessageRemoved(Kullo::id_type messageId)
 {
     int position = getIndexForId(messageId);
     if (position == -1) return;
@@ -202,7 +221,7 @@ void MessageListSource::onMessageDeleted(quint32 messageId)
     endRemoveRows();
 }
 
-void MessageListSource::onMessageAttachmentsDownloaded(quint32 messageId)
+void MessageListSource::onMessageAttachmentsDownloaded(Kullo::id_type messageId)
 {
     int position = getIndexForId(messageId);
     if (position == -1) return;
@@ -211,7 +230,7 @@ void MessageListSource::onMessageAttachmentsDownloaded(quint32 messageId)
     emit dataChanged(rowIndex, rowIndex, QVector<int>{AttachmentsReadyRole});
 }
 
-void MessageListSource::onMessageStateChanged(quint32 messageId)
+void MessageListSource::onMessageStateChanged(Kullo::id_type messageId)
 {
     int position = getIndexForId(messageId);
     if (position == -1) return;
@@ -223,7 +242,7 @@ void MessageListSource::onMessageStateChanged(quint32 messageId)
                      });
 }
 
-void MessageListSource::onMessageDeliveryStatusChanged(quint32 messageId)
+void MessageListSource::onMessageDeliveryStatusChanged(Kullo::id_type messageId)
 {
     int position = getIndexForId(messageId);
     if (position == -1) return;
@@ -232,11 +251,13 @@ void MessageListSource::onMessageDeliveryStatusChanged(quint32 messageId)
     emit dataChanged(rowIndex, rowIndex, QVector<int>{DeliveryStatusRole});
 }
 
-int MessageListSource::getIndexForId(quint32 messageId) const
+int MessageListSource::getIndexForId(Kullo::id_type messageId) const
 {
     for (size_t i = 0; i < messageModels_.size(); ++i)
     {
-        if (messageModels_.at(i)->id() == messageId)
+        auto &model = messageModels_.at(i);
+        kulloAssert(model);
+        if (model->id() == messageId)
         {
             return i;
         }
@@ -246,20 +267,18 @@ int MessageListSource::getIndexForId(quint32 messageId) const
 
 void MessageListSource::loadMessageModels()
 {
-    for (auto &itr : conversation_->messages())
+    for (auto msgId : session_->messages()->allForConversation(convId_))
     {
-        auto msg = itr.second;
-        if (!msg->isDeleted())
-        {
-            std::unique_ptr<MessageModel> mm(new MessageModel(msg, nullptr));
-            connectMessageModelToList(mm);
-            messageModels_.push_back(std::move(mm));
-        }
+        std::unique_ptr<MessageModel> mm(new MessageModel(session_, eventDispatcher_, msgId));
+        kulloAssert(mm);
+        connectMessageModelToList(mm);
+        messageModels_.push_back(std::move(mm));
     }
 }
 
 void MessageListSource::connectMessageModelToList(const std::unique_ptr<MessageModel> &mm)
 {
+    //TODO invert this relationship: listen to this signal here and then notify MessageModel
     connect(mm.get(), &MessageModel::attachmentsDownloaded,
             this, &MessageListSource::onMessageAttachmentsDownloaded);
     connect(mm.get(), &MessageModel::stateChanged,
@@ -270,6 +289,8 @@ void MessageListSource::connectMessageModelToList(const std::unique_ptr<MessageM
 
 void MessageListSource::insertMessage(const int position, std::unique_ptr<MessageModel> &&mm)
 {
+    kulloAssert(mm);
+
     auto parent = QModelIndex();
     beginInsertRows(parent, position, position);
     messageModels_.insert(messageModels_.begin()+position, std::move(mm));

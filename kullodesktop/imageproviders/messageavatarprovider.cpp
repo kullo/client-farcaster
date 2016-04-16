@@ -40,9 +40,9 @@ QPixmap MessageAvatarProvider::drawAvatar(const QString &url, const QSize &rende
 
     bool okConvId;
     bool okMsgId;
-    quint32 convId = convIdAndMsgId[1].toUInt(&okConvId);
-    quint32 msgId = convIdAndMsgId[2].toUInt(&okMsgId);
-    if (!okConvId || !okMsgId || convId == 0 || msgId == 0)
+    auto convId = convIdAndMsgId[1].toInt(&okConvId);
+    auto msgId = convIdAndMsgId[2].toInt(&okMsgId);
+    if (!okConvId || !okMsgId || convId < 0 || msgId < 0)
     {
         Log.w() << "Invalid message avatar request string: " << url;
         return QPixmap();

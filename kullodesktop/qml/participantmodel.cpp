@@ -2,7 +2,9 @@
 #include "participantmodel.h"
 
 #include <desktoputil/stlqt.h>
-#include <desktoputil/dice/model/participant.h>
+#include <kulloclient/api/Messages.h>
+#include <kulloclient/crypto/hasher.h>
+#include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
 namespace KulloDesktop {
@@ -11,43 +13,55 @@ namespace Qml {
 ParticipantModel::ParticipantModel(QObject *parent)
     : QObject(parent)
 {
-    Log.e() << "Don't instantiate Participant in QML.";
+    Log.f() << "Don't instantiate Participant in QML.";
 }
 
-ParticipantModel::ParticipantModel(std::shared_ptr<Kullo::Model::Participant> part, QObject *parent)
+ParticipantModel::ParticipantModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        Kullo::id_type msgId,
+        QObject *parent)
     : QObject(parent)
-    , part_(part)
+    , session_(session)
+    , msgId_(msgId)
 {
+    kulloAssert(session_);
+    kulloAssert(msgId >= 0);
 }
 
 QString ParticipantModel::name() const
 {
-    return QString::fromStdString(part_->name());
+    return QString::fromStdString(session_->senders()->name(msgId_));
 }
 
 QString ParticipantModel::address() const
 {
-    return QString::fromStdString(part_->address().toString());
+    return QString::fromStdString(session_->senders()->address(msgId_)->toString());
 }
 
 QString ParticipantModel::organization() const
 {
-    return QString::fromStdString(part_->organization());
+    return QString::fromStdString(session_->senders()->organization(msgId_));
 }
 
 QPixmap ParticipantModel::avatar() const
 {
-    QByteArray type;
-    if (part_->avatarMimeType() == "image/png")  type = "png";
-    if (part_->avatarMimeType() == "image/jpeg") type = "jpeg";
+    auto mimeType = session_->senders()->avatarMimeType(msgId_);
+    auto data = session_->senders()->avatar(msgId_);
 
-    QPixmap out;
-    QByteArray avatarData = DesktopUtil::StlQt::toQByteArray(part_->avatar());
-    if (out.loadFromData(avatarData, type.constData()))
+    QByteArray type;
+    if (mimeType == "image/png")  type = "png";
+    if (mimeType == "image/jpeg") type = "jpeg";
+
+    // Loading image data into a QPixmap takes a lot of time and is repeated
+    // often with the same data, so let's cache it
+    auto dataHash = Kullo::Crypto::Hasher::sha256(data);
+    if (dataHash != avatarCacheDataHash_)
     {
-        return out;
+        avatarCacheDataHash_ = dataHash;
+        QByteArray avatarData = DesktopUtil::StlQt::toQByteArray(data);
+        avatarCache_.loadFromData(avatarData, type.constData());
     }
-    return QPixmap();
+    return avatarCache_;
 }
 
 }

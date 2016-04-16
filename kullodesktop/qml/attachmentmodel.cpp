@@ -1,17 +1,23 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "attachmentmodel.h"
 
+#include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <QDesktopServices>
 #include <QDir>
 #include <QUrl>
 
-#include <desktoputil/dice/model/attachment.h>
+#include <apimirror/MessageAttachmentsContentListener.h>
+#include <apimirror/MessageAttachmentsSaveToListener.h>
 #include <desktoputil/filesystem.h>
 #include <desktoputil/qtypestreamers.h>
 #include <desktoputil/stlqt.h>
+#include <kulloclient/api/AsyncTask.h>
+#include <kulloclient/api/MessageAttachments.h>
+#include <kulloclient/api_impl/debug.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/exceptions.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -19,42 +25,43 @@ namespace Qml {
 AttachmentModel::AttachmentModel(QObject *parent)
     : QObject(parent)
 {
-    Log.e() << "Don't instantiate Attachment in QML.";
+    Log.f() << "Don't instantiate Attachment in QML.";
 }
 
-AttachmentModel::AttachmentModel(Kullo::Model::Attachment *att, QObject *parent)
+AttachmentModel::AttachmentModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        Kullo::id_type msgId,
+        Kullo::id_type attId,
+        QObject *parent)
     : QObject(parent)
-    , attachment_(att)
+    , session_(session)
+    , msgId_(msgId)
+    , attId_(attId)
 {
-    kulloAssert(attachment_);
-    kulloAssert(parent == nullptr);
+    kulloAssert(session_);
 }
 
 QString AttachmentModel::filename() const
 {
-    return QString::fromStdString(attachment_->filename());
+    return QString::fromStdString(session_->messageAttachments()->filename(msgId_, attId_));
 }
 
 QString AttachmentModel::hash() const
 {
-    return QString::fromStdString(attachment_->hash());
+    return QString::fromStdString(session_->messageAttachments()->hash(msgId_, attId_));
 }
 
 QString AttachmentModel::mimeType() const
 {
-    return QString::fromStdString(attachment_->mimeType());
+    return QString::fromStdString(session_->messageAttachments()->mimeType(msgId_, attId_));
 }
 
 quint32 AttachmentModel::size() const
 {
-    return attachment_->size();
+    return session_->messageAttachments()->size(msgId_, attId_);
 }
 
-QString AttachmentModel::note() const
-{
-    return QString::fromStdString(attachment_->note());
-}
-
+//TODO make AttachmentModel::saveTo asynchronous
 bool AttachmentModel::saveTo(const QUrl &url) const
 {
     if (!url.isLocalFile())
@@ -63,19 +70,10 @@ bool AttachmentModel::saveTo(const QUrl &url) const
         return false;
     }
 
-    QString localFile = url.toLocalFile();
-
-    try
-    {
-        attachment_->saveTo(localFile.toStdString());
-        return true;
-    }
-    catch (Kullo::Util::FilesystemError)
-    {
-        return false;
-    }
+    return doSaveTo(url.toLocalFile().toStdString());
 }
 
+//TODO make AttachmentModel::open asynchronous
 bool AttachmentModel::open() const
 {
     QString tmpFilename = DesktopUtil::Filesystem::prepareTmpFilename(filename());
@@ -104,15 +102,7 @@ bool AttachmentModel::open() const
         return false;
     }
 
-    try
-    {
-        attachment_->saveTo(tmpFileInfo.absoluteFilePath().toStdString());
-    }
-    catch (Kullo::Util::FilesystemError)
-    {
-        Log.e() << "File could not be saved to " << tmpFileInfo.absoluteFilePath();
-        return false;
-    }
+    if (!doSaveTo(tmpFileInfo.absoluteFilePath().toStdString())) return false;
 
     Log.i() << "Opening file " << tmpFileInfo.absoluteFilePath();
     QUrl tmpFileUrl = QUrl::fromLocalFile(tmpFileInfo.absoluteFilePath());
@@ -121,12 +111,48 @@ bool AttachmentModel::open() const
 
 QByteArray AttachmentModel::content() const
 {
-    return DesktopUtil::StlQt::toQByteArray(attachment_->content());
+    auto listener = std::make_shared<ApiMirror::MessageAttachmentsContentListener>();
+    std::vector<unsigned char> data;
+    connect(listener.get(), &ApiMirror::MessageAttachmentsContentListener::_finished,
+            [&data](int64_t msgId, int64_t attId, const std::vector<uint8_t> &content)
+    {
+        K_UNUSED(msgId);
+        K_UNUSED(attId);
+        data = content;
+    });
+
+    // Synchronous operation is no problem here, as content() is only used for
+    // ImageProviders which operate asynchronously.
+    session_->messageAttachments()->contentAsync(msgId_, attId_, listener)->waitUntilDone();
+    return DesktopUtil::StlQt::toQByteArray(data);
 }
 
-quint32 AttachmentModel::messageId() const
+Kullo::id_type AttachmentModel::messageId() const
 {
-    return attachment_->messageId();
+    return msgId_;
+}
+
+bool AttachmentModel::doSaveTo(const std::string &path) const
+{
+    auto listener = std::make_shared<ApiMirror::MessageAttachmentsSaveToListener>();
+    boost::optional<Kullo::Api::LocalError> saveErr;
+    connect(listener.get(), &ApiMirror::MessageAttachmentsSaveToListener::_error,
+            [&saveErr](int64_t msgId, int64_t attId, const std::string &path, Kullo::Api::LocalError error)
+    {
+        K_UNUSED(msgId);
+        K_UNUSED(attId);
+        K_UNUSED(path);
+        saveErr = error;
+    });
+
+    session_->messageAttachments()->saveToAsync(msgId_, attId_, path, listener)->waitUntilDone();
+
+    if (saveErr)
+    {
+        Log.e() << "File could not be saved to " << path << ", error " << saveErr;
+        return false;
+    }
+    return true;
 }
 
 }

@@ -34,7 +34,6 @@
         <file>resources/scalable/trayicon_linux_orange.svg</file>
         <file>resources/scalable/trayicon_linux_turquoise.svg</file>
         <file>resources/scalable/trayicon_osx_default.svg</file>
-        <file>resources/scalable/trayicon_osx_loggedout.svg</file>
         <file>resources/scalable/trayicon_osx_notification.svg</file>
         <file>resources/scalable/trayicon_windows_default.svg</file>
         <file>resources/scalable/trayicon_windows_loggedout.svg</file>

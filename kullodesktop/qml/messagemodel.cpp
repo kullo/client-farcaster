@@ -1,13 +1,17 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "messagemodel.h"
 
-#include <desktoputil/dice/model/message.h>
+#include <QQmlEngine>
 
 #include <desktoputil/kulloclient2qt.h>
+#include <kulloclient/api/Delivery.h>
+#include <kulloclient/api/DeliveryState.h>
+#include <kulloclient/api/MessageAttachments.h>
+#include <kulloclient/api/Messages.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/delivery.h>
 #include <kulloclient/util/formatstring.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -15,107 +19,123 @@ namespace Qml {
 MessageModel::MessageModel(QObject *parent)
     : QObject(parent)
 {
-    Log.e() << "Don't instantiate Message in QML.";
+    Log.f() << "Don't instantiate Message in QML.";
 }
 
-MessageModel::MessageModel(std::shared_ptr<Kullo::Model::Message> msg, QObject *parent)
+MessageModel::MessageModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        ApiMirror::EventDispatcher &eventDispatcher,
+        Kullo::id_type msgId,
+        QObject *parent)
     : QObject(parent)
-    , msg_(msg)
-    , sender_(msg->sender(), nullptr)
-    , attachments_(msg, nullptr)
+    , session_(session)
+    , msgId_(msgId)
+    , sender_(session_, msgId_)
+    , attachments_(session_, msgId_)
 {
-    kulloAssert(msg_);
-    kulloAssert(parent == nullptr);
+    kulloAssert(session_);
 
-    connect(msg_.get(), &Kullo::Model::Message::attachmentsDownloaded, this, &MessageModel::onAttachmentsDownloaded);
-    connect(msg_.get(), &Kullo::Model::Message::stateChanged,          this, &MessageModel::stateChanged);
-    connect(msg_.get(), &Kullo::Model::Message::deliveryChanged,       this, &MessageModel::deliveryStatusChanged);
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::messageAttachmentsDownloadedChanged,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type messageId)
+    {
+        K_UNUSED(conversationId);
+        if (messageId == msgId_) onAttachmentsDownloaded();
+    });
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::messageStateChanged,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type messageId)
+    {
+        K_UNUSED(conversationId);
+        if (messageId == msgId_) emit stateChanged(msgId_);
+    });
+    connect(&eventDispatcher, &ApiMirror::EventDispatcher::messageDeliveryChanged,
+            this, [this](Kullo::id_type conversationId, Kullo::id_type messageId)
+    {
+        K_UNUSED(conversationId);
+        if (messageId == msgId_) emit deliveryStatusChanged(msgId_);
+    });
 }
 
-quint32 MessageModel::id() const
+Kullo::id_type MessageModel::id() const
 {
-    return msg_->id();
+    return msgId_;
 }
 
-quint32 MessageModel::conversationId() const
+Kullo::id_type MessageModel::conversationId() const
 {
-    return msg_->conversationId();
+    return session_->messages()->conversation(msgId_);
 }
 
 ParticipantModel *MessageModel::sender()
 {
+    QQmlEngine::setObjectOwnership(&sender_, QQmlEngine::CppOwnership);
     return &sender_;
 }
 
 bool MessageModel::read() const
 {
-    return msg_->state(Kullo::Dao::MessageState::Read);
+    return session_->messages()->isRead(msgId_);
 }
 
 void MessageModel::setRead(bool value)
 {
-    msg_->setState(Kullo::Dao::MessageState::Read, value);
-    msg_->save();
+    session_->messages()->setRead(msgId_, value);
 }
 
 bool MessageModel::done() const
 {
-    return msg_->state(Kullo::Dao::MessageState::Done);
+    return session_->messages()->isDone(msgId_);
 }
 
 void MessageModel::setDone(bool value)
 {
-    msg_->setState(Kullo::Dao::MessageState::Done, value);
-    msg_->save();
+    session_->messages()->setDone(msgId_, value);
 }
 
 QDateTime MessageModel::dateSent() const
 {
-    return DesktopUtil::KulloClient2Qt::toQDateTime(msg_->dateSent());
+    return DesktopUtil::KulloClient2Qt::toQDateTime(session_->messages()->dateSent(msgId_));
 }
 
 QDateTime MessageModel::dateReceived() const
 {
-    return DesktopUtil::KulloClient2Qt::toQDateTime(msg_->dateReceived());
-}
-
-bool MessageModel::deleted() const
-{
-    return msg_->isDeleted();
+    return DesktopUtil::KulloClient2Qt::toQDateTime(session_->messages()->dateReceived(msgId_));
 }
 
 QString MessageModel::text() const
 {
-    return QString::fromStdString(msg_->text());
+    return QString::fromStdString(session_->messages()->text(msgId_));
 }
 
 QString MessageModel::textAsHtml() const
 {
-    std::string result = msg_->text();
+    std::string result = session_->messages()->text(msgId_);
     Kullo::Util::FormatString::messageTextToHtml(result);
     return QString::fromStdString(result);
 }
 
 QString MessageModel::footer() const
 {
-    return QString::fromStdString(msg_->footer());
+    return QString::fromStdString(session_->messages()->footer(msgId_));
 }
 
 QString MessageModel::deliveryStatus() const
 {
-    if (msg_->deliveryState().empty())
+    auto deliveryState = session_->messages()->deliveryState(msgId_);
+    if (deliveryState.empty())
     {
         return QStringLiteral("none");
     }
     else
     {
-        auto something_failed = bool{false};
-        auto something_unsent = bool{false};
+        auto something_failed = false;
+        auto something_unsent = false;
 
-        for (auto const &msgState : msg_->deliveryState())
+        for (auto const &msgState : deliveryState)
         {
-            something_failed = something_failed || (msgState.state == Kullo::Util::Delivery::failed);
-            something_unsent = something_unsent || (msgState.state == Kullo::Util::Delivery::unsent);
+            using namespace Kullo::Api;
+            auto state = msgState->state();
+            something_failed = something_failed || (state == DeliveryState::Failed);
+            something_unsent = something_unsent || (state == DeliveryState::Unsent);
         }
 
         if (something_failed)      return QStringLiteral("error");
@@ -126,18 +146,19 @@ QString MessageModel::deliveryStatus() const
 
 AttachmentListModel *MessageModel::attachments()
 {
+    QQmlEngine::setObjectOwnership(&attachments_, QQmlEngine::CppOwnership);
     return &attachments_;
 }
 
 bool MessageModel::attachmentsReady() const
 {
 
-    return msg_->attachmentsReady();
+    return session_->messageAttachments()->allAttachmentsDownloaded(msgId_);
 }
 
 void MessageModel::deletePermanently()
 {
-    msg_->deletePermanently();
+    session_->messages()->remove(msgId_);
 }
 
 bool MessageModel::operator<(const MessageModel &other) const
@@ -148,13 +169,6 @@ bool MessageModel::operator<(const MessageModel &other) const
 bool MessageModel::operator>(const MessageModel &other) const
 {
     return dateReceived() > other.dateReceived();
-}
-
-void MessageModel::markAsReadAndDone()
-{
-    msg_->setState(Kullo::Dao::MessageState::Read, true);
-    msg_->setState(Kullo::Dao::MessageState::Done, true);
-    msg_->save();
 }
 
 void MessageModel::onAttachmentsDownloaded()

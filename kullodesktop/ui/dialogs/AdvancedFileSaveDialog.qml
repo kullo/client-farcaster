@@ -4,19 +4,19 @@ import QtQuick.Dialogs 1.2
 import Kullo 1.0
 
 Item {
-    id: _root
+    id: root
     property string title
     property string filename
     property url fileUrl
 
     function openDialog() {
         if (nativeDialog.valid) nativeDialog.open()
-        else _root.openRequested()
+        else root.openRequested()
     }
 
     function closeDialog() {
         if (nativeDialog.valid) nativeDialog.close()
-        else _root.closeRequested()
+        else root.closeRequested()
     }
 
     signal openRequested()
@@ -28,19 +28,19 @@ Item {
         if (!nativeDialog.valid)
         {
             console.debug("Create fallback Dialog.");
-            qmlFileDialogComponent.createObject(_root);
+            qmlFileDialogComponent.createObject(root);
         }
     }
 
     FileSaveDialog {
         id: nativeDialog
-        title: _root.title
-        filename: _root.filename
+        title: root.title
+        filename: root.filename
 
         // fileUrlChanged is emitted before accepted
-        onFileUrlChanged: _root.fileUrl = fileUrl
-        onAccepted: _root.accepted()
-        onRejected: _root.rejected()
+        onFileUrlChanged: root.fileUrl = fileUrl
+        onAccepted: root.accepted()
+        onRejected: root.rejected()
     }
 
     Component {
@@ -49,20 +49,20 @@ Item {
         Item {
             FileDialog {
                 id: qmlFileDialog
-                title: _root.title
+                title: root.title
                 selectExisting: false
 
                 // fileUrlChanged is emitted after accepted
-                onFileUrlChanged: _root.fileUrl = fileUrl
+                onFileUrlChanged: root.fileUrl = fileUrl
                 onAccepted: {
-                    _root.fileUrl = fileUrl
-                    _root.accepted()
+                    root.fileUrl = fileUrl
+                    root.accepted()
                 }
-                onRejected: _root.rejected()
+                onRejected: root.rejected()
             }
 
             Connections {
-                target: _root
+                target: root
                 onOpenRequested: qmlFileDialog.open()
                 onCloseRequested: qmlFileDialog.close()
             }

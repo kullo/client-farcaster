@@ -84,7 +84,6 @@ ListView {
         paddingRight: 5
         paddingBottom: 5
         paddingLeft: 5
-        conversationParticipantsAddresses: participantsAddresses
         highlightColor: root.activeFocus ? "#999999" : "#bbbbbb"
 
         onAvatarDoubleClicked: {
@@ -95,6 +94,14 @@ ListView {
             senderInfoWindow.senderAddress = senderAddress_
             senderInfoWindow.openWindow()
         }
+    }
+
+    footer: ConversationIntro {
+        conversationParticipantsAddresses: participantsAddresses
+        paddingTop: 5
+        paddingRight: 5
+        paddingBottom: 10
+        paddingLeft: 5
     }
 
     cacheBuffer: 1000 // px

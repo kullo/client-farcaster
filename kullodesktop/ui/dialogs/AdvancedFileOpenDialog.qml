@@ -4,7 +4,7 @@ import QtQuick.Dialogs 1.2
 import Kullo 1.0
 
 Item {
-    id: _root
+    id: root
     property string title
     property url fileUrl
     property var fileUrls
@@ -12,12 +12,12 @@ Item {
 
     function openDialog() {
         if (nativeDialog.valid) nativeDialog.open()
-        else _root.openRequested()
+        else root.openRequested()
     }
 
     function closeDialog() {
         if (nativeDialog.valid) nativeDialog.close()
-        else _root.closeRequested()
+        else root.closeRequested()
     }
 
     signal openRequested()
@@ -29,20 +29,20 @@ Item {
         if (!nativeDialog.valid)
         {
             console.debug("Create fallback Dialog.");
-            qmlFileDialogComponent.createObject(_root);
+            qmlFileDialogComponent.createObject(root);
         }
     }
 
     FileOpenDialog {
         id: nativeDialog
-        title: _root.title
-        selectMultiple: _root.selectMultiple
+        title: root.title
+        selectMultiple: root.selectMultiple
 
         // fileUrlChanged is emitted before accepted
-        onFileUrlChanged: _root.fileUrl = fileUrl
-        onFileUrlsChanged: _root.fileUrls = fileUrls
-        onAccepted: _root.accepted()
-        onRejected: _root.rejected()
+        onFileUrlChanged: root.fileUrl = fileUrl
+        onFileUrlsChanged: root.fileUrls = fileUrls
+        onAccepted: root.accepted()
+        onRejected: root.rejected()
     }
 
     Component {
@@ -51,23 +51,23 @@ Item {
         Item {
             FileDialog {
                 id: qmlFileDialog
-                title: _root.title
+                title: root.title
                 selectExisting: true
-                selectMultiple: _root.selectMultiple
+                selectMultiple: root.selectMultiple
 
                 // fileUrlChanged is emitted after accepted
-                onFileUrlChanged: _root.fileUrl = fileUrl
-                onFileUrlsChanged: _root.fileUrls = fileUrls
+                onFileUrlChanged: root.fileUrl = fileUrl
+                onFileUrlsChanged: root.fileUrls = fileUrls
                 onAccepted: {
-                    _root.fileUrl = fileUrl
-                    _root.fileUrls = fileUrls
-                    _root.accepted()
+                    root.fileUrl = fileUrl
+                    root.fileUrls = fileUrls
+                    root.accepted()
                 }
-                onRejected: _root.rejected()
+                onRejected: root.rejected()
             }
 
             Connections {
-                target: _root
+                target: root
                 onOpenRequested: qmlFileDialog.open()
                 onCloseRequested: qmlFileDialog.close()
             }

@@ -2,10 +2,10 @@
 #include "attachmentlistmodel.h"
 
 #include <QQmlEngine>
+
+#include <kulloclient/api/MessageAttachments.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
-
-#include <desktoputil/dice/model/message.h>
 #include <desktoputil/filesystem.h>
 #include <desktoputil/qtypestreamers.h>
 
@@ -17,12 +17,16 @@ namespace Qml {
 AttachmentListModel::AttachmentListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    Log.e() << "Don't instantiate AttachmentList in QML.";
+    Log.f() << "Don't instantiate AttachmentList in QML.";
 }
 
-AttachmentListModel::AttachmentListModel(std::shared_ptr<Kullo::Model::Message> msg, QObject *parent)
+AttachmentListModel::AttachmentListModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        Kullo::id_type msgId,
+        QObject *parent)
     : QAbstractListModel(parent)
-    , msg_(msg)
+    , session_(session)
+    , msgId_(msgId)
 {
     refreshAttachmentModels();
 }
@@ -37,7 +41,6 @@ QHash<int, QByteArray> AttachmentListModel::roleNames() const
     roles[FilenameRole] = QByteArrayLiteral("filename_");
     roles[HashRole]     = QByteArrayLiteral("hash_");
     roles[SizeRole]     = QByteArrayLiteral("size_");
-    roles[NoteRole]     = QByteArrayLiteral("note_");
     roles[MimeTypeRole] = QByteArrayLiteral("mimeType_");
     return roles;
 }
@@ -57,8 +60,6 @@ QVariant AttachmentListModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(attachmentModels_[index.row()]->hash());
     case SizeRole:
         return QVariant::fromValue(attachmentModels_[index.row()]->size());
-    case NoteRole:
-        return QVariant::fromValue(attachmentModels_[index.row()]->note());
     case MimeTypeRole:
         return QVariant::fromValue(attachmentModels_[index.row()]->mimeType());
 
@@ -108,9 +109,9 @@ void AttachmentListModel::refreshAttachmentModels()
 {
     attachmentModels_.clear();
 
-    for (auto att : msg_->attachments())
+    for (auto attId : session_->messageAttachments()->allForMessage(msgId_))
     {
-        attachmentModels_.emplace_back(new AttachmentModel(att.get(), nullptr));
+        attachmentModels_.emplace_back(new AttachmentModel(session_, msgId_, attId));
     }
 }
 

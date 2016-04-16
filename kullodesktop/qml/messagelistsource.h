@@ -1,10 +1,12 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #pragma once
 
+#include <memory>
 #include <QAbstractListModel>
 
-#include <desktoputil/dice/dice-forwards.h>
-#include <desktoputil/dice/model/conversation.h>
+#include <apimirror/eventdispatcher.h>
+#include <kulloclient/types.h>
+#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 
@@ -35,7 +37,11 @@ public:
         IncomingRole
     };
 
-    explicit MessageListSource(std::shared_ptr<Kullo::Model::Conversation> conv, QObject *parent);
+    MessageListSource(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            ApiMirror::EventDispatcher &eventDispatcher,
+            Kullo::id_type convId,
+            QObject *parent = nullptr);
     ~MessageListSource();
     QHash<int, QByteArray> roleNames() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -46,23 +52,25 @@ public:
     void markAllMessagesAsDone();
     void markAllMessagesAsReadAndDone();
 
-    MessageModel *get(quint32 messageId) const;
-    void deleteMessage(quint32 messageId);
+    MessageModel *get(Kullo::id_type messageId) const;
+    void deleteMessage(Kullo::id_type messageId);
 
 private slots:
-    void onMessageAdded(quint32 messageId);
-    void onMessageDeleted(quint32 messageId);
-    void onMessageAttachmentsDownloaded(quint32 messageId);
-    void onMessageStateChanged(quint32 messageId);
-    void onMessageDeliveryStatusChanged(quint32 messageId);
+    void onMessageAdded(Kullo::id_type messageId);
+    void onMessageRemoved(Kullo::id_type messageId);
+    void onMessageAttachmentsDownloaded(Kullo::id_type messageId);
+    void onMessageStateChanged(Kullo::id_type messageId);
+    void onMessageDeliveryStatusChanged(Kullo::id_type messageId);
 
 private:
-    int getIndexForId(quint32 messageId) const;
+    int getIndexForId(Kullo::id_type messageId) const;
     void loadMessageModels();
     void connectMessageModelToList(const std::unique_ptr<MessageModel> &mm);
     void insertMessage(const int position, std::unique_ptr<MessageModel> &&mm);
 
-    std::shared_ptr<Kullo::Model::Conversation> conversation_;
+    std::shared_ptr<Kullo::Api::Session> session_;
+    ApiMirror::EventDispatcher &eventDispatcher_;
+    Kullo::id_type convId_ = -1;
     std::vector<std::unique_ptr<MessageModel>> messageModels_;
 };
 

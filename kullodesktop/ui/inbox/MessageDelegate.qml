@@ -16,14 +16,13 @@ Item {
     property int paddingRight: 10
     property int paddingBottom: 10
     property int paddingLeft: 10
-    property var conversationParticipantsAddresses: [] // stringlist
     property int conversationId: conversationId_
     property int messageId: id_
     property bool attachmentsReady: attachmentsReady_
     property string highlightColor: "#bbbbbb"
 
     /* private */
-    property bool _selected: index === root.currentIndex
+    property bool _selected: ListView.isCurrentItem
     property bool _showFooter: false
     property bool _hasFooter: footer_.trim() !== ""
 
@@ -32,9 +31,11 @@ Item {
 
     id: root
 
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: paddingTop + messageBorder.height + paddingBottom + intro.height
+    anchors {
+        left: parent.left
+        right: parent.right
+    }
+    height: paddingTop + messageBorder.height + paddingBottom
     clip: true
 
     states: State {
@@ -52,32 +53,11 @@ Item {
 
     on_SelectedChanged: {
         if (_selected) {
-            if (!read_) markAsRad()
+            if (!read_) markAsRead()
         }
     }
 
-    Component.onCompleted: checkForLastElement()
-
-    function checkForLastElement()
-    {
-        if (index == -1)
-        {
-            intro.visible = false
-        }
-        else
-        {
-            if (index == messagesList.count-1)
-            {
-                intro.visible = true
-            }
-            else
-            {
-                intro.visible = false
-            }
-        }
-    }
-
-    function markAsRad() {
+    function markAsRead() {
         read_ = true
     }
 
@@ -94,11 +74,15 @@ Item {
         messagesList.currentIndex = index
     }
 
+    // Keep border a separate component because "The border is rendered within the
+    // rectangle's boundaries." so offsetting every child would be painful otherwise.
     Rectangle {
         id: messageBorder
         color: "transparent"
-        border.color: _selected ? highlightColor : "transparent"
-        border.width: 1
+        border {
+            color: _selected ? highlightColor : "transparent"
+            width: 1
+        }
 
         y: paddingTop
         anchors {
@@ -259,9 +243,9 @@ Item {
                 }
             }
 
-            Rectangle {
+            //Rectangle { color: "#8800ff00"
+            Item {
                 id: footer
-                color: "transparent"
 
                 anchors {
                     top: body.bottom
@@ -390,22 +374,6 @@ Item {
                     }
                 }
             }
-        }
-    }
-
-    ConversationIntro {
-        id: intro
-        anchors {
-            left: parent.left
-            leftMargin: paddingLeft
-            right: parent.right
-            rightMargin: paddingRight
-        }
-        y: messageBackground.y + messageBackground.height + paddingBottom
-
-        Connections {
-            target: messagesList
-            onCountChanged: checkForLastElement()
         }
     }
 }

@@ -3,7 +3,10 @@
 
 #include <memory>
 #include <QAbstractListModel>
-#include <desktoputil/dice/dice-forwards.h>
+
+#include <apimirror/eventdispatcher.h>
+#include <kulloclient/types.h>
+#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 
@@ -19,33 +22,36 @@ public:
         AttachmentIndexRole = Qt::UserRole,
         FilenameRole,
         SizeRole,
-        NoteRole,
         MimeTypeRole,
         HashRole
     };
 
-    explicit DraftAttachmentListModel(QObject *parent = 0);
-    explicit DraftAttachmentListModel(std::shared_ptr<Kullo::Model::Draft> draft, QObject *parent);
+    explicit DraftAttachmentListModel(QObject *parent = nullptr);
+    DraftAttachmentListModel(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            ApiMirror::EventDispatcher &eventDispatcher,
+            Kullo::id_type convId,
+            QObject *parent = nullptr);
     ~DraftAttachmentListModel();
     QHash<int, QByteArray> roleNames() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     void reloadModel();
 
-    Q_INVOKABLE KulloDesktop::Qml::DraftAttachmentModel* get(quint32 index) const;
+    Q_INVOKABLE KulloDesktop::Qml::DraftAttachmentModel* get(Kullo::id_type index) const;
     Q_INVOKABLE int count() const;
 
+private slots:
+    void onAttachmentsChanged(Kullo::id_type conversationId, Kullo::id_type attachmentId);
+
 private:
-    int getPositionForIndex(size_t index) const;
+    int getPositionForIndex(Kullo::id_type index) const;
     void loadAttachmentModels();
 
-    std::shared_ptr<Kullo::Model::Draft> draft_;
+    std::shared_ptr<Kullo::Api::Session> session_;
+    Kullo::id_type convId_ = -1;
     std::vector<std::unique_ptr<DraftAttachmentModel>> attachmentModels_;
-
-private slots:
-    void onAttachmentsChanged();
 };
 
 }

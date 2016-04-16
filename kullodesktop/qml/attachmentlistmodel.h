@@ -3,7 +3,9 @@
 
 #include <memory>
 #include <QAbstractListModel>
-#include <desktoputil/dice/dice-forwards.h>
+
+#include <kulloclient/types.h>
+#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 
@@ -19,12 +21,14 @@ public:
         FilenameRole = Qt::UserRole,
         HashRole,
         SizeRole,
-        NoteRole,
         MimeTypeRole
     };
 
-    explicit AttachmentListModel(QObject *parent = 0);
-    explicit AttachmentListModel(std::shared_ptr<Kullo::Model::Message> msg, QObject *parent);
+    explicit AttachmentListModel(QObject *parent = nullptr);
+    AttachmentListModel(
+            const std::shared_ptr<Kullo::Api::Session> &session,
+            Kullo::id_type msgId,
+            QObject *parent = nullptr);
     ~AttachmentListModel();
     QHash<int, QByteArray> roleNames() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -37,7 +41,8 @@ public:
 private:
     void refreshAttachmentModels();
 
-    std::shared_ptr<Kullo::Model::Message> msg_;
+    std::shared_ptr<Kullo::Api::Session> session_;
+    Kullo::id_type msgId_ = -1;
     std::vector<std::unique_ptr<AttachmentModel>> attachmentModels_;
 };
 

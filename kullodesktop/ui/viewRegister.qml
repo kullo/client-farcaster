@@ -25,7 +25,7 @@ FocusScope {
 
     Registerer {
         id: registerer
-        client: ClientNewApi
+        client: Client.client()
     }
 
     function onLoadedStep1() {
@@ -90,7 +90,7 @@ FocusScope {
 
     Rectangle {
         anchors.fill: parent
-        color: Style.baigeLight
+        color: Style.beigeLight
 
         Logo {
             id: logo

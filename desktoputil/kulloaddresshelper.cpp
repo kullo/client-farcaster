@@ -3,14 +3,14 @@
 
 #include <QStringList>
 
+#include <kulloclient/api/Address.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/kulloaddress.h>
 
 namespace DesktopUtil {
 
 bool KulloAddressHelper::isValidKulloAddress(const QString &address)
 {
-    return Kullo::Util::KulloAddress::isValid(address.toStdString());
+    return !!Kullo::Api::Address::create(address.toStdString());
 }
 
 bool KulloAddressHelper::isValidKulloDomain(const QString &domain)
@@ -21,8 +21,8 @@ bool KulloAddressHelper::isValidKulloDomain(const QString &domain)
 
 bool KulloAddressHelper::kulloAddressEqual(const QString &lhs, const QString &rhs)
 {
-    return Kullo::Util::KulloAddress(lhs.toStdString())
-            == Kullo::Util::KulloAddress(rhs.toStdString());
+    return Kullo::Api::Address::create(lhs.toStdString())->isEqualTo(
+                Kullo::Api::Address::create(rhs.toStdString()));
 }
 
 QStringList KulloAddressHelper::splitKulloAddress(const QString &address)

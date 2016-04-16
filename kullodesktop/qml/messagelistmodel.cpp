@@ -19,12 +19,16 @@ const auto SORT_ROLE = MessageListSource::MessageDateReceivedRole;
 MessageListModel::MessageListModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    Log.e() << "Don't instantiate MessageList in QML.";
+    Log.f() << "Don't instantiate MessageList in QML.";
 }
 
-MessageListModel::MessageListModel(std::shared_ptr<Kullo::Model::Conversation> conv, QObject *parent)
+MessageListModel::MessageListModel(
+        const std::shared_ptr<Kullo::Api::Session> &session,
+        ApiMirror::EventDispatcher &eventDispatcher,
+        Kullo::id_type convId,
+        QObject *parent)
     : QSortFilterProxyModel(parent)
-    , source_(new MessageListSource(conv, nullptr))
+    , source_(new MessageListSource(session, eventDispatcher, convId, nullptr))
 {
     setSourceModel(source_.get());
     sort(0, Qt::DescendingOrder);
@@ -64,12 +68,12 @@ void MessageListModel::markAllMessagesAsReadAndDone()
     source_->markAllMessagesAsReadAndDone();
 }
 
-MessageModel *MessageListModel::get(quint32 messageId) const
+MessageModel *MessageListModel::get(Kullo::id_type messageId) const
 {
     return source_->get(messageId);
 }
 
-void MessageListModel::deleteMessage(quint32 messageId)
+void MessageListModel::deleteMessage(Kullo::id_type messageId)
 {
     source_->deleteMessage(messageId);
 }
