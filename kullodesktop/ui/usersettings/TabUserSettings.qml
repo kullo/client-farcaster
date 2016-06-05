@@ -11,11 +11,13 @@ import "../native"
 import "../windows"
 
 TabContent {
-    id: _root
+    id: root
+
+    /* public */
+    property string address
     property alias name: rowName.value
     property alias organization: rowOrganization.value
     property alias footer: rowFooter.value
-    property string address
 
     function refreshAvatar() {
         rowAvatar.refreshAvatar()
@@ -77,9 +79,9 @@ TabContent {
         AvatarRow {
             id: rowAvatar
             name: qsTr("Avatar")
-            address: _root.address
+            address: root.address
             labelOffset: rowOrganization.labelOffset
-            onAvatarChanged: _root.avatarChanged()
+            onAvatarChanged: root.avatarChanged()
         }
     }
 
@@ -119,7 +121,7 @@ TabContent {
                 style: KulloButtonStyle {
                     source: "/resources/scalable/cancel_w.svg"
                 }
-                onClicked: _root.closeWindow()
+                onClicked: root.closeWindowRequested()
             }
 
             NativeButton {
@@ -137,10 +139,10 @@ TabContent {
                         Client.userSettings.footer = rowFooter.value
 
                     if (Client.userSettings.storeTmpAvatar()) {
-                        _root.avatarChanged()
+                        root.avatarChanged()
                     }
 
-                    _root.closeWindow()
+                    root.closeWindowRequested()
                 }
             }
         }

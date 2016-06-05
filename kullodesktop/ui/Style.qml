@@ -23,6 +23,7 @@ QtObject {
     property color purpleLight: "#91127D"
     property color red: "#B90B34"
     property color redLight: "#D33447"
+    property color white: "#FFFFFF"
 
     property color conversationsListBackground: "#FFFFFF"
     property color messagesListBackground: "#CCCCCC"

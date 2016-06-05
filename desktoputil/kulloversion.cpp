@@ -128,17 +128,17 @@ bool KulloVersion::isPatchUpgradeOf(const KulloVersion &other) const
     return this->patch_ > other.patch_;
 }
 
-int KulloVersion::major() const
+int KulloVersion::majorVersion() const
 {
     return major_;
 }
 
-int KulloVersion::minor() const
+int KulloVersion::minorVersion() const
 {
     return minor_;
 }
 
-int KulloVersion::patch() const
+int KulloVersion::patchVersion() const
 {
     return patch_;
 }

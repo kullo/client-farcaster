@@ -8,7 +8,7 @@ import "../formelements"
 import "../native"
 
 NativeModalWindow {
-    id: _root
+    id: root
     width: 500
     height: 410
     title: qsTr("MasterKey backup notification")
@@ -21,7 +21,7 @@ NativeModalWindow {
     onVisibleChanged: {
         if (visible) // window opened
         {
-            _root._dirtyClosing = true
+            root._dirtyClosing = true
             mainItem.forceActiveFocus()
         }
     }
@@ -63,7 +63,7 @@ NativeModalWindow {
             fill: parent
         }
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Rectangle {
@@ -71,7 +71,7 @@ NativeModalWindow {
             property int paddingH: 10
             property int paddingV: 10
 
-            color: Qt.darker(_root.color, 1.20)
+            color: Qt.darker(root.color, 1.20)
             anchors {
                 left: parent.left
                 right: parent.right
@@ -134,7 +134,7 @@ NativeModalWindow {
                 onClicked: {
                     var seconds = remindTime.current.seconds
                     postpone(seconds)
-                    _root.closeWindow()
+                    root.closeWindow()
                 }
                 style: KulloButtonStyle {
                     source: "/resources/scalable/later_w.svg"
@@ -188,7 +188,7 @@ NativeModalWindow {
                     textFormat: Text.RichText
                     onLinkActivated: {
                         confirmation.enabled = true
-                        _root.openMasterKey()
+                        root.openMasterKey()
                     }
                 }
             }
@@ -224,7 +224,7 @@ NativeModalWindow {
                     }
                     onClicked: {
                         confirm()
-                        _root.closeWindow()
+                        root.closeWindow()
                     }
                 }
             }

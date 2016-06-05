@@ -10,7 +10,9 @@
 namespace KulloDesktop {
 namespace Qml {
 
-static const int RUN_INTERVAL_MS = 2 * 60 * 1000; // 2 minutes
+namespace {
+const auto RUN_INTERVAL_MS = int{2 * 60 * 1000}; // 2 minutes
+}
 
 Scheduler::Scheduler(QObject *parent)
     : QObject(parent)

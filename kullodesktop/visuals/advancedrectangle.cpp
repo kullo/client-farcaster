@@ -13,6 +13,14 @@ AdvancedRectangle::AdvancedRectangle(QQuickItem *parent) :
             this, &AdvancedRectangle::onAppearanceChanged);
     connect(this, &AdvancedRectangle::colorChanged,
             this, &AdvancedRectangle::onAppearanceChanged);
+    connect(this, &AdvancedRectangle::radiusTopLeftChanged,
+            this, &AdvancedRectangle::onAppearanceChanged);
+    connect(this, &AdvancedRectangle::radiusTopRightChanged,
+            this, &AdvancedRectangle::onAppearanceChanged);
+    connect(this, &AdvancedRectangle::radiusBottomLeftChanged,
+            this, &AdvancedRectangle::onAppearanceChanged);
+    connect(this, &AdvancedRectangle::radiusBottomRightChanged,
+            this, &AdvancedRectangle::onAppearanceChanged);
 }
 
 QColor AdvancedRectangle::color() const

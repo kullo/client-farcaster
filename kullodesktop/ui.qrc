@@ -6,7 +6,6 @@
         <file alias="viewInbox.qml">ui/viewInbox.qml</file>
         <file alias="viewLoggingIn.qml">ui/viewLoggingIn.qml</file>
         <file alias="viewLogin.qml">ui/viewLogin.qml</file>
-        <file alias="viewLoginSetUserSettings.qml">ui/viewLoginSetUserSettings.qml</file>
         <file alias="viewRegister.qml">ui/viewRegister.qml</file>
         <file alias="viewWelcome.qml">ui/viewWelcome.qml</file>
         <file alias="libraryLoggerInitializer.qml">ui/libraryLoggerInitializer.qml</file>
@@ -86,6 +85,8 @@
         <file alias="ChessRectangle.qml">ui/misc/ChessRectangle.qml</file>
         <file alias="CtrlKey.qml">ui/misc/CtrlKey.qml</file>
         <file alias="CutCopyPasteMenu.qml">ui/misc/CutCopyPasteMenu.qml</file>
+        <file alias="EmojiList.qml">ui/misc/EmojiList.qml</file>
+        <file alias="EmojiPopup.qml">ui/misc/EmojiPopup.qml</file>
         <file alias="ErrorHint.qml">ui/misc/ErrorHint.qml</file>
         <file alias="Key.qml">ui/misc/Key.qml</file>
         <file alias="Logo.qml">ui/misc/Logo.qml</file>
@@ -124,6 +125,5 @@
     <qresource prefix="/registration">
         <file alias="AddressSelection.qml">ui/registration/AddressSelection.qml</file>
         <file alias="Keygen.qml">ui/registration/Keygen.qml</file>
-        <file alias="SetUserSettings.qml">ui/registration/SetUserSettings.qml</file>
     </qresource>
 </RCC>

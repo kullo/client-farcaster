@@ -17,10 +17,6 @@ FocusScope {
         answer.addQuoteToAnswer(quoteText)
     }
 
-    function refreshAvatar() {
-        answer.refreshAvatar()
-    }
-
     /* private */
     clip: false
 

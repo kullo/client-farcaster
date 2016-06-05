@@ -40,7 +40,8 @@ HEADERS += \
     versions.h
 
 # BEGIN httpclient-curl
-INCLUDEPATH += $$PWD/../../httpclient-curl
+CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-httpclient-curl/include
+CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-httpclient-curl-debug/include
 # END httpclient-curl
 
 include(../common_post.pri)

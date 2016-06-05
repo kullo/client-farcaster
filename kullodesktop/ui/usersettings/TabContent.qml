@@ -8,5 +8,5 @@ Item {
         margins: 10
     }
 
-    signal closeWindow()
+    signal closeWindowRequested()
 }

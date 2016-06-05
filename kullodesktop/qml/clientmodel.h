@@ -108,8 +108,8 @@ private:
     std::shared_ptr<ApiMirror::SyncerListener> syncerListener_;
     ApiMirror::Client &client_;
     std::shared_ptr<Kullo::Api::Session> session_;
-    std::shared_ptr<Qml::ConversationListSource> conversationsSource_;
-    std::shared_ptr<Qml::ConversationListModel> conversationsProxy_;
+    std::shared_ptr<ConversationListSource> conversationsSource_;
+    std::shared_ptr<ConversationListModel> conversationsProxy_;
     std::unique_ptr<UserSettingsModel> userSettingsModel_;
 
     std::shared_ptr<Kullo::Api::AsyncTask> createSessionTask_;

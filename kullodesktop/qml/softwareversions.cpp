@@ -30,7 +30,7 @@ QString SoftwareVersions::version()
 
 QString SoftwareVersions::versionSimplified()
 {
-    return QString::number(DesktopUtil::Versions::kullodesktopVersion().major());
+    return QString::number(DesktopUtil::Versions::kullodesktopVersion().majorVersion());
 }
 
 }

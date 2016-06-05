@@ -171,7 +171,7 @@ FForm {
                     if (ok) {
                         console.info("Login ok.")
                         Client.userSettings.reset(address, masterKeyPem)
-                        app.state = "setUserSettings"
+                        app.state = "loggingIn"
                     }
                     else {
                         console.info("Login failed.")

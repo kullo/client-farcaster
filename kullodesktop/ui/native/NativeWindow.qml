@@ -56,7 +56,7 @@ Window {
         if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_W)
         {
             event.accepted = true
-            _root.closeWindow()
+            closeWindow()
             return true
         }
         // CTRL + M (OS X)
@@ -65,7 +65,7 @@ Window {
             if (Os.osx && !windowTypeModalWindow)
             {
                 event.accepted = true
-                _root.showMinimized()
+                showMinimized()
                 return true
             }
         }

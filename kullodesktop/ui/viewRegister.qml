@@ -40,21 +40,12 @@ FocusScope {
         mainloader.item.forceActiveFocus()
     }
 
-    function onLoadedStep3() {
-        mainloader.item.done.connect(onStep3Done)
-        mainloader.item.forceActiveFocus()
-    }
-
     function onStep1Done() {
         appWindow.alert(0)
         step2()
     }
 
     function onStep2Done() {
-        step3()
-    }
-
-    function onStep3Done() {
         app.state = "loggingIn"
     }
 
@@ -62,7 +53,6 @@ FocusScope {
         // diconnect all from loader
         mainloader.loaded.disconnect(onLoadedStep1);
         mainloader.loaded.disconnect(onLoadedStep2);
-        mainloader.loaded.disconnect(onLoadedStep3);
 
         mainloader.loaded.connect(onLoadedStep1);
         mainloader.source = "/registration/Keygen.qml"
@@ -72,20 +62,9 @@ FocusScope {
         // diconnect all from loader
         mainloader.loaded.disconnect(onLoadedStep1);
         mainloader.loaded.disconnect(onLoadedStep2);
-        mainloader.loaded.disconnect(onLoadedStep3);
 
         mainloader.loaded.connect(onLoadedStep2);
         mainloader.source = "/registration/AddressSelection.qml"
-    }
-
-    function step3() {
-        // diconnect all from loader
-        mainloader.loaded.disconnect(onLoadedStep1);
-        mainloader.loaded.disconnect(onLoadedStep2);
-        mainloader.loaded.disconnect(onLoadedStep3);
-
-        mainloader.loaded.connect(onLoadedStep3);
-        mainloader.source = "/registration/SetUserSettings.qml"
     }
 
     Rectangle {

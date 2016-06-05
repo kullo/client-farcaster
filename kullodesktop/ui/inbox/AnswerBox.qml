@@ -53,10 +53,6 @@ FocusScope {
         }
     }
 
-    function refreshAvatar() {
-        header.avatarSource = "image://senderavatars/" + Client.userSettings.address + "?" + Date.now()
-    }
-
     SystemPalette {
         id: palette
         colorGroup: root._enabled ? SystemPalette.Active : SystemPalette.Disabled
@@ -125,8 +121,10 @@ FocusScope {
                 conversation: root.conversation
             }
 
-            TextArea {
-                id: messageText
+            Item {
+            //Rectangle { color: "green"
+                id: inputContainer
+
                 anchors {
                     top: header.bottom
                     left: parent.left;
@@ -134,28 +132,70 @@ FocusScope {
                     bottom: attachmentsBox.top
                     margins: body._padding
                 }
-                focus: true
-                enabled: root._enabled
-                textColor: palette.text
-                font.pointSize: Style.fontSize.answerTextInput
-                font.family: FontList.SerifFamily
-                wrapMode: TextEdit.Wrap
-                text: root.conversation ? root.conversation.draft.text : ""
 
-                onTextChanged: {
-                    if (root.conversation) {
-                        root.conversation.draft.text = text
+                EmojiPopup {
+                    id: emojiPopup
+                    z: 2
+
+                    onSelected: {
+                        messageText.insert(messageText.cursorPosition, emoji)
+                        messageText.forceActiveFocus()
+                        close()
                     }
-                    saveUnit.count()
+
+                    onCanceled: {
+                        messageText.forceActiveFocus()
+                        close()
+                    }
                 }
 
-                CutCopyPasteMenu {
-                    hasCut: true
-                    hasSelectAll: true
-                    onCut: messageText.cut()
-                    onCopy: messageText.copy()
-                    onPaste: messageText.paste()
-                    onSelectAll: messageText.selectAll()
+                TextArea {
+                    id: messageText
+                    anchors.fill: parent
+                    focus: true
+                    enabled: root._enabled
+                    textColor: palette.text
+                    font.pointSize: Style.fontSize.answerTextInput
+                    font.family: FontList.SerifFamily
+                    wrapMode: TextEdit.Wrap
+                    text: root.conversation ? root.conversation.draft.text : ""
+
+
+                    Keys.onPressed: {
+                        if (SC.isCtrlAndKey(Qt.Key_Space, event)) {
+                            event.accepted = true
+
+                            var pos = messageText.cursorRectangle
+                            var posInContainer = mapToItem(inputContainer, pos.x, pos.y, pos.width, pos.height)
+                            //console.log(pos)
+                            var xCenter = posInContainer.x + (posInContainer.width/2.0)
+                            var yBottom = posInContainer.y + posInContainer.height
+                            var yTop = posInContainer.y
+                            if (yBottom + emojiPopup.height < inputContainer.height - 10) {
+                                emojiPopup.placeBelow(xCenter, yBottom)
+                            }
+                            else {
+                                emojiPopup.placeAbove(xCenter, yTop)
+                            }
+                            emojiPopup.open()
+                        }
+                    }
+
+                    onTextChanged: {
+                        if (root.conversation) {
+                            root.conversation.draft.text = text
+                        }
+                        saveUnit.count()
+                    }
+
+                    CutCopyPasteMenu {
+                        hasCut: true
+                        hasSelectAll: true
+                        onCut: messageText.cut()
+                        onCopy: messageText.copy()
+                        onPaste: messageText.paste()
+                        onSelectAll: messageText.selectAll()
+                    }
                 }
             }
 

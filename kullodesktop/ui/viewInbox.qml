@@ -60,14 +60,9 @@ FocusScope {
         scheduler.user = Client.userSettings
         scheduler.start()
         storeWindowSizeChanges = true
-
-        if (showUserSettingsOnStartup())
-        {
-            showUserSettingsWindow()
-        }
     }
 
-    function showUserSettingsOnStartup() {
+    function userSettingsIncomplete() {
         return Client.userSettings.name.trim() === ""
     }
 
@@ -142,7 +137,6 @@ FocusScope {
 
     SettingsWindow {
         id: settingsWindow
-        onAvatarChanged: rightColumn.refreshAvatar();
     }
 
     InfoWindow {
@@ -225,6 +219,7 @@ FocusScope {
             syncingBanner.hide()
             if (heartbeat.needResync) heartbeat.resync()
             if (countMessagesNewUnread > 0) newMessageSound.play();
+            if (userSettingsIncomplete()) showUserSettingsWindow()
         }
         onSyncError: {
             var errmsg;

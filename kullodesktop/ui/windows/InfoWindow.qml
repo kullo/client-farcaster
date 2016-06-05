@@ -11,7 +11,7 @@ import "../native"
 import "../js/shortcut.js" as SC
 
 NativeModalWindow {
-    id: _root
+    id: root
     width: 300
     height: 450
     title: qsTr("Info")
@@ -29,7 +29,7 @@ NativeModalWindow {
             margins: 10
         }
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Column {
@@ -97,7 +97,7 @@ NativeModalWindow {
                          horizontalCenter: parent.horizontalCenter
                      }
                      text: qsTr("Download")
-                     onClicked: _root.downloadUpdate()
+                     onClicked: root.downloadUpdate()
                 }
 
                 NativeText {
@@ -162,7 +162,7 @@ NativeModalWindow {
             text: qsTr("Okay")
             tooltip: qsTr("Close window")
                      + " (%1)".arg(SC.nameOfCtrlAndKey("W", Os.osx))
-            onClicked: _root.closeWindow()
+            onClicked: root.closeWindow()
             style: KulloButtonStyle {}
         }
     }

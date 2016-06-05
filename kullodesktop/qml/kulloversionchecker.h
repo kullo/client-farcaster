@@ -7,7 +7,7 @@
 #include <QUrl>
 #include <QString>
 #include <QTimer>
-#include <mutex>
+#include <atomic>
 #include <desktoputil/asynchttpgetmanager.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
@@ -46,12 +46,15 @@ signals:
     void updateUrlChanged();
 
 private slots:
-    void onRequestFinished(DesktopUtil::AsyncHttpGetManager::Response response);
     void onMightNeedToRun();
+    void onRequestFinished(DesktopUtil::AsyncHttpGetManager::Response response);
 
 private:
+    void handleVersionRequestError();
+    void handleVersionRequestSuccess(const QByteArray &returnBody);
+
     QTimer timer_;
-    QDateTime lastRunUtc_;
+    QDateTime lastSuccessfulRunUtc_;
     DesktopUtil::AsyncHttpGetManager manager_;
     QString versionAvailable_;
     Applications::KulloApplication &app_;
@@ -60,7 +63,7 @@ private:
     std::shared_ptr<QBuffer> downloadBuffer_;
     // Ensures that download data is not overwritten
     // before entirely processed.
-    std::mutex running_;
+    std::atomic<bool> running_;
 };
 
 }

@@ -30,6 +30,7 @@
 #include <kulloclient/api_impl/debug.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/misc.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
@@ -62,7 +63,12 @@ ClientModel::ClientModel(
     QString activeUser = app_.deviceSettings().activeUser();
     if (!activeUser.isEmpty())  // load UserSettings if we have an active user
     {
+        Log.d() << "Active user: " << activeUser;
         userSettingsModel_->load(activeUser);
+    }
+    else
+    {
+        Log.d() << "No active user set.";
     }
 
     connect(syncerListener_.get(), &ApiMirror::SyncerListener::_progressed,
@@ -97,6 +103,7 @@ void ClientModel::logIn()
 
     // Set active user on login
     auto addr = userSettingsModel_->address();
+    kulloAssert(!addr.isEmpty());
     app_.deviceSettings().setActiveUser(addr);
     app_.deviceSettings().setLastActiveUser(addr);
 
@@ -128,7 +135,8 @@ void ClientModel::logIn()
             this, &ClientModel::onCreateSessionError);
 
     createSessionTask_ = client_.raw()->createSessionAsync(
-                userSettingsModel_->rawUserSettings(),
+                userSettingsModel_->rawAddress(),
+                userSettingsModel_->rawMasterKey(),
                 dbFilePath.toStdString(),
                 sessionListener,
                 listener
@@ -143,6 +151,7 @@ void ClientModel::logOut()
     session_.reset();
     app_.deviceSettings().setActiveUser("");
     conversationsSource_->setSession(nullptr);
+    userSettingsModel_->setUserSettings(nullptr);
 
     emit loggedInChanged(false);
 }
@@ -264,6 +273,8 @@ void ClientModel::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Sess
 void ClientModel::onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error)
 {
     //TODO handle create session error
+    K_UNUSED(address);
+    K_UNUSED(error);
 }
 
 void ClientModel::onInternalLoginDone()
@@ -272,6 +283,9 @@ void ClientModel::onInternalLoginDone()
 
     Log.i() << "Logged in.";
     session_->syncer()->setListener(syncerListener_);
+
+    userSettingsModel_->setUserSettings(session_->userSettings());
+    userSettingsModel_->migrate();
 
     conversationsListSource()->setSession(session_);
     conversationsProxy_ = std::make_shared<Qml::ConversationListModel>(conversationsSource_, nullptr);
@@ -284,7 +298,7 @@ void ClientModel::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgres
 {
     latestSyncProgress_ = progress;
     emit syncProgressed(latestSyncProgress_->countProcessed,
-                         latestSyncProgress_->countTotal);
+                        latestSyncProgress_->countTotal);
 }
 
 void ClientModel::onSyncFinished()

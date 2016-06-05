@@ -5,7 +5,7 @@ import "../buttons"
 import "../native"
 
 TabContent {
-    id: _root
+    id: root
 
     function reset() {
         updateLaneRow.value = Devicesettings.updateLane
@@ -58,7 +58,7 @@ TabContent {
             text: qsTr("Discard")
             style: KulloButtonStyle { source: "/resources/scalable/cancel_w.svg" }
             onClicked: {
-                _root.closeWindow()
+                root.closeWindowRequested()
             }
         }
 
@@ -69,7 +69,7 @@ TabContent {
             onClicked: {
                 Devicesettings.updateLane = updateLaneRow.value
                 Devicesettings.closeToTray = closeToTrayRow.checked
-                _root.closeWindow()
+                root.closeWindowRequested()
             }
         }
     }

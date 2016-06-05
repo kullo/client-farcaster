@@ -37,15 +37,13 @@ else:unix:                                PRE_TARGETDEPS += $$OUT_PWD/../desktop
 # END desktoputil
 
 # BEGIN httpclient-curl
-win32:CONFIG(release, debug|release):     LIBS += -L$$OUT_PWD/../../build-httpclient-curl/httpclient/release/     -lhttpclient
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$OUT_PWD/../../build-httpclient-curl-debug/httpclient/debug/ -lhttpclient
-else:unix:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../build-httpclient-curl/httpclient/             -lhttpclient
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../build-httpclient-curl-debug/httpclient/       -lhttpclient
+CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../build-httpclient-curl/httpclient/       -lhttpclient
+CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../build-httpclient-curl-debug/httpclient/ -lhttpclient
 
 DEPENDPATH += $$PWD/../../httpclient-curl/httpclient
 
-win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/release/httpclient.lib
-else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/debug/httpclient.lib
+win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/httpclient.lib
+else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/httpclient.lib
 else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/libhttpclient.a
 else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/libhttpclient.a
 

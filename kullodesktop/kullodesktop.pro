@@ -98,6 +98,7 @@ SOURCES += \
     qml/fileopendialog.cpp \
     qml/filesavedialog.cpp \
     qml/fontlist.cpp \
+    qml/hdpi.cpp \
     qml/kulloupdatermodel.cpp \
     qml/kulloversionchecker.cpp \
     qml/libraryloggermodel.cpp \
@@ -154,6 +155,7 @@ HEADERS += \
     qml/fileopendialog.h \
     qml/filesavedialog.h \
     qml/fontlist.h \
+    qml/hdpi.h \
     qml/kulloupdatermodel.h \
     qml/kulloversionchecker.h \
     qml/libraryloggermodel.h \
@@ -213,19 +215,19 @@ else:unix:                                PRE_TARGETDEPS += $$OUT_PWD/../desktop
 # END desktoputil
 
 # BEGIN httpclient-curl
-win32:CONFIG(release, debug|release):     LIBS += -L$$OUT_PWD/../../build-httpclient-curl/httpclient/release/     -lhttpclient
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$OUT_PWD/../../build-httpclient-curl-debug/httpclient/debug/ -lhttpclient
-else:unix:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../build-httpclient-curl/httpclient/             -lhttpclient
-else:unix:CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../build-httpclient-curl-debug/httpclient/       -lhttpclient
+CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../bin-httpclient-curl/lib/       -lhttpclient
+CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../bin-httpclient-curl-debug/lib/ -lhttpclient
 
-DEPENDPATH += $$PWD/../../httpclient-curl/httpclient
+CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../bin-httpclient-curl/lib
+CONFIG(debug, debug|release):   DEPENDPATH += $$PWD/../../bin-httpclient-curl-debug/lib
 
-win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/release/httpclient.lib
-else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/debug/httpclient.lib
-else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/libhttpclient.a
-else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/libhttpclient.a
+win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl/lib/httpclient.lib
+else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl-debug/lib/httpclient.lib
+else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl/lib/libhttpclient.a
+else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl-debug/lib/libhttpclient.a
 
-INCLUDEPATH += $$PWD/../../httpclient-curl
+CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-httpclient-curl/include
+CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-httpclient-curl-debug/include
 # END httpclient-curl
 
 # BEGIN libkullo

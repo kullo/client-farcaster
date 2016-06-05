@@ -5,7 +5,7 @@ import "../buttons"
 import "../native"
 
 TabContent {
-    id: _root
+    id: root
 
     function reset() {
         fontSizeUserFactorRow.value = Devicesettings.fontSizeUserFactor
@@ -70,7 +70,7 @@ TabContent {
             onClicked: {
                 Devicesettings.fontSizeUserFactorPreview = Devicesettings.fontSizeUserFactor
                 Devicesettings.messagesFontPreview = Devicesettings.messagesFont
-                _root.closeWindow()
+                root.closeWindowRequested()
             }
         }
 
@@ -81,7 +81,7 @@ TabContent {
             onClicked: {
                 Devicesettings.fontSizeUserFactor = Devicesettings.fontSizeUserFactorPreview
                 Devicesettings.messagesFont = Devicesettings.messagesFontPreview
-                _root.closeWindow()
+                root.closeWindowRequested()
             }
         }
     }

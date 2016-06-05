@@ -36,6 +36,7 @@
 
 #include "kullodesktop/qml/clientmodel.h"
 #include "kullodesktop/qml/fontlist.h"
+#include "kullodesktop/qml/hdpi.h"
 #include "kullodesktop/qml/kulloversionchecker.h"
 #include "kullodesktop/qml/modalitywatcher.h"
 #include "kullodesktop/qml/os.h"
@@ -154,11 +155,14 @@ int main(int argc, char *argv[])
         app.deviceSettings().migrate();
 
         Qml::FontList fontlist;
+        Qml::Hdpi hdpi;
         Qml::Utils utils;
         Qml::SoftwareVersions softwareVersions;
         Qml::Os os;
         Qml::ModalityWatcher modalityWatcher;
         Qml::KulloVersionChecker kulloVersionChecker(app);
+
+        Log.d() << "Font scaling factor: " << hdpi.fontScalingFactor();
 
         /*
          * Create Client
@@ -195,6 +199,7 @@ int main(int argc, char *argv[])
          */
         QQmlContext *context = engine.rootContext();
         context->setContextProperty("Client", &clientModel);
+        context->setContextProperty("Hdpi", &hdpi);
         context->setContextProperty("KulloVersionChecker", &kulloVersionChecker);
         context->setContextProperty("Devicesettings", &app.deviceSettings());
         context->setContextProperty("FontList", &fontlist);

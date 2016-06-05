@@ -2,6 +2,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
+import QtQuick.Window 2.2
 import Kullo 1.0
 
 import "." // QTBUG-34418, singletons require explicit import to load qmldir file
@@ -16,6 +17,12 @@ ApplicationWindow {
     Component.onCompleted: {
         app.forceActiveFocus()
         KulloVersionChecker.run()
+    }
+
+    /* private */
+    property real _devicePixelRatio: Screen.devicePixelRatio
+    on_DevicePixelRatioChanged: {
+        console.info("Device pixel ratio: " + _devicePixelRatio)
     }
 
     UpdateDialog {
@@ -65,8 +72,6 @@ ApplicationWindow {
         // * register
         // * welcome
         // * login
-        // * setUserSettings
-        // * registerSetUserSettings
         //
         // Properties to be set in every state
         // * app.loaderSource
@@ -164,42 +169,6 @@ ApplicationWindow {
                 PropertyChanges {
                     target: app
                     loaderSource: "viewLogin.qml"
-                }
-                PropertyChanges {
-                    target: appWindow
-                    visibility: "AutomaticVisibility"
-                }
-                PropertyChanges {
-                    target: appWindow
-                    width: 300
-                    height: 500
-                    minimumWidth: 0
-                    minimumHeight: 0
-                }
-            },
-            State {
-                name: "setUserSettings"
-                PropertyChanges {
-                    target: app
-                    loaderSource: "viewLoginSetUserSettings.qml"
-                }
-                PropertyChanges {
-                    target: appWindow
-                    visibility: "AutomaticVisibility"
-                }
-                PropertyChanges {
-                    target: appWindow
-                    width: 300
-                    height: 500
-                    minimumWidth: 0
-                    minimumHeight: 0
-                }
-            },
-            State {
-                name: "registerSetUserSettings"
-                PropertyChanges {
-                    target: app
-                    loaderSource: "viewRegisterSetUserSettings.qml"
                 }
                 PropertyChanges {
                     target: appWindow

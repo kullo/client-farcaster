@@ -1,3 +1,4 @@
+/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "initials.h"
 
 #include <QRegularExpression>

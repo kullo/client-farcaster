@@ -8,11 +8,12 @@ import "../buttons"
 import "../native"
 
 NativeWindow {
-    id: _root
+    id: root
     width: 550
     height: 220
     title: qsTr("Conversation Info")
 
+    /* public */
     property int conversationId: -1
     property alias participantsList: participantsText.text
     property var participantsAddresses
@@ -44,7 +45,7 @@ NativeWindow {
             margins: 10
         }
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Image {

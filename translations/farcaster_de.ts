@@ -126,7 +126,7 @@
     <name>ClientTooOldBanner</name>
     <message>
         <source>This software is too old to sync with the server.</source>
-        <translation>Diese Software ist zu alt um mit diesem Server zu synchronisieren.</translation>
+        <translation>Diese Software ist zu alt, um mit diesem Server zu synchronisieren.</translation>
     </message>
     <message>
         <source>Please download the current version from &lt;a style=&apos;color: %1&apos; href=&apos;%2&apos;&gt;kullo.net/download&lt;/a&gt;</source>
@@ -191,6 +191,389 @@
     <message>
         <source>Select all</source>
         <translation>Alles auswählen</translation>
+    </message>
+</context>
+<context>
+    <name>EmojiList</name>
+    <message>
+        <source>grinning face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>grinning face with smiling eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with tears of joy</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with open mouth</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with open mouth and smiling eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with open mouth and cold sweat</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with open mouth and tightly-closed eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with halo</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with horns</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>winking face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with smiling eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face savouring delicious food</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>relieved face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with heart-shaped eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling face with sunglasses</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smirking face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>neutral face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>expressionless face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unamused face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with cold sweat</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pensive face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>confused face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>confounded face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kissing face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face throwing a kiss</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kissing face with smiling eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kissing face with closed eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with stuck-out tongue</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with stuck-out tongue and winking eye</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with stuck-out tongue and tightly-closed eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>disappointed face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>worried face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>angry face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pouting face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>crying face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>persevering face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with look of triumph</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>disappointed but relieved face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>frowning face with open mouth</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>anguished face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fearful face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>weary face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sleepy face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>tired face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>grimacing face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>loudly crying face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with open mouth</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hushed face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with open mouth and cold sweat</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face screaming in fear</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>astonished face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>flushed face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sleeping face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dizzy face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face without mouth</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with medical mask</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>grinning cat face with smiling eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cat face with tears of joy</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling cat face with open mouth</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>smiling cat face with heart-shaped eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cat face with wry smile</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kissing cat face with closed eyes</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pouting cat face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>crying cat face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>weary cat face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with no good gesture</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>face with ok gesture</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>person bowing deeply</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>see-no-evil monkey</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hear-no-evil monkey</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>speak-no-evil monkey</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>happy person raising one hand</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>person raising both hands in celebration</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>person frowning</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>person with pouting face</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>person with folded hands</source>
+        <comment>emoji description</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -377,7 +760,7 @@
     </message>
     <message>
         <source>If Kullo crashed before, you might need to restart your computer.</source>
-        <translation>Nach einem Absturz von Kullo kann es sein, dass der Computer neu gestartet werden muss um das Problem zu beheben.</translation>
+        <translation>Nach einem Absturz von Kullo kann es sein, dass der Computer neu gestartet werden muss, um das Problem zu beheben.</translation>
     </message>
 </context>
 <context>

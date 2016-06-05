@@ -9,15 +9,15 @@ import "../"
 import "../buttons"
 import "../native"
 import "../usersettings"
-//import "../js/shortcut.js" as SC
 
 NativeModalWindow {
-    id: _root
+    id: root
     width: 400
     height: 500
     title: qsTr("Settings")
     objectName: "SettingsWindow"
 
+    // unused signal since sender avatar is not shown in compose view anymore
     signal avatarChanged()
 
     onVisibleChanged: {
@@ -25,11 +25,10 @@ NativeModalWindow {
         {
             if (tabUserSettings.item)
             {
+                tabUserSettings.item.address      = Client.userSettings.address
                 tabUserSettings.item.name         = Client.userSettings.name
                 tabUserSettings.item.organization = Client.userSettings.organization
-                tabUserSettings.item.address      = Client.userSettings.address
                 tabUserSettings.item.footer       = Client.userSettings.footer
-                tabUserSettings.item.address      = Client.userSettings.address
                 tabUserSettings.item.refreshAvatar()
                 checkValues()
             }
@@ -74,7 +73,7 @@ NativeModalWindow {
             margins: 10
         }
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
         TabView {
@@ -103,8 +102,8 @@ NativeModalWindow {
                 title: qsTr("Sender")
                 source: "/usersettings/TabUserSettings.qml"
                 onLoaded: {
-                    item.closeWindow.connect(closeWindow)
                     item.avatarChanged.connect(avatarChanged)
+                    item.closeWindowRequested.connect(closeWindow)
                 }
             }
 
@@ -119,7 +118,7 @@ NativeModalWindow {
                 title: qsTr("Device")
                 source: "/usersettings/TabDeviceSettings.qml"
                 onLoaded: {
-                    item.closeWindow.connect(closeWindow)
+                    item.closeWindowRequested.connect(closeWindow)
                 }
             }
 
@@ -128,7 +127,7 @@ NativeModalWindow {
                 title: qsTr("Font")
                 source: "/usersettings/TabFont.qml"
                 onLoaded: {
-                    item.closeWindow.connect(closeWindow)
+                    item.closeWindowRequested.connect(closeWindow)
                 }
             }
         }

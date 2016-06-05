@@ -124,7 +124,7 @@ K_TEST_F(KulloVersion, isPatchUpgradeOf)
 K_TEST_F(KulloVersion, getters)
 {
     auto version = DesktopUtil::KulloVersion("1.12.3");
-    EXPECT_THAT(version.major(), Eq(1));
-    EXPECT_THAT(version.minor(), Eq(12));
-    EXPECT_THAT(version.patch(), Eq(3));
+    EXPECT_THAT(version.majorVersion(), Eq(1));
+    EXPECT_THAT(version.minorVersion(), Eq(12));
+    EXPECT_THAT(version.patchVersion(), Eq(3));
 }

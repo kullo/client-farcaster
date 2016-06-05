@@ -13,7 +13,7 @@ Item {
     id: root
 
     property alias name: label.text
-    property string address: "";
+    property string address: ""
 
     property int marginTop: 0
     property int marginBottom: 0
@@ -103,7 +103,6 @@ Item {
                                 if (Client.userSettings.setTmpAvatarFileUrl(fileUrl))
                                 {
                                     console.debug("Temporary avatar set.")
-                                    Client.userSettings.tmpAvatarActive = true
                                     refreshAvatar()
                                 }
                                 drop.acceptProposedAction()

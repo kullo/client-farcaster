@@ -25,6 +25,7 @@ Item {
     property bool _selected: ListView.isCurrentItem
     property bool _showFooter: false
     property bool _hasFooter: footer_.trim() !== ""
+    property real _maxTextWidth: 600*Hdpi.FontScalingFactor
 
     signal avatarClicked();
     signal avatarDoubleClicked();
@@ -154,7 +155,9 @@ Item {
                         leftMargin: 15
                         bottomMargin: 20
                     }
-                    width: (body.width-2*anchors.leftMargin) < 600 ? (body.width-2*anchors.leftMargin) : 600
+                    width: (body.width-2*anchors.leftMargin) < _maxTextWidth
+                           ? (body.width-2*anchors.leftMargin)
+                           : _maxTextWidth
                     font.family: Devicesettings.messagesFontPreview.family
                     font.italic: Devicesettings.messagesFontPreview.italic
                     font.weight: Devicesettings.messagesFontPreview.weight

@@ -9,7 +9,7 @@ import "../native"
 import "../js/format.js" as Format
 
 NativeWindow {
-    id: _root
+    id: root
 
     title: qsTr("Import MasterKey")
     width: 400
@@ -26,7 +26,7 @@ NativeWindow {
         }
         color: Style.beigeLight
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Column {
@@ -79,7 +79,7 @@ NativeWindow {
                                 element.text = keyParts[i]
                             }
                         }
-                        _root.closeWindow()
+                        root.closeWindow()
                     }
                 }
             }

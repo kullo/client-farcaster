@@ -8,7 +8,7 @@ import "../buttons"
 import "../native"
 
 NativeWindow {
-    id: _root
+    id: root
     width: 550
     height: 220
     title: qsTr("Sender Info")
@@ -26,7 +26,7 @@ NativeWindow {
         id: mainItem
         anchors.fill: parent
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
         Image {

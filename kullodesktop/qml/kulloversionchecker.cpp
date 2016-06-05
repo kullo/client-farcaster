@@ -43,6 +43,7 @@ namespace Qml {
 KulloVersionChecker::KulloVersionChecker(Applications::KulloApplication &app, QObject *parent)
     : QObject(parent)
     , app_(app)
+    , running_(false)
 {
     connect(&manager_, &DesktopUtil::AsyncHttpGetManager::finished,
             this, &KulloVersionChecker::onRequestFinished);
@@ -79,7 +80,12 @@ QUrl KulloVersionChecker::downloadUrl() const
 
 void KulloVersionChecker::run()
 {
-    running_.lock();
+    if (running_.exchange(true))
+    {
+        // running_ was already true
+        return;
+    }
+
     QUrl url(CHECK_URL_PATTERN.arg(OS_FAMILY, app_.deviceSettings().updateLane()));
 
     downloadData_ = std::make_shared<QByteArray>();
@@ -87,22 +93,40 @@ void KulloVersionChecker::run()
     downloadBuffer_->open(QIODevice::WriteOnly);
 
     manager_.get(url, downloadBuffer_);
+}
 
-    lastRunUtc_ = QDateTime::currentDateTimeUtc();
+void KulloVersionChecker::onMightNeedToRun()
+{
+    const auto nowUtc = QDateTime::currentDateTimeUtc();
+    if (lastSuccessfulRunUtc_.isNull() || lastSuccessfulRunUtc_.secsTo(nowUtc) > INTERVAL_RUN)
+    {
+        run();
+    }
 }
 
 void KulloVersionChecker::onRequestFinished(DesktopUtil::AsyncHttpGetManager::Response response)
 {
     if (response->error || response->statusCode != 200)
     {
-        Log.e() << "Error getting latest Kullo version.";
-        running_.unlock();
-        return;
+        handleVersionRequestError();
     }
+    else
+    {
+        handleVersionRequestSuccess(*downloadData_);
+    }
+    running_ = false;
+}
 
-    DesktopUtil::KulloVersion versionAvailable(QString::fromUtf8(*downloadData_).trimmed().toStdString());
-    // All downloaded data processed, release mutex
-    running_.unlock();
+void KulloVersionChecker::handleVersionRequestError()
+{
+    Log.e() << "Error getting latest Kullo version.";
+}
+
+void KulloVersionChecker::handleVersionRequestSuccess(const QByteArray &returnBody)
+{
+    lastSuccessfulRunUtc_ = QDateTime::currentDateTimeUtc();
+
+    DesktopUtil::KulloVersion versionAvailable(QString::fromUtf8(returnBody).trimmed().toStdString());
 
     DesktopUtil::KulloVersion versionInstalled = DesktopUtil::Versions::kullodesktopVersion();
 
@@ -117,14 +141,6 @@ void KulloVersionChecker::onRequestFinished(DesktopUtil::AsyncHttpGetManager::Re
         emit updateAvailableChanged();
         emit versionAvailableChanged();
         emit updateAvailable(versionInstalledStr, versionAvailableStr);
-    }
-}
-
-void KulloVersionChecker::onMightNeedToRun()
-{
-    if (lastRunUtc_.isNull() || lastRunUtc_.secsTo(QDateTime::currentDateTimeUtc()) > INTERVAL_RUN)
-    {
-        run();
     }
 }
 

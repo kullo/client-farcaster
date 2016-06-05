@@ -9,10 +9,13 @@ import "../native"
 import "../js/format.js" as Format
 
 NativeWindow {
-    id: _root
+    id: root
 
+    /* public */
     property string address
     property alias key: keyInput.text
+
+    /* private */
     property string _intoText: qsTr("Kullo MasterKey of %1").arg(address)
 
     title: qsTr("Show MasterKey")
@@ -30,7 +33,7 @@ NativeWindow {
             margins: 10
         }
 
-        Keys.onEscapePressed: _root.closeWindow()
+        Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: {
             handleNativeWindowShortcuts(event)
 

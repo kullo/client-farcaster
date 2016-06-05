@@ -24,6 +24,7 @@ SUBDIRS += \
     apimirror \
     cpp-markdown \
     desktoputil \
+    integration-tests \
     kullodesktop \
     tests \
     translations
@@ -39,6 +40,8 @@ SUBDIRS += \
 #}
 
 tests.depends += desktoputil
+integration-tests.depends += desktoputil
+
 kullodesktop.depends += apimirror
 kullodesktop.depends += cpp-markdown
 kullodesktop.depends += desktoputil
