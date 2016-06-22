@@ -17,7 +17,7 @@ FocusScope {
 
     id: root
     height: 8*_ELEMENT_SIZE + 2*_BORDER_WIDTH
-    width: 14*_ELEMENT_SIZE + 2*_BORDER_WIDTH
+    width: 15*_ELEMENT_SIZE + 2*_BORDER_WIDTH
 
     visible: false
 
@@ -108,11 +108,11 @@ FocusScope {
 
                     }
                     id: previewEmoji
-                    width:  4*_ELEMENT_SIZE
-                    height: 4*_ELEMENT_SIZE
+                    width:  5*_ELEMENT_SIZE
+                    height: 5*_ELEMENT_SIZE
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    font.pixelSize: 2*_ELEMENT_SIZE
+                    font.pixelSize: 2.5*_ELEMENT_SIZE
                     color: _FOREGROUND_COLOR
                     text: grid.currentItem ? grid.currentItem.emoji : ""
                 }
@@ -125,7 +125,7 @@ FocusScope {
                         leftMargin: _PADDING_H
                     }
                     id: previewDescription
-                    width:  4*_ELEMENT_SIZE - 2*_PADDING_H
+                    width:  5*_ELEMENT_SIZE - 2*_PADDING_H
                     height: 2*_ELEMENT_SIZE
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignTop

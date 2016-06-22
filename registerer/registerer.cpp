@@ -1,122 +1,106 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "registerer.h"
 
-#include <fstream>
-
+#include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressNotAvailableReason.h>
+#include <kulloclient/api/AsyncTask.h>
+#include <kulloclient/api/Client.h>
+#include <kulloclient/api/ClientGenerateKeysListener.h>
+#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/Registration.h>
+#include <kulloclient/api/RegistrationRegisterAccountListener.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/kulloaddress.h>
 #include <kulloclient/util/librarylogger.h>
-#include <kulloclient/util/masterkey.h>
 #include <kulloclient/util/misc.h>
-#include <kulloclient/util/formatstring.h>
 
-Registerer::Registerer(const QCoreApplication &app, QObject *parent)
-    : QObject(parent)
-    , app_(app)
+namespace {
+
+class GenKeysListener: public Kullo::Api::ClientGenerateKeysListener
 {
-
-}
-
-Registerer::~Registerer()
-{
-}
-
-void Registerer::run(const Kullo::Util::KulloAddress &address, const Kullo::Util::MasterKey &masterKey)
-{
-    registration_ = Kullo::make_unique<Kullo::Model::Registration>();
-    registrationAddress_ = Kullo::make_unique<Kullo::Util::KulloAddress>(address);
-
-    connect(registration_.get(), &Kullo::Model::Registration::keysGenerationProgressChanged,
-            this, &Registerer::onKeysGenerationProgressChanged);
-    connect(registration_.get(), &Kullo::Model::Registration::keysGenerationDone,
-            this, &Registerer::onKeysGenerationDone);
-
-    connect(registration_.get(), &Kullo::Model::Registration::success,
-            this, &Registerer::onSuccess);
-    connect(registration_.get(), &Kullo::Model::Registration::error,
-            this, &Registerer::onError);
-
-    connect(registration_.get(), &Kullo::Model::Registration::codeChallenge,
-            this, &Registerer::onChallenge);
-    connect(registration_.get(), &Kullo::Model::Registration::reservationChallenge,
-            this, &Registerer::onChallenge);
-    connect(registration_.get(), &Kullo::Model::Registration::resetChallenge,
-            this, &Registerer::onChallenge);
-    connect(registration_.get(), &Kullo::Model::Registration::addressExists,
-            this, &Registerer::onAddressExists);
-    connect(registration_.get(), &Kullo::Model::Registration::addressBlocked,
-            this, &Registerer::onAddressBlocked);
-
-    registration_->genKeys(masterKey);
-}
-
-std::string Registerer::getStringContentsOrCrash(const std::string &filename, bool trimmed)
-{
-    std::string out;
-
-    try {
-        std::ifstream t(filename);
-
-        if (t.fail())
-        {
-            Log.e() << "Opening file failed: " << filename;
-            exit(1);
-        }
-
-        out = std::string(std::istreambuf_iterator<char>{t},
-                          std::istreambuf_iterator<char>{});
-    }
-    catch(std::exception& e)
+public:
+    void progress(int8_t progress) override
     {
-        Log.f() << e.what();
+        Log.i() << "Key generation: "  << std::to_string(progress) << " %";
     }
 
-    if (trimmed)
+    void finished(const std::shared_ptr<Kullo::Api::Registration> &registration) override
     {
-        Kullo::Util::FormatString::trim(out);
+        registration_ = registration;
     }
 
-    return out;
+    std::shared_ptr<Kullo::Api::Registration> registration() const
+    {
+        return registration_;
+    }
+
+private:
+    std::shared_ptr<Kullo::Api::Registration> registration_;
+};
+
+class RegAccListener: public Kullo::Api::RegistrationRegisterAccountListener
+{
+public:
+    void challengeNeeded(
+            const std::shared_ptr<Kullo::Api::Address> &address,
+            const std::shared_ptr<Kullo::Api::Challenge> &challenge) override
+    {
+        K_UNUSED(address);
+        K_UNUSED(challenge);
+        Log.f() << "Challenge requested, but challenges are not implemented.";
+    }
+
+    void addressNotAvailable(
+            const std::shared_ptr<Kullo::Api::Address> &address,
+            Kullo::Api::AddressNotAvailableReason reason) override
+    {
+        //FIXME log reason
+        K_UNUSED(reason);
+        Log.f() << "Address " << address->toString() << " not available.";
+    }
+
+    void finished(
+            const std::shared_ptr<Kullo::Api::Address> &address,
+            const std::shared_ptr<Kullo::Api::MasterKey> &masterKey) override
+    {
+        Log.i() << "Successfully registered address " << address->toString();
+        masterKey_ = masterKey;
+    }
+
+    void error(
+            const std::shared_ptr<Kullo::Api::Address> &address,
+            Kullo::Api::NetworkError error) override
+    {
+        K_UNUSED(address);
+        //FIXME log error
+        K_UNUSED(error);
+        Log.f() << "Error while registering address.";
+    }
+
+    std::shared_ptr<Kullo::Api::MasterKey> masterKey() const
+    {
+        return masterKey_;
+    }
+
+private:
+    std::shared_ptr<Kullo::Api::MasterKey> masterKey_;
+};
+
 }
 
-void Registerer::onKeysGenerationProgressChanged(int progress)
+std::shared_ptr<Kullo::Api::MasterKey> Registerer::run(
+        const std::shared_ptr<Kullo::Api::Address> &address)
 {
-    Log.i() << "Key generation: "  << progress << " %";
-}
+    auto client = Kullo::Api::Client::create();
 
-void Registerer::onKeysGenerationDone()
-{
-    Log.i() << "MasterKey:\n"
-            << registration_->userSettings().masterKey->toPem();
+    auto genKeysL = std::make_shared<GenKeysListener>();
+    client->generateKeysAsync(genKeysL)->waitUntilDone();
 
-    kulloAssert(registrationAddress_);
+    auto registration = genKeysL->registration();
+    kulloAssert(registration);
+    auto regAccL = std::make_shared<RegAccListener>();
+    registration->
+            registerAccountAsync(address, nullptr, "", regAccL)->
+            waitUntilDone();
 
-    registration_->registerAccount(*registrationAddress_);
-}
-
-void Registerer::onSuccess()
-{
-    Log.i() << "Registration succeeded";
-    app_.exit(0);
-}
-
-void Registerer::onChallenge()
-{
-    Log.f() << "Challenge received. Cannot handle challenged. Will now crash, Cya!";
-}
-
-void Registerer::onAddressExists()
-{
-    Log.f() << "Address exists. Cannot handle this. Will now crash, Cya!";
-}
-
-void Registerer::onAddressBlocked()
-{
-    Log.f() << "Address blocked. Cannot handle this. Will now crash, Cya!";
-}
-
-void Registerer::onError(std::exception_ptr exception)
-{
-    if (exception) std::rethrow_exception(exception);
-    app_.exit(1);
+    return regAccL->masterKey();
 }

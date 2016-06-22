@@ -34,10 +34,10 @@ SUBDIRS += \
     crashreporter.depends += desktoputil
 }
 
-#linux() {
-#    SUBDIRS += registerer
-#    registerer.depends += desktoputil
-#}
+linux() {
+    SUBDIRS += registerer
+    registerer.depends += desktoputil
+}
 
 tests.depends += desktoputil
 integration-tests.depends += desktoputil

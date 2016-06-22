@@ -162,7 +162,7 @@ FocusScope {
 
 
                     Keys.onPressed: {
-                        if (SC.isCtrlAndKey(Qt.Key_Space, event)) {
+                        if (SC.isCtrlAndKey(Qt.Key_Period, event)) {
                             event.accepted = true
 
                             var pos = messageText.cursorRectangle

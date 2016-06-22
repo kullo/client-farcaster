@@ -2,10 +2,8 @@ include(../common_pre.pri)
 
 TEMPLATE = app
 
-QT = core
-
 CONFIG += console
-CONFIG -= app_bundle
+CONFIG -= app_bundle qt
 
 TARGET = registerer
 
@@ -37,45 +35,20 @@ else:unix:                                PRE_TARGETDEPS += $$OUT_PWD/../desktop
 # END desktoputil
 
 # BEGIN httpclient-curl
-CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../build-httpclient-curl/httpclient/       -lhttpclient
-CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../build-httpclient-curl-debug/httpclient/ -lhttpclient
+CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../bin-httpclient-curl/lib/       -lhttpclient
+CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../bin-httpclient-curl-debug/lib/ -lhttpclient
 
-DEPENDPATH += $$PWD/../../httpclient-curl/httpclient
+CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../bin-httpclient-curl/lib
+CONFIG(debug, debug|release):   DEPENDPATH += $$PWD/../../bin-httpclient-curl-debug/lib
 
-win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/httpclient.lib
-else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/httpclient.lib
-else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl/httpclient/libhttpclient.a
-else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../build-httpclient-curl-debug/httpclient/libhttpclient.a
+win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl/lib/httpclient.lib
+else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl-debug/lib/httpclient.lib
+else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl/lib/libhttpclient.a
+else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../bin-httpclient-curl-debug/lib/libhttpclient.a
 
-INCLUDEPATH += $$PWD/../../httpclient-curl
+CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-httpclient-curl/include
+CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-httpclient-curl-debug/include
 # END httpclient-curl
-
-# BEGIN curl
-windowsDebug(): INCLUDEPATH += $$PWD/../../build-curl-debug/include
-else:           INCLUDEPATH += $$PWD/../../build-curl/include
-
-windowsDebug(): TD_BUILD_DIR = $$PWD/../../build-curl-debug
-else:           TD_BUILD_DIR = $$PWD/../../build-curl
-win32 {
-    TD_FILE_CURL = libcurl.lib
-    TD_FILE_CURLCPP = curlcpp.lib
-} else {
-    TD_FILE_CURL = libcurl.a
-    TD_FILE_CURLCPP = libcurlcpp.a
-}
-PRE_TARGETDEPS += \
-    $${TD_BUILD_DIR}/lib/$${TD_FILE_CURL} \
-    $${TD_BUILD_DIR}/lib/$${TD_FILE_CURLCPP}
-
-win32: QMAKE_CXX_FLAGS += -DCURL_STATICLIB
-
-win32:CONFIG(release, debug|release):    LIBS += -L$$OUT_PWD/../../build-curl/lib -lcurlcpp -llibcurl
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../build-curl-debug/lib -lcurlcpp -llibcurl
-else:macx:                               LIBS += -L$$OUT_PWD/../../build-curl/lib -lcurlcpp -lcurl -framework Security -framework Foundation -lz
-else:                                    LIBS += -L$$OUT_PWD/../../build-curl/lib -lcurlcpp -lcurl -lz
-
-unix:!macx:                              LIBS += -L$$OUT_PWD/../../build-openssl/lib -lssl -lcrypto
-# END curl
 
 # BEGIN libkullo
 INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
@@ -102,5 +75,19 @@ PRE_TARGETDEPS += \
     $${TD_PREFIX}boost_filesystem$${TD_SUFFIX} \
     $${TD_PREFIX}boost_system$${TD_SUFFIX}
 # END libkullo
+
+# BEGIN curl
+windowsDebug(): INCLUDEPATH += $$PWD/../../build-curl-debug/include
+else:           INCLUDEPATH += $$PWD/../../build-curl/include
+
+win32: QMAKE_CXX_FLAGS += -DCURL_STATICLIB
+
+win32:CONFIG(release, debug|release):    LIBS += -L$$OUT_PWD/../../build-curl/lib -lcurlcpp -llibcurl
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../build-curl-debug/lib -lcurlcpp -llibcurl
+else:macx:                               LIBS += -L$$OUT_PWD/../../build-curl/lib -lcurlcpp -lcurl -framework Security -framework Foundation -lz
+else:                                    LIBS += -L$$OUT_PWD/../../build-curl/lib -lcurlcpp -lcurl -lz
+
+linux():                                 LIBS += -L$$OUT_PWD/../../build-openssl/lib -lssl -lcrypto
+# END curl
 
 include(../common_post.pri)

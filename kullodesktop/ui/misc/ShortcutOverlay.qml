@@ -15,7 +15,9 @@ BackgroundCover {
             verticalCenter: parent.verticalCenter
         }
         width: 520
-        height: 320
+        height: column.anchors.topMargin
+                + column.implicitHeight
+                + column.anchors.bottomMargin
         radius: 10
 
         MouseArea {
@@ -36,6 +38,7 @@ BackgroundCover {
         }
 
         Column {
+            id: column
             anchors {
                 fill: parent
                 topMargin: 25
@@ -121,6 +124,18 @@ BackgroundCover {
 
                     NativeText {
                         text: qsTr("Reply to the current conversation")
+                    }
+                }
+
+                ShortcutRow {
+                    ShortcutBlock {
+                        CtrlKey {}
+                        NativeText { text: "+" }
+                        Key { text: "." }
+                    }
+
+                    NativeText {
+                        text: qsTr("Open emoji keyboard")
                     }
                 }
 
