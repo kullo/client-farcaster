@@ -1,7 +1,7 @@
 .PHONY: translate qmlformelements-github2farcaster qmlformelements-farcaster2github test
 
 translate:
-	/opt/qt/bin/lupdate -verbose -no-obsolete ./kullodesktop -ts ./translations/farcaster_de.ts
+	lupdate -verbose -no-obsolete ./kullodesktop -ts ./translations/farcaster_de.ts
 
 qmlformelements-github2farcaster:
 	cp ~/nobackup/QmlFormElements/F* ./kullodesktop/ui/formelements/

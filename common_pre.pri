@@ -65,8 +65,8 @@ macx {
 }
 
 # Hardening
-*-g++:CONFIG(release, debug|release) {
-    QMAKE_CXXFLAGS += -fstack-protector -fPIE -Wformat -Wformat-security -D_FORTIFY_SOURCE=2 -O2
+linuxRelease(): {
+    QMAKE_CXXFLAGS += -fstack-protector -fPIE -D_FORTIFY_SOURCE=2
     QMAKE_LFLAGS += -pie -z relro -z now
 }
 

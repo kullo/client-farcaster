@@ -397,6 +397,7 @@ FocusScope {
 
         SplitView {
             id: splitView
+            readonly property real handleWidth: 1 // we know that from the source code
 
             anchors {
                 left: leftColumn.right
@@ -405,10 +406,19 @@ FocusScope {
                 top: parent.top
             }
 
+            // when user resized the window
+            onWidthChanged: rightColumn.updateWidthFromConstrains()
+
             MiddleColumn {
                 id: middleColumn
+                // 210 px is the width of one attachment delegate and all surrounding
+                // paddings, margins and borders and the SYSTEM DEPENDENT 13 px scroll
+                // bar on Ubuntu. As soon as we get below that, we'll crash.
+                // Go for 210+something to deal with different scroll bar widths.
+                readonly property real minimumWidth: 220
 
                 Layout.fillWidth: true
+                Layout.minimumWidth: minimumWidth // Avoids deep recursion crash from geometry updates
 
                 onActiveFocusChanged: {
                     focusChanged(focus)
@@ -422,6 +432,12 @@ FocusScope {
 
                 Layout.minimumWidth: minimumWidthSet ? 150 : 0
                 visible: inbox.state == "reply" || width > 0
+
+                function updateWidthFromConstrains() {
+                    if (splitView.width < middleColumn.minimumWidth + splitView.handleWidth + width) {
+                        width = splitView.width - (middleColumn.minimumWidth + splitView.handleWidth)
+                    }
+                }
 
                 onWidthChanged: {
                     if (splitView.resizing) {

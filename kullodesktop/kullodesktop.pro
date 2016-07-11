@@ -233,7 +233,7 @@ CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-httpclient-curl-d
 # BEGIN libkullo
 INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
 LIBS += -L$$LIBKULLO_BIN_DIR/lib \
-    -lkulloclient -lbotan -ljsoncpp -lsmartsqlite -lboost_program_options \
+    -lkulloclient -ljsoncpp -lsmartsqlite -lboost_program_options \
     -lz -lboost_regex -lboost_filesystem -lboost_system
 
 DEPENDPATH += $$LIBKULLO_BIN_DIR/include
@@ -246,7 +246,6 @@ win32 {
 }
 PRE_TARGETDEPS += \
     $${TD_PREFIX}kulloclient$${TD_SUFFIX} \
-    $${TD_PREFIX}botan$${TD_SUFFIX} \
     $${TD_PREFIX}jsoncpp$${TD_SUFFIX} \
     $${TD_PREFIX}smartsqlite$${TD_SUFFIX} \
     $${TD_PREFIX}boost_program_options$${TD_SUFFIX} \
@@ -262,6 +261,22 @@ windows() | linux() {
     LIBS += -lbreakpadwrapper
 }
 # END breakpadwrapper
+
+# BEGIN botan
+CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../bin-botan/lib/       -lbotan
+CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../bin-botan-debug/lib/ -lbotan
+
+CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../bin-botan/lib
+CONFIG(debug, debug|release):   DEPENDPATH += $$PWD/../../bin-botan-debug/lib
+
+win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan/lib/botan.lib
+else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan-debug/lib/botan.lib
+else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan/lib/libbotan.a
+else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan-debug/lib/libbotan.a
+
+CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-botan/include
+CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-botan-debug/include
+# END botan
 
 # BEGIN curl
 windowsDebug(): INCLUDEPATH += $$PWD/../../build-curl-debug/include
@@ -280,17 +295,17 @@ linux():                                 LIBS += -L$$OUT_PWD/../../build-openssl
 # BEGIN google-breakpad
 win32 {
     CONFIG(debug, debug|release) {
-        LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/windows/handler/Debug/lib -lexception_handler
-        LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/windows/crash_generation/Debug/lib -lcrash_generation_client
-        LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/windows/Debug/lib -lcommon
+        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/handler/Debug/lib -lexception_handler
+        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/crash_generation/Debug/lib -lcrash_generation_client
+        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/Debug/lib -lcommon
     }
     CONFIG(release, debug|release) {
-        LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/windows/handler/Release/lib -lexception_handler
-        LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/windows/crash_generation/Release/lib -lcrash_generation_client
-        LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/windows/Release/lib -lcommon
+        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/handler/Release/lib -lexception_handler
+        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/crash_generation/Release/lib -lcrash_generation_client
+        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/Release/lib -lcommon
     }
 }
-linux(): LIBS += -L$$PWD/../../google-breakpad/breakpad-code/src/client/linux -lbreakpad_client
+linux(): LIBS += -L$$PWD/../../build-google-breakpad/src/client/linux -lbreakpad_client
 # END google-breakpad
 
 
