@@ -30,7 +30,7 @@ public:
 
     void draftAttachmentsTooBig(int64_t convId) override
     {
-        emit _draftAttachmentsTooBig(Kullo::id_type{convId});
+        emit _draftAttachmentsTooBig(convId);
     }
 
     void progressed(const Kullo::Api::SyncProgress &progress) override

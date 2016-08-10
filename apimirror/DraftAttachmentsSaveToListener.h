@@ -24,12 +24,12 @@ public:
 
     void finished(int64_t convId, int64_t attId, const std::string &path) override
     {
-        emit _finished(Kullo::id_type{convId}, Kullo::id_type{attId}, path);
+        emit _finished(convId, attId, path);
     }
 
     void error(int64_t convId, int64_t attId, const std::string &path, Kullo::Api::LocalError error) override
     {
-        emit _error(Kullo::id_type{convId}, Kullo::id_type{attId}, path, error);
+        emit _error(convId, attId, path, error);
     }
 
 signals:

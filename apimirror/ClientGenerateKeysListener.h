@@ -18,13 +18,13 @@ public:
     explicit ClientGenerateKeysListener(QObject *parent = nullptr)
         : QObject(parent)
     {
-        // no registration needded for: int
+        // no registration needed for: int
         qRegisterMetaType<std::shared_ptr<Kullo::Api::Registration>>("std::shared_ptr<Kullo::Api::Registration>");
     }
 
     void progress(int8_t progress) override
     {
-        emit _progress(int{progress});
+        emit _progress(progress);
     }
 
     void finished(const std::shared_ptr<Kullo::Api::Registration> &registration) override

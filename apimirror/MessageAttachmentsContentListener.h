@@ -24,7 +24,7 @@ public:
 
     void finished(int64_t msgId, int64_t attId, const std::vector<uint8_t> &content) override
     {
-        emit _finished(Kullo::id_type{msgId}, Kullo::id_type{attId}, content);
+        emit _finished(msgId, attId, content);
     }
 
 signals:

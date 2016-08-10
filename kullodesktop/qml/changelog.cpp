@@ -2,13 +2,10 @@
 #include "changelog.h"
 
 #include <QRegularExpression>
-#include <cpp-markdown/markdown.h>
-#include <desktoputil/kulloclient2qt.h>
 #include <kulloclient/util/librarylogger.h>
 
 namespace {
-const auto CHANGELOG_MD_URL = QStringLiteral("https://www.kullo.net/download/files/changelog.md");
-//const auto CHANGELOG_MD_URL = QStringLiteral("http://localhost/download/files/changelog.md");
+const auto CHANGELOG_URL_HTML = QStringLiteral("https://www.kullo.net/download/files/changelog.html");
 }
 
 namespace KulloDesktop {
@@ -27,7 +24,7 @@ QString Changelog::html() const
 
 void Changelog::update()
 {
-    QUrl url(CHANGELOG_MD_URL);
+    QUrl url(CHANGELOG_URL_HTML);
 
     downloadData_ = std::make_shared<QByteArray>();
     downloadBuffer_ = std::make_shared<QBuffer>(downloadData_.get());
@@ -44,12 +41,7 @@ void Changelog::onRequestFinished(DesktopUtil::AsyncHttpGetManager::Response res
         return;
     }
 
-    auto changelogMd = DesktopUtil::KulloClient2Qt::fromUtf8(*downloadData_);
-    markdown::Document md;
-    md.read(changelogMd);
-    std::ostringstream out;
-    md.write(out);
-    auto htmlContent = QString::fromStdString(out.str());
+    auto htmlContent = QString::fromUtf8(*downloadData_);
     htmlContent.remove(QRegularExpression("<h1>.*</h1>"));
     htmlContent = htmlContent.trimmed();
     changelogHtml_ = htmlContent;

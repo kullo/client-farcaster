@@ -4,12 +4,12 @@ TEMPLATE = subdirs
 
 #
 # (crashreporter) (tests)  (kullodesktop)
-#         \         |       /     |    \
-#          \        |      /      |     \
-#           \       |     /       |      \
-#            \      |    /        |       \
-#             \     |   /         |        \
-#            (desktoputil)  (apimirror)  (cpp-markdown)
+#         \         |       /     |
+#          \        |      /      |
+#           \       |     /       |
+#            \      |    /        |
+#             \     |   /         |
+#            (desktoputil)  (apimirror)
 #                 /\             /  \
 #                /  \           /    \           internal
 # - - - - - - - / - -\- - - - -/- - - \ - - - - - - - - -
@@ -22,7 +22,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     apimirror \
-    cpp-markdown \
     desktoputil \
     integration-tests \
     kullodesktop \
@@ -43,7 +42,6 @@ tests.depends += desktoputil
 integration-tests.depends += desktoputil
 
 kullodesktop.depends += apimirror
-kullodesktop.depends += cpp-markdown
 kullodesktop.depends += desktoputil
 kullodesktop.depends += translations
 

@@ -1376,6 +1376,14 @@ aktiv</translation>
         <source>Save all</source>
         <translation>Alle speichern</translation>
     </message>
+    <message>
+        <source>Error opening file</source>
+        <translation>Fehler beim Dabei-Öffnen</translation>
+    </message>
+    <message>
+        <source>File %1 could not be opened</source>
+        <translation>Die Datei %1 konnte nicht geöffnet werden</translation>
+    </message>
 </context>
 <context>
     <name>viewLoggingIn</name>

@@ -192,18 +192,6 @@ else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../apimirr
 unix:                                     PRE_TARGETDEPS += $$OUT_PWD/../apimirror/libapimirror.a
 # END apimirror
 
-# BEGIN cpp-markdown
-win32:CONFIG(release, debug|release):     LIBS += -L$$OUT_PWD/../cpp-markdown/release/ -lcpp-markdown
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$OUT_PWD/../cpp-markdown/debug/   -lcpp-markdown
-else:unix:                                LIBS += -L$$OUT_PWD/../cpp-markdown/         -lcpp-markdown
-
-DEPENDPATH += $$PWD/../cpp-markdown
-
-win32:CONFIG(release, debug|release):    PRE_TARGETDEPS += $$OUT_PWD/../cpp-markdown/release/cpp-markdown.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../cpp-markdown/debug/cpp-markdown.lib
-else:unix:                               PRE_TARGETDEPS += $$OUT_PWD/../cpp-markdown/libcpp-markdown.a
-# END cpp-markdown
-
 # BEGIN desktoputil
 win32:CONFIG(release, debug|release):     LIBS += -L$$OUT_PWD/../desktoputil/release/ -ldesktoputil
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$OUT_PWD/../desktoputil/debug/   -ldesktoputil
@@ -292,21 +280,21 @@ else:                                    LIBS += -L$$OUT_PWD/../../build-curl/li
 linux():                                 LIBS += -L$$OUT_PWD/../../build-openssl/lib -lssl -lcrypto
 # END curl
 
-# BEGIN google-breakpad
+# BEGIN breakpad
 win32 {
     CONFIG(debug, debug|release) {
-        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/handler/Debug/lib -lexception_handler
-        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/crash_generation/Debug/lib -lcrash_generation_client
-        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/Debug/lib -lcommon
+        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/handler/Debug/lib -lexception_handler
+        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/crash_generation/Debug/lib -lcrash_generation_client
+        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/Debug/lib -lcommon
     }
     CONFIG(release, debug|release) {
-        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/handler/Release/lib -lexception_handler
-        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/crash_generation/Release/lib -lcrash_generation_client
-        LIBS += -L$$PWD/../../build-google-breakpad/src/client/windows/Release/lib -lcommon
+        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/handler/Release/lib -lexception_handler
+        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/crash_generation/Release/lib -lcrash_generation_client
+        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/Release/lib -lcommon
     }
 }
-linux(): LIBS += -L$$PWD/../../build-google-breakpad/src/client/linux -lbreakpad_client
-# END google-breakpad
+linux(): LIBS += -L$$PWD/../../build-breakpad/src/client/linux -lbreakpad_client
+# END breakpad
 
 
 folder_01.source = ./icons

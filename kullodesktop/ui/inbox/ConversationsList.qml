@@ -289,13 +289,13 @@ ListView {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
-                if (mouse.button == Qt.LeftButton)
+                if (mouse.button === Qt.LeftButton)
                 {
                     inbox.closeAnswer()
                     root.currentIndex = index
                     root.forceActiveFocus()
                 }
-                else if (mouse.button == Qt.RightButton)
+                else if (mouse.button === Qt.RightButton)
                 {
                     root._currentSecondaryIndex = index
                     contextMenu.selectedConversationId = id_

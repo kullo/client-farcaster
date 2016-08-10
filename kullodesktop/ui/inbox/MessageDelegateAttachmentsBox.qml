@@ -87,7 +87,7 @@ Item {
                     attachmentsList.forceActiveFocus()
                     attachmentsList.currentIndex = index
 
-                    if (mouse.button == Qt.RightButton)
+                    if (mouse.button === Qt.RightButton)
                     {
                         contextMenu.popup()
                     }
