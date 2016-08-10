@@ -326,7 +326,10 @@ FocusScope {
                                 }
                             }
                             onDoubleClicked: {
-                                root.conversation.draft.attachments.get(attachmentIndex_).open()
+                                var attachment = root.conversation.draft.attachments.get(attachmentIndex_)
+                                if (!attachment.open()) {
+                                    inbox.showOpenFileError(attachment.filename)
+                                }
                             }
                         }
                     }

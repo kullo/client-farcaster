@@ -37,25 +37,10 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     }
     else
     {
+        Log.w() << "Request image size not valid for attachmentpreview (" << renderSize
+                << "). Use Image.sourceSize.";
         // Let image look ugly
-        renderSize = QSize(32, 32);
-        Log.w() << "Request image size not set for avatar. Use Image.sourceSize.";
-    }
-
-    /*
-     * From QQuickImageProvider::requestPixmap:
-     * > In all cases, size must be set to the original size of the image.
-     * > This is used to set the width and height of the relevant Image if
-     * > these values have not been set explicitly.
-     *
-     * Use default of 64x64 pixels as "original size" if requestedSize
-     * not set.
-     *
-     */
-    if (size)
-    {
-        size->setWidth(renderSize.width());
-        size->setHeight(renderSize.height());
+        renderSize = QSize(16, 16);
     }
 
     // Cut query string from URL
@@ -113,9 +98,26 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
         return QPixmap();
     }
 
-    return QPixmap::fromImage(image.scaled(renderSize,
-                                           Qt::KeepAspectRatioByExpanding,
-                                           Qt::SmoothTransformation));
+    const auto pixmap = QPixmap::fromImage(image.scaled(renderSize,
+                                                        Qt::KeepAspectRatio,
+                                                        Qt::SmoothTransformation));
+
+    /*
+     * From QQuickImageProvider::requestPixmap:
+     * > In all cases, size must be set to the original size of the image.
+     * > This is used to set the width and height of the relevant Image if
+     * > these values have not been set explicitly.
+     *
+     * Use default of 64x64 pixels as "original size" if requestedSize
+     * not set.
+     *
+     */
+    kulloAssert(size);
+    // Real size after scaling. One side is equal to renderSize, one is less or equal than renderSize
+    size->setWidth(pixmap.width());
+    size->setHeight(pixmap.height());
+
+    return pixmap;
 }
 
 }

@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#include <kulloclient/types.h>
 #include <kulloclient/api/DraftAttachmentsContentListener.h>
 
 namespace ApiMirror {
@@ -16,15 +17,18 @@ class DraftAttachmentsContentListener
 public:
     explicit DraftAttachmentsContentListener(QObject *parent = nullptr)
         : QObject(parent)
-    {}
+    {
+        // registered in registerMetaTypes(): Kullo::id_type
+        // why does std::vector<uint8_t> work?
+    }
 
     void finished(int64_t convId, int64_t attId, const std::vector<uint8_t> &content) override
     {
-        emit _finished(convId, attId, content);
+        emit _finished(Kullo::id_type{convId}, Kullo::id_type{attId}, content);
     }
 
 signals:
-    void _finished(int64_t convId, int64_t attId, const std::vector<uint8_t> &content);
+    void _finished(Kullo::id_type convId, Kullo::id_type attId, const std::vector<uint8_t> &content);
 };
 
 }

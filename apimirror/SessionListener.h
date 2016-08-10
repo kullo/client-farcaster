@@ -10,6 +10,7 @@ namespace ApiMirror {
 class SessionListener : public QObject, public Kullo::Api::SessionListener
 {
     Q_OBJECT
+
 public:
     explicit SessionListener(QObject *parent = nullptr)
         : QObject(parent)

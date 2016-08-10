@@ -47,7 +47,12 @@ Item {
 
                 MenuItem {
                     text: qsTr('Open')
-                    onTriggered: attachments_.get(index).open()
+                    onTriggered: {
+                        var attachment = attachments_.get(index)
+                        if (!attachment.open()) {
+                            inbox.showOpenFileError(attachment.filename)
+                        }
+                    }
                 }
 
                 MenuItem {
@@ -89,7 +94,11 @@ Item {
                 }
                 onDoubleClicked: {
                     selectThisMessage()
-                    attachments_.get(index).open()
+
+                    var attachment = attachments_.get(index)
+                    if (!attachment.open()) {
+                        inbox.showOpenFileError(attachment.filename)
+                    }
                 }
             }
         }

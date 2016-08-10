@@ -18,6 +18,8 @@ public:
     explicit ClientAddressExistsListener(QObject *parent = nullptr)
         : QObject(parent)
     {
+        // no registration needded for: bool
+        // registered in registerMetaTypes(): std::string
         qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
     }
 

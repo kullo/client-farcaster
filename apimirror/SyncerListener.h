@@ -4,6 +4,7 @@
 #include <memory>
 #include <QObject>
 
+#include <kulloclient/types.h>
 #include <kulloclient/api/SyncerListener.h>
 #include <kulloclient/api/SyncProgress.h>
 
@@ -12,10 +13,12 @@ namespace ApiMirror {
 class SyncerListener : public QObject, public Kullo::Api::SyncerListener
 {
     Q_OBJECT
+
 public:
     explicit SyncerListener(QObject *parent = nullptr)
         : QObject(parent)
     {
+        // registered in registerMetaTypes(): Kullo::id_type
         qRegisterMetaType<std::shared_ptr<Kullo::Api::SyncProgress>>("std::shared_ptr<Kullo::Api::SyncProgress>");
         qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
     }
@@ -27,7 +30,7 @@ public:
 
     void draftAttachmentsTooBig(int64_t convId) override
     {
-        emit _draftAttachmentsTooBig(convId);
+        emit _draftAttachmentsTooBig(Kullo::id_type{convId});
     }
 
     void progressed(const Kullo::Api::SyncProgress &progress) override
@@ -47,13 +50,9 @@ public:
 
 signals:
     void _started();
-
-    void _draftAttachmentsTooBig(int64_t convId);
-
+    void _draftAttachmentsTooBig(Kullo::id_type convId);
     void _progressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress);
-
     void _finished();
-
     void _error(Kullo::Api::NetworkError error);
 };
 

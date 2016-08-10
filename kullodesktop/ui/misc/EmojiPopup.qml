@@ -90,7 +90,6 @@ FocusScope {
                     radiusTopRight: parent.position === parent.topEdge ? 3 : 0
                     radiusBottomLeft:  parent.position === parent.bottomEdge ? 3 : 0
                     radiusBottomRight: parent.position === parent.bottomEdge ? 3 : 0
-                    onRadiusTopLeftChanged: console.log(radiusTopLeft)
                 }
             }
 

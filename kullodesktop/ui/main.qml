@@ -22,7 +22,12 @@ ApplicationWindow {
     /* private */
     property real _devicePixelRatio: Screen.devicePixelRatio
     on_DevicePixelRatioChanged: {
-        console.info("Device pixel ratio: " + _devicePixelRatio)
+        console.info("Device pixel ratio current screen: " + _devicePixelRatio)
+    }
+
+    property real _maxDevicePixelRatio: Hdpi.MaxDevicePixelRatio
+    on_MaxDevicePixelRatioChanged: {
+        console.info("Max. device pixel ratio across all screens: " + _maxDevicePixelRatio)
     }
 
     UpdateDialog {

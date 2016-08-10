@@ -18,6 +18,7 @@ public:
     explicit ClientCheckCredentialsListener(QObject *parent = nullptr)
         : QObject(parent)
     {
+        // no registration needded for: bool
         qRegisterMetaType<std::shared_ptr<Kullo::Api::Address>>(
                     "std::shared_ptr<Kullo::Api::Address>");
         qRegisterMetaType<std::shared_ptr<Kullo::Api::MasterKey>>(

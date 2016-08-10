@@ -18,6 +18,7 @@ public:
     explicit SessionAccountInfoListener(QObject *parent = nullptr)
         : QObject(parent)
     {
+        // registered in registerMetaTypes(): std::string
         qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
     }
 

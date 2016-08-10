@@ -102,6 +102,18 @@ FocusScope {
         middleColumn.forceActiveFocus();
     }
 
+    MessageDialog {
+        id: openFileErrorDialog
+        property string filename: ""
+        title: qsTr("Error opening file")
+        text: qsTr("File %1 could not be opened").arg(filename)
+    }
+
+    function showOpenFileError(filename) {
+        openFileErrorDialog.filename = filename
+        openFileErrorDialog.open()
+    }
+
     Scheduler {
         id: scheduler
 

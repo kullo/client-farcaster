@@ -10,7 +10,7 @@ else {
     QMAKE_LFLAGS += -rdynamic
 }
 
-macx-clang {
+*-clang* {
     # http://petereisentraut.blogspot.de/2011/05/ccache-and-clang.html
     QMAKE_CXXFLAGS += -Qunused-arguments
 }

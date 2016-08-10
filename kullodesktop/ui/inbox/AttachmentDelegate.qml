@@ -64,10 +64,12 @@ Item {
                 }
                 spacing: 2
 
-                Image {
+                NativeImage {
                     id: fileIcon
 
-                    function isImage(mime)
+                    property int _WIDTH: 120
+                    property int _HEIGHT: 48
+                    function _isImage(mime)
                     {
                         return mime === "image/bmp"
                                 || mime === "image/gif"
@@ -75,7 +77,7 @@ Item {
                                 || mime === "image/png"
                     }
 
-                    source: attachmentsReady && isImage(mimeType)
+                    source: attachmentsReady && _isImage(mimeType)
                             ? "image://attachmentpreview/" + Utils.urlencode(Client.userSettings.address)
                               + "/" + conversationId
                               + "/" + messageId
@@ -83,15 +85,17 @@ Item {
                               + "?" + hash
                             : Utils.makeFileUrl("/icons/filetypes/ubuntu/" + Mime.mime2icon(mimeType))
                     anchors {
-                        left: parent.left
-                        leftMargin: 10
+                        horizontalCenter: parent.horizontalCenter
                     }
-                    width: parent.width-2*anchors.leftMargin
-                    height: 48
-                    smooth: true
-                    sourceSize.height: 48
-                    sourceSize.width: 48
+
+                    width: _WIDTH
+                    height: _HEIGHT
                     fillMode: Image.PreserveAspectFit
+
+                    //onPaintedGeometryChanged: {
+                    //    console.warn(paintedWidth + "x" + paintedHeight)
+                    //}
+
                     asynchronous: true
                 }
 

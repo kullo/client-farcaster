@@ -29,5 +29,21 @@ qreal Hdpi::fontScalingFactor() const
 #endif
 }
 
+qreal Hdpi::maxDevicePixelRatio() const
+{
+    const auto screens = Applications::KulloApplication::screens();
+    kulloAssert(screens.size() >= 1);
+
+    qreal out = 0;
+    for (auto screen: screens)
+    {
+        if (screen->devicePixelRatio() > out)
+        {
+            out = screen->devicePixelRatio();
+        }
+    }
+    return out;
+}
+
 }
 }

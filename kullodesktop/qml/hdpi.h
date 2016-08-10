@@ -16,6 +16,9 @@ public:
     Q_PROPERTY(qreal FontScalingFactor READ fontScalingFactor NOTIFY somethingChanged)
     qreal fontScalingFactor() const;
 
+    Q_PROPERTY(qreal MaxDevicePixelRatio READ maxDevicePixelRatio NOTIFY somethingChanged)
+    qreal maxDevicePixelRatio() const;
+
 signals:
     void somethingChanged();
 };
