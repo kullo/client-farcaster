@@ -11,11 +11,11 @@ Item {
 
     Component.onCompleted: {
         timer.start()
-        Client.logIn()
+        Inbox.logIn()
     }
 
     Connections {
-        target: Client
+        target: Inbox
         onLoggedInChanged: {
             timer.stop()
             if (loggedIn)

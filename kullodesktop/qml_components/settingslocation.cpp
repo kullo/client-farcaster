@@ -1,5 +1,5 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
-#include "settingslocationmodel.h"
+#include "settingslocation.h"
 
 #include <string>
 #include <QUrl>
@@ -11,26 +11,27 @@
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
+#include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/usersettingsmodel.h"
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
-SettingsLocationModel::SettingsLocationModel(QObject *parent)
+SettingsLocation::SettingsLocation(QObject *parent)
     : QObject(parent)
     , locked_(false)
 {
 }
 
-SettingsLocationModel::~SettingsLocationModel()
+SettingsLocation::~SettingsLocation()
 {
 }
 
-void SettingsLocationModel::openUrl(ClientModel *clientModel)
+void SettingsLocation::openUrl(Qml::Inbox *inbox)
 {
-    kulloAssert(clientModel);
+    kulloAssert(inbox);
 
-    auto session = clientModel->session();
+    auto session = inbox->session();
     if (!session) return;
 
     if (locked_) return;

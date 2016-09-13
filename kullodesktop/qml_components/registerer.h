@@ -5,16 +5,11 @@
 #include <QObject>
 
 #include <apimirror/apimirror-forwards.h>
+#include <kullodesktop/farcaster-forwards.h>
 #include <kulloclient/kulloclient-forwards.h>
 
-namespace Kullo {
-namespace Api {
-class Challenge; // Missing in libkullo v38
-}
-}
-
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 class ChallengeTypes : public QObject
 {
@@ -41,6 +36,10 @@ public:
     explicit Registerer(QObject *parent = 0);
     ~Registerer();
 
+    Q_PROPERTY(KulloDesktop::Qml::InnerApplication* application READ application WRITE setApplication NOTIFY applicationChanged)
+    Qml::InnerApplication *application() const;
+    void setApplication(Qml::InnerApplication *application);
+
     Q_PROPERTY(ApiMirror::Client* client READ client WRITE setClient NOTIFY clientChanged)
     ApiMirror::Client *client() const;
     void setClient(ApiMirror::Client *client);
@@ -53,6 +52,7 @@ public:
     Q_INVOKABLE void registerAccount(const QString &addr, const QString &challengeAnswer);
 
 signals:
+    void applicationChanged();
     void clientChanged();
     void lockedChanged();
     void keysGenerationProgressChanged(int percent);
@@ -66,6 +66,7 @@ signals:
     void networkError();
 
 private:
+    Qml::InnerApplication *application_ = nullptr;
     ApiMirror::Client *client_ = nullptr;
     std::shared_ptr<ApiMirror::ClientGenerateKeysListener> listenerKeygen_;
     std::shared_ptr<ApiMirror::RegistrationRegisterAccountListener> listenerRegistration_;

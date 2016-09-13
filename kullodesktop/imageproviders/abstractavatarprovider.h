@@ -15,7 +15,7 @@ namespace Imageproviders {
 class AbstractAvatarProvider : public QQuickImageProvider
 {
 public:
-    AbstractAvatarProvider(Qml::ClientModel &clientModel);
+    AbstractAvatarProvider(Qml::Inbox &inbox);
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
 
 protected:
@@ -25,7 +25,7 @@ protected:
     QPixmap getEmptyAvatar(const QSize &renderSize);
     QPixmap rounded(const QPixmap &in);
 
-    Qml::ClientModel &clientModel_;
+    Qml::Inbox &inbox_;
     std::unordered_map<std::uint32_t, std::unique_ptr<QPixmap>> emptyAvatarCache_;
 };
 

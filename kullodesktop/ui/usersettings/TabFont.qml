@@ -8,8 +8,8 @@ TabContent {
     id: root
 
     function reset() {
-        fontSizeUserFactorRow.value = Devicesettings.fontSizeUserFactor
-        messagesFontRow.font        = Devicesettings.messagesFont
+        fontSizeUserFactorRow.value = InnerApplication.deviceSettings.fontSizeUserFactor
+        messagesFontRow.font        = InnerApplication.deviceSettings.messagesFont
     }
 
     Component.onCompleted: reset()
@@ -36,12 +36,12 @@ TabContent {
                 //: Font size name
                 ListElement { text: qsTr("huge"); value: 130 }
             }
-            initialValue: Devicesettings.fontSizeUserFactor
+            initialValue: InnerApplication.deviceSettings.fontSizeUserFactor
             description: ""
 
             onValueChanged: {
                 console.log("Set font factor: " + value)
-                Devicesettings.fontSizeUserFactorPreview = value
+                InnerApplication.deviceSettings.fontSizeUserFactorPreview = value
             }
         }
 
@@ -50,7 +50,7 @@ TabContent {
             name: qsTr("Messages")
 
             onCurrentFontChanged: {
-                Devicesettings.messagesFontPreview = currentFont
+                InnerApplication.deviceSettings.messagesFontPreview = currentFont
             }
         }
     }
@@ -68,8 +68,8 @@ TabContent {
             text: qsTr("Discard")
             style: KulloButtonStyle { source: "/resources/scalable/cancel_w.svg" }
             onClicked: {
-                Devicesettings.fontSizeUserFactorPreview = Devicesettings.fontSizeUserFactor
-                Devicesettings.messagesFontPreview = Devicesettings.messagesFont
+                InnerApplication.deviceSettings.fontSizeUserFactorPreview = InnerApplication.deviceSettings.fontSizeUserFactor
+                InnerApplication.deviceSettings.messagesFontPreview = InnerApplication.deviceSettings.messagesFont
                 root.closeWindowRequested()
             }
         }
@@ -79,8 +79,8 @@ TabContent {
             text: qsTr("Save")
             style: KulloButtonStyle { source: "/resources/scalable/ok_w.svg" }
             onClicked: {
-                Devicesettings.fontSizeUserFactor = Devicesettings.fontSizeUserFactorPreview
-                Devicesettings.messagesFont = Devicesettings.messagesFontPreview
+                InnerApplication.deviceSettings.fontSizeUserFactor = InnerApplication.deviceSettings.fontSizeUserFactorPreview
+                InnerApplication.deviceSettings.messagesFont = InnerApplication.deviceSettings.messagesFontPreview
                 root.closeWindowRequested()
             }
         }

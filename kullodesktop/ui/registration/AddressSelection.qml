@@ -10,7 +10,7 @@ import "../misc"
 import "../native"
 
 FForm {
-    id: _root
+    id: root
     property var registerer: null
 
     signal done()
@@ -70,9 +70,8 @@ FForm {
         onSucceeded: {
             registerer.locked = false
             console.info("Registration succeeded for address: '" + address + "'" )
-            Client.removeDatabase(address)
-            Client.userSettings.reset(address, masterKeyPem)
-            _root.done()
+            Inbox.clearDatabaseAndResetUserSettings(address, masterKeyPem)
+            root.done()
         }
         onServerError: {
             registerer.locked = false

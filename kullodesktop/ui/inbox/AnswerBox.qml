@@ -155,11 +155,14 @@ FocusScope {
                     focus: true
                     enabled: root._enabled
                     textColor: palette.text
+
+                    font.family: InnerApplication.deviceSettings.messagesFontPreview.family
+                    font.italic: InnerApplication.deviceSettings.messagesFontPreview.italic
+                    font.weight: InnerApplication.deviceSettings.messagesFontPreview.weight
                     font.pointSize: Style.fontSize.answerTextInput
-                    font.family: FontList.SerifFamily
+
                     wrapMode: TextEdit.Wrap
                     text: root.conversation ? root.conversation.draft.text : ""
-
 
                     Keys.onPressed: {
                         if (SC.isCtrlAndKey(Qt.Key_Period, event)) {

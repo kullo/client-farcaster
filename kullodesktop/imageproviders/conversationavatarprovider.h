@@ -11,7 +11,7 @@ namespace Imageproviders {
 class ConversationAvatarProvider : public AbstractAvatarProvider
 {
 public:
-    ConversationAvatarProvider(Qml::ClientModel &clientModel);
+    ConversationAvatarProvider(Qml::Inbox &inbox);
 
 protected:
     QPixmap drawAvatar(const QString &url, const QSize &renderSize) override;

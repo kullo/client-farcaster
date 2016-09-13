@@ -184,6 +184,16 @@ void ConversationListSource::onParticipantChanged(Kullo::id_type conversationId)
     }
 }
 
+void ConversationListSource::onSingleConversationCountUnreadChanged()
+{
+    const auto count = unreadMessagesCount();
+    if (count != lastUnreadMessagesCount_)
+    {
+        lastUnreadMessagesCount_ = count;
+        emit unreadMessagesCountChanged(count);
+    }
+}
+
 void ConversationListSource::refreshConversations()
 {
     beginResetModel();
@@ -210,7 +220,7 @@ void ConversationListSource::connectConversationModelToList(const std::unique_pt
     connect(cm->draft(), &DraftModel::emptyChanged,
             this, [this, convId](){ onConversationChanged(convId); });
     connect(cm.get(), &ConversationModel::countUnreadChanged,
-            this, &ConversationListSource::unreadMessagesCountChanged);
+            this, &ConversationListSource::onSingleConversationCountUnreadChanged);
 }
 
 Kullo::id_type ConversationListSource::openWhenCreated()
@@ -247,7 +257,7 @@ void ConversationListSource::setOpenWhenCreated(
     openWhenCreated_ = participants;
 }
 
-qint32 ConversationListSource::unreadMessagesCount()
+qint32 ConversationListSource::unreadMessagesCount() const
 {
     qint32 sum = 0;
     for (const auto &cm : conversationModels_)

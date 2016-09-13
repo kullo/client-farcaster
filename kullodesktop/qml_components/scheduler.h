@@ -6,7 +6,7 @@
 #include <kullodesktop/farcaster-forwards.h>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 class Scheduler : public QObject
 {
@@ -17,8 +17,8 @@ public:
     ~Scheduler();
 
     Q_PROPERTY(KulloDesktop::Qml::UserSettingsModel* user READ user WRITE setUser NOTIFY userChanged)
-    UserSettingsModel *user() const;
-    void setUser(UserSettingsModel *user);
+    Qml::UserSettingsModel *user() const;
+    void setUser(Qml::UserSettingsModel *user);
 
     Q_INVOKABLE void start();
 
@@ -32,7 +32,7 @@ private slots:
     void run();
 
 private:
-    UserSettingsModel *user_ = nullptr;
+    Qml::UserSettingsModel *user_ = nullptr;
     QTimer timer_;
 };
 

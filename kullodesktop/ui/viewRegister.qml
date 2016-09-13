@@ -25,7 +25,8 @@ FocusScope {
 
     Registerer {
         id: registerer
-        client: Client.client()
+        application: InnerApplication
+        client: Inbox.client()
     }
 
     function onLoadedStep1() {

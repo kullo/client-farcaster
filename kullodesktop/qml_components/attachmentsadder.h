@@ -12,19 +12,19 @@
 #include "kullodesktop/farcaster-forwards.h"
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
-class AttachmentsAdderModel : public QObject
+class AttachmentsAdder : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit AttachmentsAdderModel(QObject *parent = 0);
-    ~AttachmentsAdderModel() override;
+    explicit AttachmentsAdder(QObject *parent = 0);
+    ~AttachmentsAdder() override;
 
     Q_PROPERTY(KulloDesktop::Qml::DraftModel* target READ target WRITE setTarget NOTIFY targetChanged)
-    DraftModel *target() const;
-    void setTarget(DraftModel *target);
+    Qml::DraftModel *target() const;
+    void setTarget(Qml::DraftModel *target);
 
     Q_INVOKABLE bool addAttachments(const QList<QUrl> &urls);
 
@@ -40,7 +40,7 @@ private slots:
     void onDoneAddingAttachments();
 
 private:
-    DraftModel* draftModel_ = nullptr;
+    Qml::DraftModel* draftModel_ = nullptr;
     std::mutex working_;
     std::atomic<bool> cancel_;
     std::thread backgroundJob_;

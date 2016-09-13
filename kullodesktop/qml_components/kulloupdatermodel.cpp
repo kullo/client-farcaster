@@ -15,7 +15,7 @@
 #include "kullodesktop/qml/os.h"
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 KulloUpdaterModel::KulloUpdaterModel(QObject *parent)
     : QObject(parent)
@@ -32,7 +32,7 @@ KulloUpdaterModel::~KulloUpdaterModel()
 
 bool KulloUpdaterModel::canRunInstaller() const
 {
-    if (Os::linux())
+    if (Qml::Os::linux())
     {
         return false;
     }
@@ -44,7 +44,7 @@ bool KulloUpdaterModel::canRunInstaller() const
 
 bool KulloUpdaterModel::installerNeedsClosedApp() const
 {
-    if (Os::osx() || Os::windows())
+    if (Qml::Os::osx() || Qml::Os::windows())
     {
         return true;
     }
@@ -56,7 +56,9 @@ bool KulloUpdaterModel::installerNeedsClosedApp() const
 
 void KulloUpdaterModel::run(const QUrl &url)
 {
-    if (!Os::linux())
+    kulloAssert(url.isValid());
+
+    if (!Qml::Os::linux())
     {
         cleanOldDownloads();
     }
@@ -171,7 +173,7 @@ void KulloUpdaterModel::postDownloadChecks()
     QFile::remove(filename_);
     QFile::rename(filenameTmp_, filename_);
 
-    if (Os::linux())
+    if (Qml::Os::linux())
     {
         QFlags<QFileDevice::Permission> permissions = QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner;
         if (!QFile(filename_).setPermissions(permissions))

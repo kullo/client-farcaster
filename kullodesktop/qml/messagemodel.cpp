@@ -65,7 +65,7 @@ Kullo::id_type MessageModel::conversationId() const
     return session_->messages()->conversation(msgId_);
 }
 
-ParticipantModel *MessageModel::sender()
+Sender *MessageModel::sender()
 {
     QQmlEngine::setObjectOwnership(&sender_, QQmlEngine::CppOwnership);
     return &sender_;

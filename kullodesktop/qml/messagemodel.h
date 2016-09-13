@@ -9,7 +9,7 @@
 #include <kulloclient/api/Session.h>
 
 #include "kullodesktop/qml/attachmentlistmodel.h"
-#include "kullodesktop/qml/participantmodel.h"
+#include "kullodesktop/qml/sender.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -32,8 +32,8 @@ public:
     Q_PROPERTY(Kullo::id_type conversationId READ conversationId NOTIFY conversationIdChanged)
     Kullo::id_type conversationId() const;
 
-    Q_PROPERTY(ParticipantModel *sender READ sender NOTIFY senderChanged)
-    ParticipantModel *sender();
+    Q_PROPERTY(Sender *sender READ sender NOTIFY senderChanged)
+    Sender *sender();
 
     Q_PROPERTY(bool read READ read WRITE setRead NOTIFY readChanged)
     bool read() const;
@@ -97,7 +97,7 @@ private slots:
 private:
     std::shared_ptr<Kullo::Api::Session> session_;
     Kullo::id_type msgId_ = -1;
-    ParticipantModel sender_;
+    Sender sender_;
     AttachmentListModel attachments_;
     QVariant attachmentsDownloaded_;
 };

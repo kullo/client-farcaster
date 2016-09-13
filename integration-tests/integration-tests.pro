@@ -13,6 +13,16 @@ SOURCES += \
 HEADERS += \
     integrationtest.h
 
+linux() {
+    copyOpenSslCommand = @echo Copying OpenSSL ...
+    copyOpenSslCommand += ; rsync -pgo --update \"$$OUT_PWD/../../build-openssl/lib/libcrypto.so.1.0.0\" \"$$OUT_PWD/../../build-openssl/lib/libssl.so.1.0.0\" \"$$OUT_PWD/\"
+    copyOpenSsl.commands = $$copyOpenSslCommand
+    QMAKE_EXTRA_TARGETS += copyOpenSsl
+    all.depends += copyOpenSsl
+}
+
+QMAKE_EXTRA_TARGETS += all
+
 # BEGIN desktoputil
 win32:CONFIG(release, debug|release):     LIBS += -L$$OUT_PWD/../desktoputil/release/ -ldesktoputil
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$OUT_PWD/../desktoputil/debug/   -ldesktoputil

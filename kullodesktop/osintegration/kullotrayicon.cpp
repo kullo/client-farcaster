@@ -1,11 +1,10 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 #include "kullotrayicon.h"
 
+#include <limits>
 #include <QAction>
-#include <QApplication>
 #include <QMenu>
 #include <QSystemTrayIcon>
-#include <QWindow>
 
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
@@ -14,27 +13,25 @@
 #include <desktoputil/osdetection.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
-#include "kullodesktop/qml/conversationlistsource.h"
+#include "kullodesktop/qml/innerapplication.h"
 
 namespace KulloDesktop {
 namespace OsIntegration {
 
 namespace {
-
 const auto ICON_STATE_LOGGEDOUT = IconState(false, 0);
-
+const auto ICON_STATE_INVALID = IconState(false, std::numeric_limits<quint32>::max());
 }
 
-KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainWindow, Qml::ClientModel& clientModel, QObject *parent)
+KulloTrayIcon::KulloTrayIcon(Qml::InnerApplication &app,
+                             QObject *parent)
     : QObject(parent)
-    , iconState_(IconState(false, 42))  // != _LOGGEDOUT, so that setIcon works
+    , iconState_(ICON_STATE_INVALID)
     , app_(app)
-    , mainWindow_(mainWindow)
-    , clientModel_(clientModel)
     , trayIcon_(Kullo::make_unique<QSystemTrayIcon>(nullptr))
 {
-    trayIcon_->setToolTip(app_.applicationName());
-    onLoggedInChanged(clientModel_.loggedIn());
+    setIcon(ICON_STATE_LOGGEDOUT);
+    trayIcon_->setToolTip(app_.mainApplication().applicationName());
 
     if (QSystemTrayIcon::supportsMessages())
     {
@@ -45,10 +42,6 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
         Log.i() << "Tray icon messages not supported.";
     }
 
-    // Restore when application requests it (e.g. OS X dock click)
-    connect(&app_, &Applications::KulloApplication::showMainWindowRequested,
-            this, &KulloTrayIcon::showMainWindow);
-
     if (DesktopUtil::OsDetection::windows() || DesktopUtil::OsDetection::linux())
     {
         // Restore on icon click
@@ -57,7 +50,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
         {
             if (reason == QSystemTrayIcon::Trigger)
             {
-                this->showMainWindow();
+                emit showMainWindowRequested();
             }
         });
     }
@@ -67,7 +60,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
         // Restore on context menu click
         trayIconMenuActions_.emplace_back(Kullo::make_unique<QAction>(trUtf8("Show"), nullptr));
         connect(trayIconMenuActions_.back().get(), &QAction::triggered,
-                this, &KulloTrayIcon::showMainWindow);
+                this, &KulloTrayIcon::showMainWindowRequested);
     }
 
     trayIconMenuActions_.emplace_back(Kullo::make_unique<QAction>(trUtf8("Quit"), nullptr));
@@ -75,7 +68,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
             this, [this]()
     {
         Log.i() << "Quit now!";
-        app_.quit();
+        app_.mainApplication().quit();
     });
 
     trayIconMenu_ = Kullo::make_unique<QMenu>();
@@ -86,35 +79,7 @@ KulloTrayIcon::KulloTrayIcon(Applications::KulloApplication &app, QWindow &mainW
     trayIcon_->setContextMenu(trayIconMenu_.get());
 
     connect(trayIcon_.get(), &QSystemTrayIcon::messageClicked,
-            this, &KulloTrayIcon::showMainWindow);
-
-    connect(&clientModel_, &Qml::ClientModel::syncFinished,
-            this, [this](bool success, int countMessagesNew, int countMessagesNewUnread, int countMessagesModified, int countMessagesDeleted)
-    {
-        K_UNUSED(countMessagesNew);
-        K_UNUSED(countMessagesDeleted);
-        K_UNUSED(countMessagesModified);
-
-        if (success && countMessagesNewUnread)
-        {
-            Log.i() << "Incoming unread messages: " << countMessagesNewUnread;
-
-            const auto popupTitle = trUtf8("Kullo message");
-            if (countMessagesNewUnread == 1)
-            {
-                trayIcon_->showMessage(popupTitle,
-                                       trUtf8("One new message received"));
-            }
-            else
-            {
-                trayIcon_->showMessage(popupTitle,
-                                       trUtf8("%1 new messages received").arg(countMessagesNewUnread));
-            }
-        }
-    });
-
-    connect(&clientModel_, &Qml::ClientModel::loggedInChanged,
-            this, &KulloTrayIcon::onLoggedInChanged);
+            this, &KulloTrayIcon::showMainWindowRequested);
 
     trayIcon_->show();
 }
@@ -127,19 +92,7 @@ void KulloTrayIcon::onLoggedInChanged(bool loggedIn)
 {
     if (loggedIn)
     {
-        kulloAssert(clientModel_.conversationsListSource());
-
-        auto update = [this]()
-        {
-            const auto unreadMessagesCount = clientModel_.conversationsListSource()->unreadMessagesCount();
-            Log.d() << "Unread message count changed: " << unreadMessagesCount;
-            setIcon(IconState(true, unreadMessagesCount));
-        };
-
-        connect(clientModel_.conversationsListSource().get(),
-                &Qml::ConversationListSource::unreadMessagesCountChanged,
-                this, update);
-        update();
+        setIcon(IconState(true, iconState_.unreadMessages));
     }
     else
     {
@@ -147,19 +100,34 @@ void KulloTrayIcon::onLoggedInChanged(bool loggedIn)
     }
 }
 
-void KulloTrayIcon::showMainWindow()
+void KulloTrayIcon::onUnreadMessagesCountChanged(int count)
 {
-    Log.d() << "Show main window now!";
+    Log.d() << "Unread message count changed: " << count;
+    setIcon(IconState(true, count));
+}
 
-    if (mainWindow_.windowState() == Qt::WindowMinimized)
+void KulloTrayIcon::onSyncFinished(bool success, int countMessagesNew, int countMessagesNewUnread, int countMessagesModified, int countMessagesDeleted)
+{
+    K_UNUSED(countMessagesNew);
+    K_UNUSED(countMessagesDeleted);
+    K_UNUSED(countMessagesModified);
+
+    if (success && countMessagesNewUnread)
     {
-        mainWindow_.showNormal();
+        Log.i() << "Incoming unread messages: " << countMessagesNewUnread;
+
+        const auto popupTitle = trUtf8("Kullo message");
+        if (countMessagesNewUnread == 1)
+        {
+            trayIcon_->showMessage(popupTitle,
+                                   trUtf8("One new message received"));
+        }
+        else
+        {
+            trayIcon_->showMessage(popupTitle,
+                                   trUtf8("%1 new messages received").arg(countMessagesNewUnread));
+        }
     }
-    else
-    {
-        mainWindow_.show();
-    }
-    mainWindow_.raise();
 }
 
 void KulloTrayIcon::setIcon(IconState state)

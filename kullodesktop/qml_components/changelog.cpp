@@ -9,7 +9,7 @@ const auto CHANGELOG_URL_HTML = QStringLiteral("https://www.kullo.net/download/f
 }
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 Changelog::Changelog(QObject *parent) : QObject(parent)
 {

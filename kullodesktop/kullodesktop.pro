@@ -84,9 +84,6 @@ SOURCES += \
     osintegration/singleinstancelock.cpp \
     qml/attachmentlistmodel.cpp \
     qml/attachmentmodel.cpp \
-    qml/attachmentsaddermodel.cpp \
-    qml/changelog.cpp \
-    qml/clientmodel.cpp \
     qml/conversationlistmodel.cpp \
     qml/conversationlistsource.cpp \
     qml/conversationmodel.cpp \
@@ -94,26 +91,30 @@ SOURCES += \
     qml/draftattachmentlistmodel.cpp \
     qml/draftattachmentmodel.cpp \
     qml/draftmodel.cpp \
-    qml/existencechecker.cpp \
-    qml/fileopendialog.cpp \
-    qml/filesavedialog.cpp \
     qml/fontlist.cpp \
     qml/hdpi.cpp \
-    qml/kulloupdatermodel.cpp \
+    qml/inbox.cpp \
+    qml/innerapplication.cpp \
     qml/kulloversionchecker.cpp \
-    qml/libraryloggermodel.cpp \
-    qml/loginchecker.cpp \
     qml/messagemodel.cpp \
     qml/messagelistmodel.cpp \
     qml/messagelistsource.cpp \
     qml/modalitywatcher.cpp \
-    qml/participantmodel.cpp \
-    qml/registerer.cpp \
-    qml/scheduler.cpp \
-    qml/settingslocationmodel.cpp \
+    qml/sender.cpp \
     qml/softwareversions.cpp \
     qml/usersettingsmodel.cpp \
     qml/utils.cpp \
+    qml_components/attachmentsadder.cpp \
+    qml_components/changelog.cpp \
+    qml_components/existencechecker.cpp \
+    qml_components/fileopendialog.cpp \
+    qml_components/filesavedialog.cpp \
+    qml_components/kulloupdatermodel.cpp \
+    qml_components/libraryloggerqmlconnector.cpp \
+    qml_components/loginchecker.cpp \
+    qml_components/registerer.cpp \
+    qml_components/scheduler.cpp \
+    qml_components/settingslocation.cpp \
     util/consoleextendedloglistener.cpp \
     util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
@@ -141,9 +142,6 @@ HEADERS += \
     osintegration/singleinstancelock.h \
     qml/attachmentmodel.h \
     qml/attachmentlistmodel.h \
-    qml/attachmentsaddermodel.h \
-    qml/changelog.h \
-    qml/clientmodel.h \
     qml/conversationlistmodel.h \
     qml/conversationlistsource.h \
     qml/conversationmodel.h \
@@ -151,27 +149,31 @@ HEADERS += \
     qml/draftattachmentlistmodel.h \
     qml/draftattachmentmodel.h \
     qml/draftmodel.h \
-    qml/existencechecker.h \
-    qml/fileopendialog.h \
-    qml/filesavedialog.h \
     qml/fontlist.h \
     qml/hdpi.h \
-    qml/kulloupdatermodel.h \
+    qml/inbox.h \
+    qml/innerapplication.h \
     qml/kulloversionchecker.h \
-    qml/libraryloggermodel.h \
-    qml/loginchecker.h \
     qml/messagemodel.h \
     qml/messagelistmodel.h \
     qml/messagelistsource.h \
     qml/modalitywatcher.h \
     qml/os.h \
-    qml/participantmodel.h \
-    qml/registerer.h \
-    qml/scheduler.h \
-    qml/settingslocationmodel.h \
+    qml/sender.h \
     qml/softwareversions.h \
     qml/usersettingsmodel.h \
     qml/utils.h \
+    qml_components/attachmentsadder.h \
+    qml_components/changelog.h \
+    qml_components/existencechecker.h \
+    qml_components/fileopendialog.h \
+    qml_components/filesavedialog.h \
+    qml_components/kulloupdatermodel.h \
+    qml_components/libraryloggerqmlconnector.h \
+    qml_components/loginchecker.h \
+    qml_components/registerer.h \
+    qml_components/scheduler.h \
+    qml_components/settingslocation.h \
     util/consoleextendedloglistener.h \
     util/htmlfileloglistener.h \
     util/kullofoldersetup.h \

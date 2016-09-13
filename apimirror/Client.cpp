@@ -18,7 +18,7 @@ Client::Client(std::shared_ptr<Kullo::Api::Client> client)
 {
 }
 
-std::shared_ptr<Kullo::Api::Client> Client::raw()
+std::shared_ptr<Kullo::Api::Client> Client::raw() const
 {
     auto ptr = client_;
     kulloAssert(ptr);

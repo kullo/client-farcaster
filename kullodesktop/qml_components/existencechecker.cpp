@@ -14,7 +14,7 @@
 #include <kulloclient/util/librarylogger.h>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 ExistenceChecker::ExistenceChecker(QObject *parent) :
     QObject(parent)

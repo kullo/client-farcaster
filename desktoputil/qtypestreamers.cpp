@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <QDebug>
+#include <QDir>
 #include <QPoint>
 #include <QSize>
 #include <QStringList>
@@ -85,6 +86,12 @@ std::ostream &operator<<(std::ostream &out, const QSize &s)
 std::ostream &operator<<(std::ostream &out, const QPoint &s)
 {
     out << "(" << s.x() << "," << s.y() << ")";
+    return out;
+}
+
+std::ostream &operator<<(std::ostream &out, const QDir &dir)
+{
+    out << dir.path();
     return out;
 }
 

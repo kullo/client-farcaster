@@ -34,9 +34,10 @@
 #include "kullodesktop/osintegration/singleinstanceerrorbox.h"
 #include "kullodesktop/osintegration/singleinstancelock.h"
 
-#include "kullodesktop/qml/clientmodel.h"
 #include "kullodesktop/qml/fontlist.h"
 #include "kullodesktop/qml/hdpi.h"
+#include "kullodesktop/qml/inbox.h"
+#include "kullodesktop/qml/innerapplication.h"
 #include "kullodesktop/qml/kulloversionchecker.h"
 #include "kullodesktop/qml/modalitywatcher.h"
 #include "kullodesktop/qml/os.h"
@@ -147,22 +148,13 @@ int main(int argc, char *argv[])
                     std::shared_ptr<Kullo::Http::HttpClientFactory>(
                         new HttpClient::HttpClientFactoryImpl()));
 
-        auto tr = std::make_shared<Kullo::Util::StlTaskRunner>();
-        Kullo::Api::Registry::setTaskRunner(tr);
+        auto taskRunner = std::make_shared<Kullo::Util::StlTaskRunner>();
+        Kullo::Api::Registry::setTaskRunner(taskRunner);
+
+        Qml::InnerApplication innerApplication(app);
+        innerApplication.deviceSettings()->migrate();
 
         ApiMirror::Client client(Kullo::Api::Client::create());
-
-        app.deviceSettings().migrate();
-
-        Qml::FontList fontlist;
-        Qml::Hdpi hdpi;
-        Qml::Utils utils;
-        Qml::SoftwareVersions softwareVersions;
-        Qml::Os os;
-        Qml::ModalityWatcher modalityWatcher;
-        Qml::KulloVersionChecker kulloVersionChecker(app);
-
-        Log.d() << "Font scaling factor: " << hdpi.fontScalingFactor();
 
         /*
          * Create Client
@@ -170,43 +162,36 @@ int main(int argc, char *argv[])
         Util::LogfileCleaner::clean();
         Util::KulloFolderSetup::perpareKulloFolder(DesktopUtil::kulloPaths().KULLO_DIR);
 
-        Qml::ClientModel clientModel(
-                    client,
-                    DesktopUtil::kulloPaths().DATABASE_DIR + QStringLiteral("/libkulloclient-%1.db"),
-                    app);
-        app.setClientModel(&clientModel);
+        Qml::Inbox inbox(innerApplication, client, taskRunner.get());
 
         /*
          * Create GUI Engine
          */
         QQmlApplicationEngine engine;
         Util::QmlSetup::setupTypes();
-        Util::QmlSetup::setupImageproviders(engine, clientModel);
+        Util::QmlSetup::setupImageproviders(engine, inbox);
 
         /*
-         * Naming is hard.
-         *
-         * The following global QML objects get a capital letter in order
-         * to not conflict with property names. Types of those objects get
-         * a "Type" suffix, since this is not visible anywhere. E.g.
-         *
-         *   SomeOtherComponent {
-         *       client: Client
-         *   }
-         *
-         * where Client is of type ClientType.
-         *
+         * Global object names must not conflict with the types in Util::QmlSetup::setupTypes()
          */
         QQmlContext *context = engine.rootContext();
-        context->setContextProperty("Client", &clientModel);
+
+        Qml::FontList fontlist;
+        Qml::Hdpi hdpi;
+        Qml::KulloVersionChecker kulloVersionChecker(innerApplication);
+        Qml::ModalityWatcher modalityWatcher;
+        Qml::Os os;
+        Qml::SoftwareVersions softwareVersions;
+        Qml::Utils utils;
+        context->setContextProperty("InnerApplication", &innerApplication);
+        context->setContextProperty("Inbox", &inbox);
+        context->setContextProperty("FontList", &fontlist);
         context->setContextProperty("Hdpi", &hdpi);
         context->setContextProperty("KulloVersionChecker", &kulloVersionChecker);
-        context->setContextProperty("Devicesettings", &app.deviceSettings());
-        context->setContextProperty("FontList", &fontlist);
         context->setContextProperty("ModalityWatcher", &modalityWatcher);
         context->setContextProperty("Os", &os);
-        context->setContextProperty("Utils", &utils);
         context->setContextProperty("SoftwareVersions", &softwareVersions);
+        context->setContextProperty("Utils", &utils);
 
         const QStringList INITIAL_QML_FILES {
             QStringLiteral("qrc:/libraryLoggerInitializer.qml"),
@@ -245,12 +230,11 @@ int main(int argc, char *argv[])
                     << "version: " << version;
         });
 
-        app.setMainWindow(window);
         window->show();
+        innerApplication.setMainWindow(window);
 
-        app.secondStageSetup();
         execStatus = app.exec();
-        tr->wait();
+        taskRunner->wait();
         lock.release();
     }
 

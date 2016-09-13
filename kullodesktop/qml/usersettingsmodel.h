@@ -80,8 +80,6 @@ public:
 
     Q_INVOKABLE bool loginCredentialsStored() const;
 
-    Q_INVOKABLE void reset(const QString &address, const QString &masterKeyPem);
-
     QPixmap avatar() const;
 
     QPixmap tmpAvatar() const;
@@ -91,6 +89,7 @@ public:
     Q_INVOKABLE void deleteAvatar();
 
     // Non-QML methods
+    void reset(const std::shared_ptr<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::MasterKey> &masterKey);
 
     bool masterKeyBackupConfirmed() const;
     void setMasterKeyBackupConfirmed(bool confirmed);

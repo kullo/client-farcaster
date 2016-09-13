@@ -6,7 +6,7 @@ import "../buttons"
 import "../native"
 
 Item {
-    id: _root
+    id: root
     property var registerer: null;
 
     signal done()
@@ -24,7 +24,7 @@ Item {
 
             if (percent == 100)
             {
-                _root.done()
+                root.done()
             }
         }
     }

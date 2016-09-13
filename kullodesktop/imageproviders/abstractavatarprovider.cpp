@@ -10,8 +10,8 @@
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
 
-#include "kullodesktop/qml/clientmodel.h"
-#include "kullodesktop/qml/participantmodel.h"
+#include "kullodesktop/qml/inbox.h"
+#include "kullodesktop/qml/sender.h"
 
 namespace {
 const int RELATIVE_CORNER_RADIUS = 15; // %
@@ -24,9 +24,9 @@ const qreal FALLBACK_AVATAR_FOREGROUND_OPACITY = 0.8;
 namespace KulloDesktop {
 namespace Imageproviders {
 
-AbstractAvatarProvider::AbstractAvatarProvider(Qml::ClientModel &clientModel)
+AbstractAvatarProvider::AbstractAvatarProvider(Qml::Inbox &inbox)
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
-    , clientModel_(clientModel)
+    , inbox_(inbox)
 {
 }
 
@@ -65,7 +65,7 @@ QPixmap AbstractAvatarProvider::requestPixmap(const QString &id, QSize *size, co
 
 QPixmap AbstractAvatarProvider::getAvatarForAddress(const QString &address, const QSize &renderSize)
 {
-    auto part = clientModel_.participantModel(Kullo::Api::Address::create(address.toStdString()));
+    auto part = inbox_.latestSenderForAddress(Kullo::Api::Address::create(address.toStdString()));
     if (!part)
     {
         return getEmptyAvatar(renderSize);

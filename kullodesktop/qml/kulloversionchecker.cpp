@@ -11,6 +11,8 @@
 #include <kulloclient/util/version.h>
 #include <kulloclient/util/librarylogger.h>
 
+#include "kullodesktop/qml/innerapplication.h"
+
 namespace {
 const auto CHECK_URL_PATTERN = QStringLiteral("https://www.kullo.net/download/files/%1/latest-%2");
 //const auto CHECK_URL_PATTERN = QStringLiteral("https://www.kullo.net/download/files/%1/latest-test-%2");
@@ -40,7 +42,7 @@ const auto DOWNLOAD_FILENAME_PATTERN = QStringLiteral("kullo-%1-linux64.run");
 namespace KulloDesktop {
 namespace Qml {
 
-KulloVersionChecker::KulloVersionChecker(Applications::KulloApplication &app, QObject *parent)
+KulloVersionChecker::KulloVersionChecker(InnerApplication &app, QObject *parent)
     : QObject(parent)
     , app_(app)
     , running_(false)
@@ -86,7 +88,7 @@ void KulloVersionChecker::run()
         return;
     }
 
-    QUrl url(CHECK_URL_PATTERN.arg(OS_FAMILY, app_.deviceSettings().updateLane()));
+    QUrl url(CHECK_URL_PATTERN.arg(OS_FAMILY, app_.deviceSettings()->updateLane()));
 
     downloadData_ = std::make_shared<QByteArray>();
     downloadBuffer_ = std::make_shared<QBuffer>(downloadData_.get());

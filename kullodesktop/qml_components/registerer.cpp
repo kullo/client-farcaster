@@ -20,8 +20,10 @@
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
 
+#include "kullodesktop/qml/innerapplication.h"
+
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 void ChallengeTypes::init()
 {
@@ -89,6 +91,8 @@ Registerer::Registerer(QObject *parent)
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_finished,
             this, [this](const std::shared_ptr<Kullo::Api::Address> & address, const std::shared_ptr<Kullo::Api::MasterKey> & masterKey)
     {
+        application_->databaseFiles().removeDatabase(address);
+
         auto addressString = QString::fromStdString(address->toString());
         auto masterKeyString = QString::fromStdString(masterKey->pem());
         emit succeeded(addressString, masterKeyString);
@@ -117,6 +121,21 @@ Registerer::Registerer(QObject *parent)
 
 Registerer::~Registerer()
 {
+}
+
+Qml::InnerApplication *Registerer::application() const
+{
+    auto out = application_;
+    QQmlEngine::setObjectOwnership(out, QQmlEngine::CppOwnership);
+    return out;
+}
+
+void Registerer::setApplication(Qml::InnerApplication *application)
+{
+    kulloAssert(!application_);
+    kulloAssert(application);
+    application_ = application;
+    emit applicationChanged();
 }
 
 ApiMirror::Client *Registerer::client() const

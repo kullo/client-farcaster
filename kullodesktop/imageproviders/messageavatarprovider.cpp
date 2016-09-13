@@ -7,7 +7,7 @@
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/qml/clientmodel.h"
+#include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
 #include "kullodesktop/qml/conversationlistsource.h"
 #include "kullodesktop/qml/conversationmodel.h"
@@ -16,14 +16,14 @@
 namespace KulloDesktop {
 namespace Imageproviders {
 
-MessageAvatarProvider::MessageAvatarProvider(Qml::ClientModel &clientModel) :
-    AbstractAvatarProvider(clientModel)
+MessageAvatarProvider::MessageAvatarProvider(Qml::Inbox &inbox)
+    : AbstractAvatarProvider(inbox)
 {
 }
 
 QPixmap MessageAvatarProvider::drawAvatar(const QString &url, const QSize &renderSize)
 {
-    if (!clientModel_.loggedIn())
+    if (!inbox_.loggedIn())
     {
         return QPixmap();
     }
@@ -48,7 +48,7 @@ QPixmap MessageAvatarProvider::drawAvatar(const QString &url, const QSize &rende
         return QPixmap();
     }
 
-    Qml::ConversationModel *conv = clientModel_.conversationsListSource()->get(convId);
+    Qml::ConversationModel *conv = inbox_.conversationsListSource()->get(convId);
     if (!conv)
     {
         Log.e() << "Conversation for message avatar not found: " << convId;

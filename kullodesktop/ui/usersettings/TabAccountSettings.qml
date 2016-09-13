@@ -17,7 +17,7 @@ TabContent {
         SelectableTextRow {
             id: rowAddress
             name: qsTr("Kullo address")
-            value: Client.userSettings.address
+            value: Inbox.userSettings.address
         }
 
         ButtonRow {
@@ -25,13 +25,13 @@ TabContent {
             name: qsTr("MasterKey")
             buttonText: qsTr("Show")
             onClicked: {
-                masterKeyShowWindow.key = Client.userSettings.masterKeyPem
+                masterKeyShowWindow.key = Inbox.userSettings.masterKeyPem
                 masterKeyShowWindow.openWindow()
             }
 
             MasterKeyShowWindow {
                 id: masterKeyShowWindow
-                address: Client.userSettings.address
+                address: Inbox.userSettings.address
             }
         }
 
@@ -40,7 +40,7 @@ TabContent {
             name: qsTr("Kullo server")
             buttonText: qsTr("Open account settings")
 
-            onClicked: settingsLocation.openUrl(Client)
+            onClicked: settingsLocation.openUrl(Inbox)
 
             SettingsLocation {
                 id: settingsLocation

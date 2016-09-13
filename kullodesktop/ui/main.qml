@@ -103,16 +103,16 @@ ApplicationWindow {
                 // https://qt.gitorious.org/qt/qtdeclarative/source/c1c7a952bc11d3bd9edcd3739c57df15b60a9e79:src/quick/items/qquickwindowmodule.cpp#L132-136
                 PropertyChanges {
                     target: appWindow
-                    visibility: Devicesettings.getMainWindowMaximized()
+                    visibility: InnerApplication.deviceSettings.getMainWindowMaximized()
                                 ? "Maximized"
                                 : "AutomaticVisibility"
                 }
                 PropertyChanges {
                     target: appWindow
-                    width: Devicesettings.getMainWindowWidth()
-                    height: Devicesettings.getMainWindowHeight()
-                    minimumWidth: Devicesettings.mainWindowMinWidth
-                    minimumHeight: Devicesettings.mainWindowMinHeight
+                    width: InnerApplication.deviceSettings.getMainWindowWidth()
+                    height: InnerApplication.deviceSettings.getMainWindowHeight()
+                    minimumWidth: InnerApplication.deviceSettings.mainWindowMinWidth
+                    minimumHeight: InnerApplication.deviceSettings.mainWindowMinHeight
                 }
             },
             State {
@@ -189,7 +189,7 @@ ApplicationWindow {
             }
         ]
 
-        state: Client.userSettings.loginCredentialsStored() ? "loggingIn" : "welcome"
+        state: Inbox.userSettings.loginCredentialsStored() ? "loggingIn" : "welcome"
 
         Loader {
             id: appLoader

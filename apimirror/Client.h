@@ -16,7 +16,7 @@ public:
     explicit Client(QObject *parent = nullptr);
     explicit Client(std::shared_ptr<Kullo::Api::Client> client);
 
-    std::shared_ptr<Kullo::Api::Client> raw();
+    std::shared_ptr<Kullo::Api::Client> raw() const;
 
 private:
     std::shared_ptr<Kullo::Api::Client> client_;

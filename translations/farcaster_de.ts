@@ -173,6 +173,10 @@
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
+    <message>
+        <source>Do you really want to delete all %1 messages?</source>
+        <translation>Willst du wirklich alle %1 Nachrichten löschen?</translation>
+    </message>
 </context>
 <context>
     <name>CutCopyPasteMenu</name>
@@ -900,6 +904,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>yesterday</source>
         <translation>gestern</translation>
+    </message>
+    <message>
+        <source>Copy Kullo address</source>
+        <translation>Kopiere Kullo-Adresse</translation>
     </message>
 </context>
 <context>

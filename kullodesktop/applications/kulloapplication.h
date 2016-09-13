@@ -4,9 +4,6 @@
 #include <memory>
 
 #include "kullodesktop/applications/exceptionawareqapplication.h"
-#include "kullodesktop/osintegration/kullotrayicon.h"
-#include "kullodesktop/qml/clientmodel.h"
-#include "kullodesktop/qml/devicesettings.h"
 
 namespace KulloDesktop {
 namespace Applications {
@@ -18,13 +15,6 @@ class KulloApplication : public ExceptionAwareQApplication
 public:
     explicit KulloApplication(int &argc, char **argv);
 
-    /// Some setup steps that need application name set
-    void secondStageSetup();
-
-    Qml::DeviceSettings& deviceSettings();
-    void setMainWindow(QWindow *mainWindow);
-    void setClientModel(Qml::ClientModel *clientModel);
-
     static QString GUID;
     static QString GUID_DEBUG;
     static bool TEST_MODE;
@@ -34,14 +24,6 @@ public:
 
 signals:
     void showMainWindowRequested();
-
-private:
-    void setCloseToTray(bool closeToTray);
-
-    Qml::DeviceSettings settings_;
-    QWindow *mainWindow_ = nullptr;
-    Qml::ClientModel *clientModel_ = nullptr;
-    std::unique_ptr<OsIntegration::KulloTrayIcon> icon_;
 };
 
 }

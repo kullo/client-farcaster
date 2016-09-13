@@ -73,7 +73,7 @@ Item {
                     title: qsTr("Select avatar")
                     onAccepted: {
                         console.debug("New avatar: " + fileUrl)
-                        if (Client.userSettings.setTmpAvatarFileUrl(fileUrl))
+                        if (Inbox.userSettings.setTmpAvatarFileUrl(fileUrl))
                         {
                             console.debug("Temporary avatar set.")
                             refreshAvatar()
@@ -89,7 +89,7 @@ Item {
                     }
                     onHoveredChanged: {
                         deleteButton.visible = containsMouse
-                                && Client.userSettings.avatarMimeType !== ""
+                                && Inbox.userSettings.avatarMimeType !== ""
                     }
 
                     DropArea {
@@ -100,7 +100,7 @@ Item {
                             {
                                 var fileUrl = drop.urls[0];
                                 console.debug("New avatar: " + fileUrl)
-                                if (Client.userSettings.setTmpAvatarFileUrl(fileUrl))
+                                if (Inbox.userSettings.setTmpAvatarFileUrl(fileUrl))
                                 {
                                     console.debug("Temporary avatar set.")
                                     refreshAvatar()
@@ -129,7 +129,7 @@ Item {
                             // This deletes avatar without further question
                             // because only one modal window is possible
                             // Fix as soon as delete confirmation for messages is there
-                            Client.userSettings.deleteAvatar()
+                            Inbox.userSettings.deleteAvatar()
                             refreshAvatar()
                             avatarChanged()
                         }
@@ -146,7 +146,7 @@ Item {
 //                          text: qsTr("Do you really want to delete your avatar?")
 //                          onYes: {
 //                              console.info("User wants to delete avatar.")
-//                              Client.userSettings.deleteAvatar()
+//                              Inbox.userSettings.deleteAvatar()
 //                              refreshAvatar()
 //                          }
 //                      }

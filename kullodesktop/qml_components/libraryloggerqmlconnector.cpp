@@ -1,32 +1,32 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
-#include "libraryloggermodel.h"
+#include "libraryloggerqmlconnector.h"
 
 #include <kulloclient/util/librarylogger.h>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
-LibraryLoggerModel::LibraryLoggerModel(QObject *parent) :
+LibraryLoggerQmlConnector::LibraryLoggerQmlConnector(QObject *parent) :
     QObject(parent)
 {
 }
 
-void LibraryLoggerModel::e(const QString &msg, const QString &stacktrace)
+void LibraryLoggerQmlConnector::e(const QString &msg, const QString &stacktrace)
 {
     Log.e(stacktrace.toStdString()) << msg.trimmed().toStdString().c_str();
 }
 
-void LibraryLoggerModel::w(const QString &msg, const QString &stacktrace)
+void LibraryLoggerQmlConnector::w(const QString &msg, const QString &stacktrace)
 {
     Log.w(stacktrace.toStdString()) << msg.trimmed().toStdString().c_str();
 }
 
-void LibraryLoggerModel::i(const QString &msg, const QString &stacktrace)
+void LibraryLoggerQmlConnector::i(const QString &msg, const QString &stacktrace)
 {
     Log.i(stacktrace.toStdString()) << msg.trimmed().toStdString().c_str();
 }
 
-void LibraryLoggerModel::d(const QString &msg, const QString &stacktrace)
+void LibraryLoggerQmlConnector::d(const QString &msg, const QString &stacktrace)
 {
     Log.d(stacktrace.toStdString()) << msg.trimmed().toStdString().c_str();
 }

@@ -11,11 +11,11 @@ namespace Imageproviders {
 class AttachmentPreviewProvider : public QQuickImageProvider
 {
 public:
-    explicit AttachmentPreviewProvider(Qml::ClientModel &clientModel);
+    explicit AttachmentPreviewProvider(Qml::Inbox &inbox);
     QPixmap requestPixmap(const QString &url, QSize *size, const QSize &requestedSize);
 
 private:
-    Qml::ClientModel &clientModel_;
+    Qml::Inbox &inbox_;
 };
 
 }

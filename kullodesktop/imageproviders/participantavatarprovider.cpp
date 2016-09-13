@@ -7,19 +7,19 @@
 #include <kulloclient/api/Address.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/qml/clientmodel.h"
+#include "kullodesktop/qml/inbox.h"
 
 namespace KulloDesktop {
 namespace Imageproviders {
 
-ParticipantAvatarProvider::ParticipantAvatarProvider(Qml::ClientModel &clientModel)
-    : AbstractAvatarProvider(clientModel)
+ParticipantAvatarProvider::ParticipantAvatarProvider(Qml::Inbox &inbox)
+    : AbstractAvatarProvider(inbox)
 {
 }
 
 QPixmap ParticipantAvatarProvider::drawAvatar(const QString &url, const QSize &renderSize)
 {
-    if (!clientModel_.loggedIn())
+    if (!inbox_.loggedIn())
     {
         return QPixmap();
     }

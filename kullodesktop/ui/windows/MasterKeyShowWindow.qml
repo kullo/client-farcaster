@@ -40,7 +40,7 @@ NativeWindow {
             // CTRL + P
             if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_P) {
                 console.info("MasterKeyShowWindow: Ctrl+P pressed.")
-                Client.userSettings.printMasterKey(_intoText)
+                Inbox.userSettings.printMasterKey(_intoText)
                 event.accepted = true
             }
         }
@@ -97,7 +97,7 @@ NativeWindow {
                 text: qsTr("Print")
                 onClicked: {
                     console.info("MasterKeyShowWindow: Print button clicked.")
-                    Client.userSettings.printMasterKey(_intoText)
+                    Inbox.userSettings.printMasterKey(_intoText)
                 }
             }
         }

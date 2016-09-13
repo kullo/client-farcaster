@@ -14,7 +14,7 @@
 #include <kulloclient/util/librarylogger.h>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 LoginChecker::LoginChecker(QObject *parent)
     : QObject(parent)

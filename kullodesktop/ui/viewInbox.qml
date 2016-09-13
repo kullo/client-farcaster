@@ -44,26 +44,26 @@ FocusScope {
         if (currentVisibility !== QWindow_Hidden)
         {
             var maximized = (appWindow.visibility === QWindow_Maximized)
-            Devicesettings.setMainWindowMaximized(maximized)
+            InnerApplication.deviceSettings.setMainWindowMaximized(maximized)
 
             if (storeWindowSizeChanges && !maximized)
             {
-                Devicesettings.setMainWindowWidth(width)
-                Devicesettings.setMainWindowHeight(height)
+                InnerApplication.deviceSettings.setMainWindowWidth(width)
+                InnerApplication.deviceSettings.setMainWindowHeight(height)
             }
         }
     }
 
     Component.onCompleted: {
-        Client.sync()
+        Inbox.sync()
         heartbeat.start()
-        scheduler.user = Client.userSettings
+        scheduler.user = Inbox.userSettings
         scheduler.start()
         storeWindowSizeChanges = true
     }
 
     function userSettingsIncomplete() {
-        return Client.userSettings.name.trim() === ""
+        return Inbox.userSettings.name.trim() === ""
     }
 
     function toggleTodoMode()
@@ -76,8 +76,8 @@ FocusScope {
 
     function toggleSoundActive()
     {
-        Devicesettings.muted = !Devicesettings.muted
-        var newValueSoundActive = !Devicesettings.muted
+        InnerApplication.deviceSettings.muted = !InnerApplication.deviceSettings.muted
+        var newValueSoundActive = !InnerApplication.deviceSettings.muted
         overlaySoundActive.active = newValueSoundActive
         overlaySoundActive.show()
     }
@@ -126,19 +126,19 @@ FocusScope {
         id: heartbeat
         interval: 10000
         repeat: true
-        onTriggered: Client.sync()
+        onTriggered: Inbox.sync()
 
         property bool needResync: false
 
         function syncAsap()
         {
-            if (!Client.sync()) needResync = true
+            if (!Inbox.sync()) needResync = true
         }
 
         function resync()
         {
             console.debug("Starting resync ...")
-            Client.sync()
+            Inbox.sync()
             needResync = false
         }
     }
@@ -204,7 +204,7 @@ FocusScope {
     }
 
     Connections {
-        target: Client
+        target: Inbox
         onOpenConversation: {
             leftColumn.openConversation(conversationId)
         }
@@ -297,7 +297,7 @@ FocusScope {
         text: qsTr("Enter Kullo address:")
         onAddressAccepted: {
             console.info("Start conversation with '" + result + "'")
-            Client.addConversation(result)
+            Inbox.addConversation(result)
         }
     }
 
@@ -334,7 +334,7 @@ FocusScope {
         id: newMessageSound
         source: "/resources/sounds/new_message.wav"
         volume: 0.5
-        muted: Devicesettings.muted
+        muted: InnerApplication.deviceSettings.muted
     }
 
     states: [
@@ -349,7 +349,7 @@ FocusScope {
             name: "reply"
             PropertyChanges {
                 target: rightColumn
-                width: Devicesettings.answerColumnWidth
+                width: InnerApplication.deviceSettings.answerColumnWidth
             }
         }
     ]
@@ -368,12 +368,12 @@ FocusScope {
     }
 
     function logout() {
-        Client.logOut()
+        Inbox.logOut()
         app.state = "welcome"
     }
 
     function openConversation(convId) {
-        var conv = Client.conversations.get(convId)
+        var conv = Inbox.conversations.get(convId)
 
         if (!conv) console.error("conv is null in inbox.openConversation() for conversation: " + convId);
         if (!conv.messages) console.error("conv.messages is null in inbox.openConversation() for conversation: " + convId);
@@ -457,7 +457,7 @@ FocusScope {
                         var widthToStore = Math.round(width)
                         widthToStore -= widthToStore%5
                         // console.debug(width + ", " + widthToStore)
-                        Devicesettings.answerColumnWidth = widthToStore
+                        InnerApplication.deviceSettings.answerColumnWidth = widthToStore
                         minimumWidthSet = true
                         animationEnabled = false
                     }

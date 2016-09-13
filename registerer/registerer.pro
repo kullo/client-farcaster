@@ -14,7 +14,7 @@ SOURCES += \
     main.cpp \
     registerer.cpp
 
-unix:!macx {
+linux() {
     copyOpenSslCommand = @echo Copying OpenSSL ...
     copyOpenSslCommand += ; rsync -pgo --update \"$$OUT_PWD/../../build-openssl/lib/libcrypto.so.1.0.0\" \"$$OUT_PWD/../../build-openssl/lib/libssl.so.1.0.0\" \"$$OUT_PWD/\"
     copyOpenSsl.commands = $$copyOpenSslCommand

@@ -27,19 +27,19 @@ NativeModalWindow {
     }
 
     function openMasterKey() {
-        masterKeyShowWindow.key = Client.userSettings.masterKeyPem
+        masterKeyShowWindow.key = Inbox.userSettings.masterKeyPem
         masterKeyShowWindow.openWindow()
     }
 
     function postpone(seconds)
     {
-        Client.userSettings.postponeMasterKeyBackupDontRemindBefore(seconds)
+        Inbox.userSettings.postponeMasterKeyBackupDontRemindBefore(seconds)
         _dirtyClosing = false
     }
 
     function confirm()
     {
-        Client.userSettings.confirmMasterKeyBackup()
+        Inbox.userSettings.confirmMasterKeyBackup()
         _dirtyClosing = false
     }
 
@@ -53,7 +53,7 @@ NativeModalWindow {
 
     MasterKeyShowWindow {
         id: masterKeyShowWindow
-        address: Client.userSettings.address
+        address: Inbox.userSettings.address
     }
 
     // Main Qt Quick Item required for attached property `Keys`

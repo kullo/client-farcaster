@@ -6,23 +6,22 @@
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/qml/clientmodel.h"
+#include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
 #include "kullodesktop/qml/conversationlistsource.h"
 #include "kullodesktop/qml/conversationmodel.h"
-#include "kullodesktop/qml/participantmodel.h"
 
 namespace KulloDesktop {
 namespace Imageproviders {
 
-ConversationAvatarProvider::ConversationAvatarProvider(Qml::ClientModel &clientModel) :
-    AbstractAvatarProvider(clientModel)
+ConversationAvatarProvider::ConversationAvatarProvider(Qml::Inbox &inbox)
+    : AbstractAvatarProvider(inbox)
 {
 }
 
 QPixmap ConversationAvatarProvider::drawAvatar(const QString &url, const QSize &renderSize)
 {
-    if (!clientModel_.loggedIn())
+    if (!inbox_.loggedIn())
     {
         return QPixmap();
     }
@@ -38,7 +37,7 @@ QPixmap ConversationAvatarProvider::drawAvatar(const QString &url, const QSize &
         return QPixmap();
     }
 
-    Qml::ConversationModel *conv = clientModel_.conversationsListSource()->get(convId);
+    Qml::ConversationModel *conv = inbox_.conversationsListSource()->get(convId);
     if (!conv)
     {
         Log.e() << "Conversation for conversation avatar not found: " << convId;

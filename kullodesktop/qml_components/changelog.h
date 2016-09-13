@@ -7,7 +7,7 @@
 #include <desktoputil/asynchttpgetmanager.h>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 class Changelog : public QObject
 {

@@ -1,5 +1,5 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
-#include "attachmentsaddermodel.h"
+#include "attachmentsadder.h"
 
 #include <QQmlEngine>
 #include <desktoputil/asynctask.h>
@@ -8,29 +8,29 @@
 #include "kullodesktop/qml/draftmodel.h"
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
-AttachmentsAdderModel::AttachmentsAdderModel(QObject *parent) :
+AttachmentsAdder::AttachmentsAdder(QObject *parent) :
     QObject(parent),
     cancel_(false)
 {
-    connect(this, &AttachmentsAdderModel::_doneAddingAttachments,
-            this, &AttachmentsAdderModel::onDoneAddingAttachments);
+    connect(this, &AttachmentsAdder::_doneAddingAttachments,
+            this, &AttachmentsAdder::onDoneAddingAttachments);
 }
 
-AttachmentsAdderModel::~AttachmentsAdderModel()
+AttachmentsAdder::~AttachmentsAdder()
 {
     cancel_ = true;
     if (backgroundJob_.joinable()) backgroundJob_.join();
 }
 
-DraftModel *AttachmentsAdderModel::target() const
+Qml::DraftModel *AttachmentsAdder::target() const
 {
     QQmlEngine::setObjectOwnership(draftModel_, QQmlEngine::CppOwnership);
     return draftModel_;
 }
 
-void AttachmentsAdderModel::setTarget(DraftModel *target)
+void AttachmentsAdder::setTarget(Qml::DraftModel *target)
 {
     if (draftModel_ != target)
     {
@@ -39,7 +39,7 @@ void AttachmentsAdderModel::setTarget(DraftModel *target)
     }
 }
 
-bool AttachmentsAdderModel::addAttachments(const QList<QUrl> &urls)
+bool AttachmentsAdder::addAttachments(const QList<QUrl> &urls)
 {
     if (!working_.try_lock()) return false;
 
@@ -53,7 +53,7 @@ bool AttachmentsAdderModel::addAttachments(const QList<QUrl> &urls)
 
     emit addingAttachmentsStarted();
 
-    auto doAddAttachments = [&](DraftModel *draftModel, const QList<QUrl> &urls)
+    auto doAddAttachments = [&](Qml::DraftModel *draftModel, const QList<QUrl> &urls)
     {
         for (const auto &url : urls)
         {
@@ -67,7 +67,7 @@ bool AttachmentsAdderModel::addAttachments(const QList<QUrl> &urls)
     return true;
 }
 
-void AttachmentsAdderModel::onDoneAddingAttachments()
+void AttachmentsAdder::onDoneAddingAttachments()
 {
     // Unlocking must happen from the same thread as locking (says Windows)
     draftModel_->addingAttachmentsInProgress().unlock();

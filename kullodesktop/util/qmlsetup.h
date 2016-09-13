@@ -12,7 +12,7 @@ class QmlSetup
 {
 public:
     static void setupTypes();
-    static void setupImageproviders(QQmlApplicationEngine &engine, Qml::ClientModel &clientModel);
+    static void setupImageproviders(QQmlApplicationEngine &engine, Qml::Inbox &clientModel);
 };
 
 }

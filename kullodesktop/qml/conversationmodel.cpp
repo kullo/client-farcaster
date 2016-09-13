@@ -14,7 +14,7 @@
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/qml/participantmodel.h"
+#include "kullodesktop/qml/sender.h"
 
 namespace KulloDesktop {
 namespace Qml {

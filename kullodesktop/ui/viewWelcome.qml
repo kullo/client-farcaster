@@ -44,7 +44,7 @@ FocusScope {
                     right: parent.right
                 }
                 spacing: 10
-                visible: Devicesettings.usersList().length > 0
+                visible: InnerApplication.deviceSettings.usersList().length > 0
 
                 NativeText {
                     anchors {
@@ -64,12 +64,12 @@ FocusScope {
 
                     onAccepted: {
                         var loginAddress = userSelection.currentText
-                        Client.userSettings.load(loginAddress)
+                        Inbox.userSettings.load(loginAddress)
                         app.state = "loggingIn"
                     }
 
                     FComboBox {
-                        property var userList: Devicesettings.usersList()
+                        property var userList: InnerApplication.deviceSettings.usersList()
                         id: userSelection
                         anchors {
                             left: parent.left
@@ -79,9 +79,9 @@ FocusScope {
                         model: userList
 
                         Component.onCompleted: {
-                            currentIndex = find(Devicesettings.lastActiveUser);
+                            currentIndex = find(InnerApplication.deviceSettings.lastActiveUser);
 
-                            if (currentIndex == -1 && Devicesettings.usersList().length > 0)
+                            if (currentIndex == -1 && InnerApplication.deviceSettings.usersList().length > 0)
                             {
                                 currentIndex = 0
                             }
@@ -112,7 +112,7 @@ FocusScope {
                         left: parent.left
                         right: parent.right
                     }
-                    text: Devicesettings.usersList().length !== 0
+                    text: InnerApplication.deviceSettings.usersList().length !== 0
                           ? qsTr("Login with another account.")
                           : qsTr("Login with your Kullo credentials.")
                 }

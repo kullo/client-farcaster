@@ -11,6 +11,7 @@ SOURCES += \
     asynchttppostmanager.cpp \
     asynctask.cpp \
     breakpadsetup.cpp \
+    databasefiles.cpp \
     filesystem.cpp \
     initials.cpp \
     kulloaddresshelper.cpp \
@@ -27,6 +28,7 @@ HEADERS += \
     asynchttppostmanager.h \
     asynctask.h \
     breakpadsetup.h \
+    databasefiles.h \
     filesystem.h \
     initials.h \
     kulloaddresshelper.h \
@@ -37,7 +39,8 @@ HEADERS += \
     paths.h \
     qtypestreamers.h \
     stlqt.h \
-    versions.h
+    versions.h \
+    desktoputil-forwards.h
 
 # BEGIN httpclient-curl
 CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-httpclient-curl/include

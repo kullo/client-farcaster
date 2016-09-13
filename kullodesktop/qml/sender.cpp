@@ -1,5 +1,5 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
-#include "participantmodel.h"
+#include "sender.h"
 
 #include <desktoputil/stlqt.h>
 #include <kulloclient/api/Messages.h>
@@ -10,16 +10,15 @@
 namespace KulloDesktop {
 namespace Qml {
 
-ParticipantModel::ParticipantModel(QObject *parent)
+Sender::Sender(QObject *parent)
     : QObject(parent)
 {
     Log.f() << "Don't instantiate Participant in QML.";
 }
 
-ParticipantModel::ParticipantModel(
-        const std::shared_ptr<Kullo::Api::Session> &session,
-        Kullo::id_type msgId,
-        QObject *parent)
+Sender::Sender(const std::shared_ptr<Kullo::Api::Session> &session,
+               Kullo::id_type msgId,
+               QObject *parent)
     : QObject(parent)
     , session_(session)
     , msgId_(msgId)
@@ -28,22 +27,22 @@ ParticipantModel::ParticipantModel(
     kulloAssert(msgId >= 0);
 }
 
-QString ParticipantModel::name() const
+QString Sender::name() const
 {
     return QString::fromStdString(session_->senders()->name(msgId_));
 }
 
-QString ParticipantModel::address() const
+QString Sender::address() const
 {
     return QString::fromStdString(session_->senders()->address(msgId_)->toString());
 }
 
-QString ParticipantModel::organization() const
+QString Sender::organization() const
 {
     return QString::fromStdString(session_->senders()->organization(msgId_));
 }
 
-QPixmap ParticipantModel::avatar() const
+QPixmap Sender::avatar() const
 {
     auto mimeType = session_->senders()->avatarMimeType(msgId_);
     auto data = session_->senders()->avatar(msgId_);

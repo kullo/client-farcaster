@@ -4,20 +4,20 @@
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/qml/clientmodel.h"
+#include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/usersettingsmodel.h"
 
 namespace KulloDesktop {
 namespace Imageproviders {
 
-SenderAvatarProvider::SenderAvatarProvider(Qml::ClientModel &clientModel)
-    : UserSettingsAvatarProvider(clientModel)
+SenderAvatarProvider::SenderAvatarProvider(Qml::Inbox &inbox)
+    : UserSettingsAvatarProvider(inbox)
 {
 }
 
 QPixmap SenderAvatarProvider::drawAvatar(const QString &url, const QSize &renderSize)
 {
-    auto userSettings = clientModel_.userSettings();
+    auto userSettings = inbox_.userSettings();
 
     // Cut query string from URL
     QString path = url.split("?").at(0);

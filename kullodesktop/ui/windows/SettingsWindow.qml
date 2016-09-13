@@ -25,10 +25,10 @@ NativeModalWindow {
         {
             if (tabUserSettings.item)
             {
-                tabUserSettings.item.address      = Client.userSettings.address
-                tabUserSettings.item.name         = Client.userSettings.name
-                tabUserSettings.item.organization = Client.userSettings.organization
-                tabUserSettings.item.footer       = Client.userSettings.footer
+                tabUserSettings.item.address      = Inbox.userSettings.address
+                tabUserSettings.item.name         = Inbox.userSettings.name
+                tabUserSettings.item.organization = Inbox.userSettings.organization
+                tabUserSettings.item.footer       = Inbox.userSettings.footer
                 tabUserSettings.item.refreshAvatar()
                 checkValues()
             }
@@ -62,7 +62,7 @@ NativeModalWindow {
 
     onClosing: {
         console.debug("UserSettingsWindow closing ...")
-        Client.userSettings.discardTmpAvatar()
+        Inbox.userSettings.discardTmpAvatar()
     }
 
     // Main Qt Quick Item required for attached property `Keys`

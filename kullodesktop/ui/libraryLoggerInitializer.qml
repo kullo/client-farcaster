@@ -2,10 +2,8 @@
 import QtQuick 2.4
 import Kullo 1.0
 
-LibraryLogger {
+LibraryLoggerQmlConnector {
     Component.onCompleted: {
-        console.debug("Initializing LibraryLogger ...")
-
         console.error = function(msg) {
             var stackList = (new Error).stack.split("\n")
             stackList.shift()

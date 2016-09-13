@@ -7,10 +7,11 @@
 #include <apimirror/Client.h>
 #include <apimirror/eventdispatcher.h>
 #include <apimirror/SyncerListener.h>
-#include <desktoputil/kulloversion.h>
+#include <kulloclient/kulloclient-forwards.h>
 #include <kulloclient/api/LocalError.h>
 #include <kulloclient/api/SyncProgress.h>
 
+#include "desktoputil/desktoputil-forwards.h"
 #include "kullodesktop/farcaster-forwards.h"
 
 namespace KulloDesktop {
@@ -33,17 +34,16 @@ public:
     static void init();
 };
 
-class ClientModel : public QObject
+class Inbox : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ClientModel(
-            ApiMirror::Client &client,
-            const QString &dbFilenameTemplate,
-            Applications::KulloApplication &app,
-            QObject *parent = 0);
-    ~ClientModel() override;
+    explicit Inbox(InnerApplication &innerApplication,
+                   ApiMirror::Client &client,
+                   Kullo::Util::StlTaskRunner *taskRunner,
+                   QObject *parent = 0);
+    ~Inbox() override;
 
     Q_PROPERTY(KulloDesktop::Qml::UserSettingsModel *userSettings READ userSettings NOTIFY userSettingsChanged)
     UserSettingsModel *userSettings();
@@ -54,27 +54,28 @@ public:
     Q_PROPERTY(KulloDesktop::Qml::ConversationListModel *conversations READ conversations NOTIFY conversationsChanged)
     ConversationListModel *conversations();
 
-    std::shared_ptr<ConversationListSource> conversationsListSource();
-
     Q_INVOKABLE void addConversation(QString participants);
 
     Q_INVOKABLE void removeConversation(Kullo::id_type conversationId);
 
     Q_INVOKABLE bool sync();
 
+    Q_INVOKABLE void clearDatabaseAndResetUserSettings(const QString &addressString, const QString &masterKeyPem);
     Q_INVOKABLE void logIn();
     Q_INVOKABLE void logOut();
-    Q_INVOKABLE void removeDatabase(const QString &addr);
-
-    std::shared_ptr<ParticipantModel> participantModel(const std::shared_ptr<Kullo::Api::Address> &address) const;
 
     Q_INVOKABLE ApiMirror::Client *client() const;
+
+    // non-QML
+    std::shared_ptr<Sender> latestSenderForAddress(const std::shared_ptr<Kullo::Api::Address> &address) const;
     std::shared_ptr<Kullo::Api::Session> session() const;
+    ConversationListSource *conversationsListSource();
 
 signals:
     void userSettingsChanged();
     void conversationsChanged();
     void loggedInChanged(bool loggedIn);
+    void unreadMessagesCountChanged(int count);
     void draftAttachmentsTooBig(Kullo::id_type conversationId);
     void syncStarted();
     void syncProgressed(int countMessagesProcessed, int countMessagesTotal);
@@ -98,23 +99,21 @@ private slots:
 
 private:
     void setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr, const DesktopUtil::KulloVersion &version);
-    DesktopUtil::KulloVersion getLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr);
-    void prepareDatabasePath(const QString &dbFile);
 
-    QString dbFilenameTemplate_;
-    Applications::KulloApplication &app_;
+    InnerApplication &innerApplication_;
+    Kullo::Util::StlTaskRunner *taskRunner_;
     ApiMirror::EventDispatcher eventDispatcher_;
     std::shared_ptr<Kullo::Api::SyncProgress> latestSyncProgress_;
     std::shared_ptr<ApiMirror::SyncerListener> syncerListener_;
     ApiMirror::Client &client_;
     std::shared_ptr<Kullo::Api::Session> session_;
-    std::shared_ptr<ConversationListSource> conversationsSource_;
-    std::shared_ptr<ConversationListModel> conversationsProxy_;
+    std::unique_ptr<ConversationListSource> conversationsSource_;
+    std::unique_ptr<ConversationListModel> conversationsProxy_;
     std::unique_ptr<UserSettingsModel> userSettingsModel_;
 
     std::shared_ptr<Kullo::Api::AsyncTask> createSessionTask_;
 
-    Q_DISABLE_COPY(ClientModel)
+    Q_DISABLE_COPY(Inbox)
 };
 
 }

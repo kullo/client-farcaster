@@ -8,20 +8,19 @@
 #include <kulloclient/api/AsyncTask.h>
 
 #include "kullodesktop/farcaster-forwards.h"
-#include "kullodesktop/qml/clientmodel.h"
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
-class SettingsLocationModel : public QObject
+class SettingsLocation : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SettingsLocationModel(QObject *parent = nullptr);
-    ~SettingsLocationModel();
+    explicit SettingsLocation(QObject *parent = nullptr);
+    ~SettingsLocation();
 
-    Q_INVOKABLE void openUrl(KulloDesktop::Qml::ClientModel *clientModel);
+    Q_INVOKABLE void openUrl(KulloDesktop::Qml::Inbox *inbox);
 
 private:
     std::atomic<bool> locked_;

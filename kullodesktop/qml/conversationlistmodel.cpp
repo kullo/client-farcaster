@@ -19,15 +19,15 @@ ConversationListModel::ConversationListModel(QObject *parent)
     Log.f() << "Don't instantiate ConversationListModel in QML.";
 }
 
-ConversationListModel::ConversationListModel(std::shared_ptr<ConversationListSource> conversations, QObject *parent)
+ConversationListModel::ConversationListModel(ConversationListSource *conversations, QObject *parent)
     : QSortFilterProxyModel(parent)
     , source_(conversations)
 {
-    setSourceModel(source_.get());
+    setSourceModel(source_);
     sort(0, Qt::DescendingOrder);
     setDynamicSortFilter(true);
 
-    connect(source_.get(), &ConversationListSource::conversationsChanged,
+    connect(source_, &ConversationListSource::conversationsChanged,
             this, &ConversationListModel::conversationsChanged);
 }
 

@@ -6,7 +6,7 @@
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/attachmentmodel.h"
-#include "kullodesktop/qml/clientmodel.h"
+#include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
 #include "kullodesktop/qml/conversationlistsource.h"
 #include "kullodesktop/qml/conversationmodel.h"
@@ -17,15 +17,15 @@
 namespace KulloDesktop {
 namespace Imageproviders {
 
-AttachmentPreviewProvider::AttachmentPreviewProvider(Qml::ClientModel &clientModel)
+AttachmentPreviewProvider::AttachmentPreviewProvider(Qml::Inbox &inbox)
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
-    , clientModel_(clientModel)
+    , inbox_(inbox)
 {
 }
 
 QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size, const QSize &requestedSize)
 {
-    if (!clientModel_.loggedIn())
+    if (!inbox_.loggedIn())
     {
         return QPixmap();
     }
@@ -71,7 +71,7 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     QByteArray imageData;
     if (msgId < 0) // Draft
     {
-        auto conversation = clientModel_.conversationsListSource()->get(convId);
+        auto conversation = inbox_.conversationsListSource()->get(convId);
         kulloAssert(conversation);
         auto draft = conversation->draft();
         kulloAssert(draft);
@@ -81,7 +81,7 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     }
     else
     {
-        auto conversation = clientModel_.conversationsListSource()->get(convId);
+        auto conversation = inbox_.conversationsListSource()->get(convId);
         kulloAssert(conversation);
         auto message = conversation->messages()->get(msgId);
         kulloAssert(message);

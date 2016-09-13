@@ -67,7 +67,7 @@ FocusScope {
 
                         onAddressAccepted: {
                             console.info("Start conversation with '" + result + "' ...")
-                            Client.addConversation(result)
+                            Inbox.addConversation(result)
                         }
                     }
                 }

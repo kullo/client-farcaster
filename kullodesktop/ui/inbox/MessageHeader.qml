@@ -1,5 +1,6 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
+import QtQuick.Controls 1.3
 
 import "../"
 import "../misc"
@@ -47,6 +48,20 @@ Rectangle {
         }
         height: Math.max(senderAvatar.height, senderNameBlock.implicitHeight)
                 + 2*_PADDING_VERTICAL
+
+        Menu {
+            id: contextMenu
+            MenuItem {
+                text: qsTr("Copy Kullo address")
+                onTriggered: Utils.setClipboardText(address)
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            onClicked: contextMenu.popup()
+        }
 
         NativeImage {
             id: senderAvatar

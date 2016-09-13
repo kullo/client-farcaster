@@ -8,8 +8,8 @@ TabContent {
     id: root
 
     function reset() {
-        updateLaneRow.value = Devicesettings.updateLane
-        closeToTrayRow.checked = Devicesettings.closeToTray
+        updateLaneRow.value = InnerApplication.deviceSettings.updateLane
+        closeToTrayRow.checked = InnerApplication.deviceSettings.closeToTray
     }
 
     Column {
@@ -30,7 +30,7 @@ TabContent {
                 //: Update lane name
                 ListElement { text: qsTr("all"); value: "all" }
             }
-            initialValue: Devicesettings.updateLane
+            initialValue: InnerApplication.deviceSettings.updateLane
             description: qsTr("'Important' updates are those we think everyone should install, e.g. security fixes or mayor feature improvements.") + " "
                          + qsTr("We plan to have an 'important' update every 4-8 weeks.") + " "
                          + qsTr("'All' updates contain minor improvements or changes that are only relevant for some users. Those come once a week or even more often.") + " "
@@ -41,7 +41,7 @@ TabContent {
             id: closeToTrayRow
             name: qsTr("Tray icon")
             text: qsTr("Close to tray")
-            checked: Devicesettings.closeToTray
+            checked: InnerApplication.deviceSettings.closeToTray
         }
     }
 
@@ -67,8 +67,8 @@ TabContent {
             text: qsTr("Save")
             style: KulloButtonStyle { source: "/resources/scalable/ok_w.svg" }
             onClicked: {
-                Devicesettings.updateLane = updateLaneRow.value
-                Devicesettings.closeToTray = closeToTrayRow.checked
+                InnerApplication.deviceSettings.updateLane = updateLaneRow.value
+                InnerApplication.deviceSettings.closeToTray = closeToTrayRow.checked
                 root.closeWindowRequested()
             }
         }

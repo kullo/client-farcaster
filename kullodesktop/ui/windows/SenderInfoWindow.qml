@@ -38,7 +38,7 @@ NativeWindow {
                 leftMargin: 10
             }
             source: messageId != -1
-                    ? "image://messageavatars/" + Utils.urlencode(Client.userSettings.address) + "/" + conversationId + "/" + messageId
+                    ? "image://messageavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId + "/" + messageId
                     : ""
             height: 200
             width: 200

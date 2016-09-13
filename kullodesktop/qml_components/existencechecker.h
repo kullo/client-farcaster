@@ -8,7 +8,7 @@
 #include <kulloclient/kulloclient-forwards.h>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 class ExistenceChecker : public QObject
 {

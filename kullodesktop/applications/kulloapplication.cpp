@@ -3,9 +3,7 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
-#include <kulloclient/util/misc.h>
 
 namespace KulloDesktop {
 namespace Applications {
@@ -24,69 +22,6 @@ KulloApplication::KulloApplication(int &argc, char **argv)
     connect(this, &KulloApplication::aboutToQuit, []() {
         Log.d() << "Time to say good bye!";
     });
-}
-
-void KulloApplication::secondStageSetup()
-{
-    kulloAssert(!organizationName().isEmpty());
-    kulloAssert(!applicationName().isEmpty());
-
-    if (NO_TRAY_ICON)
-    {
-        setCloseToTray(false);
-    }
-    else
-    {
-        setCloseToTray(settings_.closeToTray());
-        connect(&settings_, &Qml::DeviceSettings::closeToTrayChanged,
-                this, [this](bool value)
-        {
-            this->setCloseToTray(value);
-        });
-    }
-}
-
-Qml::DeviceSettings& KulloApplication::deviceSettings()
-{
-    return settings_;
-}
-
-void KulloApplication::setMainWindow(QWindow *mainWindow)
-{
-    mainWindow_ = mainWindow;
-}
-
-void KulloApplication::setClientModel(Qml::ClientModel *clientModel)
-{
-    clientModel_ = clientModel;
-}
-
-namespace {
-bool runningUnderGnome()
-{
-    auto desktop = std::getenv("DESKTOP_SESSION");
-    const std::string prefix = "gnome";
-    return desktop && !std::strncmp(desktop, prefix.data(), prefix.length());
-}
-}
-
-void KulloApplication::setCloseToTray(bool closeToTray)
-{
-    setQuitOnLastWindowClosed(!closeToTray);
-
-    if (!closeToTray && runningUnderGnome())
-    {
-        // Hide icon if we don't close to tray, because otherwise the app won't
-        // quit when the last window is closed.
-        icon_.reset();
-    }
-    else if (!icon_)
-    {
-        kulloAssert(mainWindow_);
-        kulloAssert(clientModel_);
-        icon_ = Kullo::make_unique<OsIntegration::KulloTrayIcon>(*this, *mainWindow_, *clientModel_);
-        Log.i() << "Done building tray icon.";
-    }
 }
 
 }

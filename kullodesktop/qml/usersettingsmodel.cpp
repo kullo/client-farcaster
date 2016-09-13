@@ -215,14 +215,6 @@ bool UserSettingsModel::loginCredentialsStored() const
     return rawAddress_ && rawMasterKey_;
 }
 
-void UserSettingsModel::reset(const QString &address, const QString &masterKeyPem)
-{
-    rawAddress_ = Kullo::Api::Address::create(address.toStdString());
-    rawMasterKey_ = Kullo::Api::MasterKey::createFromPem(masterKeyPem.toStdString());
-
-    setUserSettings(nullptr);
-}
-
 QPixmap UserSettingsModel::avatar() const
 {
     if (avatarData().isEmpty()) return QPixmap();
@@ -383,6 +375,14 @@ std::pair<QByteArray, QString> UserSettingsModel::compressAvatar(const QImage &s
     return std::pair<QByteArray, QString>(avatarData, compressedFormat);
 }
 
+void UserSettingsModel::reset(const std::shared_ptr<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::MasterKey> &masterKey)
+{
+    rawAddress_ = address;
+    rawMasterKey_ = masterKey;
+
+    setUserSettings(nullptr);
+}
+
 bool UserSettingsModel::masterKeyBackupConfirmed() const
 {
     if (!settings_) return true;
@@ -522,7 +522,7 @@ void UserSettingsModel::load(const QString &address)
 
     auto masterKey = Kullo::Api::MasterKey::createFromDataBlocks(
                 DesktopUtil::StlQt::toVector(data.toStringList()));
-    reset(address, QString::fromStdString(masterKey->pem()));
+    reset(Kullo::Api::Address::create(address.toStdString()), masterKey);
 }
 
 void UserSettingsModel::migrate()

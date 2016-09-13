@@ -5,18 +5,23 @@ namespace KulloDesktop {
     namespace Applications {
         class KulloApplication;
     }
+    namespace OsIntegration {
+        class KulloTrayIcon;
+    }
     namespace Qml {
         class AttachmentModel;
-        class ClientModel;
         class ConversationListModel;
         class ConversationListSource;
         class ConversationModel;
+        class DeviceSettings;
         class DraftAttachmentModel;
         class DraftAttachmentListModel;
         class DraftModel;
+        class Inbox;
+        class InnerApplication;
         class MessageListSource;
         class MessageModel;
-        class ParticipantModel;
+        class Sender;
         class UserSettingsModel;
     }
 }

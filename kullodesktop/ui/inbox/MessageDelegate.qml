@@ -127,7 +127,7 @@ Item {
                 name: senderName_
                 organization: senderOrganization_
                 address: senderAddress_
-                avatarSource: "image://messageavatars/" + Utils.urlencode(Client.userSettings.address) + "/" + conversationId_ + "/" + id_
+                avatarSource: "image://messageavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId_ + "/" + id_
 
                 onAvatarClicked: root.avatarClicked()
                 onAvatarDoubleClicked: root.avatarDoubleClicked()
@@ -158,9 +158,9 @@ Item {
                     width: (body.width-2*anchors.leftMargin) < _maxTextWidth
                            ? (body.width-2*anchors.leftMargin)
                            : _maxTextWidth
-                    font.family: Devicesettings.messagesFontPreview.family
-                    font.italic: Devicesettings.messagesFontPreview.italic
-                    font.weight: Devicesettings.messagesFontPreview.weight
+                    font.family: InnerApplication.deviceSettings.messagesFontPreview.family
+                    font.italic: InnerApplication.deviceSettings.messagesFontPreview.italic
+                    font.weight: InnerApplication.deviceSettings.messagesFontPreview.weight
                     font.pointSize: Style.fontSize.message
                     color: Style.messageText
                     textFormat: TextEdit.RichText

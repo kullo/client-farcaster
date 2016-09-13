@@ -165,12 +165,12 @@ FForm {
 
             LoginChecker {
                 id: loginChecker
-                client: Client.client()
+                client: Inbox.client()
 
                 onLoginChecked: {
                     if (ok) {
                         console.info("Login ok.")
-                        Client.userSettings.reset(address, masterKeyPem)
+                        Inbox.clearDatabaseAndResetUserSettings(address, masterKeyPem)
                         app.state = "loggingIn"
                     }
                     else {

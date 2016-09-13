@@ -9,7 +9,7 @@ namespace Imageproviders {
 class ParticipantAvatarProvider : public AbstractAvatarProvider
 {
 public:
-    ParticipantAvatarProvider(Qml::ClientModel &clientModel);
+    ParticipantAvatarProvider(Qml::Inbox &inbox);
 
 protected:
     virtual QPixmap drawAvatar(const QString &url, const QSize &renderSize);

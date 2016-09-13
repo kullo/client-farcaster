@@ -1,6 +1,7 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import QtQuick.Dialogs 1.2
 import Kullo 1.0
 
 ListView {
@@ -16,7 +17,7 @@ ListView {
 
     function checkOpenWhenCreated()
     {
-        var convId = Client.conversations.openWhenCreated();
+        var convId = Inbox.conversations.openWhenCreated();
         if (convId < 0) return false;
 
         console.info("Conversation ID stored to be opened: " + convId);
@@ -81,6 +82,21 @@ ListView {
         }
     }
 
+    MessageDialog {
+        id: confirmRemoveDialog
+        property int conversationId
+        property int messagesCount
+        icon: StandardIcon.Question
+        text: qsTr("Do you really want to delete all %1 messages?").arg(messagesCount)
+        standardButtons: StandardButton.Cancel | StandardButton.Yes
+        onYes: removeConversation(conversationId)
+    }
+
+    function removeConversation(convId) {
+        Inbox.removeConversation(convId)
+        inbox.closeAnswer()
+    }
+
     Connections {
         target: model
         onConversationsChanged: postConversationsChanged()
@@ -130,7 +146,7 @@ ListView {
         if (event.modifiers === 0 && event.key === Qt.Key_Home) {
             event.accepted = true
             resetQuickKeySearch()
-            if (Client.conversations.count() > 0)
+            if (Inbox.conversations.count() > 0)
             {
                 root.currentIndex = 0
             }
@@ -138,7 +154,7 @@ ListView {
         else if (event.modifiers === 0 && event.key === Qt.Key_End) {
             event.accepted = true
             resetQuickKeySearch()
-            if (Client.conversations.count() > 0)
+            if (Inbox.conversations.count() > 0)
             {
                 root.currentIndex = root.count-1
             }
@@ -177,7 +193,7 @@ ListView {
             var posLastFind = -1
             for (var p = 0; p < count; ++p)
             {
-                if (searchCharInConversation(ch, Client.conversations.at(p)))
+                if (searchCharInConversation(ch, Inbox.conversations.at(p)))
                 {
                     if (posFirstFind == -1) posFirstFind = p
                     if (p > posLastFind) posLastFind = p
@@ -268,11 +284,17 @@ ListView {
         MenuItem {
             text: qsTr("Remove")
             enabled: contextMenu.selectedConversationId != -1
-                     && root.model.get(contextMenu.selectedConversationId).count === 0
             onTriggered: {
                 var convId = contextMenu.selectedConversationId
-                Client.removeConversation(convId)
-                inbox.closeAnswer()
+                var messagesCount = root.model.get(contextMenu.selectedConversationId).count
+
+                if (messagesCount !== 0) {
+                    confirmRemoveDialog.conversationId = convId
+                    confirmRemoveDialog.messagesCount = messagesCount
+                    confirmRemoveDialog.open()
+                } else {
+                    removeConversation(convId)
+                }
             }
         }
     }
@@ -305,10 +327,10 @@ ListView {
         }
     }
 
-    model: Client.conversations
+    model: Inbox.conversations
 
     Component.onCompleted: {
-        Client.conversations.todoMode = Qt.binding(function() { return inbox.todoMode })
+        Inbox.conversations.todoMode = Qt.binding(function() { return inbox.todoMode })
     }
 
     highlight: ConversationHighlighter {}

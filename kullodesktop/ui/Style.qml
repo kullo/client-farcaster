@@ -56,11 +56,11 @@ QtObject {
     // So we scale up on OS X
     property var fontSize: QtObject {
         property real sp: Os.osx
-                          ? 1.25 * (Devicesettings.fontSizeUserFactorPreview / 100.0)
-                          : 1.00 * (Devicesettings.fontSizeUserFactorPreview / 100.0)
+                          ? 1.25 * (InnerApplication.deviceSettings.fontSizeUserFactorPreview / 100.0)
+                          : 1.00 * (InnerApplication.deviceSettings.fontSizeUserFactorPreview / 100.0)
         property real shortcutOverlayHeadline: 20*sp
         property real shortcutOverlayKey: 10*sp
-        property real answerTextInput: 14*sp
+        property real answerTextInput: InnerApplication.deviceSettings.messagesFontPreview.pointSize*sp
         property real bigTextInput: 14*sp
         property real normal: 11*sp
         property real small: 10*sp
@@ -71,7 +71,7 @@ QtObject {
         property real conversationIntroAdresses: 16*sp
         property real conversationIntroNormal: small
         property real overlay: 26*sp
-        property real message: Devicesettings.messagesFontPreview.pointSize*sp
+        property real message: InnerApplication.deviceSettings.messagesFontPreview.pointSize*sp
         property real messageHeaderPrimary: 13*sp
         property real messageHeaderSecondary: 10*sp
         property real loggingIn: 25*sp

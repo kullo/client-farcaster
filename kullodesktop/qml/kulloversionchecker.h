@@ -10,7 +10,7 @@
 #include <atomic>
 #include <desktoputil/asynchttpgetmanager.h>
 
-#include "kullodesktop/applications/kulloapplication.h"
+#include "kullodesktop/farcaster-forwards.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -20,7 +20,7 @@ class KulloVersionChecker : public QObject
     Q_OBJECT
 
 public:
-    explicit KulloVersionChecker(Applications::KulloApplication &app, QObject *parent = 0);
+    explicit KulloVersionChecker(InnerApplication &app, QObject *parent = 0);
 
     Q_PROPERTY(bool updateAvailable READ updateAvailable NOTIFY updateAvailableChanged)
     bool updateAvailable() const;
@@ -57,7 +57,7 @@ private:
     QDateTime lastSuccessfulRunUtc_;
     DesktopUtil::AsyncHttpGetManager manager_;
     QString versionAvailable_;
-    Applications::KulloApplication &app_;
+    InnerApplication &app_;
 
     std::shared_ptr<QByteArray> downloadData_;
     std::shared_ptr<QBuffer> downloadBuffer_;

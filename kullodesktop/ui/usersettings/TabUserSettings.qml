@@ -131,14 +131,14 @@ TabContent {
                     source: "/resources/scalable/ok_w.svg"
                 }
                 onClicked: {
-                    if (Client.userSettings.name !== rowName.value)
-                        Client.userSettings.name = rowName.value
-                    if (Client.userSettings.organization !== rowOrganization.value)
-                        Client.userSettings.organization = rowOrganization.value
-                    if (Client.userSettings.footer !== rowFooter.value)
-                        Client.userSettings.footer = rowFooter.value
+                    if (Inbox.userSettings.name !== rowName.value)
+                        Inbox.userSettings.name = rowName.value
+                    if (Inbox.userSettings.organization !== rowOrganization.value)
+                        Inbox.userSettings.organization = rowOrganization.value
+                    if (Inbox.userSettings.footer !== rowFooter.value)
+                        Inbox.userSettings.footer = rowFooter.value
 
-                    if (Client.userSettings.storeTmpAvatar()) {
+                    if (Inbox.userSettings.storeTmpAvatar()) {
                         root.avatarChanged()
                     }
 

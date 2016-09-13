@@ -8,7 +8,7 @@
 #include "kullodesktop/qml/usersettingsmodel.h"
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
 namespace {
 const auto RUN_INTERVAL_MS = int{2 * 60 * 1000}; // 2 minutes
@@ -23,13 +23,13 @@ Scheduler::~Scheduler()
 {
 }
 
-UserSettingsModel *Scheduler::user() const
+Qml::UserSettingsModel *Scheduler::user() const
 {
     QQmlEngine::setObjectOwnership(user_, QQmlEngine::CppOwnership);
     return user_;
 }
 
-void Scheduler::setUser(UserSettingsModel *user)
+void Scheduler::setUser(Qml::UserSettingsModel *user)
 {
     if (user_ != user)
     {

@@ -4,14 +4,14 @@
 #include <QObject>
 
 namespace KulloDesktop {
-namespace Qml {
+namespace QmlComponents {
 
-class LibraryLoggerModel : public QObject
+class LibraryLoggerQmlConnector : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit LibraryLoggerModel(QObject *parent = 0);
+    explicit LibraryLoggerQmlConnector(QObject *parent = 0);
     Q_INVOKABLE void e(const QString &msg, const QString &stacktrace = "");
     Q_INVOKABLE void w(const QString &msg, const QString &stacktrace = "");
     Q_INVOKABLE void i(const QString &msg, const QString &stacktrace = "");

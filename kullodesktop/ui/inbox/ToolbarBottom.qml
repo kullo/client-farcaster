@@ -49,11 +49,11 @@ Rectangle {
         }
 
         IconButton {
-            source: Devicesettings.muted
+            source: InnerApplication.deviceSettings.muted
                     ? "/resources/scalable/sound_muted_b.svg"
                     : "/resources/scalable/sound_unmuted_b.svg"
             onClicked: inbox.toggleSoundActive()
-            tooltip: Devicesettings.muted ? qsTr("Unmute") : qsTr("Mute")
+            tooltip: InnerApplication.deviceSettings.muted ? qsTr("Unmute") : qsTr("Mute")
         }
 
         IconButton {

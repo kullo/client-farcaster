@@ -14,27 +14,29 @@
 
 #include "kullodesktop/qml/attachmentlistmodel.h"
 #include "kullodesktop/qml/attachmentmodel.h"
-#include "kullodesktop/qml/attachmentsaddermodel.h"
-#include "kullodesktop/qml/changelog.h"
-#include "kullodesktop/qml/clientmodel.h"
+#include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
 #include "kullodesktop/qml/conversationmodel.h"
+#include "kullodesktop/qml/devicesettings.h"
 #include "kullodesktop/qml/draftmodel.h"
 #include "kullodesktop/qml/draftattachmentlistmodel.h"
 #include "kullodesktop/qml/draftattachmentmodel.h"
-#include "kullodesktop/qml/existencechecker.h"
-#include "kullodesktop/qml/filesavedialog.h"
-#include "kullodesktop/qml/fileopendialog.h"
-#include "kullodesktop/qml/kulloupdatermodel.h"
-#include "kullodesktop/qml/libraryloggermodel.h"
-#include "kullodesktop/qml/loginchecker.h"
+#include "kullodesktop/qml/innerapplication.h"
 #include "kullodesktop/qml/messagelistmodel.h"
 #include "kullodesktop/qml/messagemodel.h"
-#include "kullodesktop/qml/participantmodel.h"
-#include "kullodesktop/qml/registerer.h"
-#include "kullodesktop/qml/scheduler.h"
-#include "kullodesktop/qml/settingslocationmodel.h"
+#include "kullodesktop/qml/sender.h"
 #include "kullodesktop/qml/usersettingsmodel.h"
+#include "kullodesktop/qml_components/attachmentsadder.h"
+#include "kullodesktop/qml_components/changelog.h"
+#include "kullodesktop/qml_components/existencechecker.h"
+#include "kullodesktop/qml_components/filesavedialog.h"
+#include "kullodesktop/qml_components/fileopendialog.h"
+#include "kullodesktop/qml_components/kulloupdatermodel.h"
+#include "kullodesktop/qml_components/libraryloggerqmlconnector.h"
+#include "kullodesktop/qml_components/loginchecker.h"
+#include "kullodesktop/qml_components/registerer.h"
+#include "kullodesktop/qml_components/scheduler.h"
+#include "kullodesktop/qml_components/settingslocation.h"
 
 #include "kullodesktop/visuals/advancedrectangle.h"
 #include "kullodesktop/visuals/hint.h"
@@ -44,40 +46,45 @@ namespace Util {
 
 void QmlSetup::setupTypes()
 {
+    // Components to be instantiated by Qml
     qmlRegisterType<FileSaveDialog>("Kullo", 1, 0, "FileSaveDialog");
     qmlRegisterType<FileOpenDialog>("Kullo", 1, 0, "FileOpenDialog");
-
-    qmlRegisterType<Qml::AttachmentListModel>("Kullo", 1, 0, "AttachmentList");
-    qmlRegisterType<Qml::AttachmentModel>("Kullo", 1, 0, "Attachment");
-    qmlRegisterType<Qml::AttachmentsAdderModel>("Kullo", 1, 0, "AttachmentsAdder");
-    qmlRegisterType<Qml::ChallengeTypes>("Kullo", 1, 0, "ChallengeTypes");
-    qmlRegisterType<Qml::Changelog>("Kullo", 1, 0, "Changelog");
-    qmlRegisterType<Qml::ConversationListModel>("Kullo", 1, 0, "ConversationListModel");
-    qmlRegisterType<Qml::ConversationModel>("Kullo", 1, 0, "Conversation");
-    qmlRegisterType<Qml::DraftModel>("Kullo", 1, 0, "Draft");
-    qmlRegisterType<Qml::DraftAttachmentListModel>("Kullo", 1, 0, "DraftAttachmentList");
-    qmlRegisterType<Qml::DraftAttachmentModel>("Kullo", 1, 0, "DraftAttachment");
-    qmlRegisterType<Qml::ExistenceChecker>("Kullo", 1, 0, "ExistenceChecker");
-    qmlRegisterType<Qml::KulloUpdaterModel>("Kullo", 1, 0, "KulloUpdater");
-    qmlRegisterType<Qml::LibraryLoggerModel>("Kullo", 1, 0, "LibraryLogger");
-    qmlRegisterType<Qml::LoginChecker>("Kullo", 1, 0, "LoginChecker");
-    qmlRegisterType<Qml::MessageListModel>("Kullo", 1, 0, "MessageList");
-    qmlRegisterType<Qml::MessageModel>("Kullo", 1, 0, "Message");
-    qmlRegisterType<Qml::ParticipantModel>("Kullo", 1, 0, "Participant");
-    qmlRegisterType<Qml::Registerer>("Kullo", 1, 0, "Registerer");
-    qmlRegisterType<Qml::Scheduler>("Kullo", 1, 0, "Scheduler");
-    qmlRegisterType<Qml::SettingsLocationModel>("Kullo", 1, 0, "SettingsLocation");
-    qmlRegisterType<Qml::SyncErrors>("Kullo", 1, 0, "SyncErrors");
-    qmlRegisterType<Qml::UserSettingsModel>("Kullo", 1, 0, "UserSettings");
-
+    qmlRegisterType<QmlComponents::AttachmentsAdder>("Kullo", 1, 0, "AttachmentsAdder");
+    qmlRegisterType<QmlComponents::ChallengeTypes>("Kullo", 1, 0, "ChallengeTypes");
+    qmlRegisterType<QmlComponents::Changelog>("Kullo", 1, 0, "Changelog");
+    qmlRegisterType<QmlComponents::ExistenceChecker>("Kullo", 1, 0, "ExistenceChecker");
+    qmlRegisterType<QmlComponents::KulloUpdaterModel>("Kullo", 1, 0, "KulloUpdater");
+    qmlRegisterType<QmlComponents::LibraryLoggerQmlConnector>("Kullo", 1, 0, "LibraryLoggerQmlConnector");
+    qmlRegisterType<QmlComponents::LoginChecker>("Kullo", 1, 0, "LoginChecker");
+    qmlRegisterType<QmlComponents::Registerer>("Kullo", 1, 0, "Registerer");
+    qmlRegisterType<QmlComponents::Scheduler>("Kullo", 1, 0, "Scheduler");
+    qmlRegisterType<QmlComponents::SettingsLocation>("Kullo", 1, 0, "SettingsLocation");
     qmlRegisterType<Visuals::AdvancedRectangle>("Kullo.Visuals", 1, 0, "AdvancedRectangle");
     qmlRegisterType<Visuals::Hint>("Kullo.Visuals", 1, 0, "Hint");
 
-    // global object types
-    qmlRegisterType<ApiMirror::Client>("Kullo", 1, 0, "ClientType");
+    qmlRegisterType<Qml::AttachmentListModel>("Kullo", 1, 0, "AttachmentList");
+    qmlRegisterType<Qml::AttachmentModel>("Kullo", 1, 0, "Attachment");
+    qmlRegisterType<Qml::ConversationListModel>("Kullo", 1, 0, "ConversationList");
+    qmlRegisterType<Qml::ConversationModel>("Kullo", 1, 0, "Conversation");
+    qmlRegisterType<Qml::DeviceSettings>("Kullo", 1, 0, "DeviceSettings");
+    qmlRegisterType<Qml::DraftModel>("Kullo", 1, 0, "Draft");
+    qmlRegisterType<Qml::DraftAttachmentListModel>("Kullo", 1, 0, "DraftAttachmentList");
+    qmlRegisterType<Qml::DraftAttachmentModel>("Kullo", 1, 0, "DraftAttachment");
+    qmlRegisterType<Qml::MessageListModel>("Kullo", 1, 0, "MessageList");
+    qmlRegisterType<Qml::MessageModel>("Kullo", 1, 0, "Message");
+    qmlRegisterType<Qml::Sender>("Kullo", 1, 0, "Sender");
+    qmlRegisterType<Qml::SyncErrors>("Kullo", 1, 0, "SyncErrors");
+    qmlRegisterType<Qml::UserSettingsModel>("Kullo", 1, 0, "UserSettings");
+
+    // Registered as global objects QQmlContext::setContextProperty()
+    // Use qmlRegisterType() with no arguments because "Instances of this
+    // type cannot be created from the QML system."
+    qmlRegisterType<ApiMirror::Client>();
+    qmlRegisterType<Qml::Inbox>();
+    qmlRegisterType<Qml::InnerApplication>();
 }
 
-void QmlSetup::setupImageproviders(QQmlApplicationEngine &engine, Qml::ClientModel &clientModel)
+void QmlSetup::setupImageproviders(QQmlApplicationEngine &engine, Qml::Inbox &clientModel)
 {
     using namespace KulloDesktop::Imageproviders;
     engine.addImageProvider(QStringLiteral("attachmentpreview"),   new AttachmentPreviewProvider(clientModel));

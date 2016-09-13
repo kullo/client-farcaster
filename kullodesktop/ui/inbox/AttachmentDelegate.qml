@@ -78,7 +78,7 @@ Item {
                     }
 
                     source: attachmentsReady && _isImage(mimeType)
-                            ? "image://attachmentpreview/" + Utils.urlencode(Client.userSettings.address)
+                            ? "image://attachmentpreview/" + Utils.urlencode(Inbox.userSettings.address)
                               + "/" + conversationId
                               + "/" + messageId
                               + "/" + attachmentId

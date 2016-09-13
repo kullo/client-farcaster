@@ -10,7 +10,7 @@ import "../native"
 import "../js/shortcut.js" as SC
 
 BaseDialog {
-    id: _root
+    id: root
     objectName: "GroupConversationStartDialog"
 
     property string text
@@ -57,7 +57,7 @@ BaseDialog {
             leftMargin: horizontalPadding
             rightMargin: horizontalPadding
         }
-        Keys.onEscapePressed: _root.rejected()
+        Keys.onEscapePressed: root.rejected()
 
         implicitHeight: body.implicitHeight + footer.implicitHeight
 
@@ -133,7 +133,7 @@ BaseDialog {
 
                     ExistenceChecker {
                         id: existenceChecker
-                        client: Client.client()
+                        client: Inbox.client()
 
                         onExistenceChecked: {
                             if (ok) {
@@ -141,16 +141,16 @@ BaseDialog {
                                 errorHintText = ""
                                 input.addValueToList(address)
 
-                                if (_root.state_closing)
+                                if (root.state_closing)
                                 {
-                                    _root.accepted()
+                                    root.accepted()
                                 }
                             }
                             else {
                                 console.info("Existence failed: " + address)
                                 errorHintText = qsTr("Address does not exist.")
                             }
-                            _root.state_closing = false
+                            root.state_closing = false
                         }
                         onNetworkError: {
                             console.info("Start: Existence failed: " + address)
@@ -166,7 +166,7 @@ BaseDialog {
                         {
                             return false
                         }
-                        if (Utils.kulloAddressEqual(address, Client.userSettings.address))
+                        if (Utils.kulloAddressEqual(address, Inbox.userSettings.address))
                         {
                             errorHintText = qsTr("Monologues not supported.")
                             return false
@@ -186,7 +186,7 @@ BaseDialog {
                     {
                         addresses.push(address)
                         stagedAddresses.add(address)
-                        _root.addressAdded()
+                        root.addressAdded()
                         input.text = ""
                     }
 
@@ -196,7 +196,7 @@ BaseDialog {
                         if (SC.isCtrlAndKey(Qt.Key_Return, event))
                         {
                             event.accepted = true
-                            _root.accepted()
+                            root.accepted()
                         }
                     }
                 }
@@ -248,14 +248,14 @@ BaseDialog {
                     text: qsTr("OK")
                     enabled: true
 
-                    onClicked: _root.accepted()
+                    onClicked: root.accepted()
                 }
 
                 NativeButton {
                     id: buttonCancel
                     text: qsTr("Cancel")
 
-                    onClicked: _root.rejected()
+                    onClicked: root.rejected()
                 }
             }
         }
@@ -274,7 +274,7 @@ BaseDialog {
             else
             {
                 // Wait for existence checker ...
-                _root.state_closing = true
+                root.state_closing = true
                 return
             }
         }
@@ -289,12 +289,12 @@ BaseDialog {
                 if (i) result += ","
                 result += addresses[i]
             }
-            _root.addressAccepted()
-            _root.closeDialog()
+            root.addressAccepted()
+            root.closeDialog()
         }
     }
 
     onRejected: {
-        _root.closeDialog()
+        root.closeDialog()
     }
 }

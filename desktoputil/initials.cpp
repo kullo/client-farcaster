@@ -7,8 +7,7 @@
 namespace DesktopUtil {
 
 namespace {
-const auto WHITESPACE       = QRegularExpression(QStringLiteral("\\s"), QRegularExpression::UseUnicodePropertiesOption);
-const auto NON_ALPHANUMERIC = QRegularExpression(QStringLiteral("[_\\W]"), QRegularExpression::UseUnicodePropertiesOption);
+const auto WORD = QRegularExpression(QStringLiteral("[[:alnum:]](?:-|\\w)*"), QRegularExpression::UseUnicodePropertiesOption);
 
 QString getFirstUnicodeCharacter(const QString &text)
 {
@@ -31,21 +30,22 @@ QString getFirstUnicodeCharacter(const QString &text)
 
 QString Initials::fromName(const QString &name)
 {
-    QStringList nameParts = name.split(WHITESPACE, QString::SkipEmptyParts);
-    QStringList out;
-
-    for (QString part : nameParts)
+    auto matchIter = WORD.globalMatch(name.toUpper());
+    QStringList words;
+    while (matchIter.hasNext())
     {
-        part.replace(NON_ALPHANUMERIC, "");
-        if (!part.isEmpty())
-        {
-            out.append(getFirstUnicodeCharacter(part));
-
-            if (out.size() == 2) break;
-        }
+        words << matchIter.next().captured(0);
     }
-
-    return out.join("");
+    QString out;
+    if (words.size() >= 1)
+    {
+        out += getFirstUnicodeCharacter(words[0]);
+    }
+    if (words.size() >= 2)
+    {
+        out += getFirstUnicodeCharacter(words[words.size() - 1]);
+    }
+    return out;
 }
 
 }

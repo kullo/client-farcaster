@@ -1,9 +1,7 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
-#include "clientmodel.h"
+#include "inbox.h"
 
 #include <exception>
-#include <QCoreApplication>
-#include <QFileInfo>
 #include <QDir>
 #include <QFile>
 #include <QQmlEngine>
@@ -13,7 +11,8 @@
 #include <apimirror/ClientCreateSessionListener.h>
 #include <apimirror/SessionListener.h>
 #include <desktoputil/asynctask.h>
-#include <desktoputil/kulloaddresshelper.h>
+#include <desktoputil/databasefiles.h>
+#include <desktoputil/kulloversion.h>
 #include <desktoputil/qtypestreamers.h>
 #include <desktoputil/versions.h>
 #include <kulloclient/api/Address.h>
@@ -31,11 +30,13 @@
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
+#include <kulloclient/util/stltaskrunner.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
 #include "kullodesktop/qml/conversationlistsource.h"
-#include "kullodesktop/qml/participantmodel.h"
+#include "kullodesktop/qml/innerapplication.h"
+#include "kullodesktop/qml/sender.h"
 #include "kullodesktop/qml/usersettingsmodel.h"
 
 namespace KulloDesktop {
@@ -46,21 +47,21 @@ void SyncErrors::init()
     qRegisterMetaType<SyncErrors::SyncError>("SyncErrors::SyncError");
 }
 
-ClientModel::ClientModel(
-        ApiMirror::Client &client,
-        const QString &dbFilenameTemplate,
-        Applications::KulloApplication &app,
-        QObject *parent)
+Inbox::Inbox(InnerApplication &innerApplication,
+             ApiMirror::Client &client,
+             Kullo::Util::StlTaskRunner *taskRunner,
+             QObject *parent)
     : QObject(parent)
-    , dbFilenameTemplate_(dbFilenameTemplate)
-    , app_(app)
+    , innerApplication_(innerApplication)
+    , taskRunner_(taskRunner)
+    , eventDispatcher_()
     , syncerListener_(std::make_shared<ApiMirror::SyncerListener>())
     , client_(client)
     , userSettingsModel_(new UserSettingsModel())
 {
     SyncErrors::init();
 
-    QString activeUser = app_.deviceSettings().activeUser();
+    QString activeUser = innerApplication_.deviceSettings()->activeUser();
     if (!activeUser.isEmpty())  // load UserSettings if we have an active user
     {
         Log.d() << "Active user: " << activeUser;
@@ -72,57 +73,56 @@ ClientModel::ClientModel(
     }
 
     connect(syncerListener_.get(), &ApiMirror::SyncerListener::_progressed,
-            this, &ClientModel::onSyncProgressed);
+            this, &Inbox::onSyncProgressed);
     connect(syncerListener_.get(), &ApiMirror::SyncerListener::_finished,
-            this, &ClientModel::onSyncFinished);
+            this, &Inbox::onSyncFinished);
     connect(syncerListener_.get(), &ApiMirror::SyncerListener::_error,
-            this, &ClientModel::onSyncError);
+            this, &Inbox::onSyncError);
     connect(syncerListener_.get(), &ApiMirror::SyncerListener::_draftAttachmentsTooBig,
-            this, &ClientModel::draftAttachmentsTooBig);
+            this, &Inbox::draftAttachmentsTooBig);
+
+    // Pass stuff to Application to be used by the tray icon
+    connect(this, &Inbox::loggedInChanged,
+            &innerApplication_, &InnerApplication::loggedInChanged);
+    connect(this, &Inbox::unreadMessagesCountChanged,
+            &innerApplication_, &InnerApplication::unreadMessagesCountChanged);
+    connect(this, &Inbox::syncFinished,
+            &innerApplication_, &InnerApplication::syncFinished);
 }
 
-ClientModel::~ClientModel()
+Inbox::~Inbox()
 {
 }
 
-bool ClientModel::loggedIn() const
+bool Inbox::loggedIn() const
 {
     return session_ != nullptr;
 }
 
-ConversationListModel *ClientModel::conversations()
+ConversationListModel *Inbox::conversations()
 {
     auto ptr = conversationsProxy_.get();
     QQmlEngine::setObjectOwnership(ptr, QQmlEngine::CppOwnership);
     return ptr;
 }
 
-void ClientModel::logIn()
+void Inbox::logIn()
 {
     if (loggedIn()) return;
 
     // Set active user on login
     auto addr = userSettingsModel_->address();
     kulloAssert(!addr.isEmpty());
-    app_.deviceSettings().setActiveUser(addr);
-    app_.deviceSettings().setLastActiveUser(addr);
+    innerApplication_.deviceSettings()->setActiveUser(addr);
+    innerApplication_.deviceSettings()->setLastActiveUser(addr);
 
-    QString dbFilePath = dbFilenameTemplate_.arg(addr);
-    prepareDatabasePath(dbFilePath);
-
-    // Begin Database Version Check
     auto currentUserAddress = Kullo::Api::Address::create(addr.toStdString());
-    DesktopUtil::KulloVersion currentKulloVersion = DesktopUtil::Versions::kullodesktopVersion();
-    DesktopUtil::KulloVersion localDatabaseKulloVersion = getLocalDatabaseKulloVersion(currentUserAddress);
-    Log.i() << "Database Kullo version installed: " << localDatabaseKulloVersion << " "
-            << "running: " << currentKulloVersion;
-    if (localDatabaseKulloVersion != currentKulloVersion)
-    {
-        setLocalDatabaseKulloVersion(currentUserAddress, currentKulloVersion);
-    }
-    // End Database Version Check
 
+    auto dbFilePath = innerApplication_.databaseFiles().databaseFilepath(currentUserAddress);
+    innerApplication_.databaseFiles().prepareDatabaseFolder(currentUserAddress);
     Log.i() << "Logging in using database file " << dbFilePath << " ...";
+
+    setLocalDatabaseKulloVersion(currentUserAddress, DesktopUtil::KulloVersion("0.0.0"));
 
     auto sessionListener = std::make_shared<ApiMirror::SessionListener>();
     connect(sessionListener.get(), &ApiMirror::SessionListener::_internalEvent,
@@ -130,9 +130,9 @@ void ClientModel::logIn()
 
     auto listener = std::make_shared<ApiMirror::ClientCreateSessionListener>();
     connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_finished,
-            this, &ClientModel::onCreateSessionFinished);
+            this, &Inbox::onCreateSessionFinished);
     connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_error,
-            this, &ClientModel::onCreateSessionError);
+            this, &Inbox::onCreateSessionError);
 
     createSessionTask_ = client_.raw()->createSessionAsync(
                 userSettingsModel_->rawAddress(),
@@ -143,65 +143,45 @@ void ClientModel::logIn()
                 );
 }
 
-void ClientModel::logOut()
+void Inbox::logOut()
 {
     if (!loggedIn()) return;
 
     Log.i() << "Logging out ...";
+
+    taskRunner_->wait();
+
+    // Throw away
+    // -> list of ConversationModel
+    //    -> DraftModel
+    //    -> MessageListModel
+    //       -> MessageListSource
+    //          -> list of MessageModel
+    //             -> including Sender
+    //             -> AttachmentListModel
+    //                -> list of AttachmentModel
+    conversationsProxy_ = nullptr;
+    conversationsSource_ = nullptr;
+
+    createSessionTask_ = nullptr;
+
     session_.reset();
-    app_.deviceSettings().setActiveUser("");
-    conversationsSource_->setSession(nullptr);
+    innerApplication_.deviceSettings()->setActiveUser("");
     userSettingsModel_->setUserSettings(nullptr);
+
+    taskRunner_->reset();
 
     emit loggedInChanged(false);
 }
 
-void ClientModel::removeDatabase(const QString &addr)
-{
-    if (!DesktopUtil::KulloAddressHelper::isValidKulloAddress(addr))
-    {
-        Log.e() << "Invalid Kullo address: " << addr;
-        return;
-    }
-
-    const QString dbFile = dbFilenameTemplate_.arg(addr);
-    const QString dbFileShm = dbFile + "-shm";
-    const QString dbFileWal = dbFile + "-wal";
-
-    Log.d() << "Removing database file " << dbFile << " ...";
-
-    if (QFile::remove(dbFile))    Log.i() << "Removed database file: " << dbFile;
-    if (QFile::remove(dbFileShm)) Log.i() << "Removed database file: " << dbFileShm;
-    if (QFile::remove(dbFileWal)) Log.i() << "Removed database file: " << dbFileWal;
-}
-
-std::shared_ptr<ParticipantModel> ClientModel::participantModel(
-        const std::shared_ptr<Kullo::Api::Address> &address) const
-{
-    if (!session_) return nullptr;
-
-    auto msgId = session_->messages()->latestForSender(address);
-    if (msgId < 0) return nullptr;
-    return std::make_shared<ParticipantModel>(session_, msgId);
-}
-
-UserSettingsModel *ClientModel::userSettings()
+UserSettingsModel *Inbox::userSettings()
 {
     auto out = userSettingsModel_.get();
     QQmlEngine::setObjectOwnership(out, QQmlEngine::CppOwnership);
     return out;
 }
 
-std::shared_ptr<ConversationListSource> ClientModel::conversationsListSource()
-{
-    if (!conversationsSource_)
-    {
-        conversationsSource_ = std::make_shared<Qml::ConversationListSource>(eventDispatcher_, nullptr);
-    }
-    return conversationsSource_;
-}
-
-void ClientModel::addConversation(QString participants)
+void Inbox::addConversation(QString participants)
 {
     std::unordered_set<std::shared_ptr<Kullo::Api::Address>> participantsSet;
     foreach (QString address, participants.trimmed().split(','))
@@ -224,15 +204,15 @@ void ClientModel::addConversation(QString participants)
     }
 }
 
-void ClientModel::removeConversation(Kullo::id_type conversationId)
+void Inbox::removeConversation(Kullo::id_type conversationId)
 {
     if (session_)
     {
-        session_->conversations()->remove(conversationId);
+        session_->conversations()->triggerRemoval(conversationId);
     }
 }
 
-bool ClientModel::sync()
+bool Inbox::sync()
 {
     if (!loggedIn()) return false;
 
@@ -242,25 +222,52 @@ bool ClientModel::sync()
     return true;
 }
 
-ApiMirror::Client *ClientModel::client() const
+void Inbox::clearDatabaseAndResetUserSettings(const QString &addressString, const QString &masterKeyPem)
+{
+    const auto address = Kullo::Api::Address::create(addressString.toStdString());
+    const auto masterKey = Kullo::Api::MasterKey::createFromPem(masterKeyPem.toStdString());
+
+    // Clear old user stuff
+    innerApplication_.databaseFiles().removeDatabase(address);
+
+    // Set user
+    userSettingsModel_->reset(address, masterKey);
+}
+
+ApiMirror::Client *Inbox::client() const
 {
     QQmlEngine::setObjectOwnership(&client_, QQmlEngine::CppOwnership);
     return &client_;
 }
 
-std::shared_ptr<Kullo::Api::Session> ClientModel::session() const
+std::shared_ptr<Sender> Inbox::latestSenderForAddress(
+        const std::shared_ptr<Kullo::Api::Address> &address) const
+{
+    if (!session_) return nullptr;
+
+    auto msgId = session_->messages()->latestForSender(address);
+    if (msgId < 0) return nullptr;
+    return std::make_shared<Sender>(session_, msgId);
+}
+
+std::shared_ptr<Kullo::Api::Session> Inbox::session() const
 {
     return session_;
 }
 
-void ClientModel::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session)
+ConversationListSource *Inbox::conversationsListSource()
+{
+    return conversationsSource_.get();
+}
+
+void Inbox::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session)
 {
     kulloAssert(session);
 
     session_ = session;
     eventDispatcher_.setSession(session);
 
-    if (app_.FAKE_LONG_MIGRATION)
+    if (Applications::KulloApplication::FAKE_LONG_MIGRATION)
     {
         QTimer::singleShot(4000, this, SLOT(onInternalLoginDone()));
     }
@@ -270,14 +277,14 @@ void ClientModel::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Sess
     }
 }
 
-void ClientModel::onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error)
+void Inbox::onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error)
 {
     //TODO handle create session error
     K_UNUSED(address);
     K_UNUSED(error);
 }
 
-void ClientModel::onInternalLoginDone()
+void Inbox::onInternalLoginDone()
 {
     kulloAssert(session_);
 
@@ -287,21 +294,26 @@ void ClientModel::onInternalLoginDone()
     userSettingsModel_->setUserSettings(session_->userSettings());
     userSettingsModel_->migrate();
 
-    conversationsListSource()->setSession(session_);
-    conversationsProxy_ = std::make_shared<Qml::ConversationListModel>(conversationsSource_, nullptr);
+    conversationsSource_ = Kullo::make_unique<ConversationListSource>(eventDispatcher_, nullptr);
+    connect(conversationsSource_.get(), &Qml::ConversationListSource::unreadMessagesCountChanged,
+            this, &Inbox::unreadMessagesCountChanged);
+    conversationsSource_->setSession(session_);
+
+    conversationsProxy_ = Kullo::make_unique<Qml::ConversationListModel>(conversationsSource_.get(), nullptr);
+
     emit conversationsChanged();
 
     emit loggedInChanged(true);
 }
 
-void ClientModel::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress)
+void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress)
 {
     latestSyncProgress_ = progress;
     emit syncProgressed(latestSyncProgress_->countProcessed,
                         latestSyncProgress_->countTotal);
 }
 
-void ClientModel::onSyncFinished()
+void Inbox::onSyncFinished()
 {
     kulloAssert(latestSyncProgress_);
     emit syncFinished(true,
@@ -311,7 +323,7 @@ void ClientModel::onSyncFinished()
                       latestSyncProgress_->countDeleted);
 }
 
-void ClientModel::onSyncError(Kullo::Api::NetworkError error)
+void Inbox::onSyncError(Kullo::Api::NetworkError error)
 {
     using namespace Kullo::Api;
 
@@ -346,7 +358,7 @@ void ClientModel::onSyncError(Kullo::Api::NetworkError error)
     emit syncFinished(false);
 }
 
-void ClientModel::setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr, const DesktopUtil::KulloVersion &version)
+void Inbox::setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr, const DesktopUtil::KulloVersion &version)
 {
     const QString key = QStringLiteral("kulloVersion-") + QString::fromStdString(addr->toString());
     const QString value = QString::fromStdString(version.toString());
@@ -355,51 +367,6 @@ void ClientModel::setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api:
     settings.beginGroup("database");
     settings.setValue(key, value);
     settings.endGroup();
-}
-
-DesktopUtil::KulloVersion ClientModel::getLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr)
-{
-    QString localDatabaseKulloVersion;
-    QSettings settings;
-    settings.beginGroup("database");
-    QVariant data = settings.value(QStringLiteral("kulloVersion-") + QString::fromStdString(addr->toString()));
-    if (data.isValid()) localDatabaseKulloVersion = data.toString();
-    settings.endGroup();
-
-    if (localDatabaseKulloVersion.isEmpty())
-    {
-        return DesktopUtil::KulloVersion("0.0.0");
-    }
-    else
-    {
-        return DesktopUtil::KulloVersion(localDatabaseKulloVersion.toStdString());
-    }
-}
-
-/*
- * Create parent direcory for `dbFile` if necessary
- * and check write access
- */
-void ClientModel::prepareDatabasePath(const QString &dbFile)
-{
-    QFileInfo dbFileInfo(dbFile);
-    // TODO: Make check compatible with symbolic links
-    if (!dbFileInfo.absoluteDir().exists())
-    {
-        Log.i() << "Creating database directory: " << dbFileInfo.absolutePath();
-        if (!QDir().mkpath(dbFileInfo.absolutePath()))
-        {
-            Log.f() << "Could not create database directory: " << dbFileInfo.absolutePath();
-        }
-    }
-    if (!QFileInfo(dbFileInfo.absolutePath()).isWritable())
-    {
-        Log.f() << "Database directory not writeable: " << dbFileInfo.absolutePath();
-    }
-    if (dbFileInfo.exists() && !dbFileInfo.isWritable())
-    {
-        Log.f() << "Database file not writeable: " << dbFileInfo.absoluteFilePath();
-    }
 }
 
 }

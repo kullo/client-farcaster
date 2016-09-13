@@ -17,7 +17,7 @@ class ConversationListModel : public QSortFilterProxyModel
 
 public:
     explicit ConversationListModel(QObject *parent = 0);
-    explicit ConversationListModel(std::shared_ptr<ConversationListSource> conversations, QObject *parent = 0);
+    explicit ConversationListModel(ConversationListSource *conversations, QObject *parent = 0);
     ~ConversationListModel();
 
     Q_PROPERTY(bool todoMode READ todoMode WRITE setTodoMode NOTIFY todoModeChanged)
@@ -41,7 +41,7 @@ protected:
 
 private:
     bool todoMode_ = false;
-    std::shared_ptr<ConversationListSource> source_;
+    ConversationListSource *source_;
 };
 
 }

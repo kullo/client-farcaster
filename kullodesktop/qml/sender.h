@@ -13,16 +13,15 @@
 namespace KulloDesktop {
 namespace Qml {
 
-class ParticipantModel : public QObject
+class Sender : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ParticipantModel(QObject *parent = nullptr);
-    ParticipantModel(
-            const std::shared_ptr<Kullo::Api::Session> &session,
-            Kullo::id_type msgId,
-            QObject *parent = nullptr);
+    explicit Sender(QObject *parent = nullptr);
+    explicit Sender(const std::shared_ptr<Kullo::Api::Session> &session,
+                    Kullo::id_type msgId,
+                    QObject *parent = nullptr);
 
     Q_PROPERTY(QString name READ name)
     QString name() const;

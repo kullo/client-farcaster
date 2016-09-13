@@ -40,7 +40,7 @@ public:
     Kullo::id_type openWhenCreated();
     void setOpenWhenCreated(std::unordered_set<std::shared_ptr<Kullo::Api::Address>> participants);
 
-    qint32 unreadMessagesCount();
+    qint32 unreadMessagesCount() const;
 
     ConversationModel *get(Kullo::id_type conversationId) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -50,13 +50,14 @@ public:
 
 signals:
     void conversationsChanged();
-    void unreadMessagesCountChanged();
+    void unreadMessagesCountChanged(int count);
 
 private slots:
     void onConversationAdded(Kullo::id_type conversationId);
     void onConversationChanged(Kullo::id_type conversationId);
     void onConversationRemoved(Kullo::id_type conversationId);
     void onParticipantChanged(Kullo::id_type conversationId);
+    void onSingleConversationCountUnreadChanged();
 
 private:
     void refreshConversations();
@@ -66,6 +67,7 @@ private:
     std::shared_ptr<Kullo::Api::Session> session_;
     std::vector<std::unique_ptr<ConversationModel>> conversationModels_;
     std::unordered_set<std::shared_ptr<Kullo::Api::Address>> openWhenCreated_;
+    int lastUnreadMessagesCount_ = -1;
 };
 
 }

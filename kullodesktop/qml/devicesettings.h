@@ -17,7 +17,7 @@ class DeviceSettings : public QObject
     Q_OBJECT
 
 public:
-    explicit DeviceSettings(QObject *parent = 0);
+    explicit DeviceSettings(QObject *parent = nullptr);
     ~DeviceSettings();
 
     void migrate();
