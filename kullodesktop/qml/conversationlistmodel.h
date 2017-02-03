@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
@@ -36,8 +36,8 @@ signals:
     void todoModeChanged();
 
 protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-    bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 
 private:
     bool todoMode_ = false;

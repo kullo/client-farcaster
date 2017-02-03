@@ -1,7 +1,8 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
+import Kullo 1.0
 
-Timer {
+StableTimer {
     /* public */
     property int maxCount: 50
     property int maxTime: 15 // seconds

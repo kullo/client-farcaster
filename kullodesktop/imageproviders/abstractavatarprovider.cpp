@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "abstractavatarprovider.h"
 
 #include <QPainter>
@@ -125,7 +125,7 @@ QPixmap AbstractAvatarProvider::getEmptyAvatar(const QSize &renderSize)
     return *emptyAvatarCache_[key];
 }
 
-QPixmap AbstractAvatarProvider::rounded(const QPixmap &in)
+QPixmap AbstractAvatarProvider::rounded(const QPixmap &in, bool cirlce)
 {
     QImage out(in.width(), in.height(), QImage::Format_ARGB32);
     out.fill(Qt::transparent);
@@ -141,7 +141,12 @@ QPixmap AbstractAvatarProvider::rounded(const QPixmap &in)
     painter.setBrush(brush);
     painter.setPen(pen);
     QRect bounds(0, 0, in.width(), in.height());
-    painter.drawRoundedRect(bounds, RELATIVE_CORNER_RADIUS, RELATIVE_CORNER_RADIUS, Qt::RelativeSize);
+
+    const auto relativeCornerRadius = cirlce
+            ? 100
+            : RELATIVE_CORNER_RADIUS;
+
+    painter.drawRoundedRect(bounds, relativeCornerRadius, relativeCornerRadius, Qt::RelativeSize);
 
     return QPixmap::fromImage(out);
 }

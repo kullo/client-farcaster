@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "programoptions.h"
 
 #include <iostream>
@@ -22,9 +22,9 @@ namespace OsIntegration {
 namespace po = boost::program_options;
 int ProgramOptions::NA = 77777777;
 
+namespace {
 // User
 const char* O_HELP         = "help";
-const char* O_NO_TRAY_ICON = "no-trayicon";
 const char* O_VERSION      = "version";
 
 // Developer
@@ -33,7 +33,6 @@ const char* O_CRYPTO_INFO         = "crypto-info";
 const char* O_VERSIONS            = "versions";
 const char* O_LOG_FORMAT_EXTENDED = "logformat-extended";
 const char* O_QT_BUILD_VERSION    = "qt-build-version";
-const char* O_IGNORE_LOCK         = "ignore-lock";
 const char* O_TEST                = "test";
 const char* O_PATHS               = "paths";
 const char* O_FAKE_LONG_MIGRATION = "fake-long-migration";
@@ -41,6 +40,7 @@ const char* O_CRASHTEST_NULLPTR   = "crashtest-nullptr";
 const char* O_CRASHTEST_THROW     = "crashtest-throw";
 // must not be changed, Qt Creator passes this argument when debugging QML
 const char* O_QMLDEBUGGING        = "qmljsdebugger";
+}
 
 ProgramOptions::ProgramOptions()
     : vm_(Kullo::make_unique<po::variables_map>())
@@ -51,7 +51,6 @@ ProgramOptions::ProgramOptions()
 
     optionsUser_->add_options()
             (O_HELP,         "Print help message")
-            (O_NO_TRAY_ICON, "Don't use system tray icon")
             (O_VERSION,      "Show Kullo version and exit")
     ;
 
@@ -61,7 +60,6 @@ ProgramOptions::ProgramOptions()
             (O_VERSIONS,            "Show versions of components")
             (O_LOG_FORMAT_EXTENDED, "Use extended log format")
             (O_QT_BUILD_VERSION,    "Qt versions Kullo was build with")
-            (O_IGNORE_LOCK,         "Ignore existing single instance lock")
             (O_TEST,                "Test Kullo and close")
             (O_PATHS,               "Show some path information")
             (O_FAKE_LONG_MIGRATION, "Fake long running database migration")
@@ -161,14 +159,6 @@ int ProgramOptions::preApplicationActions()
 int ProgramOptions::postApplicationActions(Applications::KulloApplication &app)
 {
     /*
-     * User options
-     */
-    if (vm_->count(O_NO_TRAY_ICON))
-    {
-        Applications::KulloApplication::NO_TRAY_ICON = true;
-    }
-
-    /*
      * Developer options
      */
     if (vm_->count(O_PATHS))
@@ -186,11 +176,6 @@ int ProgramOptions::postApplicationActions(Applications::KulloApplication &app)
     if (vm_->count(O_FAKE_LONG_MIGRATION))
     {
         Applications::KulloApplication::FAKE_LONG_MIGRATION = true;
-    }
-
-    if (vm_->count(O_IGNORE_LOCK))
-    {
-        Applications::KulloApplication::IGNORE_LOCK = true;
     }
 
     if (vm_->count(O_TEST))

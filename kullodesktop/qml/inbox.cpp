@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "inbox.h"
 
 #include <exception>
@@ -164,7 +164,7 @@ void Inbox::logOut()
 
     createSessionTask_ = nullptr;
 
-    session_.reset();
+    session_ = nullptr;
     innerApplication_.deviceSettings()->setActiveUser("");
     userSettingsModel_ = nullptr;
 
@@ -319,7 +319,13 @@ void Inbox::onInternalLoginDone()
 
 void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress)
 {
-    latestSyncProgress_ = progress;
+    kulloAssert(progress);
+
+    if (!latestSyncProgress_ || progress->phase != latestSyncProgress_->phase)
+    {
+        emit syncPhaseChanged(ApiMirror::Enums::SyncPhaseHolder::convert(progress->phase));
+    }
+
     emit syncProgressed(
                 ApiMirror::Enums::SyncPhaseHolder::convert(progress->phase),
                 progress->incomingMessagesProcessed,
@@ -334,6 +340,8 @@ void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &pr
                 progress->outgoingMessagesTotalBytes,
                 progress->runTimeMs
                 );
+
+    latestSyncProgress_ = *progress;
 }
 
 void Inbox::onSyncFinished()
@@ -344,6 +352,7 @@ void Inbox::onSyncFinished()
                       latestSyncProgress_->incomingMessagesNewUnread,
                       latestSyncProgress_->incomingMessagesModified,
                       latestSyncProgress_->incomingMessagesDeleted);
+    latestSyncProgress_ = boost::none;
 }
 
 void Inbox::onSyncError(Kullo::Api::NetworkError error)
@@ -379,6 +388,8 @@ void Inbox::onSyncError(Kullo::Api::NetworkError error)
 
     Log.w() << "Sync failed: " << error;
     emit syncFinished(false);
+
+    latestSyncProgress_ = boost::none;
 }
 
 void Inbox::setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr, const DesktopUtil::KulloVersion &version)

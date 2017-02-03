@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "qmlsetup.h"
 
 #include <QQmlApplicationEngine>
@@ -32,6 +32,7 @@
 #include "kullodesktop/qml/usersettings.h"
 #include "kullodesktop/qml_components/visuals/advancedrectangle.h"
 #include "kullodesktop/qml_components/visuals/hint.h"
+#include "kullodesktop/qml_components/accountinfo.h"
 #include "kullodesktop/qml_components/attachmentsadder.h"
 #include "kullodesktop/qml_components/changelog.h"
 #include "kullodesktop/qml_components/existencechecker.h"
@@ -42,7 +43,7 @@
 #include "kullodesktop/qml_components/loginchecker.h"
 #include "kullodesktop/qml_components/registerer.h"
 #include "kullodesktop/qml_components/scheduler.h"
-#include "kullodesktop/qml_components/settingslocation.h"
+#include "kullodesktop/qml_components/stabletimer.h"
 
 namespace KulloDesktop {
 namespace QmlBridge {
@@ -52,6 +53,7 @@ void QmlSetup::setupTypes()
     // Components to be instantiated by Qml
     qmlRegisterType<FileSaveDialog>("Kullo", 1, 0, "FileSaveDialog");
     qmlRegisterType<FileOpenDialog>("Kullo", 1, 0, "FileOpenDialog");
+    qmlRegisterType<QmlComponents::AccountInfo>("Kullo", 1, 0, "AccountInfo");
     qmlRegisterType<QmlComponents::AttachmentsAdder>("Kullo", 1, 0, "AttachmentsAdder");
     qmlRegisterType<QmlComponents::ChallengeTypes>("Kullo", 1, 0, "ChallengeTypes");
     qmlRegisterType<QmlComponents::Changelog>("Kullo", 1, 0, "Changelog");
@@ -61,7 +63,7 @@ void QmlSetup::setupTypes()
     qmlRegisterType<QmlComponents::LoginChecker>("Kullo", 1, 0, "LoginChecker");
     qmlRegisterType<QmlComponents::Registerer>("Kullo", 1, 0, "Registerer");
     qmlRegisterType<QmlComponents::Scheduler>("Kullo", 1, 0, "Scheduler");
-    qmlRegisterType<QmlComponents::SettingsLocation>("Kullo", 1, 0, "SettingsLocation");
+    qmlRegisterType<QmlComponents::StableTimer>("Kullo", 1, 0, "StableTimer");
     qmlRegisterType<QmlComponents::Visuals::AdvancedRectangle>("Kullo.Visuals", 1, 0, "AdvancedRectangle");
     qmlRegisterType<QmlComponents::Visuals::Hint>("Kullo.Visuals", 1, 0, "Hint");
 

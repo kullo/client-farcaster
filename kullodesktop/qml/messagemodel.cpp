@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "messagemodel.h"
 
 #include <QQmlEngine>
@@ -11,7 +11,6 @@
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
-#include <kulloclient/util/strings.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -108,9 +107,7 @@ QString MessageModel::text() const
 
 QString MessageModel::textAsHtml() const
 {
-    std::string result = session_->messages()->text(msgId_);
-    Kullo::Util::Strings::messageTextToHtml(result);
-    return QString::fromStdString(result);
+    return QString::fromStdString(session_->messages()->textAsHtml(msgId_, true));
 }
 
 QString MessageModel::footer() const

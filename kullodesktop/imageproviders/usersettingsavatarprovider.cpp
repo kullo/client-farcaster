@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "usersettingsavatarprovider.h"
 
 #include <desktoputil/qtypestreamers.h>
@@ -21,6 +21,8 @@ QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &
 
     // Cut query string from URL
     QString path = url.split("?").at(0);
+    bool styleRounded = url.split("?").at(1).contains("rounded");
+    bool styleCircle = url.split("?").at(1).contains("circle");
 
     if (path != userSettings->address())
     {
@@ -28,7 +30,19 @@ QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &
     }
 
     QPixmap out = getUserAvatarData(url, renderSize, userSettings);
-    return out;
+
+    if (styleRounded)
+    {
+        return rounded(out);
+    }
+    else if (styleCircle)
+    {
+        return rounded(out, true);
+    }
+    else
+    {
+        return out;
+    }
 }
 
 QPixmap UserSettingsAvatarProvider::getUserAvatarData(const QString &url, const QSize &renderSize, const Qml::UserSettings *userSettings)

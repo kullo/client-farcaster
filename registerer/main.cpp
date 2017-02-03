@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include <iostream>
 
 #include <httpclient/httpclientfactoryimpl.h>
@@ -21,6 +21,14 @@ int main(int argc, char *argv[])
         std::exit(1);
     }
 
+    const auto adressString = std::string(argv[1]);
+    auto address = Kullo::Api::Address::create(adressString);
+    if (!address)
+    {
+        Log.e() << "Invalid adress format: " << adressString;
+        return 1;
+    }
+
     auto taskRunner = std::make_shared<Kullo::Util::StlTaskRunner>();
     Kullo::Api::Registry::setTaskRunner(taskRunner);
 
@@ -28,9 +36,7 @@ int main(int argc, char *argv[])
                 std::shared_ptr<Kullo::Http::HttpClientFactory>(
                     new HttpClient::HttpClientFactoryImpl()));
 
-    auto address = Kullo::Api::Address::create(std::string(argv[1]));
-
-    Log.i() << "Registering " << address;
+    Log.i() << "Registering " << address->toString();
     auto masterKey = Registerer().run(address);
     kulloAssert(masterKey);
     std::cout << masterKey->pem();

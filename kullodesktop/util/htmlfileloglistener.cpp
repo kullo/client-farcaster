@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "kullodesktop/util/htmlfileloglistener.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -9,6 +9,7 @@
 #include <kulloclient/api/LogType.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/misc.h>
+#include <kulloclient/util/strings.h>
 #include <QDir>
 #include <QFileInfo>
 #include <QString>
@@ -19,9 +20,10 @@ namespace Util {
 namespace {
 
 const std::string FILENAME = "kullo_log_%s.html";
-const std::string HEADER = "<p>&nbsp;</p><hr>\n<h2>Session %s</h2>\n<table border=\"1\">";
-const std::string FOOTER = "</table>";
-const std::string ROW = "<tr><td>%s</td><td><small>%s</small></td><td>%s</td><td><small>%s</small></td></tr>";
+const std::string META = "<meta charset=\"UTF-8\">";
+const std::string CSS = "<style>.f { color: rgb(192, 0, 0) } .e { color: rgb(255,64,64) } .w { color: rgb(255,128,0) } .i { color: rgb(16,16,16) } p { position: relative; padding-left: 11em; margin: 10px 0; } code { position: absolute; left: 0; top: 3px; } small { opacity: 0.2 } </style>";
+const std::string SESSION_HEADER = META + "\n" + CSS + "\n" + "<p><strong>Starting new session %s</strong></p>";
+const std::string ROW = "<p class=\"%s\"><code>%s %s</code> %s<br /><small>%s</small></p>";
 const std::string DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
 
 std::string getCurrentDateTime()
@@ -51,7 +53,7 @@ HtmlFileLogListener::HtmlFileLogListener()
     openFile(fileInfo.absoluteFilePath().toStdString());
 
     // write header
-    auto fmt = boost::format(HEADER) % getCurrentDateTime();
+    auto fmt = boost::format(SESSION_HEADER) % getCurrentDateTime();
     log(fmt.str());
 }
 
@@ -77,13 +79,14 @@ void HtmlFileLogListener::writeLogMessage(
     if (type == LogType::Debug) return;
 #endif
 
+    std::string typeCssClass;
     std::string typeName;
     switch (type) {
-    case LogType::Fatal:   typeName = "FATAL";   break;
-    case LogType::Error:   typeName = "ERROR";   break;
-    case LogType::Warning: typeName = "WARNING"; break;
-    case LogType::Info:    typeName = "INFO";    break;
-    case LogType::Debug:   typeName = "DEBUG";   break;
+    case LogType::Fatal:   typeName = "F"; typeCssClass = "f"; break;
+    case LogType::Error:   typeName = "E"; typeCssClass = "e"; break;
+    case LogType::Warning: typeName = "W"; typeCssClass = "w"; break;
+    case LogType::Info:    typeName = "I"; typeCssClass = "i"; break;
+    case LogType::Debug:   typeName = "D"; typeCssClass = "d"; break;
     default: kulloAssert(false);
     }
 
@@ -97,8 +100,11 @@ void HtmlFileLogListener::writeLogMessage(
         position = DesktopUtil::Filesystem::shortenSourcePath(file) + ":" + std::to_string(line) + " (" + function + ")";
     }
 
+    std::string messageHtml = Kullo::Util::Strings::htmlEscape(message);
+    std::string positionHtml = Kullo::Util::Strings::htmlEscape(position);
+
     auto dateStr = getCurrentDateTime();
-    auto fmt = boost::format(ROW) % typeName % dateStr % message % position;
+    auto fmt = boost::format(ROW) % typeCssClass % typeName % dateStr % messageHtml % positionHtml;
     log(fmt.str());
 
     if (type == LogType::Fatal)
@@ -126,8 +132,7 @@ void HtmlFileLogListener::closeFile()
     std::lock_guard<std::mutex> lock(streamMutex_); Q_UNUSED(lock)
     if (stream_)
     {
-        *stream_ << FOOTER << std::endl;
-        stream_.reset();
+        stream_ = nullptr;
     }
 }
 

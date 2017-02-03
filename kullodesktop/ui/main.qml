@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
@@ -190,6 +190,14 @@ ApplicationWindow {
         ]
 
         state: Inbox.userSettings ? "loggingIn" : "welcome"
+
+        onStateChanged: {
+            if (state == "inbox") {
+                appWindow.title = "Kullo - " + Inbox.userSettings.address
+            } else {
+                appWindow.title = "Kullo"
+            }
+        }
 
         Loader {
             id: appLoader

@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
@@ -21,8 +21,11 @@ public:
         : QObject(parent)
     {
         // registered in registerMetaTypes(): Kullo::id_type
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::SyncProgress>>("std::shared_ptr<Kullo::Api::SyncProgress>");
         qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
+
+        // wrap in shared_ptr to make it Qt meta type compatible
+        // (i.e. public default constructor + public copy constructor + public destructor)
+        qRegisterMetaType<std::shared_ptr<Kullo::Api::SyncProgress>>("std::shared_ptr<Kullo::Api::SyncProgress>");
     }
 
     void started() override

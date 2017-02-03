@@ -1,12 +1,12 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 
 import "../../"
 import "../../native"
 
 Rectangle {
-    id: _root
     /* private */
+    id: root
     property bool _showBanner: false
     property int _paddingV: 8
     property int _paddingH: 15

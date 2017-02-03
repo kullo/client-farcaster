@@ -10,6 +10,8 @@ QT = core gui qml quick widgets \
     core-private gui-private \
     multimedia printsupport
 
+TEMPLATE = app
+
 RESOURCES += \
     resources.qrc \
     translations.qrc \
@@ -80,7 +82,6 @@ SOURCES += \
     imageproviders/usersettingsavatarprovider.cpp \
     osintegration/kullotrayicon.cpp \
     osintegration/programoptions.cpp \
-    osintegration/singleinstanceerrorbox.cpp \
     osintegration/singleinstancelock.cpp \
     qml/attachmentlistmodel.cpp \
     qml/attachmentmodel.cpp \
@@ -107,6 +108,7 @@ SOURCES += \
     qml_bridge/qmlsetup.cpp \
     qml_components/visuals/advancedrectangle.cpp \
     qml_components/visuals/hint.cpp \
+    qml_components/accountinfo.cpp \
     qml_components/attachmentsadder.cpp \
     qml_components/changelog.cpp \
     qml_components/existencechecker.cpp \
@@ -117,7 +119,7 @@ SOURCES += \
     qml_components/loginchecker.cpp \
     qml_components/registerer.cpp \
     qml_components/scheduler.cpp \
-    qml_components/settingslocation.cpp \
+    qml_components/stabletimer.cpp \
     util/consoleextendedloglistener.cpp \
     util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
@@ -137,7 +139,6 @@ HEADERS += \
     imageproviders/usersettingsavatarprovider.h \
     osintegration/kullotrayicon.h \
     osintegration/programoptions.h \
-    osintegration/singleinstanceerrorbox.h \
     osintegration/singleinstancelock.h \
     qml/attachmentmodel.h \
     qml/attachmentlistmodel.h \
@@ -165,6 +166,7 @@ HEADERS += \
     qml_bridge/qmlsetup.h \
     qml_components/visuals/advancedrectangle.h \
     qml_components/visuals/hint.h \
+    qml_components/accountinfo.h \
     qml_components/attachmentsadder.h \
     qml_components/changelog.h \
     qml_components/existencechecker.h \
@@ -175,7 +177,7 @@ HEADERS += \
     qml_components/loginchecker.h \
     qml_components/registerer.h \
     qml_components/scheduler.h \
-    qml_components/settingslocation.h \
+    qml_components/stabletimer.h \
     util/consoleextendedloglistener.h \
     util/htmlfileloglistener.h \
     util/kullofoldersetup.h \
@@ -222,7 +224,9 @@ CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-httpclient-curl-d
 INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
 LIBS += -L$$LIBKULLO_BIN_DIR/lib \
     -lkulloclient -ljsoncpp -lsmartsqlite -lboost_program_options \
-    -lz -lboost_filesystem -lboost_system
+    -lz \
+    -lboost_filesystem \
+    -lboost_system
 
 DEPENDPATH += $$LIBKULLO_BIN_DIR/include
 win32 {
@@ -240,6 +244,11 @@ PRE_TARGETDEPS += \
     $${TD_PREFIX}z$${TD_SUFFIX} \
     $${TD_PREFIX}boost_filesystem$${TD_SUFFIX} \
     $${TD_PREFIX}boost_system$${TD_SUFFIX}
+
+windows(): {
+    PRE_TARGETDEPS += $${TD_PREFIX}boost_regex$${TD_SUFFIX}
+    LIBS += -lboost_regex
+}
 # END libkullo
 
 # BEGIN breakpadwrapper

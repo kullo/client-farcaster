@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <QDateTime>
@@ -52,7 +52,7 @@ public:
     Q_PROPERTY(QString text READ text NOTIFY textChanged)
     QString text() const;
 
-    // used in MessageListSource
+    Q_PROPERTY(QString textAsHtml READ textAsHtml NOTIFY textAsHtmlChanged)
     QString textAsHtml() const;
 
     Q_PROPERTY(QString footer READ footer NOTIFY footerChanged)
@@ -87,6 +87,7 @@ signals:
     void dateSentChanged();
     void dateReceivedChanged();
     void textChanged();
+    void textAsHtmlChanged();
     void footerChanged();
     void attachmentsChanged();
     void attachmentsReadyChanged();

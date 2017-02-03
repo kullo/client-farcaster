@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "conversationmodel.h"
 
 #include <QQmlEngine>
@@ -7,10 +7,10 @@
 #include <desktoputil/kulloclient2qt.h>
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/Conversations.h>
-#include <kulloclient/api/DateTime.h>
 #include <kulloclient/api/Messages.h>
 #include <kulloclient/api/Senders.h>
 #include <kulloclient/api/Session.h>
+#include <kulloclient/api_impl/DateTime.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 

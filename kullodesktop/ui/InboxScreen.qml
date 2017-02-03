@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
@@ -9,6 +9,7 @@ import Kullo 1.0
 import "." // QTBUG-34418, singletons require explicit import to load qmldir file
 import "inbox"
 import "inbox/banners"
+import "buttons"
 import "dialogs"
 import "misc"
 import "native"
@@ -63,24 +64,12 @@ FocusScope {
         storeWindowSizeChanges = true
     }
 
-    function userSettingsIncomplete() {
-        return Inbox.userSettings.name.trim() === ""
-    }
-
     function toggleTodoMode()
     {
         var newValue = !inboxScreen.todoMode
         inboxScreen.todoMode = newValue
-        overlayTodoMode.active = newValue
-        overlayTodoMode.show()
-    }
-
-    function toggleSoundActive()
-    {
-        InnerApplication.deviceSettings.muted = !InnerApplication.deviceSettings.muted
-        var newValueSoundActive = !InnerApplication.deviceSettings.muted
-        overlaySoundActive.active = newValueSoundActive
-        overlaySoundActive.show()
+        toastTodoMode.active = newValue
+        toastTodoMode.show()
     }
 
     function toggleAnswer() {
@@ -123,7 +112,7 @@ FocusScope {
         }
     }
 
-    Timer {
+    StableTimer {
         id: heartbeat
         interval: 10000
         repeat: true
@@ -146,6 +135,10 @@ FocusScope {
 
     ShortcutOverlay {
         id: shortcutOverlay
+    }
+
+    ProfileOverlay {
+        id: profileOverlay
     }
 
     SettingsWindow {
@@ -194,11 +187,12 @@ FocusScope {
         id: clientTooOldBanner
     }
 
-    Timer {
+    StableTimer {
         id: syncingBannerDelayTimer
-        interval: 1000
+        // first syncer is slow at the moment
+        interval: 750
         repeat: false
-        triggeredOnStart: false
+        running: false
         onTriggered: {
             syncingBanner.show()
         }
@@ -243,6 +237,9 @@ FocusScope {
                 syncingBanner.progressIndeterminate = true
             }
         }
+        onSyncPhaseChanged: {
+            syncingBannerDelayTimer.restart()
+        }
         onSyncFinished: {
             syncingBannerDelayTimer.stop()
             if (success) {
@@ -256,7 +253,13 @@ FocusScope {
             // during logout this slot might still be running when there is no user anymore
             if (Inbox.userSettings)
             {
-                if (userSettingsIncomplete()) showUserSettingsWindow()
+                if (Inbox.userSettings.name.trim() === "")
+                {
+                    // this probably means that user is coming from registration
+                    var localPart = Inbox.userSettings.address.split("#")[0]
+                    Inbox.userSettings.name = localPart
+                    profileOverlay.fadeIn()
+                }
             }
         }
         onSyncError: {
@@ -329,7 +332,7 @@ FocusScope {
 
     GroupConversationStartDialog {
         id: startConversationPrompt
-        text: qsTr("Enter Kullo address:")
+        title: qsTr("Start conversation")
         onAddressAccepted: {
             console.info("Start conversation with '" + result + "'")
             Inbox.addConversation(result)
@@ -426,6 +429,128 @@ FocusScope {
         anchors.fill: parent
         focus: true
 
+        PopupMenu {
+            id: popupMenu
+
+            property real placeAtX
+            property real placeAtY
+
+            function placeAt(target) {
+                // place at full pixels to avoid placing elements inside of PopupMenu to pixel fractions
+                placeAtX = Math.round(target.x - (width/2))
+                placeAtY = Math.round(target.y - height)
+                x = placeAtX
+            }
+
+            function open() {
+                forceActiveFocus()
+            }
+
+            function close() {
+                focus = false
+            }
+
+            property bool opened: focus
+
+            opacity: 0 // init invisible
+            visible: opacity != 0 // make sure the element is not clickable after closing
+
+            states: [
+                State {
+                    when: popupMenu.opened
+                    PropertyChanges { target: popupMenu; opacity: 1.0; y: placeAtY }
+                },
+                State {
+                    when: !popupMenu.opened
+                    PropertyChanges { target: popupMenu; opacity: 0.0; y: placeAtY-10 }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    NumberAnimation { properties: "opacity,y"; duration: 100 }
+                }
+            ]
+
+            NativeButton {
+                text: qsTr("My Kullo")
+                tooltip: qsTr("Show profile")
+                onClicked: {
+                    popupMenu.close()
+                    profileOverlay.fadeIn()
+                }
+
+                width: parent.width-2*parent.padding
+                style: KulloButtonStyle {
+                    iconPosition: _POSITION_LEFT
+                    paddingH: 10
+                    source: "/resources/scalable/profile_w.svg"
+                    backgroundColor: "transparent"
+                    hoverColor: "#33ffffff"
+                    textColor: Style.white
+                }
+            }
+
+            NativeButton {
+                text: qsTr("Settings")
+                tooltip: qsTr("Show settings")
+                         + " (%1)".arg(SC.nameOfCtrlAndKey("G", Os.osx))
+                onClicked: {
+                    popupMenu.close()
+                    inboxScreen.showUserSettingsWindow()
+                }
+
+                width: parent.width-2*parent.padding
+                style: KulloButtonStyle {
+                    iconPosition: _POSITION_LEFT
+                    paddingH: 10
+                    source: "/resources/scalable/settings2_w.svg"
+                    backgroundColor: "transparent"
+                    hoverColor: "#33ffffff"
+                    textColor: Style.white
+                }
+            }
+
+            NativeButton {
+                text: qsTr("Info")
+                tooltip: qsTr("Show info window")
+                onClicked: {
+                    popupMenu.close()
+                    inboxScreen.showInfoWindow()
+                }
+
+                width: parent.width-2*parent.padding
+                style: KulloButtonStyle {
+                    iconPosition: _POSITION_LEFT
+                    paddingH: 10
+                    source: "/resources/scalable/info_w.svg"
+                    backgroundColor: "transparent"
+                    hoverColor: "#33ffffff"
+                    textColor: Style.white
+                }
+            }
+
+            NativeButton {
+                text: qsTr("Leave inbox")
+                tooltip: qsTr("Go to start screen")
+                         + " (%1)".arg(SC.nameOfCtrlAndKey("O", Os.osx))
+                onClicked: {
+                    popupMenu.close()
+                    inboxScreen.logout()
+                }
+
+                width: parent.width-2*parent.padding
+                style: KulloButtonStyle {
+                    iconPosition: _POSITION_LEFT
+                    paddingH: 10
+                    source: "/resources/scalable/logout2_w.svg"
+                    backgroundColor: "transparent"
+                    hoverColor: "#33ffffff"
+                    textColor: Style.white
+                }
+            }
+        }
+
         LeftColumn {
             id: leftColumn
             anchors {
@@ -505,15 +630,9 @@ FocusScope {
         }
     }
 
-    Overlay {
-        id: overlayTodoMode
+    Toast {
+        id: toastTodoMode
         anchors.centerIn: parent
         text: qsTr("Todo\nmode")
-    }
-
-    Overlay {
-        id: overlaySoundActive
-        anchors.centerIn: parent
-        text: qsTr("Sound\nactive")
     }
 }

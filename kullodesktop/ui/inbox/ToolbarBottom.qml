@@ -1,74 +1,96 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
+import Kullo 1.0
 
+import "../"
 import "../buttons"
+import "../native"
+import "../misc"
 import "../js/shortcut.js" as SC
 
 Rectangle {
-    height: borderTop.height
-            + theContentRow.implicitHeight
-            + 2*theContentRow.anchors.topMargin
-    color: "#80ffffff"
+    height: profileButton.implicitHeight + 2*5
+    color: Style.leftToolbarBackground
 
-    Rectangle {
-        id: borderTop
-        color: "#ccc"
-        height: 1
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-            leftMargin: 3
-            rightMargin: 3
+    // delay loading data to speed up software start
+    DelayedRepeatingTimer {
+        firstInterval: 1000 // 1 second
+        secondInterval: 5*60*1000 // 5 minutes
+        handleOnTriggered: function() {
+            superHandleOnTriggered()
+            accountInfo.reload()
         }
     }
 
-    Row {
-        id: theContentRow
+    AccountInfo {
+        id: accountInfo
+        inbox: Inbox
+    }
+
+    NativeButton {
+        id: profileButton
         anchors {
-            top: borderTop.bottom
+            top: parent.top
             topMargin: 5
             left: parent.left
             leftMargin: 5
+            right: moreButton.left
+            rightMargin: 5
+        }
+
+        text: qsTr("My Kullo")
+
+        style: KulloButtonStyle {
+            function reloadAvatar() {
+                source = "image://usersettingsavatars/" + Inbox.userSettings.address + "?circle&" + Date.now()
+            }
+
+            source: "image://usersettingsavatars/" + Inbox.userSettings.address + "?circle"
+            iconSize: 32
+            iconPosition: _POSITION_LEFT
+            paddingH: 8
+            paddingV: 2
+            backgroundColor: "transparent"
+            hoverColor: "#22000000"
+            textColor: Style.black
+            progress: accountInfo.storageUsed
+            progressMax: accountInfo.storageQuota
+
+            Connections {
+                target: profileOverlay
+                onAvatarChanged: reloadAvatar()
+            }
+        }
+
+        onClicked: {
+            popupMenu.close()
+            profileOverlay.fadeIn()
+        }
+    }
+
+    IconButton {
+        tooltip: qsTr("More menu items")
+        id: moreButton
+        anchors {
+            verticalCenter: parent.verticalCenter
             right: parent.right
+            rightMargin: 5
         }
-        spacing: 5
+        source: "/resources/scalable/more_b.svg"
 
-        IconButton {
-            source: "/resources/scalable/logout2_b.svg"
-            onClicked: inboxScreen.logout()
-            tooltip: qsTr("Go to start screen")
-                     + " (%1)".arg(SC.nameOfCtrlAndKey("O", Os.osx))
-        }
-
-        IconButton {
-            source: "/resources/scalable/settings2_b.svg"
-            onClicked: inboxScreen.showUserSettingsWindow()
-            tooltip: qsTr("Show settings")
-                     + " (%1)".arg(SC.nameOfCtrlAndKey("G", Os.osx))
-        }
-
-        IconButton {
-            source: InnerApplication.deviceSettings.muted
-                    ? "/resources/scalable/sound_muted_b.svg"
-                    : "/resources/scalable/sound_unmuted_b.svg"
-            onClicked: inboxScreen.toggleSoundActive()
-            tooltip: InnerApplication.deviceSettings.muted ? qsTr("Unmute") : qsTr("Mute")
-        }
-
-        IconButton {
-            source: inboxScreen.todoMode
-                    ? "/resources/scalable/todo_active_b.svg"
-                    : "/resources/scalable/todo_b.svg"
-            onClicked: inboxScreen.toggleTodoMode()
-            tooltip: (inboxScreen.todoMode ? qsTr("Switch todo mode off") : qsTr("Switch todo mode on"))
-                     + " (%1)".arg(SC.nameOfCtrlAndKey("T", Os.osx))
-        }
-
-        IconButton {
-            source: "/resources/scalable/info_b.svg"
-            onClicked: inboxScreen.showInfoWindow()
-            tooltip: qsTr("Show info window")
+        onClicked: {
+            if (!popupMenu.opened)
+            {
+                var y = 0
+                var x = width/2
+                var targetPoint = mapToItem(inboxContent, x, y)
+                popupMenu.placeAt(targetPoint)
+                popupMenu.open()
+            }
+            else
+            {
+                popupMenu.close()
+            }
         }
     }
 }

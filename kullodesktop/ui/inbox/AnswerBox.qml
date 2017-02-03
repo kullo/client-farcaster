@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Controls.Styles 1.3
@@ -25,6 +25,26 @@ FocusScope {
 
     ErrorDialog {
         id: addAttachmentErrorDialog
+    }
+
+    onConversationChanged: {
+        // initial text backend->UI
+        if (conversation) {
+            messageText.text = conversation.draft.text
+        } else {
+            messageText.text
+        }
+    }
+
+    Connections {
+        target: root.conversation
+                ? root.conversation.draft
+                : null
+
+        // text updates backend->UI
+        onTextChanged: {
+            messageText.text = root.conversation.draft.text
+        }
     }
 
     AttachmentsAdder {
@@ -191,7 +211,9 @@ FocusScope {
                     font.pointSize: Style.fontSize.answerTextInput
 
                     wrapMode: TextEdit.Wrap
-                    text: root.conversation ? root.conversation.draft.text : ""
+
+                    // Do not use property binding for `text` here because
+                    // the two-way signaling is too complex to work reliably
 
                     Keys.onPressed: {
                         if (SC.isCtrlAndKey(Qt.Key_Period, event)) {
@@ -213,6 +235,7 @@ FocusScope {
                         }
                     }
 
+                    // text change UI->backend
                     onTextChanged: {
                         if (root.conversation) {
                             root.conversation.draft.text = text

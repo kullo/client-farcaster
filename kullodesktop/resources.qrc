@@ -17,11 +17,17 @@
         <file>resources/scalable/logo.svg</file>
         <file>resources/scalable/login_w.svg</file>
         <file>resources/scalable/logout2_b.svg</file>
+        <file>resources/scalable/logout2_w.svg</file>
         <file>resources/scalable/info_b.svg</file>
+        <file>resources/scalable/info_w.svg</file>
         <file>resources/scalable/minus_b.svg</file>
+        <file>resources/scalable/more_b.svg</file>
         <file>resources/scalable/ok_w.svg</file>
+        <file>resources/scalable/profile_b.svg</file>
+        <file>resources/scalable/profile_w.svg</file>
         <file>resources/scalable/send_w.svg</file>
         <file>resources/scalable/settings2_b.svg</file>
+        <file>resources/scalable/settings2_w.svg</file>
         <file>resources/scalable/sound_muted_b.svg</file>
         <file>resources/scalable/sound_unmuted_b.svg</file>
         <file>resources/scalable/state_unread_b.svg</file>
@@ -39,6 +45,7 @@
         <file>resources/scalable/trayicon_windows_loggedout.svg</file>
         <file>resources/scalable/trayicon_windows_notification.svg</file>
         <file>resources/scalable/user_b.svg</file>
+        <file>resources/scalable/user_w.svg</file>
         <file>resources/scalable/write_w.svg</file>
         <file>resources/sounds/new_message.wav</file>
         <file>resources/empty_avatar.png</file>

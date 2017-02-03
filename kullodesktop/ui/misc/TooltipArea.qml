@@ -1,6 +1,7 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls.Private 1.0
+import Kullo 1.0
 
 // TooltipArea.qml
 // This file contains private Qt Quick modules that might change in future versions of Qt
@@ -17,7 +18,7 @@ MouseArea {
     onExited: Tooltip.hideText()
     onCanceled: Tooltip.hideText()
 
-    Timer {
+    StableTimer {
         interval: 1000
         running: root.enabled && root.containsMouse && root.text.length
         onTriggered: Tooltip.showText(root, Qt.point(root.mouseX, root.mouseY), root.text)

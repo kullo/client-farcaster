@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 pragma Singleton
 import QtQuick 2.4
 
@@ -29,6 +29,8 @@ QtObject {
     property color messagesListBackground: "#CCCCCC"
     property color answerColumnBackground: "#999999"
 
+    property color leftToolbarBackground: "#e6e6e6"
+
     property color messageHeaderBackground: "#707070"
     property color messageHeaderForeground: "#fafafa"
     property color messageHeaderForegroundSecondary: "#99fafafa" // 60% opacity
@@ -36,8 +38,11 @@ QtObject {
     property color messageText: black
     property color messageFooter: "#666666"
 
+    property color profileHeadline: Utils.setAlpha(black, 0.9)
+    property color profileHeadlineSecondary: Utils.setAlpha(black, 0.7)
+
     property color answerHeaderBackground: "transparent"
-    property color answerHeaderForeground: black
+    property color answerHeaderForeground: Utils.setAlpha(black, 0.9)
     property color answerHeaderForegroundSecondary: Utils.setAlpha(black, 0.7)
 
     property string buttonBackgroundColor: blue
@@ -70,7 +75,6 @@ QtObject {
         property real conversationListCounter: 10*sp
         property real conversationIntroAdresses: 16*sp
         property real conversationIntroNormal: small
-        property real overlay: 26*sp
         property real message: InnerApplication.deviceSettings.messagesFontPreview.pointSize*sp
         property real messageHeaderPrimary: 13*sp
         property real messageHeaderSecondary: 10*sp
@@ -82,5 +86,6 @@ QtObject {
         property real registrationKulloAdressUsername: bigTextInput
         property real registrationKulloAdressDomain: bigTextInput + 1*sp
         property real registrationChallengeAnswerInput: bigTextInput
+        property real toast: 26*sp
     }
 }

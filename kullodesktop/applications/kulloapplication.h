@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
@@ -18,8 +18,6 @@ public:
     static QString GUID;
     static QString GUID_DEBUG;
     static bool TEST_MODE;
-    static bool IGNORE_LOCK;
-    static bool NO_TRAY_ICON;
     static bool FAKE_LONG_MIGRATION;
 
 signals:

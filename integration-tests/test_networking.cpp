@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "integrationtest.h"
 
 #include <kulloclient/api/Registry.h>
@@ -67,4 +67,25 @@ TEST_F(Networking, getHttps)
     EXPECT_THAT(response.statusCode, Eq(200));
     EXPECT_THAT(response.headers.size(), Ge(2u));
     EXPECT_THAT(response.headers, Contains(HttpHeaderEq(Http::HttpHeader{"Content-Type", "application/json"})));
+}
+
+TEST_F(Networking, multipleTlsCertificates)
+{
+    const auto urls = std::vector<std::string> {
+            "https://www.kullo.net/en/",
+            "https://kullo.kullo.net/v1/status",
+            "https://kullo.kullo.net/v1/status",
+            "https://de.wikipedia.org/wiki/Wikipedia:Hauptseite",
+            "https://putsreq.com/iisoLiU2zd8zkF9uB0iQ",
+            "https://stackoverflow.com/"
+    };
+
+    for (const auto url : urls)
+    {
+        auto request = Http::Request(Http::HttpMethod::Get, url, {});
+        auto response = httpClient_->sendRequest(request, timeoutMs_, nullptr, nullptr);
+        EXPECT_THAT(response.error, Eq(boost::none));
+        EXPECT_THAT(response.statusCode, Eq(200));
+        EXPECT_THAT(response.headers.size(), Ge(2u));
+    }
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import Kullo 1.0
@@ -7,15 +7,16 @@ import "../"
 import "../buttons"
 import "../misc"
 import "../native"
+import "../js/format.js" as Format
 import "../js/shortcut.js" as SC
 
 Item {
     /* public */
     property var messagesList
-    property int paddingTop: 10
-    property int paddingRight: 10
-    property int paddingBottom: 10
-    property int paddingLeft: 10
+    property int paddingTop: 5
+    property int paddingRight: 5
+    property int paddingBottom: 5
+    property int paddingLeft: 5
     property int conversationId: conversationId_
     property int messageId: id_
     property bool attachmentsReady: attachmentsReady_
@@ -32,10 +33,6 @@ Item {
 
     id: root
 
-    anchors {
-        left: parent.left
-        right: parent.right
-    }
     height: paddingTop + messageBorder.height + paddingBottom
     clip: true
 
@@ -164,7 +161,24 @@ Item {
                     font.pointSize: Style.fontSize.message
                     color: Style.messageText
                     textFormat: TextEdit.RichText
-                    onLinkActivated: Qt.openUrlExternally(link)
+                    onLinkActivated: {
+                        var scheme = Format.scheme_from_url(link)
+
+                        if (scheme === "http" || scheme === "https")
+                        {
+                            if (!Qt.openUrlExternally(link))
+                            {
+                                console.warn("Could not open url: " + link)
+                            }
+                        }
+                        else if (scheme === "kulloInternal") {
+                            var address = link.substring(scheme.length+1)
+                            startConversationPrompt.openDialog()
+                            startConversationPrompt.inputText = address
+                        } else {
+                            console.warn("Unrecognized sheme: " + scheme)
+                        }
+                    }
 
                     function quoteSelectedText() {
                         var quoteText = messageTextBox.selectedText.trim()
@@ -188,12 +202,22 @@ Item {
                     }
 
                     Menu {
-                        id: linkMenu
+                        id: webLinkMenu
                         property string link: ""
 
                         MenuItem {
                             text: qsTr("Copy link address")
-                            onTriggered: Utils.setClipboardText(linkMenu.link)
+                            onTriggered: Utils.setClipboardText(webLinkMenu.link)
+                        }
+                    }
+
+                    Menu {
+                        id: kulloAddressLinkMenu
+                        property string address: ""
+
+                        MenuItem {
+                            text: qsTr("Copy Kullo address")
+                            onTriggered: Utils.setClipboardText(kulloAddressLinkMenu.address)
                         }
                     }
 
@@ -217,10 +241,21 @@ Item {
                             else
                             {
                                 var link = messageTextBox.linkAt(mouseX, mouseY)
-                                if (link !== "")
+                                var scheme = Format.scheme_from_url(link)
+
+                                if (scheme === "http" || scheme === "https")
                                 {
-                                    linkMenu.link = link
-                                    linkMenu.popup()
+                                    webLinkMenu.link = link
+                                    webLinkMenu.popup()
+                                }
+                                else if (scheme === "kulloInternal")
+                                {
+                                    kulloAddressLinkMenu.address = link.substring(scheme.length+1)
+                                    kulloAddressLinkMenu.popup()
+                                }
+                                else
+                                {
+                                    console.warn("Unknown scheme: " + scheme)
                                 }
                             }
                         }
@@ -363,7 +398,7 @@ Item {
                     tooltip: qsTr("Delete message")
                     source: "/resources/scalable/delete_b.svg"
 
-                    Timer {
+                    StableTimer {
                         id: deleteTimer
                         interval: 350
                         onTriggered: {

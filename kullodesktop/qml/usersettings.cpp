@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "usersettings.h"
 
 #include <chrono>
@@ -17,9 +17,9 @@
 #include <desktoputil/kulloclient2qt.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/api/Address.h>
-#include <kulloclient/api/DateTime.h>
 #include <kulloclient/api/MasterKey.h>
 #include <kulloclient/api/UserSettings.h>
+#include <kulloclient/api_impl/DateTime.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
@@ -76,7 +76,7 @@ QString UserSettings::name() const
     return QString::fromStdString(settings_->name());
 }
 
-void UserSettings::setName(QString name)
+void UserSettings::setName(const QString &name)
 {
     if (!settings_) return;
     if (settings_->name() == name.toStdString()) return;
@@ -91,7 +91,7 @@ QString UserSettings::organization() const
     return QString::fromStdString(settings_->organization());
 }
 
-void UserSettings::setOrganization(QString organization)
+void UserSettings::setOrganization(const QString &organization)
 {
     if (!settings_) return;
     if (settings_->organization() == organization.toStdString()) return;

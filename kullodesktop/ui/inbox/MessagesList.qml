@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 
 import "../windows"
@@ -79,11 +79,12 @@ ListView {
     }
 
     delegate: MessageDelegate {
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
+
         messagesList: root
-        paddingTop: 5
-        paddingRight: 5
-        paddingBottom: 5
-        paddingLeft: 5
         highlightColor: root.activeFocus ? "#999999" : "#bbbbbb"
 
         onAvatarDoubleClicked: {

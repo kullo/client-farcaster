@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <cstdint>
@@ -23,7 +23,7 @@ protected:
     QPixmap getAvatarForAddress(const QString &address, const QSize &renderSize);
     QPixmap getFallbackAvatar(const QString name, const QSize &renderSize);
     QPixmap getEmptyAvatar(const QSize &renderSize);
-    QPixmap rounded(const QPixmap &in);
+    QPixmap rounded(const QPixmap &in, bool cirlce=false);
 
     Qml::Inbox &inbox_;
     std::unordered_map<std::uint32_t, std::unique_ptr<QPixmap>> emptyAvatarCache_;

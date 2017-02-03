@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
@@ -26,11 +26,6 @@ NativeModalWindow {
         }
     }
 
-    function openMasterKey() {
-        masterKeyShowWindow.key = Inbox.userSettings.masterKeyPem
-        masterKeyShowWindow.openWindow()
-    }
-
     function postpone(seconds)
     {
         Inbox.userSettings.postponeMasterKeyBackupDontRemindBefore(seconds)
@@ -54,6 +49,7 @@ NativeModalWindow {
     MasterKeyShowWindow {
         id: masterKeyShowWindow
         address: Inbox.userSettings.address
+        key: Inbox.userSettings.masterKeyPem
     }
 
     // Main Qt Quick Item required for attached property `Keys`
@@ -183,11 +179,13 @@ NativeModalWindow {
 
                 NativeTextWithLinks {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    html: qsTr("<a href='showMasterKey' style='color: %1'>Show MasterKey and print now</a>")
-                          .arg(color)
-                    onLinkActivated: {
+                    html: qsTr("<a href='showMasterKey://'>Show MasterKey and print now</a>")
+                    handleOnLinkActivated: function() {
                         confirmation.enabled = true
-                        root.openMasterKey()
+
+                        masterKeyShowWindow.openWindow()
+                        masterKeyShowWindow.raise()
+                        masterKeyShowWindow.requestActivate()
                     }
                 }
             }

@@ -1,10 +1,9 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <atomic>
 #include <memory>
 #include <utility>
-#include <QDateTime>
 #include <QObject>
 #include <QStringList>
 #include <QUrl>
@@ -13,7 +12,6 @@
 
 #include <kulloclient/kulloclient-forwards.h>
 #include <kulloclient/api/Address.h>
-#include <kulloclient/api/DateTime.h>
 #include <kulloclient/api/MasterKey.h>
 
 class QSettings;
@@ -48,11 +46,11 @@ public:
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     QString name() const;
-    void setName(QString name);
+    void setName(const QString &name);
 
     Q_PROPERTY(QString organization READ organization WRITE setOrganization NOTIFY organizationChanged)
     QString organization() const;
-    void setOrganization(QString organization);
+    void setOrganization(const QString &organization);
 
     Q_PROPERTY(QString avatarMimeType READ avatarMimeType NOTIFY avatarMimeTypeChanged)
     QString avatarMimeType() const;

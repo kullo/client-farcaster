@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import Kullo 1.0
@@ -255,10 +255,10 @@ BaseDialog {
                 anchors {
                     left: parent.left
                 }
-                html: "<a href='showUpdateDetails://' style='color: %1'>".arg(color)
+                html: "<a href='showUpdateDetails://'>"
                       + (changelogTextbox.visible ? qsTr("Hide details") : qsTr("Show details"))
                       + "</a>"
-                onLinkActivated: {
+                handleOnLinkActivated: function() {
                     changelogTextbox.visible = !changelogTextbox.visible
                     recalculateContentHeight()
                 }

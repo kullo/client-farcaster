@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import Kullo 1.0
@@ -10,32 +10,32 @@ import "../native"
 import "../js/shortcut.js" as SC
 
 BaseDialog {
-    id: root
     objectName: "GroupConversationStartDialog"
 
-    property string text
-    property alias buttonOkEnabled: buttonOk.enabled
-    property alias buttonCancelEnabled: buttonCancel.enabled
-    property alias errorHintText: errorHint.text
-    property bool errorHintVisible: errorHintText !== ""
-    property var addresses
+    /* public */
+    property alias inputText: input.text
     property string result
-    property bool state_closing: false
+
+    /* private */
+    property var _addresses
+    property alias _errorHintText: errorHint.text
+    property bool _errorHintVisible: _errorHintText !== ""
+    property bool _stateClosing: false
 
     signal addressAccepted()
     signal addressAdded()
 
+    id: root
     width: 400
     minimumHeight: mainItem.implicitHeight + 2*verticalPadding
     height: mainItem.implicitHeight + 2*verticalPadding
-    title: text
 
     Component.onCompleted: {
         mainItem.forceActiveFocus()
     }
 
     function reset() {
-        addresses = []
+        _addresses = []
         result = ""
         input.text = ""
         for(var i = stagedAddresses.children.length; i > 1; i--)
@@ -129,7 +129,7 @@ BaseDialog {
                     text: ""
                     enabled: !existenceChecker.locked
 
-                    onTextChanged: errorHintText = ""
+                    onTextChanged: _errorHintText = ""
 
                     ExistenceChecker {
                         id: existenceChecker
@@ -138,23 +138,23 @@ BaseDialog {
                         onExistenceChecked: {
                             if (ok) {
                                 console.info("Existence ok: '" + address + "'")
-                                errorHintText = ""
+                                _errorHintText = ""
                                 input.addValueToList(address)
 
-                                if (root.state_closing)
+                                if (root._stateClosing)
                                 {
                                     root.accepted()
                                 }
                             }
                             else {
                                 console.info("Existence failed: " + address)
-                                errorHintText = qsTr("Address does not exist.")
+                                _errorHintText = qsTr("Address does not exist.")
                             }
-                            root.state_closing = false
+                            root._stateClosing = false
                         }
                         onNetworkError: {
                             console.info("Start: Existence failed: " + address)
-                            errorHintText = qsTr("Address could not be verified. Are you online? Is the address correct?")
+                            _errorHintText = qsTr("Address could not be verified. Are you online? Is the address correct?")
                         }
                     }
 
@@ -168,12 +168,12 @@ BaseDialog {
                         }
                         if (Utils.kulloAddressEqual(address, Inbox.userSettings.address))
                         {
-                            errorHintText = qsTr("Monologues not supported.")
+                            _errorHintText = qsTr("Monologues not supported.")
                             return false
                         }
-                        if (addresses.indexOf(address) !== -1)
+                        if (_addresses.indexOf(address) !== -1)
                         {
-                            errorHintText = qsTr("Address already added.")
+                            _errorHintText = qsTr("Address already added.")
                             return false
                         }
 
@@ -184,7 +184,7 @@ BaseDialog {
 
                     function addValueToList(address)
                     {
-                        addresses.push(address)
+                        _addresses.push(address)
                         stagedAddresses.add(address)
                         root.addressAdded()
                         input.text = ""
@@ -261,7 +261,9 @@ BaseDialog {
         }
     }
 
-    onErrorHintVisibleChanged: buttonOkEnabled = !errorHintVisible
+    on_ErrorHintVisibleChanged: {
+        buttonOk.enabled = !_errorHintVisible
+    }
 
     onAccepted: {
         // Something in input?
@@ -274,20 +276,20 @@ BaseDialog {
             else
             {
                 // Wait for existence checker ...
-                root.state_closing = true
+                root._stateClosing = true
                 return
             }
         }
 
         // Called from OK button click or Ctrl+Enter
         // Double check input here
-        if (addresses.length)
+        if (_addresses.length)
         {
             result = ""
-            for (var i = 0; i < addresses.length; ++i)
+            for (var i = 0; i < _addresses.length; ++i)
             {
                 if (i) result += ","
-                result += addresses[i]
+                result += _addresses[i]
             }
             root.addressAccepted()
             root.closeDialog()

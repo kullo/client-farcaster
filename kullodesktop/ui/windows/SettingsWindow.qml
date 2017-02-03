@@ -1,7 +1,5 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
-import QtQuick.Controls 1.3
-import QtQuick.Window 2.2
 import Kullo 1.0
 import Kullo.Visuals 1.0
 
@@ -11,14 +9,11 @@ import "../native"
 import "../usersettings"
 
 NativeModalWindow {
-    id: root
     title: qsTr("Settings")
     objectName: "SettingsWindow"
 
-    // unused signal since sender avatar is not shown in compose view anymore
-    signal avatarChanged()
-
     /* private */
+    id: root
     property int _DEFAULT_WINDOW_WIDTH: 400
     property int _DEFAULT_WINDOW_HEIGHT: 500
 
@@ -28,29 +23,7 @@ NativeModalWindow {
     onVisibleChanged: {
         if (visible) // window opened
         {
-            if (tabUserSettings.item)
-            {
-                tabUserSettings.item.address      = Inbox.userSettings.address
-                tabUserSettings.item.name         = Inbox.userSettings.name
-                tabUserSettings.item.organization = Inbox.userSettings.organization
-                tabUserSettings.item.footer       = Inbox.userSettings.footer
-                tabUserSettings.item.refreshAvatar()
-                checkValues()
-            }
-            else
-            {
-                console.warn("TabUserSettings not available.")
-            }
-
-            if (tabDeviceSettings.item)
-            {
-                tabDeviceSettings.item.reset()
-            }
-
-            if (tabFontSettings.item)
-            {
-                tabFontSettings.item.reset()
-            }
+            reloadDataIntoUi()
 
             // reset window dimensions
             root.width = _DEFAULT_WINDOW_WIDTH
@@ -60,18 +33,19 @@ NativeModalWindow {
         }
     }
 
-    function checkValues() {
-        var valid = true
-        var obj = tabUserSettings.item
+    onClosing: resetTemporaryValues()
 
-        if (obj.name.trim() === "") valid = false
-
-        obj.buttonSave.enabled = valid
+    function reloadDataIntoUi() {
+        fontSizeUserFactorRow.value = InnerApplication.deviceSettings.fontSizeUserFactor
+        messagesFontRow.font = InnerApplication.deviceSettings.messagesFont
+        closeToTrayRow.checked = InnerApplication.deviceSettings.closeToTray
+        playSoundRow.checked = !InnerApplication.deviceSettings.muted
+        updateLaneRow.value = InnerApplication.deviceSettings.updateLane
     }
 
-    onClosing: {
-        console.debug("SettingsWindow closing ...")
-        Inbox.userSettings.discardTmpAvatar()
+    function resetTemporaryValues() {
+        InnerApplication.deviceSettings.fontSizeUserFactorPreview = InnerApplication.deviceSettings.fontSizeUserFactor
+        InnerApplication.deviceSettings.messagesFontPreview = InnerApplication.deviceSettings.messagesFont
     }
 
     // Main Qt Quick Item required for attached property `Keys`
@@ -85,58 +59,105 @@ NativeModalWindow {
         Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
-        TabView {
-            anchors.fill: parent
+        Column {
+            id: mainColumn
+            anchors {
+                left: parent.left
+                top: parent.top
+                right: parent.right
+            }
+            spacing: 10
 
-            // ALT+<number> tab switching can be implemented when this bug is solved:
-            // "On Ubuntu, ALT+<character> must not put <character> in text input"
-            // https://bugreports.qt.io/browse/QTBUG-45698
+            ComboBoxRow {
+                id: fontSizeUserFactorRow
+                name: qsTr("Font size")
+                values: ListModel {
+                    //: Font size name
+                    ListElement { text: qsTr("small"); value: 85 }
+                    //: Font size name
+                    ListElement { text: qsTr("normal"); value: 100 }
+                    //: Font size name
+                    ListElement { text: qsTr("large"); value: 115 }
+                    //: Font size name
+                    ListElement { text: qsTr("huge"); value: 130 }
+                }
+                initialValue: InnerApplication.deviceSettings.fontSizeUserFactor
 
-//            Keys.onPressed: {
-//                if (SC.isAltAndKey(Qt.Key_1, event))
-//                {
-//                    currentIndex = 0
-//                    event.accepted = true
-//                }
-//                else if (SC.isAltAndKey(Qt.Key_2, event))
-//                {
-//                    currentIndex = 1
-//                    event.accepted = true
-//                }
-//            }
-
-            Tab {
-                id: tabUserSettings
-                active: true
-                title: qsTr("Sender")
-                source: "/usersettings/TabUserSettings.qml"
-                onLoaded: {
-                    item.avatarChanged.connect(avatarChanged)
-                    item.closeWindowRequested.connect(closeWindow)
+                onValueChanged: {
+                    console.log("Set font factor: " + value)
+                    InnerApplication.deviceSettings.fontSizeUserFactorPreview = value
                 }
             }
 
-            Tab {
-                id: tabAccountSettings
-                title: qsTr("Account")
-                source: "/usersettings/TabAccountSettings.qml"
-            }
+            FontRow {
+                id: messagesFontRow
+                name: qsTr("Messages")
 
-            Tab {
-                id: tabDeviceSettings
-                title: qsTr("Device")
-                source: "/usersettings/TabDeviceSettings.qml"
-                onLoaded: {
-                    item.closeWindowRequested.connect(closeWindow)
+                onCurrentFontChanged: {
+                    InnerApplication.deviceSettings.messagesFontPreview = currentFont
                 }
             }
 
-            Tab {
-                id: tabFontSettings
-                title: qsTr("Font")
-                source: "/usersettings/TabFont.qml"
-                onLoaded: {
-                    item.closeWindowRequested.connect(closeWindow)
+            CheckBoxRow {
+                id: closeToTrayRow
+                name: qsTr("Tray icon")
+                text: qsTr("Close to tray")
+                checked: InnerApplication.deviceSettings.closeToTray
+            }
+
+            CheckBoxRow {
+                id: playSoundRow
+                name: qsTr("Notifications")
+                text: qsTr("Sound for new messages")
+                checked: !InnerApplication.deviceSettings.muted
+            }
+
+            ComboBoxRow {
+                id: updateLaneRow
+                name: qsTr("Update lane")
+                values: ListModel {
+                    //: Update lane name
+                    ListElement { text: qsTr("important"); value: "important" }
+                    //: Update lane name
+                    ListElement { text: qsTr("all"); value: "all" }
+                }
+                initialValue: InnerApplication.deviceSettings.updateLane
+                description: qsTr("'Important' updates are those we think everyone should install, e.g. security fixes or mayor feature improvements.") + " "
+                             + qsTr("We plan to have an 'important' update every 4-8 weeks.") + " "
+                             + qsTr("'All' updates contain minor improvements or changes that are only relevant for some users. Those come once a week or even more often.") + " "
+                             + qsTr("This is for pioneers.")
+            }
+        }
+
+        Row {
+            id: bottonsRow
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+            }
+            spacing: 10
+
+            NativeButton {
+                id: buttonDiscard
+                text: qsTr("Discard")
+                style: KulloButtonStyle { source: "/resources/scalable/cancel_w.svg" }
+                onClicked: {
+                    root.closeWindow()
+                }
+            }
+
+            NativeButton {
+                id: buttonSave
+                text: qsTr("Save")
+                style: KulloButtonStyle { source: "/resources/scalable/ok_w.svg" }
+                onClicked: {
+                    InnerApplication.deviceSettings.fontSizeUserFactor = InnerApplication.deviceSettings.fontSizeUserFactorPreview
+                    InnerApplication.deviceSettings.messagesFont = InnerApplication.deviceSettings.messagesFontPreview
+                    InnerApplication.deviceSettings.updateLane = updateLaneRow.value
+                    InnerApplication.deviceSettings.closeToTray = closeToTrayRow.checked
+                    InnerApplication.deviceSettings.muted = !playSoundRow.checked
+
+                    root.closeWindow()
                 }
             }
         }

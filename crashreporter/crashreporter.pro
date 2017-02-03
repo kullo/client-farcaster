@@ -95,7 +95,8 @@ linux():                                 LIBS += -L$$OUT_PWD/../../build-openssl
 INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
 LIBS += -L$$LIBKULLO_BIN_DIR/lib \
     -lkulloclient -lboost_program_options -lz \
-    -lboost_filesystem -lboost_system
+    -lboost_filesystem \
+    -lboost_system
 
 DEPENDPATH += $$LIBKULLO_BIN_DIR/include
 win32 {
@@ -111,6 +112,11 @@ PRE_TARGETDEPS += \
     $${TD_PREFIX}z$${TD_SUFFIX} \
     $${TD_PREFIX}boost_filesystem$${TD_SUFFIX} \
     $${TD_PREFIX}boost_system$${TD_SUFFIX}
+
+windows(): {
+    PRE_TARGETDEPS += $${TD_PREFIX}boost_regex$${TD_SUFFIX}
+    LIBS += -lboost_regex
+}
 # END libkullo
 
 include(../common_post.pri)

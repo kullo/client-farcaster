@@ -1,26 +1,25 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
+import "../"
 import "../buttons"
 import "../formelements"
 import "../js/shortcut.js" as SC
 
 Rectangle {
-    height: theButtonsRow.implicitHeight
-            + 2*theButtonsRow.anchors.topMargin
+    height: theButtonsRowRight.implicitHeight
+            + 2*theButtonsRowRight.anchors.topMargin
             + borderbottom.height
-    color: "#E6E6E6"
+    color: Style.leftToolbarBackground
 
     Row {
-        id: theButtonsRow
+        id: theButtonsRowLeft
         anchors {
             left: parent.left
-            leftMargin: theButtonsRow.spacing
-            right: parent.right
-            rightMargin: theButtonsRow.spacing
+            leftMargin: theButtonsRowLeft.spacing
             top: parent.top
-            topMargin: 5
+            topMargin: 5 + 2 // the FSubmitButton is 4px smaller than the IconButton, thus add 2
         }
         spacing: 5
 
@@ -39,6 +38,26 @@ Rectangle {
                 tooltip: qsTr("Create a new conversation")
                          + " (%1)".arg(SC.nameOfCtrlAndKey("N", Os.osx))
             }
+        }
+    }
+
+    Row {
+        id: theButtonsRowRight
+        anchors {
+            right: parent.right
+            rightMargin: theButtonsRowRight.spacing
+            top: parent.top
+            topMargin: 5
+        }
+        spacing: 5
+
+        IconButton {
+            source: inboxScreen.todoMode
+                    ? "/resources/scalable/todo_active_b.svg"
+                    : "/resources/scalable/todo_b.svg"
+            onClicked: inboxScreen.toggleTodoMode()
+            tooltip: (inboxScreen.todoMode ? qsTr("Switch todo mode off") : qsTr("Switch todo mode on"))
+                     + " (%1)".arg(SC.nameOfCtrlAndKey("T", Os.osx))
         }
     }
 

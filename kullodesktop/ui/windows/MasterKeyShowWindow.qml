@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
@@ -6,19 +6,18 @@ import "../"
 import "../buttons"
 import "../misc"
 import "../native"
-import "../js/format.js" as Format
 
 NativeWindow {
-    id: root
-
     /* public */
     property string address
     property alias key: keyInput.text
 
     /* private */
-    property string _intoText: qsTr("Kullo MasterKey of %1").arg(address)
+    property string _descriptionTextPrexfix: qsTr("Kullo MasterKey of")
+    property string _descriptionText: _descriptionTextPrexfix + " " + address
+    id: root
 
-    title: qsTr("Show MasterKey")
+    title: "MasterKey"
     width: 400
     height: mainItem.anchors.topMargin +
             windowContent.implicitHeight +
@@ -40,7 +39,7 @@ NativeWindow {
             // CTRL + P
             if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_P) {
                 console.info("MasterKeyShowWindow: Ctrl+P pressed.")
-                Inbox.userSettings.printMasterKey(_intoText)
+                Inbox.userSettings.printMasterKey(_descriptionText)
                 event.accepted = true
             }
         }
@@ -51,14 +50,30 @@ NativeWindow {
                 fill: parent
             }
             property int spacing: 10
-            implicitHeight: intoText.implicitHeight
+            implicitHeight: infoTextRow.implicitHeight
                             + keyInput.implicitHeight
                             + printButton.implicitHeight
                             + 2*spacing
 
-            NativeText {
-                id: intoText
-                text: _intoText
+            Row {
+                id: infoTextRow
+                NativeText {
+                    text: _descriptionTextPrexfix + " "
+                }
+                NativeSelectableText {
+                    id: addressElement
+                    text: address
+
+                    CutCopyPasteMenu {
+                        hasCopy: true
+                        hasSelectAll: true
+                        hasPaste: false
+                        hasCut: false
+
+                        onSelectAll: addressElement.selectAll()
+                        onCopy: addressElement.copy()
+                    }
+                }
             }
 
             TextArea {
@@ -66,7 +81,7 @@ NativeWindow {
                 anchors {
                     left: parent.left
                     right: parent.right
-                    top: intoText.bottom
+                    top: infoTextRow.bottom
                     bottom: printButton.top
                     topMargin: windowContent.spacing
                     bottomMargin: windowContent.spacing
@@ -97,7 +112,7 @@ NativeWindow {
                 text: qsTr("Print")
                 onClicked: {
                     console.info("MasterKeyShowWindow: Print button clicked.")
-                    Inbox.userSettings.printMasterKey(_intoText)
+                    Inbox.userSettings.printMasterKey(_descriptionText)
                 }
             }
         }

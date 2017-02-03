@@ -1,15 +1,17 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "desktoputil/kulloversion.h"
 
 #include <algorithm>
-#include <regex>
+#include <iterator>
 #include <sstream>
 #include <stdexcept>
+
+#include <kulloclient/util/regex.h>
 
 namespace DesktopUtil {
 
 namespace {
-const std::regex SIMPLE_VERSION_REGEX("[0-9]+\\.[0-9]+\\.[0-9]+");
+const Kullo::Util::Regex SIMPLE_VERSION_REGEX("[0-9]+\\.[0-9]+\\.[0-9]+");
 }
 
 KulloVersion::KulloVersion(const std::string &inputStr)
@@ -37,7 +39,7 @@ KulloVersion::KulloVersion(const std::string &inputStr)
         version = inputStr;
     }
 
-    if (!std::regex_match(version, SIMPLE_VERSION_REGEX))
+    if (!Kullo::Util::Regex::match(version, SIMPLE_VERSION_REGEX))
     {
         throw std::invalid_argument("Version string has unsupported format. Must be: X.Y.Z");
     }

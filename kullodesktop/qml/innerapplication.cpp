@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "innerapplication.h"
 
 #include <QQmlEngine>
@@ -35,19 +35,12 @@ InnerApplication::InnerApplication(Applications::KulloApplication &mainApplicati
     connect(&mainApplication_, &Applications::KulloApplication::showMainWindowRequested,
             this, &InnerApplication::showMainWindowIfPossible);
 
-    if (Applications::KulloApplication::NO_TRAY_ICON)
+    setCloseToTray(settings_.closeToTray());
+    connect(&settings_, &Qml::DeviceSettings::closeToTrayChanged,
+            this, [this](bool value)
     {
-        setCloseToTray(false);
-    }
-    else
-    {
-        setCloseToTray(settings_.closeToTray());
-        connect(&settings_, &Qml::DeviceSettings::closeToTrayChanged,
-                this, [this](bool value)
-        {
-            this->setCloseToTray(value);
-        });
-    }
+        this->setCloseToTray(value);
+    });
 }
 
 InnerApplication::~InnerApplication()

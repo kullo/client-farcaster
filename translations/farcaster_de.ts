@@ -125,7 +125,7 @@
     </message>
 </context>
 <context>
-    <name>AvatarRow</name>
+    <name>AvatarChooser</name>
     <message>
         <source>Select avatar</source>
         <translation>Avatar wählen</translation>
@@ -133,6 +133,14 @@
     <message>
         <source>Delete avatar</source>
         <translation>Avatar löschen</translation>
+    </message>
+    <message>
+        <source>Confirmation</source>
+        <translation>Bestätigung</translation>
+    </message>
+    <message>
+        <source>Do you really want to delete your avatar?</source>
+        <translation>Willst du deinen Avatar wirklich löschen?</translation>
     </message>
 </context>
 <context>
@@ -741,10 +749,6 @@
         <translation>Nachricht konnte nicht gesendet werden, da die Anhänge zu groß sind.</translation>
     </message>
     <message>
-        <source>Enter Kullo address:</source>
-        <translation>Kullo-Adresse eingeben:</translation>
-    </message>
-    <message>
         <source>Save attachment</source>
         <translation>Anhang speichern</translation>
     </message>
@@ -757,12 +761,6 @@
 mode</source>
         <translation>Todo-
 Modus</translation>
-    </message>
-    <message>
-        <source>Sound
-active</source>
-        <translation>Ton
-aktiv</translation>
     </message>
     <message>
         <source>Message could not be sent because the text is too long.</source>
@@ -795,6 +793,42 @@ aktiv</translation>
     <message>
         <source>Syncing</source>
         <translation>Synchronisiere</translation>
+    </message>
+    <message>
+        <source>Start conversation</source>
+        <translation>Beginne Konversation</translation>
+    </message>
+    <message>
+        <source>Show profile</source>
+        <translation>Profil anzeigen</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <source>Show settings</source>
+        <translation>Einstellungen öffnen</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>Info</translation>
+    </message>
+    <message>
+        <source>Show info window</source>
+        <translation>Info-Fenster anzeigen</translation>
+    </message>
+    <message>
+        <source>Leave inbox</source>
+        <translation>Posteingang verlassen</translation>
+    </message>
+    <message>
+        <source>Go to start screen</source>
+        <translation>Zum Start-Bildschirm</translation>
+    </message>
+    <message>
+        <source>My Kullo</source>
+        <translation>Mein Kullo</translation>
     </message>
 </context>
 <context>
@@ -883,21 +917,6 @@ aktiv</translation>
     </message>
 </context>
 <context>
-    <name>KulloDesktop::OsIntegration::SingleInstanceErrorBox</name>
-    <message>
-        <source>Can&apos;t start more than one instance of %1.</source>
-        <translation>Es kann nur eine Instanz von %1 gestartet werden.</translation>
-    </message>
-    <message>
-        <source>Is Kullo running in background?</source>
-        <translation>Läuft Kullo noch im Hintergrund?</translation>
-    </message>
-    <message>
-        <source>If Kullo crashed before, you might need to restart your computer.</source>
-        <translation>Nach einem Absturz von Kullo kann es sein, dass der Computer neu gestartet werden muss, um das Problem zu beheben.</translation>
-    </message>
-</context>
-<context>
     <name>LoggingInScreen</name>
     <message>
         <source>Logging in</source>
@@ -980,16 +999,16 @@ sind deine Nachrichten verloren.</translation>
         <translation>Die Ende-zu-Ende-Verschlüsselung von Kullo erlaubt es nur dem Besitzer deines MasterKeys, Nachrichten zu entschlüsseln. Ein Kullo-Provider hat keine Möglichkeit, einen verlorenen MasterKey zurückzusetzen. Um sicherzustellen, dass du auch nach einem Defekt oder Diebstahl deines Gerätes auf deine Kullo-Nachrichten zugreifen kannst, drucke den MasterKey bitte als Backup aus.</translation>
     </message>
     <message>
-        <source>&lt;a href=&apos;showMasterKey&apos; style=&apos;color: %1&apos;&gt;Show MasterKey and print now&lt;/a&gt;</source>
-        <translation>&lt;a href=&apos;showMasterKey&apos; style=&apos;color: %1&apos;&gt;MasterKey anzeigen und jetzt ausdrucken&lt;/a&gt;</translation>
-    </message>
-    <message>
         <source>I swear, I did backup my MasterKey!</source>
         <translation>Ja, ich habe meinen MasterKey gesichert!</translation>
     </message>
     <message>
         <source>Done</source>
         <translation>Erledigt</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&apos;showMasterKey://&apos;&gt;Show MasterKey and print now&lt;/a&gt;</source>
+        <translation>&lt;a href=&apos;showMasterKey://&apos;&gt;MasterKey anzeigen und jetzt ausdrucken&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -1010,16 +1029,12 @@ sind deine Nachrichten verloren.</translation>
 <context>
     <name>MasterKeyShowWindow</name>
     <message>
-        <source>Show MasterKey</source>
-        <translation>MasterKey anzeigen</translation>
-    </message>
-    <message>
-        <source>Kullo MasterKey of %1</source>
-        <translation>Kullo MasterKey von %1</translation>
-    </message>
-    <message>
         <source>Print</source>
         <translation>Drucken</translation>
+    </message>
+    <message>
+        <source>Kullo MasterKey of</source>
+        <translation>Kullo MasterKey von</translation>
     </message>
 </context>
 <context>
@@ -1043,6 +1058,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Footer</source>
         <translation>Impressum</translation>
+    </message>
+    <message>
+        <source>Copy Kullo address</source>
+        <translation>Kopiere Kullo-Adresse</translation>
     </message>
 </context>
 <context>
@@ -1111,6 +1130,41 @@ sind deine Nachrichten verloren.</translation>
     </message>
 </context>
 <context>
+    <name>ProfileOverlay</name>
+    <message>
+        <source>Close (Esc)</source>
+        <translation>Schließen (Esc)</translation>
+    </message>
+    <message>
+        <source>You</source>
+        <translation>Du</translation>
+    </message>
+    <message>
+        <source>%1 on Kullo</source>
+        <translation>%1 bei Kullo</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <source>Organization</source>
+        <translation>Organisation</translation>
+    </message>
+    <message>
+        <source>Show MasterKey</source>
+        <translation>MasterKey anzeigen</translation>
+    </message>
+    <message>
+        <source>Plan: %1 (%2/%3 GB)</source>
+        <translation>Tarif: %1 (%2/%3 GB)</translation>
+    </message>
+    <message>
+        <source>Name must be set in order to send messages</source>
+        <translation>Name muss gesetzt sein um Nachrichten zu verschicken</translation>
+    </message>
+</context>
+<context>
     <name>PromptDialog</name>
     <message>
         <source>Cancel</source>
@@ -1161,20 +1215,86 @@ sind deine Nachrichten verloren.</translation>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <source>Sender</source>
-        <translation>Absender</translation>
+        <source>Font size</source>
+        <translation>Schriftgröße</translation>
     </message>
     <message>
-        <source>Account</source>
-        <translation>Account</translation>
+        <source>small</source>
+        <extracomment>Font size name</extracomment>
+        <translation>klein</translation>
     </message>
     <message>
-        <source>Device</source>
-        <translation>Gerät</translation>
+        <source>normal</source>
+        <extracomment>Font size name</extracomment>
+        <translation>normal</translation>
     </message>
     <message>
-        <source>Font</source>
-        <translation>Schrift</translation>
+        <source>large</source>
+        <extracomment>Font size name</extracomment>
+        <translation>groß</translation>
+    </message>
+    <message>
+        <source>huge</source>
+        <extracomment>Font size name</extracomment>
+        <translation>Sehr groß</translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation>Nachrichten</translation>
+    </message>
+    <message>
+        <source>Tray icon</source>
+        <translation>Tray-Icon</translation>
+    </message>
+    <message>
+        <source>Close to tray</source>
+        <translation>Zu Tray schließen</translation>
+    </message>
+    <message>
+        <source>Notifications</source>
+        <translation>Mitteilungen</translation>
+    </message>
+    <message>
+        <source>Sound for new messages</source>
+        <translation>Ton bei neuen Nachrichten</translation>
+    </message>
+    <message>
+        <source>Update lane</source>
+        <translation>Update-Spur</translation>
+    </message>
+    <message>
+        <source>important</source>
+        <extracomment>Update lane name</extracomment>
+        <translation>Wichtige Updates</translation>
+    </message>
+    <message>
+        <source>all</source>
+        <extracomment>Update lane name</extracomment>
+        <translation>Alle Updates</translation>
+    </message>
+    <message>
+        <source>&apos;Important&apos; updates are those we think everyone should install, e.g. security fixes or mayor feature improvements.</source>
+        <translation>&apos;Important&apos; sind Updates, die jeder installieren sollte, wie z.B. Sicherheitsupdates oder größere neue Features.</translation>
+    </message>
+    <message>
+        <source>We plan to have an &apos;important&apos; update every 4-8 weeks.</source>
+        <translation>Ein solches &apos;important&apos; Update wollen wir alle 4-8 Wochen veröffentlichen.</translation>
+    </message>
+    <message>
+        <source>&apos;All&apos; updates contain minor improvements or changes that are only relevant for some users. Those come once a week or even more often.</source>
+        <translation>&apos;All&apos; enthält auch Updates mit kleineren Änderungen, die nur für einige Nutzer relevant sind. Diese können u.U. mehr als einmal pro Woche kommen.</translation>
+    </message>
+    <message>
+        <source>This is for pioneers.</source>
+        <translation>Das ist die Option für Pioniere.</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Verwerfen</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Speichern</translation>
     </message>
 </context>
 <context>
@@ -1232,148 +1352,6 @@ sind deine Nachrichten verloren.</translation>
     </message>
 </context>
 <context>
-    <name>TabAccountSettings</name>
-    <message>
-        <source>Kullo address</source>
-        <translation>Kullo-Adresse</translation>
-    </message>
-    <message>
-        <source>MasterKey</source>
-        <translation>MasterKey</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Anzeigen</translation>
-    </message>
-    <message>
-        <source>Open account settings</source>
-        <translation>Account-Einstellungen öffnen</translation>
-    </message>
-    <message>
-        <source>Kullo server</source>
-        <translation>Kullo-Server</translation>
-    </message>
-</context>
-<context>
-    <name>TabDeviceSettings</name>
-    <message>
-        <source>&apos;Important&apos; updates are those we think everyone should install, e.g. security fixes or mayor feature improvements.</source>
-        <translation>&apos;Important&apos; sind Updates, die jeder installieren sollte, wie z.B. Sicherheitsupdates oder größere neue Features.</translation>
-    </message>
-    <message>
-        <source>We plan to have an &apos;important&apos; update every 4-8 weeks.</source>
-        <translation>Ein solches &apos;important&apos; Update wollen wir alle 4-8 Wochen veröffentlichen.</translation>
-    </message>
-    <message>
-        <source>&apos;All&apos; updates contain minor improvements or changes that are only relevant for some users. Those come once a week or even more often.</source>
-        <translation>&apos;All&apos; enthält auch Updates mit kleineren Änderungen, die nur für einige Nutzer relevant sind. Diese können u.U. mehr als einmal pro Woche kommen.</translation>
-    </message>
-    <message>
-        <source>This is for pioneers.</source>
-        <translation>Das ist die Option für Pioniere.</translation>
-    </message>
-    <message>
-        <source>Discard</source>
-        <translation>Verwerfen</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Speichern</translation>
-    </message>
-    <message>
-        <source>Update lane</source>
-        <translation>Update-Spur</translation>
-    </message>
-    <message>
-        <source>important</source>
-        <extracomment>Update lane name</extracomment>
-        <translation>Wichtige Updates</translation>
-    </message>
-    <message>
-        <source>all</source>
-        <extracomment>Update lane name</extracomment>
-        <translation>Alle Updates</translation>
-    </message>
-    <message>
-        <source>Close to tray</source>
-        <translation>Zu Tray schließen</translation>
-    </message>
-    <message>
-        <source>Tray icon</source>
-        <translation>Tray-Icon</translation>
-    </message>
-</context>
-<context>
-    <name>TabFont</name>
-    <message>
-        <source>Font size</source>
-        <translation>Schriftgröße</translation>
-    </message>
-    <message>
-        <source>small</source>
-        <extracomment>Font size name</extracomment>
-        <translation>klein</translation>
-    </message>
-    <message>
-        <source>normal</source>
-        <extracomment>Font size name</extracomment>
-        <translation>normal</translation>
-    </message>
-    <message>
-        <source>large</source>
-        <extracomment>Font size name</extracomment>
-        <translation>groß</translation>
-    </message>
-    <message>
-        <source>huge</source>
-        <extracomment>Font size name</extracomment>
-        <translation>Sehr groß</translation>
-    </message>
-    <message>
-        <source>Messages</source>
-        <translation>Nachrichten</translation>
-    </message>
-    <message>
-        <source>Discard</source>
-        <translation>Verwerfen</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Speichern</translation>
-    </message>
-</context>
-<context>
-    <name>TabUserSettings</name>
-    <message>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <source>Name must not be empty.</source>
-        <translation>Der Name darf nicht leer bleiben.</translation>
-    </message>
-    <message>
-        <source>Organization</source>
-        <translation>Organisation</translation>
-    </message>
-    <message>
-        <source>Avatar</source>
-        <translation>Avatar</translation>
-    </message>
-    <message>
-        <source>Imprint</source>
-        <translation>Impressum</translation>
-    </message>
-    <message>
-        <source>Discard</source>
-        <translation>Verwerfen</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Speichern</translation>
-    </message>
-</context>
-<context>
     <name>TextFieldKulloAddress</name>
     <message>
         <source>Kullo address</source>
@@ -1383,32 +1361,12 @@ sind deine Nachrichten verloren.</translation>
 <context>
     <name>ToolbarBottom</name>
     <message>
-        <source>Go to start screen</source>
-        <translation>Zum Start-Bildschirm</translation>
+        <source>More menu items</source>
+        <translation>Weitere Menüeinträge</translation>
     </message>
     <message>
-        <source>Unmute</source>
-        <translation>Ton anschalten</translation>
-    </message>
-    <message>
-        <source>Mute</source>
-        <translation>Ton ausschalten</translation>
-    </message>
-    <message>
-        <source>Switch todo mode off</source>
-        <translation>Todo-Modus deaktivieren</translation>
-    </message>
-    <message>
-        <source>Switch todo mode on</source>
-        <translation>Todo-Modus aktivieren</translation>
-    </message>
-    <message>
-        <source>Show info window</source>
-        <translation>Info-Fenster anzeigen</translation>
-    </message>
-    <message>
-        <source>Show settings</source>
-        <translation>Einstellungen öffnen</translation>
+        <source>My Kullo</source>
+        <translation>Mein Kullo</translation>
     </message>
 </context>
 <context>
@@ -1420,6 +1378,14 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Create a new conversation</source>
         <translation>Erstelle eine neue Konversation</translation>
+    </message>
+    <message>
+        <source>Switch todo mode off</source>
+        <translation>Todo-Modus deaktivieren</translation>
+    </message>
+    <message>
+        <source>Switch todo mode on</source>
+        <translation>Todo-Modus aktivieren</translation>
     </message>
 </context>
 <context>

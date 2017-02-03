@@ -61,7 +61,6 @@
         <file alias="ToolbarBottom.qml">ui/inbox/ToolbarBottom.qml</file>
     </qresource>
     <qresource prefix="/js">
-        <file alias="djb2.js">ui/js/djb2.js</file>
         <file alias="format.js">ui/js/format.js</file>
         <file alias="mime.js">ui/js/mime.js</file>
         <file alias="shortcut.js">ui/js/shortcut.js</file>
@@ -82,21 +81,26 @@
         <file alias="FTextFieldKulloAddress.qml">ui/native/FTextFieldKulloAddress.qml</file>
     </qresource>
     <qresource prefix="/misc">
+        <file alias="AvatarChooser.qml">ui/misc/AvatarChooser.qml</file>
         <file alias="BackgroundCover.qml">ui/misc/BackgroundCover.qml</file>
         <file alias="ChessRectangle.qml">ui/misc/ChessRectangle.qml</file>
         <file alias="CircularProgressBar.qml">ui/misc/CircularProgressBar.qml</file>
         <file alias="CtrlKey.qml">ui/misc/CtrlKey.qml</file>
         <file alias="CutCopyPasteMenu.qml">ui/misc/CutCopyPasteMenu.qml</file>
+        <file alias="DelayedRepeatingTimer.qml">ui/misc/DelayedRepeatingTimer.qml</file>
         <file alias="EmojiList.qml">ui/misc/EmojiList.qml</file>
         <file alias="EmojiPopup.qml">ui/misc/EmojiPopup.qml</file>
         <file alias="ErrorHint.qml">ui/misc/ErrorHint.qml</file>
         <file alias="Key.qml">ui/misc/Key.qml</file>
         <file alias="Logo.qml">ui/misc/Logo.qml</file>
-        <file alias="Overlay.qml">ui/misc/Overlay.qml</file>
+        <file alias="Pointer.qml">ui/misc/Pointer.qml</file>
+        <file alias="PopupMenu.qml">ui/misc/PopupMenu.qml</file>
+        <file alias="ProfileOverlay.qml">ui/misc/ProfileOverlay.qml</file>
         <file alias="ReturnKey.qml">ui/misc/ReturnKey.qml</file>
         <file alias="ShortcutBlock.qml">ui/misc/ShortcutBlock.qml</file>
         <file alias="ShortcutOverlay.qml">ui/misc/ShortcutOverlay.qml</file>
         <file alias="ShortcutRow.qml">ui/misc/ShortcutRow.qml</file>
+        <file alias="Toast.qml">ui/misc/Toast.qml</file>
         <file alias="TooltipArea.qml">ui/misc/TooltipArea.qml</file>
     </qresource>
     <qresource prefix="/usersettings">
@@ -107,11 +111,6 @@
         <file alias="FontRow.qml">ui/usersettings/FontRow.qml</file>
         <file alias="RowLabel.qml">ui/usersettings/RowLabel.qml</file>
         <file alias="SelectableTextRow.qml">ui/usersettings/SelectableTextRow.qml</file>
-        <file alias="TabAccountSettings.qml">ui/usersettings/TabAccountSettings.qml</file>
-        <file alias="TabContent.qml">ui/usersettings/TabContent.qml</file>
-        <file alias="TabDeviceSettings.qml">ui/usersettings/TabDeviceSettings.qml</file>
-        <file alias="TabFont.qml">ui/usersettings/TabFont.qml</file>
-        <file alias="TabUserSettings.qml">ui/usersettings/TabUserSettings.qml</file>
         <file alias="TextAreaRow.qml">ui/usersettings/TextAreaRow.qml</file>
         <file alias="TextFieldRow.qml">ui/usersettings/TextFieldRow.qml</file>
     </qresource>

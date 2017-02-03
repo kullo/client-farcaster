@@ -1,8 +1,10 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
 #include <QObject>
+
+#include <boost/optional.hpp>
 
 #include <apimirror/Client.h>
 #include <apimirror/eventdispatcher.h>
@@ -85,6 +87,7 @@ signals:
             int outgoingMessagesUploadedBytes,
             int outgoingMessagesTotalBytes,
             int runTimeMs);
+    void syncPhaseChanged(ApiMirror::Enums::SyncPhaseHolder::SyncPhase phase);
     void syncFinished(bool success,
                       int countMessagesNew = 0,
                       int countMessagesNewUnread = 0,
@@ -110,7 +113,7 @@ private:
     InnerApplication &innerApplication_;
     Kullo::Util::StlTaskRunner *taskRunner_;
     ApiMirror::EventDispatcher eventDispatcher_;
-    std::shared_ptr<Kullo::Api::SyncProgress> latestSyncProgress_;
+    boost::optional<Kullo::Api::SyncProgress> latestSyncProgress_;
     std::shared_ptr<ApiMirror::SyncerListener> syncerListener_;
     ApiMirror::Client &client_;
     std::shared_ptr<Kullo::Api::Session> session_;

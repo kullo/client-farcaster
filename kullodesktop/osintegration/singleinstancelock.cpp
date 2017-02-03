@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "singleinstancelock.h"
 
 #include <cstdint>
@@ -102,7 +102,8 @@ std::unique_ptr<QLocalSocket> SingleInstanceLock::connectToServer()
     }
     else
     {
-        Log.w() << "Could not connect to socket server: "
+        // Do not warn because this case is normal for the first instance
+        Log.d() << "Could not connect to SingleInstanceLock server: "
                 << LOCAL_SOCKET_ERROR_STRINGS[socket->error()];
         return nullptr;
     }

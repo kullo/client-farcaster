@@ -1,5 +1,7 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "registerer.h"
+
+#include <boost/optional.hpp>
 
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/AddressNotAvailableReason.h>
@@ -20,7 +22,7 @@ class GenKeysListener: public Kullo::Api::ClientGenerateKeysListener
 public:
     void progress(int8_t progress) override
     {
-        Log.i() << "Key generation: "  << std::to_string(progress) << " %";
+        Log.i() << "Key generation: "  << static_cast<int>(progress) << " %";
     }
 
     void finished(const std::shared_ptr<Kullo::Api::Registration> &registration) override
@@ -100,7 +102,7 @@ std::shared_ptr<Kullo::Api::MasterKey> Registerer::run(
     auto regAccL = std::make_shared<RegAccListener>();
     registration->registerAccountAsync(
                 address,
-                "", // terms
+                boost::none, // terms
                 nullptr, // challenge
                 "", // challenge answer
                 regAccL)->

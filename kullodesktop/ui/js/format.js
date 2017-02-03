@@ -1,5 +1,13 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 .pragma library
+
+function scheme_from_url(urlString) {
+    var schemeEndPos = urlString.indexOf(":")
+    if (schemeEndPos === -1) return null
+
+    var scheme = urlString.substring(0, schemeEndPos)
+    return scheme
+}
 
 function filesize_human(bytes) {
     // Use binary multiplier 1024 here to avoid having a "102 MB" file in Kullo
@@ -9,13 +17,13 @@ function filesize_human(bytes) {
     var KILO = 1024
 
     if (bytes >= 80*MEGA)
-        return (bytes/MEGA).toFixed(0) + " MB"
+        return (bytes/MEGA).toLocaleString(Qt.locale(), 'f', 0) + " MB"
     else if (bytes >= 1*MEGA)
-        return (bytes/MEGA).toFixed(1) + " MB"
+        return (bytes/MEGA).toLocaleString(Qt.locale(), 'f', 1) + " MB"
     else if (bytes >= 8*KILO)
-        return (bytes/KILO).toFixed(0) + " KB"
+        return (bytes/KILO).toLocaleString(Qt.locale(), 'f', 0) + " KB"
     else if (bytes >= 1*KILO)
-        return (bytes/KILO).toFixed(1) + " KB"
+        return (bytes/KILO).toLocaleString(Qt.locale(), 'f', 1) + " KB"
     else
         return bytes + " Bytes"
 }

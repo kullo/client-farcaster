@@ -1,5 +1,6 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
+import Kullo 1.0
 
 import ".."
 import "../native"
@@ -52,7 +53,7 @@ Rectangle {
         }
     ]
 
-    Timer {
+    StableTimer {
         id: timer
         interval: 800
         onTriggered: _fadeOut()
@@ -65,7 +66,7 @@ Rectangle {
         }
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pointSize: Style.fontSize.overlay
+        font.pointSize: Style.fontSize.toast
         text: root.text
         // if this text wraps, layout is destroyed entirely
         wrapMode: Text.NoWrap

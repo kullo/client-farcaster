@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include <cstdlib>
 #include <exception>
 #include <signal.h>
@@ -19,6 +19,7 @@
 
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/Registry.h>
+#include <kulloclient/api/Syncer.h>
 #include <kulloclient/http/Registry.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
@@ -32,7 +33,6 @@
 #endif
 
 #include "kullodesktop/osintegration/programoptions.h"
-#include "kullodesktop/osintegration/singleinstanceerrorbox.h"
 #include "kullodesktop/osintegration/singleinstancelock.h"
 
 #include "kullodesktop/qml/fontlist.h"
@@ -234,6 +234,13 @@ int main(int argc, char *argv[])
         innerApplication.setMainWindow(window);
 
         execStatus = app.exec();
+
+        if (inbox.session())
+        {
+            Log.d() << "Canceling sync tasks ...";
+            inbox.session()->syncer()->cancel();
+        }
+
         taskRunner->wait();
         lock.release();
     }

@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import Kullo 1.0
 
@@ -38,7 +38,7 @@ Item {
         }
     }
 
-    Timer {
+    StableTimer {
         id: timer
         interval: 250
         repeat: false
@@ -76,7 +76,7 @@ Item {
                   ? qsTr("Logging in") + " " + "...".slice(0, _dotCount)
                   : qsTr("Optimizing inbox") + " " + "...".slice(0, _dotCount);
 
-            Timer {
+            StableTimer {
                 id: dotTimer
                 interval: 800
                 repeat: true

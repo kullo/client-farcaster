@@ -1,4 +1,4 @@
-/* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <QApplication>
@@ -14,7 +14,7 @@ public:
     explicit ExceptionAwareQApplication(int &argc, char **argv);
     virtual ~ExceptionAwareQApplication() = default;
 
-    virtual bool notify(QObject *receiver, QEvent *event);
+    bool notify(QObject *receiver, QEvent *event) override;
 };
 
 }
