@@ -6,12 +6,12 @@ import Kullo 1.0
 import "../native"
 
 BaseDialog {
-    id: _root
+    id: root
     objectName: "UpdateDialog"
     property alias textUpdateAvailable: updateAvailableText.text
     property alias state: mainItem.state
 
-    title: state == "downloading" || _root.state == "downloaded"
+    title: state == "downloading" || root.state == "downloaded"
            ? qsTr("Downloading Kullo update")
            : qsTr("Kullo update available")
 
@@ -24,7 +24,7 @@ BaseDialog {
 
     function recalculateContentHeight()
     {
-        _root.height = content.implicitHeight
+        root.height = content.implicitHeight
                 + footer.implicitHeight
                 + 2*verticalPadding
     }
@@ -75,7 +75,7 @@ BaseDialog {
             leftMargin: horizontalPadding
             rightMargin: horizontalPadding
         }
-        Keys.onEscapePressed: _root.closeDialog()
+        Keys.onEscapePressed: root.closeDialog()
 
         Item
         {
@@ -84,14 +84,14 @@ BaseDialog {
                 left: parent.left
                 right: parent.right
             }
-            implicitHeight: _root.state == "downloading" || _root.state == "downloaded"
+            implicitHeight: root.state == "downloading" || root.state == "downloaded"
                             ? contentDownload.implicitHeight
                             : contentUpdateAvailable.implicitHeight
             height: implicitHeight
 
             Item {
                 id: contentUpdateAvailable
-                visible: _root.state == "updateAvailable"
+                visible: root.state == "updateAvailable"
                 anchors {
                     top: parent.top
                     left: parent.left
@@ -135,7 +135,7 @@ BaseDialog {
                         NativeButton {
                             id: buttonNo
                             text: qsTr("Cancel")
-                            onClicked: _root.closeDialog()
+                            onClicked: root.closeDialog()
                             isDefault: focus
                         }
 
@@ -143,7 +143,7 @@ BaseDialog {
                             id: buttonYes
                             text: qsTr("Download")
                             onClicked: {
-                                _root.downloadUpdate()
+                                root.downloadUpdate()
                             }
                             focus: true
                             isDefault: focus
@@ -154,8 +154,8 @@ BaseDialog {
 
             Column {
                 id: contentDownload
-                visible: _root.state == "downloading"
-                         || _root.state == "downloaded"
+                visible: root.state == "downloading"
+                         || root.state == "downloaded"
                 anchors {
                     fill: parent
                 }
@@ -169,7 +169,7 @@ BaseDialog {
                     id: updater
                     onDownloadProgress: progressBar.value = percentage
                     onDone: {
-                        _root.state = "downloaded"
+                        root.state = "downloaded"
                     }
                 }
 
@@ -197,11 +197,11 @@ BaseDialog {
 
                     NativeButton {
                         id: abortButton
-                        visible: _root.state == "downloading"
+                        visible: root.state == "downloading"
                         text: qsTr("Abort")
                         onClicked: {
                             updater.cancel()
-                            _root.closeDialog()
+                            root.closeDialog()
                         }
                     }
 
@@ -213,10 +213,10 @@ BaseDialog {
                                  : qsTr("Install")
                                  )
                               : qsTr("Open")
-                        visible: _root.state == "downloaded"
+                        visible: root.state == "downloaded"
                         onClicked: {
                             updater.openTarget()
-                            _root.closeDialog()
+                            root.closeDialog()
                             if (updater.installerNeedsClosedApp)
                             {
                                 Qt.quit()
@@ -229,8 +229,8 @@ BaseDialog {
                     NativeButton {
                         id: closeButton
                         text: qsTr("Close")
-                        visible: _root.state == "downloaded"
-                        onClicked: _root.closeDialog()
+                        visible: root.state == "downloaded"
+                        onClicked: root.closeDialog()
                         isDefault: focus
                     }
                 }

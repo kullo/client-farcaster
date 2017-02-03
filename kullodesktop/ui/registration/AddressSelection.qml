@@ -70,7 +70,7 @@ FForm {
         onSucceeded: {
             registerer.locked = false
             console.info("Registration succeeded for address: '" + address + "'" )
-            Inbox.clearDatabaseAndResetUserSettings(address, masterKeyPem)
+            Inbox.loadCredentials(address)
             root.done()
         }
         onServerError: {

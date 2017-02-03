@@ -168,7 +168,7 @@ Item {
 
                     function quoteSelectedText() {
                         var quoteText = messageTextBox.selectedText.trim()
-                        inbox.openAnswer()
+                        inboxScreen.openAnswer()
                         rightColumn.addQuoteToAnswer(quoteText)
                     }
 

@@ -16,9 +16,9 @@ public:
     explicit Scheduler(QObject *parent = 0);
     ~Scheduler();
 
-    Q_PROPERTY(KulloDesktop::Qml::UserSettingsModel* user READ user WRITE setUser NOTIFY userChanged)
-    Qml::UserSettingsModel *user() const;
-    void setUser(Qml::UserSettingsModel *user);
+    Q_PROPERTY(KulloDesktop::Qml::UserSettings* user READ user WRITE setUser NOTIFY userChanged)
+    Qml::UserSettings *user() const;
+    void setUser(Qml::UserSettings *user);
 
     Q_INVOKABLE void start();
 
@@ -32,7 +32,7 @@ private slots:
     void run();
 
 private:
-    Qml::UserSettingsModel *user_ = nullptr;
+    Qml::UserSettings *user_ = nullptr;
     QTimer timer_;
 };
 

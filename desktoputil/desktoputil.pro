@@ -19,6 +19,7 @@ SOURCES += \
     kulloversion.cpp \
     osdetection.cpp \
     paths.cpp \
+    qdebugmessagehandler.cpp \
     qtypestreamers.cpp \
     stlqt.cpp \
     versions.cpp
@@ -37,6 +38,7 @@ HEADERS += \
     metatypes.h \
     osdetection.h \
     paths.h \
+    qdebugmessagehandler.h \
     qtypestreamers.h \
     stlqt.h \
     versions.h \

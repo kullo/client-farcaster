@@ -46,9 +46,9 @@ signals:
 public slots:
     void onLoggedInChanged(bool loggedIn);
     void onUnreadMessagesCountChanged(int count);
+    void showMainWindowIfPossible();
 
 private:
-    void showMainWindowIfPossible();
     void setCloseToTray(bool closeToTray);
 
     Applications::KulloApplication &mainApplication_;

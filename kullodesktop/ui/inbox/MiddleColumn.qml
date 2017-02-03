@@ -14,7 +14,7 @@ FocusScope {
 
     function setModel(m) {
         messagesList.model = m
-        messagesList.model.todoMode = Qt.binding(function() { return inbox.todoMode })
+        messagesList.model.todoMode = Qt.binding(function() { return inboxScreen.todoMode })
     }
 
     Rectangle {
@@ -31,7 +31,7 @@ FocusScope {
                 left: parent.left
                 top: parent.top
             }
-            width: inbox.width - leftColumn.width
+            width: inboxScreen.width - leftColumn.width
             height: + leftPart.implicitHeight
                     + 2*_PADDING_VERTICAL
 
@@ -87,7 +87,7 @@ FocusScope {
                     iconPosition: _POSITION_LEFT
                     source: "/resources/scalable/write_w.svg"
                 }
-                onClicked: inbox.openAnswer()
+                onClicked: inboxScreen.openAnswer()
             }
         }
 

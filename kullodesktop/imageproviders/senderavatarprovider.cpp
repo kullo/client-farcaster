@@ -5,7 +5,7 @@
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/inbox.h"
-#include "kullodesktop/qml/usersettingsmodel.h"
+#include "kullodesktop/qml/usersettings.h"
 
 namespace KulloDesktop {
 namespace Imageproviders {

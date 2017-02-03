@@ -12,13 +12,18 @@ import "../usersettings"
 
 NativeModalWindow {
     id: root
-    width: 400
-    height: 500
     title: qsTr("Settings")
     objectName: "SettingsWindow"
 
     // unused signal since sender avatar is not shown in compose view anymore
     signal avatarChanged()
+
+    /* private */
+    property int _DEFAULT_WINDOW_WIDTH: 400
+    property int _DEFAULT_WINDOW_HEIGHT: 500
+
+    width: _DEFAULT_WINDOW_WIDTH
+    height: _DEFAULT_WINDOW_HEIGHT
 
     onVisibleChanged: {
         if (visible) // window opened
@@ -47,6 +52,10 @@ NativeModalWindow {
                 tabFontSettings.item.reset()
             }
 
+            // reset window dimensions
+            root.width = _DEFAULT_WINDOW_WIDTH
+            root.height = _DEFAULT_WINDOW_HEIGHT
+
             mainItem.forceActiveFocus()
         }
     }
@@ -61,7 +70,7 @@ NativeModalWindow {
     }
 
     onClosing: {
-        console.debug("UserSettingsWindow closing ...")
+        console.debug("SettingsWindow closing ...")
         Inbox.userSettings.discardTmpAvatar()
     }
 

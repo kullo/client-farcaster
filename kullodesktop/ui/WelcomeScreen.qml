@@ -28,13 +28,15 @@ FocusScope {
         Column {
             id: column1
             width: 260
-            anchors.top: logo.bottom
-            anchors.topMargin: 50
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 20
-            anchors.rightMargin: 20
+            anchors {
+                top: logo.bottom
+                topMargin: 50
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                leftMargin: 20
+                rightMargin: 20
+            }
             spacing: 30
 
             Column {
@@ -64,7 +66,7 @@ FocusScope {
 
                     onAccepted: {
                         var loginAddress = userSelection.currentText
-                        Inbox.userSettings.load(loginAddress)
+                        Inbox.loadCredentials(loginAddress)
                         app.state = "loggingIn"
                     }
 

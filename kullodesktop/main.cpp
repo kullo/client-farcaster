@@ -12,6 +12,7 @@
 #include <desktoputil/breakpadsetup.h>
 #include <desktoputil/metatypes.h>
 #include <desktoputil/paths.h>
+#include <desktoputil/qdebugmessagehandler.h>
 #include <desktoputil/qtypestreamers.h>
 
 #include <apimirror/Client.h>
@@ -43,13 +44,12 @@
 #include "kullodesktop/qml/os.h"
 #include "kullodesktop/qml/softwareversions.h"
 #include "kullodesktop/qml/utils.h"
+#include "kullodesktop/qml_bridge/qmlsetup.h"
 
 #include "kullodesktop/util/consoleextendedloglistener.h"
 #include "kullodesktop/util/htmlfileloglistener.h"
 #include "kullodesktop/util/kullofoldersetup.h"
 #include "kullodesktop/util/logfilecleaner.h"
-#include "kullodesktop/util/qdebugmessagehandler.h"
-#include "kullodesktop/util/qmlsetup.h"
 
 using namespace KulloDesktop;
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 #endif
     Kullo::Util::LibraryLogger::setCurrentThreadName("main");
 
-    qInstallMessageHandler(&Util::QDebugMessageHandler::handler);
+    qInstallMessageHandler(&DesktopUtil::QDebugMessageHandler::handler);
 
     int execStatus;
     { // Lifespan of application
@@ -129,17 +129,14 @@ int main(int argc, char *argv[])
         #endif
 
         // lock must live longer than any DB accessing objects
-        OsIntegration::SingleInstanceLock lock(guid, Applications::KulloApplication::IGNORE_LOCK);
+        OsIntegration::SingleInstanceLock lock(guid);
 
-        if (!lock.acquire())
+        if (lock.acquire() == OsIntegration::SingleInstanceLock::AcquireResult::InformedOtherInstance)
         {
-            Log.e() << "Can't start more than one instance of the application.";
-            OsIntegration::SingleInstanceErrorBox msgBox(app.applicationName());
-            msgBox.exec();
-
             // Return from main() and clean everything properly
             // http://stackoverflow.com/questions/461449/return-statement-vs-exit-in-main
-            return 1;
+            Log.i() << "Informed other kullo instance to come up.";
+            return 5;
         }
 
         DesktopUtil::registerMetaTypes();
@@ -153,6 +150,9 @@ int main(int argc, char *argv[])
 
         Qml::InnerApplication innerApplication(app);
         innerApplication.deviceSettings()->migrate();
+
+        QObject::connect(&lock, &OsIntegration::SingleInstanceLock::showMainWindowRequested,
+                         &innerApplication, &Qml::InnerApplication::showMainWindowIfPossible);
 
         ApiMirror::Client client(Kullo::Api::Client::create());
 
@@ -168,8 +168,8 @@ int main(int argc, char *argv[])
          * Create GUI Engine
          */
         QQmlApplicationEngine engine;
-        Util::QmlSetup::setupTypes();
-        Util::QmlSetup::setupImageproviders(engine, inbox);
+        QmlBridge::QmlSetup::setupTypes();
+        QmlBridge::QmlSetup::setupImageproviders(engine, inbox);
 
         /*
          * Global object names must not conflict with the types in Util::QmlSetup::setupTypes()

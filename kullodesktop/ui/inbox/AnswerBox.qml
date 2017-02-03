@@ -69,7 +69,7 @@ FocusScope {
         if (SC.isPlainKey(Qt.Key_Escape, event))
         {
             event.accepted = true
-            inbox.closeAnswer()
+            inboxScreen.closeAnswer()
         }
 
         if (SC.isCtrlAndKey(Qt.Key_Return, event))
@@ -331,7 +331,7 @@ FocusScope {
                             onDoubleClicked: {
                                 var attachment = root.conversation.draft.attachments.get(attachmentIndex_)
                                 if (!attachment.open()) {
-                                    inbox.showOpenFileError(attachment.filename)
+                                    inboxScreen.showOpenFileError(attachment.filename)
                                 }
                             }
                         }

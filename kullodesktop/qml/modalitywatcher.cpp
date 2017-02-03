@@ -23,14 +23,14 @@ bool ModalityWatcher::aboutToOpen(QString objectName)
         Log.d() << "Object about to open: " << objectName;
     }
 
-    if (currentObject_)
+    if (currentObjectName_)
     {
-        Log.e() << "Modality currently blocked by: " << *currentObject_;
+        Log.e() << "Modality currently blocked by: " << *currentObjectName_;
         return false;
     }
     else
     {
-        currentObject_ = objectName;
+        currentObjectName_ = objectName;
         return true;
     }
 }
@@ -39,19 +39,19 @@ void ModalityWatcher::closed(QString objectName)
 {
     Log.d() << "Closed: " << objectName;
 
-    if (!currentObject_)
+    if (!currentObjectName_)
     {
         Log.e() << "Closing object but non has been opened.";
         return;
     }
 
-    if (*currentObject_ != objectName)
+    if (*currentObjectName_ != objectName)
     {
-        Log.w() << "Stored object name " << *currentObject_
+        Log.w() << "Stored object name " << *currentObjectName_
                 << " is not closed object name " << objectName;
     }
 
-    currentObject_ = boost::none;
+    currentObjectName_ = boost::none;
 }
 
 }

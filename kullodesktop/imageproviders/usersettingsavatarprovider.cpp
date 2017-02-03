@@ -5,7 +5,7 @@
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/qml/inbox.h"
-#include "kullodesktop/qml/usersettingsmodel.h"
+#include "kullodesktop/qml/usersettings.h"
 
 namespace KulloDesktop {
 namespace Imageproviders {
@@ -31,7 +31,7 @@ QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &
     return out;
 }
 
-QPixmap UserSettingsAvatarProvider::getUserAvatarData(const QString &url, const QSize &renderSize, const Qml::UserSettingsModel *userSettings)
+QPixmap UserSettingsAvatarProvider::getUserAvatarData(const QString &url, const QSize &renderSize, const Qml::UserSettings *userSettings)
 {
     QPixmap avatar;
     if (userSettings->tmpAvatarActive())

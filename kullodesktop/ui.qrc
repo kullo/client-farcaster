@@ -1,14 +1,14 @@
 <RCC>
     <qresource prefix="/">
+        <file alias="InboxScreen.qml">ui/InboxScreen.qml</file>
+        <file alias="libraryLoggerInitializer.qml">ui/libraryLoggerInitializer.qml</file>
+        <file alias="main.qml">ui/main.qml</file>
         <file alias="qmldir">ui/qmldir</file>
         <file alias="Style.qml">ui/Style.qml</file>
-        <file alias="main.qml">ui/main.qml</file>
-        <file alias="viewInbox.qml">ui/viewInbox.qml</file>
-        <file alias="viewLoggingIn.qml">ui/viewLoggingIn.qml</file>
-        <file alias="viewLogin.qml">ui/viewLogin.qml</file>
-        <file alias="viewRegister.qml">ui/viewRegister.qml</file>
-        <file alias="viewWelcome.qml">ui/viewWelcome.qml</file>
-        <file alias="libraryLoggerInitializer.qml">ui/libraryLoggerInitializer.qml</file>
+        <file alias="LoggingInScreen.qml">ui/LoggingInScreen.qml</file>
+        <file alias="LoginScreen.qml">ui/LoginScreen.qml</file>
+        <file alias="RegisterScreen.qml">ui/RegisterScreen.qml</file>
+        <file alias="WelcomeScreen.qml">ui/WelcomeScreen.qml</file>
     </qresource>
     <qresource prefix="/buttons">
         <file alias="BackButton.qml">ui/buttons/BackButton.qml</file>

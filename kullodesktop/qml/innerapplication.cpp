@@ -8,6 +8,7 @@
 #include <kulloclient/util/librarylogger.h>
 
 #include <desktoputil/paths.h>
+#include <desktoputil/osdetection.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/osintegration/kullotrayicon.h"
@@ -99,7 +100,29 @@ void InnerApplication::showMainWindowIfPossible()
     {
         mainWindow_->show();
     }
-    mainWindow_->raise();
+
+    // bring window to foreground
+    //
+    // Ubuntu:
+    //   raise() brings the window to foreground without focussing it,
+    //   which is annoying. Use requestActivate() highlights the app icon
+    // Windows:
+    //   requestActivate() highlights the app icon
+    // OS X:
+    //   raise() brings up the window to foreground and focusses it
+    //
+    if (DesktopUtil::OsDetection::linux())
+    {
+        mainWindow_->requestActivate();
+    }
+    else if (DesktopUtil::OsDetection::windows())
+    {
+        mainWindow_->requestActivate();
+    }
+    else if (DesktopUtil::OsDetection::osx())
+    {
+        mainWindow_->raise();
+    }
 }
 
 void InnerApplication::setCloseToTray(bool closeToTray)

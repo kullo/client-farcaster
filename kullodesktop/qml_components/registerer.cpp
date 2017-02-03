@@ -21,6 +21,7 @@
 #include <kulloclient/util/misc.h>
 
 #include "kullodesktop/qml/innerapplication.h"
+#include "kullodesktop/qml/usersettings.h"
 
 namespace KulloDesktop {
 namespace QmlComponents {
@@ -92,6 +93,7 @@ Registerer::Registerer(QObject *parent)
             this, [this](const std::shared_ptr<Kullo::Api::Address> & address, const std::shared_ptr<Kullo::Api::MasterKey> & masterKey)
     {
         application_->databaseFiles().removeDatabase(address);
+        Qml::UserSettings::storeCredentials(address, masterKey);
 
         auto addressString = QString::fromStdString(address->toString());
         auto masterKeyString = QString::fromStdString(masterKey->pem());

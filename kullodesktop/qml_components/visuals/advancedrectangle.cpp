@@ -2,6 +2,7 @@
 #include "advancedrectangle.h"
 
 namespace KulloDesktop {
+namespace QmlComponents {
 namespace Visuals {
 
 AdvancedRectangle::AdvancedRectangle(QQuickItem *parent) :
@@ -159,5 +160,6 @@ void AdvancedRectangle::onAppearanceChanged()
     update(QRect(0, 0, new_width, new_height));
 }
 
+}
 }
 }

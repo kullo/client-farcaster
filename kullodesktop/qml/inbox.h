@@ -17,6 +17,8 @@
 namespace KulloDesktop {
 namespace Qml {
 
+// This is used as Class.EnumValue in QML (e.g. SyncErrors.Unauthorized),
+// so the enum name is skipped.
 class SyncErrors : public QObject
 {
     Q_OBJECT
@@ -31,7 +33,7 @@ public:
     };
     Q_ENUM(SyncError)
 
-    static void init();
+    static void registerEnumsInClassForSignalSlot();
 };
 
 class Inbox : public QObject
@@ -45,8 +47,8 @@ public:
                    QObject *parent = 0);
     ~Inbox() override;
 
-    Q_PROPERTY(KulloDesktop::Qml::UserSettingsModel *userSettings READ userSettings NOTIFY userSettingsChanged)
-    UserSettingsModel *userSettings();
+    Q_PROPERTY(KulloDesktop::Qml::UserSettings *userSettings READ userSettings NOTIFY userSettingsChanged)
+    UserSettings *userSettings();
 
     Q_PROPERTY(bool loggedIn READ loggedIn NOTIFY loggedInChanged)
     bool loggedIn() const;
@@ -60,7 +62,12 @@ public:
 
     Q_INVOKABLE bool sync();
 
-    Q_INVOKABLE void clearDatabaseAndResetUserSettings(const QString &addressString, const QString &masterKeyPem);
+    // TODO: move this functionality to C++ to ensure critical operations are performed,
+    // even if the user interface has problems.
+    // This is already done in registration but not trivial in login
+    Q_INVOKABLE void clearDatabaseAndStoreCredentials(const QString &addressString, const QString &masterKeyPem);
+
+    Q_INVOKABLE void loadCredentials(const QString &addressString);
     Q_INVOKABLE void logIn();
     Q_INVOKABLE void logOut();
 
@@ -109,7 +116,7 @@ private:
     std::shared_ptr<Kullo::Api::Session> session_;
     std::unique_ptr<ConversationListSource> conversationsSource_;
     std::unique_ptr<ConversationListModel> conversationsProxy_;
-    std::unique_ptr<UserSettingsModel> userSettingsModel_;
+    std::unique_ptr<UserSettings> userSettingsModel_;
 
     std::shared_ptr<Kullo::Api::AsyncTask> createSessionTask_;
 

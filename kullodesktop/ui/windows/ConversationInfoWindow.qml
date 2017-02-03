@@ -5,12 +5,11 @@ import QtQuick.Window 2.2
 import Kullo 1.0
 
 import "../buttons"
+import "../misc"
 import "../native"
 
 NativeWindow {
     id: root
-    width: 550
-    height: 220
     title: qsTr("Conversation Info")
 
     /* public */
@@ -19,7 +18,25 @@ NativeWindow {
     property var participantsAddresses
     property var participants
 
-    onVisibleChanged: if (visible) mainItem.forceActiveFocus()
+    /* private */
+    property int _DEFAULT_WINDOW_WIDTH: 550
+    property int _DEFAULT_WINDOW_HEIGHT: 220
+    property Conversation _conversation: conversationId !== -1
+                                         ? Inbox.conversations.get(conversationId)
+                                         : null
+
+    width: _DEFAULT_WINDOW_WIDTH
+    height: _DEFAULT_WINDOW_HEIGHT
+
+    onVisibleChanged: {
+        if (visible) {
+            // reset window dimensions
+            root.width = _DEFAULT_WINDOW_WIDTH
+            root.height = _DEFAULT_WINDOW_HEIGHT
+
+            mainItem.forceActiveFocus()
+        }
+    }
 
     onParticipantsChanged: {
         participantsList = ""
@@ -48,7 +65,7 @@ NativeWindow {
         Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
-        Image {
+        NativeImage {
             id: avatar
             anchors {
                 left: parent.left
@@ -57,10 +74,6 @@ NativeWindow {
             source: conversationId != -1 ? "image://conversationavatars/" + conversationId : ""
             height: 200
             width: 200
-            // Use source size to achieve smooth
-            // scaling via c++
-            sourceSize.width: width
-            sourceSize.height: height
         }
 
         Column {
@@ -83,6 +96,34 @@ NativeWindow {
                 anchors {
                     left: parent.left
                     right: parent.right
+                }
+            }
+
+            NativeText {
+                id: statsLabel
+                text: qsTr("Message counts") + ":"
+                font.bold: true
+            }
+
+            Row {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                spacing: 10
+
+                NativeSelectableText {
+                    TooltipArea {
+                        text: qsTr("incoming")
+                    }
+                    text: "%1↓".arg(_conversation ? _conversation.countIncoming : -1)
+                }
+
+                NativeSelectableText {
+                    TooltipArea {
+                        text: qsTr("outgoing")
+                    }
+                    text: "%1↑".arg(_conversation ? _conversation.countOutgoing : -1)
                 }
             }
         }

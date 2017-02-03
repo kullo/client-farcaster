@@ -7,7 +7,7 @@ import "../"
 import "../native"
 
 BaseDialog {
-    id: _root
+    id: root
 
     property alias text: contentText.text
     property alias result: contentInput.text
@@ -37,7 +37,7 @@ BaseDialog {
             leftMargin: horizontalPadding
             rightMargin: horizontalPadding
         }
-        Keys.onEscapePressed: _root.rejected()
+        Keys.onEscapePressed: root.rejected()
         implicitHeight: header.implicitHeight + body.implicitHeight + footer.implicitHeight
 
         Item {
@@ -83,7 +83,7 @@ BaseDialog {
                 text: ""
                 inputMethodHints: Qt.ImhNoAutoUppercase
 
-                onAccepted: _root.accepted()
+                onAccepted: root.accepted()
             }
 
             Hint {
@@ -135,7 +135,7 @@ BaseDialog {
                     id: buttonCancel
                     text: qsTr("Cancel")
 
-                    onClicked: _root.rejected()
+                    onClicked: root.rejected()
                 }
 
                 NativeButton {
@@ -143,7 +143,7 @@ BaseDialog {
                     text: qsTr("OK")
                     enabled: valid
 
-                    onClicked: _root.accepted()
+                    onClicked: root.accepted()
                 }
             }
         }
@@ -152,9 +152,9 @@ BaseDialog {
     onAccepted: {
         if (valid)
         {
-            _root.resultAccepted()
-            _root.closeDialog()
+            root.resultAccepted()
+            root.closeDialog()
         }
     }
-    onRejected: _root.closeDialog()
+    onRejected: root.closeDialog()
 }

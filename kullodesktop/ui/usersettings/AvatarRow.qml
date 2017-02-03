@@ -8,6 +8,7 @@ import "../js/djb2.js" as DJB2
 import "../buttons"
 import "../dialogs"
 import "../misc"
+import "../native"
 
 Item {
     id: root
@@ -53,17 +54,15 @@ Item {
         ChessRectangle {
             id: imageContent
             x: 1 // border
-            y: x
-            width: 180
-            height: width
+            y: 1
+            width: 200
+            height: 200
 
-            Image {
+            NativeImage {
                 id: avatar
                 width: parent.width
-                height: width
+                height: parent.height
 
-                sourceSize.width: width
-                sourceSize.height: height
                 smooth: true
 
                 cache: false

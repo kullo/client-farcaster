@@ -1,17 +1,18 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
+#include "../kullodesktoptest.h"
+
 #include <exception>
 
 #include <desktoputil/kulloversion.h>
 
-#include "tests/kullotest.h"
 
 using namespace testing;
 
-class KulloVersion : public KulloTest
+class KulloVersion : public KulloDesktopTest
 {
 };
 
-K_TEST_F(KulloVersion, format)
+TEST_F(KulloVersion, format)
 {
     EXPECT_NO_THROW(DesktopUtil::KulloVersion("1.2.3"));
     EXPECT_NO_THROW(DesktopUtil::KulloVersion("0.1.2"));
@@ -40,7 +41,7 @@ K_TEST_F(KulloVersion, format)
     EXPECT_ANY_THROW(DesktopUtil::KulloVersion("0.20.4 (Kopie)"));
 }
 
-K_TEST_F(KulloVersion, equals)
+TEST_F(KulloVersion, equals)
 {
     EXPECT_EQ(DesktopUtil::KulloVersion("0.12.4"), DesktopUtil::KulloVersion("0.12.4"));
 
@@ -53,7 +54,7 @@ K_TEST_F(KulloVersion, equals)
     EXPECT_EQ(DesktopUtil::KulloVersion("1.2.0003"), DesktopUtil::KulloVersion("1.2.3"));
 }
 
-K_TEST_F(KulloVersion, greater)
+TEST_F(KulloVersion, greater)
 {
     EXPECT_GT(DesktopUtil::KulloVersion("0.12.4"), DesktopUtil::KulloVersion("0.12.3"));
     EXPECT_GT(DesktopUtil::KulloVersion("0.13.4"), DesktopUtil::KulloVersion("0.12.4"));
@@ -64,7 +65,7 @@ K_TEST_F(KulloVersion, greater)
     EXPECT_GT(DesktopUtil::KulloVersion("1.0.0"), DesktopUtil::KulloVersion("0.992.52"));
 }
 
-K_TEST_F(KulloVersion, less)
+TEST_F(KulloVersion, less)
 {
     EXPECT_LT(DesktopUtil::KulloVersion("0.12.3"), DesktopUtil::KulloVersion("0.12.4"));
     EXPECT_LT(DesktopUtil::KulloVersion("0.12.4"), DesktopUtil::KulloVersion("0.13.4"));
@@ -75,7 +76,7 @@ K_TEST_F(KulloVersion, less)
     EXPECT_LT(DesktopUtil::KulloVersion("0.992.52"), DesktopUtil::KulloVersion("1.0.0"));
 }
 
-K_TEST_F(KulloVersion, preview)
+TEST_F(KulloVersion, preview)
 {
     EXPECT_NO_THROW(DesktopUtil::KulloVersion("1.0.0-prev"));
 
@@ -88,7 +89,7 @@ K_TEST_F(KulloVersion, preview)
 }
 
 
-K_TEST_F(KulloVersion, isMayorUpgradeOf)
+TEST_F(KulloVersion, isMayorUpgradeOf)
 {
     EXPECT_TRUE(DesktopUtil::KulloVersion("1.12.3").isMajorUpgradeOf(DesktopUtil::KulloVersion("0.12.3"))); // minor, patch equal
     EXPECT_TRUE(DesktopUtil::KulloVersion("1.12.3").isMajorUpgradeOf(DesktopUtil::KulloVersion("0.13.4"))); // minor, patch lower
@@ -99,7 +100,7 @@ K_TEST_F(KulloVersion, isMayorUpgradeOf)
     EXPECT_FALSE(DesktopUtil::KulloVersion("0.12.3").isMajorUpgradeOf(DesktopUtil::KulloVersion("0.11.2"))); // minor, patch bigger
 }
 
-K_TEST_F(KulloVersion, isMinorUpgradeOf)
+TEST_F(KulloVersion, isMinorUpgradeOf)
 {
     EXPECT_TRUE(DesktopUtil::KulloVersion("1.12.3").isMinorUpgradeOf(DesktopUtil::KulloVersion("0.12.3"))); // mayor upgrade is minor upgrade
 
@@ -112,7 +113,7 @@ K_TEST_F(KulloVersion, isMinorUpgradeOf)
     EXPECT_FALSE(DesktopUtil::KulloVersion("0.12.3").isMajorUpgradeOf(DesktopUtil::KulloVersion("0.12.2"))); // patch bigger
 }
 
-K_TEST_F(KulloVersion, isPatchUpgradeOf)
+TEST_F(KulloVersion, isPatchUpgradeOf)
 {
     EXPECT_TRUE(DesktopUtil::KulloVersion("1.12.3").isPatchUpgradeOf(DesktopUtil::KulloVersion("0.12.3"))); // mayor upgrade is patch upgrade
     EXPECT_TRUE(DesktopUtil::KulloVersion("0.13.3").isPatchUpgradeOf(DesktopUtil::KulloVersion("0.12.3"))); // minor upgrade is patch upgrade
@@ -121,7 +122,7 @@ K_TEST_F(KulloVersion, isPatchUpgradeOf)
     EXPECT_FALSE(DesktopUtil::KulloVersion("0.12.3").isPatchUpgradeOf(DesktopUtil::KulloVersion("0.12.4"))); // patch lower
 }
 
-K_TEST_F(KulloVersion, getters)
+TEST_F(KulloVersion, getters)
 {
     auto version = DesktopUtil::KulloVersion("1.12.3");
     EXPECT_THAT(version.majorVersion(), Eq(1));

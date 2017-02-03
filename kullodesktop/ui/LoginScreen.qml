@@ -170,7 +170,8 @@ FForm {
                 onLoginChecked: {
                     if (ok) {
                         console.info("Login ok.")
-                        Inbox.clearDatabaseAndResetUserSettings(address, masterKeyPem)
+                        Inbox.clearDatabaseAndStoreCredentials(address, masterKeyPem)
+                        Inbox.loadCredentials(address)
                         app.state = "loggingIn"
                     }
                     else {

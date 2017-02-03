@@ -21,10 +21,12 @@ import "../native"
 //}
 
 Rectangle {
-    property alias text: _text.text
-    property alias fontFamily: _text.font.family
+    /* public */
+    property alias text: label.text
+    property alias fontFamily: label.font.family
     property int textPaddingTop: Os.osx ? 5 : -1
 
+    /* private */
     property int _TEXT_PADDING_TOP_DEFAULT: 3
 
     color: "#f7f7f7"
@@ -33,13 +35,13 @@ Rectangle {
         color: "#ccc"
         width: 1
     }
-    width: _text.contentWidth
-           + _text.anchors.leftMargin
-           + _text.anchors.rightMargin
+    width: label.contentWidth
+           + label.anchors.leftMargin
+           + label.anchors.rightMargin
     height: 20
 
     NativeText {
-        id: _text
+        id: label
         anchors {
             left: parent.left
             top: parent.top

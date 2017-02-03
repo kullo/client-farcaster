@@ -5,7 +5,7 @@ import QtQuick.Controls 1.3
 import "../native"
 
 BaseDialog {
-    id: _root
+    id: root
     property alias text: mainText.text
 
     signal yes()
@@ -20,7 +20,7 @@ BaseDialog {
         id: mainItem
         anchors.fill: parent
 
-        Keys.onEscapePressed: _root.rejected()
+        Keys.onEscapePressed: root.rejected()
 
         FocusScope {
             id: content
@@ -70,8 +70,8 @@ BaseDialog {
                         id: buttonNo
                         text: qsTr("No")
                         onClicked: {
-                            _root.closeDialog()
-                            _root.no()
+                            root.closeDialog()
+                            root.no()
                         }
                         isDefault: focus
                     }
@@ -80,8 +80,8 @@ BaseDialog {
                         id: buttonYes
                         text: qsTr("Yes")
                         onClicked: {
-                            _root.closeDialog()
-                            _root.yes()
+                            root.closeDialog()
+                            root.yes()
                         }
                         focus: true
                         isDefault: focus

@@ -102,8 +102,11 @@ SOURCES += \
     qml/modalitywatcher.cpp \
     qml/sender.cpp \
     qml/softwareversions.cpp \
-    qml/usersettingsmodel.cpp \
+    qml/usersettings.cpp \
     qml/utils.cpp \
+    qml_bridge/qmlsetup.cpp \
+    qml_components/visuals/advancedrectangle.cpp \
+    qml_components/visuals/hint.cpp \
     qml_components/attachmentsadder.cpp \
     qml_components/changelog.cpp \
     qml_components/existencechecker.cpp \
@@ -119,10 +122,6 @@ SOURCES += \
     util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
     util/logfilecleaner.cpp \
-    util/qdebugmessagehandler.cpp \
-    util/qmlsetup.cpp \
-    visuals/advancedrectangle.cpp \
-    visuals/hint.cpp \
     main.cpp
 
 HEADERS += \
@@ -161,8 +160,11 @@ HEADERS += \
     qml/os.h \
     qml/sender.h \
     qml/softwareversions.h \
-    qml/usersettingsmodel.h \
+    qml/usersettings.h \
     qml/utils.h \
+    qml_bridge/qmlsetup.h \
+    qml_components/visuals/advancedrectangle.h \
+    qml_components/visuals/hint.h \
     qml_components/attachmentsadder.h \
     qml_components/changelog.h \
     qml_components/existencechecker.h \
@@ -178,10 +180,6 @@ HEADERS += \
     util/htmlfileloglistener.h \
     util/kullofoldersetup.h \
     util/logfilecleaner.h \
-    util/qdebugmessagehandler.h \
-    util/qmlsetup.h \
-    visuals/advancedrectangle.h \
-    visuals/hint.h \
     farcaster-forwards.h
 
 # BEGIN apimirror

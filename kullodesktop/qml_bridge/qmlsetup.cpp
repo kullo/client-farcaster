@@ -25,7 +25,9 @@
 #include "kullodesktop/qml/messagelistmodel.h"
 #include "kullodesktop/qml/messagemodel.h"
 #include "kullodesktop/qml/sender.h"
-#include "kullodesktop/qml/usersettingsmodel.h"
+#include "kullodesktop/qml/usersettings.h"
+#include "kullodesktop/qml_components/visuals/advancedrectangle.h"
+#include "kullodesktop/qml_components/visuals/hint.h"
 #include "kullodesktop/qml_components/attachmentsadder.h"
 #include "kullodesktop/qml_components/changelog.h"
 #include "kullodesktop/qml_components/existencechecker.h"
@@ -38,11 +40,8 @@
 #include "kullodesktop/qml_components/scheduler.h"
 #include "kullodesktop/qml_components/settingslocation.h"
 
-#include "kullodesktop/visuals/advancedrectangle.h"
-#include "kullodesktop/visuals/hint.h"
-
 namespace KulloDesktop {
-namespace Util {
+namespace QmlBridge {
 
 void QmlSetup::setupTypes()
 {
@@ -59,8 +58,8 @@ void QmlSetup::setupTypes()
     qmlRegisterType<QmlComponents::Registerer>("Kullo", 1, 0, "Registerer");
     qmlRegisterType<QmlComponents::Scheduler>("Kullo", 1, 0, "Scheduler");
     qmlRegisterType<QmlComponents::SettingsLocation>("Kullo", 1, 0, "SettingsLocation");
-    qmlRegisterType<Visuals::AdvancedRectangle>("Kullo.Visuals", 1, 0, "AdvancedRectangle");
-    qmlRegisterType<Visuals::Hint>("Kullo.Visuals", 1, 0, "Hint");
+    qmlRegisterType<QmlComponents::Visuals::AdvancedRectangle>("Kullo.Visuals", 1, 0, "AdvancedRectangle");
+    qmlRegisterType<QmlComponents::Visuals::Hint>("Kullo.Visuals", 1, 0, "Hint");
 
     qmlRegisterType<Qml::AttachmentListModel>("Kullo", 1, 0, "AttachmentList");
     qmlRegisterType<Qml::AttachmentModel>("Kullo", 1, 0, "Attachment");
@@ -74,7 +73,8 @@ void QmlSetup::setupTypes()
     qmlRegisterType<Qml::MessageModel>("Kullo", 1, 0, "Message");
     qmlRegisterType<Qml::Sender>("Kullo", 1, 0, "Sender");
     qmlRegisterType<Qml::SyncErrors>("Kullo", 1, 0, "SyncErrors");
-    qmlRegisterType<Qml::UserSettingsModel>("Kullo", 1, 0, "UserSettings");
+
+    qmlRegisterUncreatableType<Qml::UserSettings>("Kullo", 1, 0, "UserSettings", "Do not create in QML");
 
     // Registered as global objects QQmlContext::setContextProperty()
     // Use qmlRegisterType() with no arguments because "Instances of this

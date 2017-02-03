@@ -6,7 +6,7 @@
 class QQmlApplicationEngine;
 
 namespace KulloDesktop {
-namespace Util {
+namespace QmlBridge {
 
 class QmlSetup
 {

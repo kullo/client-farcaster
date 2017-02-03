@@ -5,7 +5,7 @@
 #include <kulloclient/util/datetime.h>
 #include <kulloclient/util/librarylogger.h>
 
-#include "kullodesktop/qml/usersettingsmodel.h"
+#include "kullodesktop/qml/usersettings.h"
 
 namespace KulloDesktop {
 namespace QmlComponents {
@@ -23,13 +23,13 @@ Scheduler::~Scheduler()
 {
 }
 
-Qml::UserSettingsModel *Scheduler::user() const
+Qml::UserSettings *Scheduler::user() const
 {
     QQmlEngine::setObjectOwnership(user_, QQmlEngine::CppOwnership);
     return user_;
 }
 
-void Scheduler::setUser(Qml::UserSettingsModel *user)
+void Scheduler::setUser(Qml::UserSettings *user)
 {
     if (user_ != user)
     {

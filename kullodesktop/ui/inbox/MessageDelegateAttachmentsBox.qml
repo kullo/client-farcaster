@@ -50,7 +50,7 @@ Item {
                     onTriggered: {
                         var attachment = attachments_.get(index)
                         if (!attachment.open()) {
-                            inbox.showOpenFileError(attachment.filename)
+                            inboxScreen.showOpenFileError(attachment.filename)
                         }
                     }
                 }
@@ -97,7 +97,7 @@ Item {
 
                     var attachment = attachments_.get(index)
                     if (!attachment.open()) {
-                        inbox.showOpenFileError(attachment.filename)
+                        inboxScreen.showOpenFileError(attachment.filename)
                     }
                 }
             }

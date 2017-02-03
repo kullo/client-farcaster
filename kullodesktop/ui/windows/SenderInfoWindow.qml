@@ -9,17 +9,31 @@ import "../native"
 
 NativeWindow {
     id: root
-    width: 550
-    height: 220
     title: qsTr("Sender Info")
 
+    /* public */
     property int conversationId: -1
     property int messageId: -1
     property alias senderName: senderName.text
     property alias senderOrganization: senderOrganization.text
     property alias senderAddress: senderAddress.text
 
-    onVisibleChanged: if (visible) mainItem.forceActiveFocus()
+    /* private */
+    property int _DEFAULT_WINDOW_WIDTH: 550
+    property int _DEFAULT_WINDOW_HEIGHT: 220
+
+    width: _DEFAULT_WINDOW_WIDTH
+    height: _DEFAULT_WINDOW_HEIGHT
+
+    onVisibleChanged: {
+        if (visible) {
+            // reset window dimensions
+            root.width = _DEFAULT_WINDOW_WIDTH
+            root.height = _DEFAULT_WINDOW_HEIGHT
+
+            mainItem.forceActiveFocus()
+        }
+    }
 
     // Main Qt Quick Item required for attached property `Keys`
     Item {
@@ -29,7 +43,7 @@ NativeWindow {
         Keys.onEscapePressed: root.closeWindow()
         Keys.onPressed: handleNativeWindowShortcuts(event)
 
-        Image {
+        NativeImage {
             id: avatar
             anchors {
                 left: parent.left
@@ -42,10 +56,6 @@ NativeWindow {
                     : ""
             height: 200
             width: 200
-            // Use source size to achieve smooth
-            // scaling via c++
-            sourceSize.width: width
-            sourceSize.height: height
         }
 
         Column {

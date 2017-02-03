@@ -6,7 +6,7 @@ import QtQuick.Window 2.2
 import "../native"
 
 NativeModalWindow {
-    id: _root
+    id: root
 
     property int contentFooterSpacing: 12
     property int buttonsSpacing: 5
@@ -23,10 +23,10 @@ NativeModalWindow {
     signal rejected()
 
     function openDialog() {
-        _root.openWindow()
+        root.openWindow()
     }
 
     function closeDialog() {
-        _root.closeWindow()
+        root.closeWindow()
     }
 }

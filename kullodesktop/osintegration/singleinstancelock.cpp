@@ -3,67 +3,142 @@
 
 #include <cstdint>
 
+#include <QLocalServer>
+#include <QLocalSocket>
+
 #include <kulloclient/util/librarylogger.h>
+#include <kulloclient/util/assert.h>
 #include <desktoputil/qtypestreamers.h>
 
 namespace KulloDesktop {
 namespace OsIntegration {
 
 namespace {
-const auto LOCKVALUE_SIZE = 1; // bytes
-const auto LOCKVALUE_LOCKED = std::uint8_t{1};
-const auto LOCKVALUE_UNLOCKED = std::uint8_t{0};
+const auto MESSAGE_SIZE_LIMIT = 50; // bytes
+const auto MESSAGE_GO_TO_FOREGROUND_REQUEST = "go to foreground";
+const auto MESSAGE_GO_TO_FOREGROUND_ACCEPT = "ok";
+
+auto LOCAL_SOCKET_ERROR_STRINGS = std::map<QLocalSocket::LocalSocketError, std::string>{
+    {QLocalSocket::ConnectionRefusedError, "ConnectionRefusedError"},
+    {QLocalSocket::PeerClosedError, "PeerClosedError"},
+    {QLocalSocket::ServerNotFoundError, "ServerNotFoundError"},
+    {QLocalSocket::SocketAccessError, "SocketAccessError"},
+    {QLocalSocket::SocketResourceError, "SocketResourceError"},
+    {QLocalSocket::SocketTimeoutError, "SocketTimeoutError"},
+    {QLocalSocket::DatagramTooLargeError, "DatagramTooLargeError"},
+    {QLocalSocket::ConnectionError, "ConnectionError"},
+    {QLocalSocket::UnsupportedSocketOperationError, "UnsupportedSocketOperationError"},
+    {QLocalSocket::OperationError, "OperationError"},
+    {QLocalSocket::UnknownSocketError, "UnknownSocketError"},
+};
 }
 
-SingleInstanceLock::SingleInstanceLock(const QString &name, bool ignoreLockValue)
-    : shared_(name)
-    , ignoreLockValue_(ignoreLockValue)
+SingleInstanceLock::SingleInstanceLock(const QString &name, QObject *parent)
+    : QObject(parent)
+    , name_(name)
 {
 }
 
-bool SingleInstanceLock::acquire()
+SingleInstanceLock::~SingleInstanceLock()
 {
-    if (!shared_.create(LOCKVALUE_SIZE, QSharedMemory::ReadWrite))
+}
+
+SingleInstanceLock::AcquireResult SingleInstanceLock::acquire()
+{
+    auto connection = connectToServer();
+
+    if (connection)
     {
-        Log.d() << "Shared memory already exists.";
-        if (!shared_.attach(QSharedMemory::ReadWrite))
+        connection->write(MESSAGE_GO_TO_FOREGROUND_REQUEST);
+        connection->flush();
+
+        if (connection->waitForReadyRead(100))
         {
-            const auto error = shared_.errorString();
-            Log.f() << "Shared memory could not be attached: " << error;
-        }
-    }
+            auto readResult = connection->read(MESSAGE_SIZE_LIMIT);
+            auto message = QString::fromUtf8(readResult);
 
-    if (ignoreLockValue_)
-    {
-        // recover from crash
+            Log.d() << "Received message: " << message;
+
+            if (message == MESSAGE_GO_TO_FOREGROUND_ACCEPT)
+            {
+                return AcquireResult::InformedOtherInstance;
+            }
+            else
+            {
+                Log.f() << "Received invalid message.";
+            }
+        }
+        else
+        {
+            Log.e() << "Socket server did not answer.";
+            purgeBrokenServer();
+            startServer();
+            return AcquireResult::CreatedInstance;
+        }
     }
     else
     {
-        shared_.lock();
-        const std::uint8_t *ret_ptr = static_cast<const std::uint8_t *>(shared_.constData());
-        const std::uint8_t ret = *ret_ptr;
-        shared_.unlock();
-
-        if (ret == LOCKVALUE_LOCKED)
-        {
-            return false;
-        }
+        purgeBrokenServer();
+        startServer();
+        return AcquireResult::CreatedInstance;
     }
-
-    shared_.lock();
-    auto write_ptr = static_cast<std::uint8_t *>(shared_.data());
-    *write_ptr = LOCKVALUE_LOCKED;
-    shared_.unlock();
-
-    return true;
 }
 
 void SingleInstanceLock::release()
 {
-    shared_.lock();
-    auto write_ptr = static_cast<std::uint8_t *>(shared_.data());
-    *write_ptr = LOCKVALUE_UNLOCKED;
-    shared_.unlock();
+    if (server_)
+    {
+        server_->close();
+    }
+}
+
+std::unique_ptr<QLocalSocket> SingleInstanceLock::connectToServer()
+{
+    auto socket = Kullo::make_unique<QLocalSocket>();
+    socket->connectToServer(name_);
+    if (socket->waitForConnected(500))
+    {
+        return socket;
+    }
+    else
+    {
+        Log.w() << "Could not connect to socket server: "
+                << LOCAL_SOCKET_ERROR_STRINGS[socket->error()];
+        return nullptr;
+    }
+}
+
+void SingleInstanceLock::purgeBrokenServer()
+{
+    QLocalServer::removeServer(name_);
+}
+
+void SingleInstanceLock::startServer()
+{
+    // server does not exist yet
+    server_ = Kullo::make_unique<QLocalServer>(nullptr);
+    auto ret = server_->listen(name_);
+    kulloAssert(ret == true);
+
+    connect(server_.get(), &QLocalServer::newConnection,
+            this, [this]() {
+        QLocalSocket *socketConnection = server_->nextPendingConnection(); // auto-deleted with server
+        connect(socketConnection, &QLocalSocket::readyRead,
+                this, [socketConnection, this]() {
+            auto message = QString::fromUtf8(socketConnection->read(MESSAGE_SIZE_LIMIT));
+
+            if (message == MESSAGE_GO_TO_FOREGROUND_REQUEST)
+            {
+                Log.d() << "Other process asked me to go to foreground.";
+                emit showMainWindowRequested();
+                socketConnection->write(MESSAGE_GO_TO_FOREGROUND_ACCEPT);
+            }
+            else
+            {
+                Log.f() << "Received invalid message.";
+            }
+        });
+    });
 }
 
 }

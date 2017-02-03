@@ -22,7 +22,7 @@ namespace KulloDesktop {
         class MessageListSource;
         class MessageModel;
         class Sender;
-        class UserSettingsModel;
+        class UserSettings;
     }
 }
 

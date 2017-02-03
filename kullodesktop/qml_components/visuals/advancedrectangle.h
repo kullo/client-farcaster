@@ -6,6 +6,7 @@
 #include <QPen>
 
 namespace KulloDesktop {
+namespace QmlComponents {
 namespace Visuals {
 
 class AdvancedRectangle : public QQuickPaintedItem
@@ -68,5 +69,6 @@ private slots:
     void onAppearanceChanged();
 };
 
+}
 }
 }

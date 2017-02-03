@@ -25,7 +25,7 @@ Rectangle {
         spacing: 5
 
         FForm {
-            onAccepted: inbox.startConversation()
+            onAccepted: inboxScreen.startConversation()
             height: startConversationButton.implicitHeight
             width: startConversationButton.implicitWidth
 

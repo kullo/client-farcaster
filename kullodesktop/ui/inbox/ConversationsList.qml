@@ -22,7 +22,7 @@ ListView {
 
         console.info("Conversation ID stored to be opened: " + convId);
         currentIndex = model.find(convId)
-        inbox.openAnswer()
+        inboxScreen.openAnswer()
         return true
     }
 
@@ -60,7 +60,7 @@ ListView {
                 // inbox.openConversation() will trigger postConversationsChanged()
                 // if messages are marked as read.
                 _lastSelectedConversationId = root.currentItem.conversationId
-                inbox.openConversation(root.currentItem.conversationId)
+                inboxScreen.openConversation(root.currentItem.conversationId)
             }
         }
     }
@@ -94,7 +94,7 @@ ListView {
 
     function removeConversation(convId) {
         Inbox.removeConversation(convId)
-        inbox.closeAnswer()
+        inboxScreen.closeAnswer()
     }
 
     Connections {
@@ -313,7 +313,7 @@ ListView {
             onClicked: {
                 if (mouse.button === Qt.LeftButton)
                 {
-                    inbox.closeAnswer()
+                    inboxScreen.closeAnswer()
                     root.currentIndex = index
                     root.forceActiveFocus()
                 }
@@ -330,7 +330,7 @@ ListView {
     model: Inbox.conversations
 
     Component.onCompleted: {
-        Inbox.conversations.todoMode = Qt.binding(function() { return inbox.todoMode })
+        Inbox.conversations.todoMode = Qt.binding(function() { return inboxScreen.todoMode })
     }
 
     highlight: ConversationHighlighter {}

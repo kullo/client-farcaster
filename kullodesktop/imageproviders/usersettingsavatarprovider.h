@@ -13,7 +13,7 @@ public:
 
 protected:
     virtual QPixmap drawAvatar(const QString &url, const QSize &renderSize);
-    QPixmap getUserAvatarData(const QString &url, const QSize &renderSize, const Qml::UserSettingsModel *userSettings);
+    QPixmap getUserAvatarData(const QString &url, const QSize &renderSize, const Qml::UserSettings *userSettings);
 };
 
 }

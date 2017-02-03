@@ -37,12 +37,12 @@
 #include "kullodesktop/qml/conversationlistsource.h"
 #include "kullodesktop/qml/innerapplication.h"
 #include "kullodesktop/qml/sender.h"
-#include "kullodesktop/qml/usersettingsmodel.h"
+#include "kullodesktop/qml/usersettings.h"
 
 namespace KulloDesktop {
 namespace Qml {
 
-void SyncErrors::init()
+void SyncErrors::registerEnumsInClassForSignalSlot()
 {
     qRegisterMetaType<SyncErrors::SyncError>("SyncErrors::SyncError");
 }
@@ -57,15 +57,14 @@ Inbox::Inbox(InnerApplication &innerApplication,
     , eventDispatcher_()
     , syncerListener_(std::make_shared<ApiMirror::SyncerListener>())
     , client_(client)
-    , userSettingsModel_(new UserSettingsModel())
 {
-    SyncErrors::init();
+    SyncErrors::registerEnumsInClassForSignalSlot();
 
     QString activeUser = innerApplication_.deviceSettings()->activeUser();
     if (!activeUser.isEmpty())  // load UserSettings if we have an active user
     {
         Log.d() << "Active user: " << activeUser;
-        userSettingsModel_->load(activeUser);
+        userSettingsModel_ = UserSettings::loadCredentialsForAddress(activeUser);
     }
     else
     {
@@ -167,14 +166,14 @@ void Inbox::logOut()
 
     session_.reset();
     innerApplication_.deviceSettings()->setActiveUser("");
-    userSettingsModel_->setUserSettings(nullptr);
+    userSettingsModel_ = nullptr;
 
     taskRunner_->reset();
 
     emit loggedInChanged(false);
 }
 
-UserSettingsModel *Inbox::userSettings()
+UserSettings *Inbox::userSettings()
 {
     auto out = userSettingsModel_.get();
     QQmlEngine::setObjectOwnership(out, QQmlEngine::CppOwnership);
@@ -222,7 +221,7 @@ bool Inbox::sync()
     return true;
 }
 
-void Inbox::clearDatabaseAndResetUserSettings(const QString &addressString, const QString &masterKeyPem)
+void Inbox::clearDatabaseAndStoreCredentials(const QString &addressString, const QString &masterKeyPem)
 {
     const auto address = Kullo::Api::Address::create(addressString.toStdString());
     const auto masterKey = Kullo::Api::MasterKey::createFromPem(masterKeyPem.toStdString());
@@ -230,8 +229,14 @@ void Inbox::clearDatabaseAndResetUserSettings(const QString &addressString, cons
     // Clear old user stuff
     innerApplication_.databaseFiles().removeDatabase(address);
 
-    // Set user
-    userSettingsModel_->reset(address, masterKey);
+    // Store new credentials
+    UserSettings::storeCredentials(address, masterKey);
+}
+
+void Inbox::loadCredentials(const QString &addressString)
+{
+    userSettingsModel_ = UserSettings::loadCredentialsForAddress(addressString);
+    emit userSettingsChanged();
 }
 
 ApiMirror::Client *Inbox::client() const

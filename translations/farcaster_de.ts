@@ -143,6 +143,18 @@
         <source>Participants</source>
         <translation>Teilnehmer</translation>
     </message>
+    <message>
+        <source>Message counts</source>
+        <translation>Nachrichten-Anzahl</translation>
+    </message>
+    <message>
+        <source>incoming</source>
+        <translation>eingehende</translation>
+    </message>
+    <message>
+        <source>outgoing</source>
+        <translation>ausgehende</translation>
+    </message>
 </context>
 <context>
     <name>ConversationIntro</name>
@@ -671,6 +683,69 @@
     </message>
 </context>
 <context>
+    <name>InboxScreen</name>
+    <message>
+        <source>Error opening file</source>
+        <translation type="unfinished">Fehler beim Dabei-Öffnen</translation>
+    </message>
+    <message>
+        <source>File %1 could not be opened</source>
+        <translation type="unfinished">Die Datei %1 konnte nicht geöffnet werden</translation>
+    </message>
+    <message>
+        <source>Server error. We&apos;re sorry :(</source>
+        <translation type="unfinished">Server-Fehler. Das tut uns Leid :(</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t connect to server. Are you online?</source>
+        <translation type="unfinished">Keine Verbindung zum Server. Bist du online?</translation>
+    </message>
+    <message>
+        <source>Login failed.</source>
+        <translation type="unfinished">Anmeldung fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>Unknown error while syncing.</source>
+        <translation type="unfinished">Unbekannter Fehler während der Synchronisation.</translation>
+    </message>
+    <message>
+        <source>Message not sent</source>
+        <translation type="unfinished">Nachricht nicht gesendet</translation>
+    </message>
+    <message>
+        <source>Message could not be sent because attachments are too big.</source>
+        <translation type="unfinished">Nachricht konnte nicht gesendet werden, da Anhänge zu groß sind.</translation>
+    </message>
+    <message>
+        <source>Please edit the message and sent again.</source>
+        <translation type="unfinished">Bitte bearbeite die Nachricht und sende sie erneut.</translation>
+    </message>
+    <message>
+        <source>Enter Kullo address:</source>
+        <translation type="unfinished">Kullo-Adresse eingeben:</translation>
+    </message>
+    <message>
+        <source>Save attachment</source>
+        <translation type="unfinished">Anhang speichern</translation>
+    </message>
+    <message>
+        <source>Save all</source>
+        <translation type="unfinished">Alle speichern</translation>
+    </message>
+    <message>
+        <source>Todo
+mode</source>
+        <translation type="unfinished">Todo-
+Modus</translation>
+    </message>
+    <message>
+        <source>Sound
+active</source>
+        <translation type="unfinished">Ton
+aktiv</translation>
+    </message>
+</context>
+<context>
     <name>InfoWindow</name>
     <message>
         <source>Info</source>
@@ -768,6 +843,48 @@
     <message>
         <source>If Kullo crashed before, you might need to restart your computer.</source>
         <translation>Nach einem Absturz von Kullo kann es sein, dass der Computer neu gestartet werden muss, um das Problem zu beheben.</translation>
+    </message>
+</context>
+<context>
+    <name>LoggingInScreen</name>
+    <message>
+        <source>Logging in</source>
+        <translation type="unfinished">Anmelden</translation>
+    </message>
+</context>
+<context>
+    <name>LoginScreen</name>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished">Importieren</translation>
+    </message>
+    <message>
+        <source>Login failed.</source>
+        <translation type="unfinished">Anmeldung fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>Kullo address invalid.</source>
+        <translation type="unfinished">Kullo-Adresse ungültig.</translation>
+    </message>
+    <message>
+        <source>MasterKey invalid.</source>
+        <translation type="unfinished">MasterKey ungültig.</translation>
+    </message>
+    <message>
+        <source>Server error, please try again later.</source>
+        <translation type="unfinished">Serverfehler, bitte später erneut versuchen.</translation>
+    </message>
+    <message>
+        <source>Protocol error. This is our fault, sorry!</source>
+        <translation type="unfinished">Protokollfehler. Das ist unsere Schuld, Entschuldigung!</translation>
+    </message>
+    <message>
+        <source>Server %1 could not be reached. Is the address correct? Are you online?</source>
+        <translation type="unfinished">Server %1 konnte nicht erreicht werden. Stimmt die Kullo-Adresse? Bist du online?</translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation type="unfinished">Anmelden</translation>
     </message>
 </context>
 <context>
@@ -1305,6 +1422,37 @@ sind deine Nachrichten verloren.</translation>
     </message>
 </context>
 <context>
+    <name>WelcomeScreen</name>
+    <message>
+        <source>Open inbox</source>
+        <translation type="unfinished">Postfach öffnen</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished">Öffnen</translation>
+    </message>
+    <message>
+        <source>Login with another account.</source>
+        <translation type="unfinished">Mit einem anderen Account einloggen.</translation>
+    </message>
+    <message>
+        <source>Login with your Kullo credentials.</source>
+        <translation type="unfinished">Melde dich mit deinen Kullo-Zugangsdaten an.</translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation type="unfinished">Anmelden</translation>
+    </message>
+    <message>
+        <source>Register, if you don&apos;t have a Kullo address yet.</source>
+        <translation type="unfinished">Registriere dich, wenn du bisher keine Kullo-Adresse hast.</translation>
+    </message>
+    <message>
+        <source>Register</source>
+        <translation type="unfinished">Registrieren</translation>
+    </message>
+</context>
+<context>
     <name>YesNoDialog</name>
     <message>
         <source>No</source>
@@ -1328,142 +1476,6 @@ sind deine Nachrichten verloren.</translation>
         <source>Ctrl</source>
         <extracomment>What user will find on the key</extracomment>
         <translation>Strg</translation>
-    </message>
-</context>
-<context>
-    <name>viewInbox</name>
-    <message>
-        <source>Enter Kullo address:</source>
-        <translation>Kullo-Adresse eingeben:</translation>
-    </message>
-    <message>
-        <source>Server error. We&apos;re sorry :(</source>
-        <translation>Server-Fehler. Das tut uns Leid :(</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t connect to server. Are you online?</source>
-        <translation>Keine Verbindung zum Server. Bist du online?</translation>
-    </message>
-    <message>
-        <source>Login failed.</source>
-        <translation>Anmeldung fehlgeschlagen.</translation>
-    </message>
-    <message>
-        <source>Unknown error while syncing.</source>
-        <translation>Unbekannter Fehler während der Synchronisation.</translation>
-    </message>
-    <message>
-        <source>Message not sent</source>
-        <translation>Nachricht nicht gesendet</translation>
-    </message>
-    <message>
-        <source>Message could not be sent because attachments are too big.</source>
-        <translation>Nachricht konnte nicht gesendet werden, da Anhänge zu groß sind.</translation>
-    </message>
-    <message>
-        <source>Please edit the message and sent again.</source>
-        <translation>Bitte bearbeite die Nachricht und sende sie erneut.</translation>
-    </message>
-    <message>
-        <source>Todo
-mode</source>
-        <translation>Todo-
-Modus</translation>
-    </message>
-    <message>
-        <source>Sound
-active</source>
-        <translation>Ton
-aktiv</translation>
-    </message>
-    <message>
-        <source>Save attachment</source>
-        <translation>Anhang speichern</translation>
-    </message>
-    <message>
-        <source>Save all</source>
-        <translation>Alle speichern</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Fehler beim Dabei-Öffnen</translation>
-    </message>
-    <message>
-        <source>File %1 could not be opened</source>
-        <translation>Die Datei %1 konnte nicht geöffnet werden</translation>
-    </message>
-</context>
-<context>
-    <name>viewLoggingIn</name>
-    <message>
-        <source>Logging in</source>
-        <translation>Anmelden</translation>
-    </message>
-</context>
-<context>
-    <name>viewLogin</name>
-    <message>
-        <source>Import</source>
-        <translation>Importieren</translation>
-    </message>
-    <message>
-        <source>Login failed.</source>
-        <translation>Anmeldung fehlgeschlagen.</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>Anmelden</translation>
-    </message>
-    <message>
-        <source>Kullo address invalid.</source>
-        <translation>Kullo-Adresse ungültig.</translation>
-    </message>
-    <message>
-        <source>MasterKey invalid.</source>
-        <translation>MasterKey ungültig.</translation>
-    </message>
-    <message>
-        <source>Server error, please try again later.</source>
-        <translation>Serverfehler, bitte später erneut versuchen.</translation>
-    </message>
-    <message>
-        <source>Protocol error. This is our fault, sorry!</source>
-        <translation>Protokollfehler. Das ist unsere Schuld, Entschuldigung!</translation>
-    </message>
-    <message>
-        <source>Server %1 could not be reached. Is the address correct? Are you online?</source>
-        <translation>Server %1 konnte nicht erreicht werden. Stimmt die Kullo-Adresse? Bist du online?</translation>
-    </message>
-</context>
-<context>
-    <name>viewWelcome</name>
-    <message>
-        <source>Open inbox</source>
-        <translation>Postfach öffnen</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Öffnen</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>Anmelden</translation>
-    </message>
-    <message>
-        <source>Register, if you don&apos;t have a Kullo address yet.</source>
-        <translation>Registriere dich, wenn du bisher keine Kullo-Adresse hast.</translation>
-    </message>
-    <message>
-        <source>Register</source>
-        <translation>Registrieren</translation>
-    </message>
-    <message>
-        <source>Login with another account.</source>
-        <translation>Mit einem anderen Account einloggen.</translation>
-    </message>
-    <message>
-        <source>Login with your Kullo credentials.</source>
-        <translation>Melde dich mit deinen Kullo-Zugangsdaten an.</translation>
     </message>
 </context>
 </TS>

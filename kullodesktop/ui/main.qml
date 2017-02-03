@@ -90,7 +90,7 @@ ApplicationWindow {
                 name: "inbox"
                 PropertyChanges {
                     target: app
-                    loaderSource: "viewInbox.qml"
+                    loaderSource: "InboxScreen.qml"
                 }
 
                 // Known issue: Loaded only once per client start.
@@ -119,7 +119,7 @@ ApplicationWindow {
                 name: "loggingIn"
                 PropertyChanges {
                     target: app
-                    loaderSource: "viewLoggingIn.qml"
+                    loaderSource: "LoggingInScreen.qml"
                 }
                 PropertyChanges {
                     target: appWindow
@@ -137,7 +137,7 @@ ApplicationWindow {
                 name: "register"
                 PropertyChanges {
                     target: app
-                    loaderSource: "viewRegister.qml"
+                    loaderSource: "RegisterScreen.qml"
                 }
                 PropertyChanges {
                     target: appWindow
@@ -155,7 +155,7 @@ ApplicationWindow {
                 name: "welcome"
                 PropertyChanges {
                     target: app
-                    loaderSource: "viewWelcome.qml"
+                    loaderSource: "WelcomeScreen.qml"
                 }
                 PropertyChanges {
                     target: appWindow
@@ -173,7 +173,7 @@ ApplicationWindow {
                 name: "login"
                 PropertyChanges {
                     target: app
-                    loaderSource: "viewLogin.qml"
+                    loaderSource: "LoginScreen.qml"
                 }
                 PropertyChanges {
                     target: appWindow
@@ -189,7 +189,7 @@ ApplicationWindow {
             }
         ]
 
-        state: Inbox.userSettings.loginCredentialsStored() ? "loggingIn" : "welcome"
+        state: Inbox.userSettings ? "loggingIn" : "welcome"
 
         Loader {
             id: appLoader

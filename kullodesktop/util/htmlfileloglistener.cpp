@@ -18,16 +18,16 @@ namespace Util {
 
 namespace {
 
-const char *FILENAME = "kullo_log_%s.html";
-const char *HEADER = "<p>&nbsp;</p><hr>\n<h2>Session %s</h2>\n<table border=\"1\">";
-const char *FOOTER = "</table>";
-const char *ROW = "<tr><td>%s</td><td><small>%s</small></td><td>%s</td><td><small>%s</small></td></tr>";
-const char *DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
+const std::string FILENAME = "kullo_log_%s.html";
+const std::string HEADER = "<p>&nbsp;</p><hr>\n<h2>Session %s</h2>\n<table border=\"1\">";
+const std::string FOOTER = "</table>";
+const std::string ROW = "<tr><td>%s</td><td><small>%s</small></td><td>%s</td><td><small>%s</small></td></tr>";
+const std::string DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
 
 std::string getCurrentDateTime()
 {
     auto nowLocal = boost::posix_time::microsec_clock::local_time();
-    auto facet = new boost::posix_time::time_facet(DATE_FORMAT);
+    auto facet = new boost::posix_time::time_facet(DATE_FORMAT.c_str());
     std::ostringstream stream;
     stream.imbue(std::locale(stream.getloc(), facet));
     stream << nowLocal;

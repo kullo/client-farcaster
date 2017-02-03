@@ -18,7 +18,7 @@ import "js/dynamic.js" as Dynamic
 import "js/shortcut.js" as SC
 
 FocusScope {
-    id: inbox
+    id: inboxScreen
 
     anchors.fill: parent
     property bool todoMode: false
@@ -68,8 +68,8 @@ FocusScope {
 
     function toggleTodoMode()
     {
-        var newValue = !inbox.todoMode
-        inbox.todoMode = newValue
+        var newValue = !inboxScreen.todoMode
+        inboxScreen.todoMode = newValue
         overlayTodoMode.active = newValue
         overlayTodoMode.show()
     }
@@ -83,23 +83,23 @@ FocusScope {
     }
 
     function toggleAnswer() {
-        if (inbox.state == "reply") closeAnswer()
+        if (inboxScreen.state == "reply") closeAnswer()
         else openAnswer()
     }
 
     function openAnswer() {
         rightColumn.buttonBoxState = "answerOpen"
         rightColumn.animationEnabled = true
-        inbox.state = "reply"
-        rightColumn.forceActiveFocus();
+        inboxScreen.state = "reply"
+        rightColumn.forceActiveFocus()
     }
 
     function closeAnswer() {
         rightColumn.buttonBoxState = "default"
         rightColumn.animationEnabled = true
         rightColumn.minimumWidthSet = false
-        inbox.state = "basic"
-        middleColumn.forceActiveFocus();
+        inboxScreen.state = "basic"
+        middleColumn.forceActiveFocus()
     }
 
     MessageDialog {
@@ -166,11 +166,11 @@ FocusScope {
     }
 
     Keys.onPressed: {
-        if (SC.isCtrlAndKey(Qt.Key_N, event)) { event.accepted = true; inbox.startConversation()      }
-        if (SC.isCtrlAndKey(Qt.Key_R, event)) { event.accepted = true; inbox.toggleAnswer()           }
-        if (SC.isCtrlAndKey(Qt.Key_G, event)) { event.accepted = true; inbox.showUserSettingsWindow() }
-        if (SC.isCtrlAndKey(Qt.Key_O, event)) { event.accepted = true; inbox.logout()                 }
-        if (SC.isCtrlAndKey(Qt.Key_T, event)) { event.accepted = true; inbox.toggleTodoMode()         }
+        if (SC.isCtrlAndKey(Qt.Key_N, event)) { event.accepted = true; inboxScreen.startConversation()      }
+        if (SC.isCtrlAndKey(Qt.Key_R, event)) { event.accepted = true; inboxScreen.toggleAnswer()           }
+        if (SC.isCtrlAndKey(Qt.Key_G, event)) { event.accepted = true; inboxScreen.showUserSettingsWindow() }
+        if (SC.isCtrlAndKey(Qt.Key_O, event)) { event.accepted = true; inboxScreen.logout()                 }
+        if (SC.isCtrlAndKey(Qt.Key_T, event)) { event.accepted = true; inboxScreen.toggleTodoMode()         }
         if (!event.accepted)
         {
             if (event.key === Qt.Key_Question)
@@ -215,7 +215,7 @@ FocusScope {
         onSyncProgressed: {
             if (countMessagesTotal >= 10) {
                 var percent = 100.0 * countMessagesProcessed/countMessagesTotal
-                var progressText = Math.floor(percent) + "\u202F%";
+                var progressText = Math.floor(percent) + "\u202F%"
                 // U+202F: NARROW NO-BREAK SPACE.
                 // Not necessarily supported, falls back to space on Ubuntu.
 
@@ -230,11 +230,16 @@ FocusScope {
             }
             syncingBanner.hide()
             if (heartbeat.needResync) heartbeat.resync()
-            if (countMessagesNewUnread > 0) newMessageSound.play();
-            if (userSettingsIncomplete()) showUserSettingsWindow()
+            if (countMessagesNewUnread > 0) newMessageSound.play()
+
+            // during logout this slot might still be running when there is no user anymore
+            if (Inbox.userSettings)
+            {
+                if (userSettingsIncomplete()) showUserSettingsWindow()
+            }
         }
         onSyncError: {
-            var errmsg;
+            var errmsg
             if (error == SyncErrors.ServerError)
             {
                 errmsg = qsTr("Server error. We're sorry :(")
@@ -270,24 +275,24 @@ FocusScope {
                 obj.open()
             }
 
-            var component = Dynamic.createComponentOrThrow("/dialogs/ErrorDialog.qml");
+            var component = Dynamic.createComponentOrThrow("/dialogs/ErrorDialog.qml")
 
-            var incubator = component.incubateObject(parent);
+            var incubator = component.incubateObject(parent)
 
             if (incubator.status !== Component.Ready)
             {
                 incubator.onStatusChanged = function(status) {
                     if (status === Component.Ready)
                     {
-                        console.debug("Object " + incubator.object + " is now ready!");
-                        openErrorDialog(incubator.object);
+                        console.debug("Object " + incubator.object + " is now ready!")
+                        openErrorDialog(incubator.object)
                     }
                 }
             }
             else
             {
-                console.debug("Object " + incubator.object + " is ready immediately!");
-                openErrorDialog(incubator.object);
+                console.debug("Object " + incubator.object + " is ready immediately!")
+                openErrorDialog(incubator.object)
             }
         }
     }
@@ -311,7 +316,7 @@ FocusScope {
         onAccepted: {
             if (!attachment.saveTo(fileUrl))
             {
-                console.error("Error while saving file: " + fileUrl);
+                console.error("Error while saving file: " + fileUrl)
             }
         }
     }
@@ -375,9 +380,9 @@ FocusScope {
     function openConversation(convId) {
         var conv = Inbox.conversations.get(convId)
 
-        if (!conv) console.error("conv is null in inbox.openConversation() for conversation: " + convId);
-        if (!conv.messages) console.error("conv.messages is null in inbox.openConversation() for conversation: " + convId);
-        if (!conv.draft) console.error("conv.draft is null in inbox.openConversation() for conversation: " + convId);
+        if (!conv) console.error("conv is null in inbox.openConversation() for conversation: " + convId)
+        if (!conv.messages) console.error("conv.messages is null in inbox.openConversation() for conversation: " + convId)
+        if (!conv.draft) console.error("conv.draft is null in inbox.openConversation() for conversation: " + convId)
 
         middleColumn.setModel(conv.messages)
         middleColumn.participantsAddresses = conv.participantsAddresses
@@ -443,7 +448,7 @@ FocusScope {
                 property bool minimumWidthSet: false
 
                 Layout.minimumWidth: minimumWidthSet ? 150 : 0
-                visible: inbox.state == "reply" || width > 0
+                visible: inboxScreen.state == "reply" || width > 0
 
                 function updateWidthFromConstrains() {
                     if (splitView.width < middleColumn.minimumWidth + splitView.handleWidth + width) {
@@ -473,12 +478,12 @@ FocusScope {
     Overlay {
         id: overlayTodoMode
         anchors.centerIn: parent
-        text: qsTr("Todo\nmode");
+        text: qsTr("Todo\nmode")
     }
 
     Overlay {
         id: overlaySoundActive
         anchors.centerIn: parent
-        text: qsTr("Sound\nactive");
+        text: qsTr("Sound\nactive")
     }
 }

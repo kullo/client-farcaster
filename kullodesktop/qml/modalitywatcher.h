@@ -18,7 +18,7 @@ public:
     Q_INVOKABLE void closed(QString objectName);
 
 private:
-    boost::optional<QString> currentObject_;
+    boost::optional<QString> currentObjectName_;
 };
 
 }

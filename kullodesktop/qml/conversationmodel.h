@@ -47,6 +47,12 @@ public:
     Q_PROPERTY(qint32 countUndone READ countUndone NOTIFY countUndoneChanged)
     qint32 countUndone() const;
 
+    Q_PROPERTY(qint32 countIncoming READ countIncoming NOTIFY countIncomingChanged)
+    qint32 countIncoming() const;
+
+    Q_PROPERTY(qint32 countOutgoing READ countOutgoing NOTIFY countOutgoingChanged)
+    qint32 countOutgoing() const;
+
     Q_PROPERTY(QDateTime latestMessageTimestamp READ latestMessageTimestamp NOTIFY latestMessageTimestampChanged)
     QDateTime latestMessageTimestamp() const;
 
@@ -75,6 +81,8 @@ signals:
     void countChanged();
     void countUnreadChanged();
     void countUndoneChanged();
+    void countIncomingChanged();
+    void countOutgoingChanged();
     void draftEmptyChanged();
 
     // unused signals

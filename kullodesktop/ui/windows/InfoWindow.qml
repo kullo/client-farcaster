@@ -12,14 +12,27 @@ import "../js/shortcut.js" as SC
 
 NativeModalWindow {
     id: root
-    width: 300
-    height: 450
     title: qsTr("Info")
     objectName: "InfoWindow"
 
     signal downloadUpdate()
 
-    onVisibleChanged: if (visible) mainItem.forceActiveFocus()
+    /* private */
+    property int _DEFAULT_WINDOW_WIDTH: 300
+    property int _DEFAULT_WINDOW_HEIGHT: 450
+
+    width: _DEFAULT_WINDOW_WIDTH
+    height: _DEFAULT_WINDOW_HEIGHT
+
+    onVisibleChanged: {
+        if (visible) {
+            // reset window dimensions
+            root.width = _DEFAULT_WINDOW_WIDTH
+            root.height = _DEFAULT_WINDOW_HEIGHT
+
+            mainItem.forceActiveFocus()
+        }
+    }
 
     // Main Qt Quick Item required for attached property `Keys`
     Item {

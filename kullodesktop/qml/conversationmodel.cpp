@@ -94,16 +94,30 @@ qint32 ConversationModel::count() const
 
 qint32 ConversationModel::countUnread() const
 {
-    auto unread = session_->conversations()->unreadMessages(convId_);
-    kulloAssert(unread <= 1000000);
-    return unread;
+    auto count = session_->conversations()->unreadMessages(convId_);
+    kulloAssert(count >= 0 && count <= 1000000);
+    return count;
 }
 
 qint32 ConversationModel::countUndone() const
 {
-    auto undone = session_->conversations()->undoneMessages(convId_);
-    kulloAssert(undone <= 1000000);
-    return undone;
+    auto count = session_->conversations()->undoneMessages(convId_);
+    kulloAssert(count >= 0 && count <= 1000000);
+    return count;
+}
+
+qint32 ConversationModel::countIncoming() const
+{
+    auto count = session_->conversations()->incomingMessages(convId_);
+    kulloAssert(count >= 0 && count <= 1000000);
+    return count;
+}
+
+qint32 ConversationModel::countOutgoing() const
+{
+    auto count = session_->conversations()->outgoingMessages(convId_);
+    kulloAssert(count >= 0 && count <= 1000000);
+    return count;
 }
 
 QDateTime ConversationModel::latestMessageTimestamp() const

@@ -6,6 +6,7 @@
 #include <QPen>
 
 namespace KulloDesktop {
+namespace QmlComponents {
 namespace Visuals {
 
 class Hint : public QQuickPaintedItem
@@ -62,5 +63,6 @@ private slots:
     void onAppearanceChanged();
 };
 
+}
 }
 }

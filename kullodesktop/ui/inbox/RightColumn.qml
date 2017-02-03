@@ -77,7 +77,7 @@ FocusScope {
                 source: "/resources/scalable/close_b.svg"
                 paddingH: 8
             }
-            onClicked: inbox.closeAnswer()
+            onClicked: inboxScreen.closeAnswer()
         }
     }
 

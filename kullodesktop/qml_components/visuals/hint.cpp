@@ -2,6 +2,7 @@
 #include "hint.h"
 
 namespace KulloDesktop {
+namespace QmlComponents {
 namespace Visuals {
 
 Hint::Hint(QQuickItem *parent) :
@@ -171,5 +172,6 @@ void Hint::onAppearanceChanged()
     update(QRect(0, 0, new_width, new_height));
 }
 
+}
 }
 }

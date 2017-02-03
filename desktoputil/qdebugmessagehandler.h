@@ -3,8 +3,7 @@
 
 #include <QMessageLogContext>
 
-namespace KulloDesktop {
-namespace Util {
+namespace DesktopUtil {
 
 class QDebugMessageHandler
 {
@@ -12,5 +11,4 @@ public:
     static void handler(QtMsgType type, const QMessageLogContext& context, const QString &message);
 };
 
-}
 }

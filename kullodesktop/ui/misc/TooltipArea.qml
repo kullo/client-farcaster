@@ -4,13 +4,14 @@ import QtQuick.Controls.Private 1.0
 
 // TooltipArea.qml
 // This file contains private Qt Quick modules that might change in future versions of Qt
-// Tested on: Qt 5.4.1
+// Tested on: Qt 5.4.1 - Qt 5.6.1
 
 MouseArea {
     property string text: ""
 
     id: root
     anchors.fill: parent
+    acceptedButtons: Qt.NoButton
     hoverEnabled: root.enabled
 
     onExited: Tooltip.hideText()

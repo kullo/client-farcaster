@@ -36,14 +36,14 @@ Rectangle {
 
         IconButton {
             source: "/resources/scalable/logout2_b.svg"
-            onClicked: inbox.logout()
+            onClicked: inboxScreen.logout()
             tooltip: qsTr("Go to start screen")
                      + " (%1)".arg(SC.nameOfCtrlAndKey("O", Os.osx))
         }
 
         IconButton {
             source: "/resources/scalable/settings2_b.svg"
-            onClicked: inbox.showUserSettingsWindow()
+            onClicked: inboxScreen.showUserSettingsWindow()
             tooltip: qsTr("Show settings")
                      + " (%1)".arg(SC.nameOfCtrlAndKey("G", Os.osx))
         }
@@ -52,22 +52,22 @@ Rectangle {
             source: InnerApplication.deviceSettings.muted
                     ? "/resources/scalable/sound_muted_b.svg"
                     : "/resources/scalable/sound_unmuted_b.svg"
-            onClicked: inbox.toggleSoundActive()
+            onClicked: inboxScreen.toggleSoundActive()
             tooltip: InnerApplication.deviceSettings.muted ? qsTr("Unmute") : qsTr("Mute")
         }
 
         IconButton {
-            source: inbox.todoMode
+            source: inboxScreen.todoMode
                     ? "/resources/scalable/todo_active_b.svg"
                     : "/resources/scalable/todo_b.svg"
-            onClicked: inbox.toggleTodoMode()
-            tooltip: (inbox.todoMode ? qsTr("Switch todo mode off") : qsTr("Switch todo mode on"))
+            onClicked: inboxScreen.toggleTodoMode()
+            tooltip: (inboxScreen.todoMode ? qsTr("Switch todo mode off") : qsTr("Switch todo mode on"))
                      + " (%1)".arg(SC.nameOfCtrlAndKey("T", Os.osx))
         }
 
         IconButton {
             source: "/resources/scalable/info_b.svg"
-            onClicked: inbox.showInfoWindow()
+            onClicked: inboxScreen.showInfoWindow()
             tooltip: qsTr("Show info window")
         }
     }
