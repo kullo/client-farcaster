@@ -250,13 +250,12 @@ BaseDialog {
                                ? changelogTextbox.anchors.topMargin + changelogTextbox.implicitHeight
                                : 0)
 
-            NativeText {
+            NativeTextWithLinks {
                 id: showDetailsText
-                textFormat: Text.RichText
                 anchors {
                     left: parent.left
                 }
-                text: "<a href='showUpdateDetails://' style='color: %1'>".arg(color)
+                html: "<a href='showUpdateDetails://' style='color: %1'>".arg(color)
                       + (changelogTextbox.visible ? qsTr("Hide details") : qsTr("Show details"))
                       + "</a>"
                 onLinkActivated: {

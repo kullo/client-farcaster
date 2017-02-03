@@ -10,7 +10,7 @@ namespace Enums {
 
 // This is used as Class.EnumValue in QML (e.g. SyncErrors.Unauthorized),
 // so the enum name is skipped.
-class LocalErrors : public QObject
+class LocalErrorHolder : public QObject
 {
     Q_OBJECT
 
@@ -24,10 +24,10 @@ public:
     Q_ENUM(LocalError)
 
     inline static void registerEnumsInClassForSignalSlot() {
-        qRegisterMetaType<LocalErrors::LocalError>("LocalErrors::LocalError");
+        qRegisterMetaType<LocalErrorHolder::LocalError>("LocalErrorHolder::LocalError");
     }
 
-    inline static LocalErrors::LocalError convert(Kullo::Api::LocalError value)
+    inline static LocalErrorHolder::LocalError convert(Kullo::Api::LocalError value)
     {
         switch (value) {
         case Kullo::Api::LocalError::FileTooBig:

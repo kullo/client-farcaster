@@ -73,6 +73,7 @@
         <file alias="NativeText.qml">ui/native/NativeText.qml</file>
         <file alias="NativeTextEdit.qml">ui/native/NativeTextEdit.qml</file>
         <file alias="NativeTextInput.qml">ui/native/NativeTextInput.qml</file>
+        <file alias="NativeTextWithLinks.qml">ui/native/NativeTextWithLinks.qml</file>
         <file alias="NativeWindow.qml">ui/native/NativeWindow.qml</file>
         <file alias="TextFieldKulloAddress.qml">ui/native/TextFieldKulloAddress.qml</file>
         <file alias="NativeModalWindow.qml">ui/native/NativeModalWindow.qml</file>

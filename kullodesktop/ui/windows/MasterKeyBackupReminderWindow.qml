@@ -181,11 +181,10 @@ NativeModalWindow {
                     }
                 }
 
-                NativeText {
+                NativeTextWithLinks {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: qsTr("<a href='showMasterKey' style='color: %1'>Show MasterKey and print now</a>")
+                    html: qsTr("<a href='showMasterKey' style='color: %1'>Show MasterKey and print now</a>")
                           .arg(color)
-                    textFormat: Text.RichText
                     onLinkActivated: {
                         confirmation.enabled = true
                         root.openMasterKey()

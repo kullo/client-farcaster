@@ -8,7 +8,7 @@
 namespace ApiMirror {
 namespace Enums {
 
-class DraftParts : public QObject
+class DraftPartHolder : public QObject
 {
     Q_OBJECT
 
@@ -22,16 +22,16 @@ public:
 
     inline static void registerEnumsInClassForSignalSlot()
     {
-        qRegisterMetaType<DraftParts::DraftPart>("DraftParts::DraftPart");
+        qRegisterMetaType<DraftPartHolder::DraftPart>("DraftPartHolder::DraftPart");
     }
 
-    inline static DraftParts::DraftPart convert(Kullo::Api::DraftPart value)
+    inline static DraftPartHolder::DraftPart convert(Kullo::Api::DraftPart value)
     {
         switch (value) {
         case Kullo::Api::DraftPart::Content:
-            return DraftParts::Content;
+            return DraftPartHolder::Content;
         case Kullo::Api::DraftPart::Attachments:
-            return DraftParts::Attachments;
+            return DraftPartHolder::Attachments;
         }
     }
 };

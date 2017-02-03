@@ -113,25 +113,21 @@ NativeModalWindow {
                      onClicked: root.downloadUpdate()
                 }
 
-                NativeText {
+                NativeTextWithLinks {
                     anchors {
                         left: parent.left
                         right: parent.right
                     }
-                    textFormat: Text.RichText
-                    text: qsTr("Or visit our <a href='%1' style='color: %2'>download website</a>.")
+                    html: qsTr("Or visit our <a href='%1'>download website</a>.")
                           .arg(KulloVersionChecker.updateUrl)
-                          .arg(color)
-                    onLinkActivated: Qt.openUrlExternally(link)
                 }
             }
 
-            NativeText {
+            NativeTextWithLinks {
                 anchors {
                     left: parent.left
                     right: parent.right
                 }
-                textFormat: Text.RichText
                 function composeVersions()
                 {
                     var out = ""
@@ -144,26 +140,21 @@ NativeModalWindow {
                     out += qsTr(" and ") + list[list.length-1]
                     return out
                 }
-                text: qsTr("Kullo is proudly based on open source software.") + " "
+                html: qsTr("Kullo is proudly based on open source software.") + " "
                       + qsTr("Kudos to %1.").arg(composeVersions())
                       + " "
-                      + qsTr("Read all <a href='%1' style='color: %2'>licenses</a>.")
+                      + qsTr("Read all <a href='%1'>licenses</a>.")
                         .arg(Utils.makeFileUrl("assets/licenses.html"))
-                        .arg(color)
-                onLinkActivated: Qt.openUrlExternally(link)
             }
 
-            NativeText {
+            NativeTextWithLinks {
                 anchors {
                     left: parent.left
                     right: parent.right
                 }
-                textFormat: Text.RichText
-                text: qsTr("Kullo for %1 is provided by Kullo&nbsp;GmbH").arg(Os.familyPretty)
+                html: qsTr("Kullo for %1 is provided by Kullo&nbsp;GmbH").arg(Os.familyPretty)
                       + ": "
-                      + "<a href='https://www.kullo.net/' style='color: %1'>www.kullo.net</a>"
-                      .arg(color)
-                onLinkActivated: Qt.openUrlExternally(link)
+                      + "<a href='https://www.kullo.net/'>www.kullo.net</a>"
             }
         }
 

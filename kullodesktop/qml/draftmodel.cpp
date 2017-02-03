@@ -35,7 +35,6 @@ DraftModel::DraftModel(
     , session_(session)
     , convId_(convId)
     , attachments_(new DraftAttachmentListModel(session_, eventDispatcher, convId_))
-    , draftEmptyCache_(empty())
 {
     kulloAssert(session_);
 
@@ -153,15 +152,13 @@ void DraftModel::addAttachment(const QString &localFile)
             this, [&] (Kullo::id_type convId, const std::string &path, Kullo::Api::LocalError error) {
         K_UNUSED(convId);
         QString filename = QFileInfo(QString::fromStdString(path)).fileName();
-        emit addingAttachmentError(ApiMirror::Enums::LocalErrors::convert(error), filename);
+        emit addingAttachmentError(ApiMirror::Enums::LocalErrorHolder::convert(error), filename);
     });
     addAttachmentTask_ = session_->draftAttachments()->addAsync(
                 convId_,
                 localFile.toStdString(),
                 mimeType.toStdString(),
                 listener);
-
-    //TODO handle DraftAttachmentsAddListener::error
 }
 
 std::mutex &DraftModel::addingAttachmentsInProgress()
@@ -172,7 +169,7 @@ std::mutex &DraftModel::addingAttachmentsInProgress()
 void DraftModel::onDraftEmptyPotentiallyChanged()
 {
     bool draftEmptyCurrent = empty();
-    if (draftEmptyCache_ != draftEmptyCurrent)
+    if (!draftEmptyCache_ || *draftEmptyCache_ != draftEmptyCurrent)
     {
         draftEmptyCache_ = draftEmptyCurrent;
         emit emptyChanged();

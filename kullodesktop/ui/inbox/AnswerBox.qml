@@ -41,10 +41,10 @@ FocusScope {
         onAddingAttachmentsError: {
             addAttachmentErrorDialog.title = qsTr("Adding attachment failed")
             switch (error) {
-            case LocalErrors.FileTooBig:
+            case LocalError.FileTooBig:
                 addAttachmentErrorDialog.text = qsTr("The file %1 is too big to be added to the draft").arg(filename)
                 break;
-            case LocalErrors.Filesystem:
+            case LocalError.Filesystem:
                 addAttachmentErrorDialog.text = qsTr("Error reading the file %1").arg(filename)
                 break;
             default:

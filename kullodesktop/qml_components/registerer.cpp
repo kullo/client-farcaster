@@ -26,6 +26,10 @@
 namespace KulloDesktop {
 namespace QmlComponents {
 
+namespace {
+const QString TERMS_URL = QStringLiteral("https://www.kullo.net/agb/?version=1");
+}
+
 void ChallengeTypes::init()
 {
     qRegisterMetaType<ChallengeTypes::ChallengeType>("ChallengeTypes::ChallengeType");
@@ -167,6 +171,11 @@ void Registerer::setLocked(bool locked)
     emit lockedChanged();
 }
 
+QString Registerer::termsUrl() const
+{
+    return TERMS_URL;
+}
+
 void Registerer::generateKeys()
 {
     // generateKeys() must be invoked only once per RegistererModel instance
@@ -203,6 +212,7 @@ void Registerer::registerAccount(const QString &addr, const QString &challengeAn
         }
         taskRegister_ = registration_->registerAccountAsync(
                     address,
+                    TERMS_URL.toStdString(),
                     lastChallenge_,
                     answer,
                     listenerRegistration_);

@@ -8,7 +8,7 @@
 namespace ApiMirror {
 namespace Enums {
 
-class SyncPhases : public QObject
+class SyncPhaseHolder : public QObject
 {
     Q_OBJECT
 
@@ -24,10 +24,10 @@ public:
     Q_ENUM(SyncPhase)
 
     inline static void registerEnumsInClassForSignalSlot() {
-        qRegisterMetaType<SyncPhases::SyncPhase>("SyncPhases::SyncPhase");
+        qRegisterMetaType<SyncPhaseHolder::SyncPhase>("SyncPhaseHolder::SyncPhase");
     }
 
-    inline static SyncPhases::SyncPhase convert(Kullo::Api::SyncPhase value) {
+    inline static SyncPhaseHolder::SyncPhase convert(Kullo::Api::SyncPhase value) {
         switch (value) {
         case Kullo::Api::SyncPhase::Keys:
             return SyncPhase::Keys;

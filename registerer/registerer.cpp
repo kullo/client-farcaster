@@ -98,8 +98,12 @@ std::shared_ptr<Kullo::Api::MasterKey> Registerer::run(
     auto registration = genKeysL->registration();
     kulloAssert(registration);
     auto regAccL = std::make_shared<RegAccListener>();
-    registration->
-            registerAccountAsync(address, nullptr, "", regAccL)->
+    registration->registerAccountAsync(
+                address,
+                "", // terms
+                nullptr, // challenge
+                "", // challenge answer
+                regAccL)->
             waitUntilDone();
 
     return regAccL->masterKey();

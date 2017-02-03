@@ -5,7 +5,7 @@
 #include <deque>
 #include <mutex>
 
-#include <apimirror/enums/LocalErrors.h>
+#include <apimirror/enums/LocalErrorHolder.h>
 #include <boost/optional.hpp>
 #include <QObject>
 #include <QUrl>
@@ -40,7 +40,7 @@ signals:
     void targetChanged();
     void addingAttachmentsStarted();
     void addingAttachmentsError(
-            ApiMirror::Enums::LocalErrors::LocalError error,
+            ApiMirror::Enums::LocalErrorHolder::LocalError error,
             const QString &filename);
     void addingAttachmentsFinished();
 
@@ -51,7 +51,7 @@ signals:
 private slots:
     void onAddingAttachmentProgressed(int64_t bytesProcessed, int64_t bytesTotal);
     void onAddingAttachmentError(
-            ApiMirror::Enums::LocalErrors::LocalError error,
+            ApiMirror::Enums::LocalErrorHolder::LocalError error,
             const QString &filename);
     void onAddingAttachmentFinished();
 

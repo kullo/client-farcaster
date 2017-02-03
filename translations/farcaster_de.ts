@@ -75,6 +75,10 @@
         <source>Please enter the reset code for address &apos;%1&apos;.</source>
         <translation>Bitte trage den Reset-Code für die Adresse &apos;%1&apos; ein.</translation>
     </message>
+    <message>
+        <source>I accept the &lt;a href=&apos;%1&apos;&gt;terms of service&lt;/a&gt;</source>
+        <translation>Ich akzeptiere die &lt;a href=&apos;%1&apos;&gt;Allgemeinen Geschäftsbedingungen&lt;/a&gt;</translation>
+    </message>
 </context>
 <context>
     <name>AnswerBox</name>
@@ -820,12 +824,12 @@ aktiv</translation>
         <translation>Kullo baut auf Open-Source-Software auf.</translation>
     </message>
     <message>
-        <source>Or visit our &lt;a href=&apos;%1&apos; style=&apos;color: %2&apos;&gt;download website&lt;/a&gt;.</source>
-        <translation>Oder besuche unsere &lt;a href=&apos;%1&apos; style=&apos;color: %2&apos;&gt;Download-Website&lt;/a&gt;.</translation>
+        <source>Or visit our &lt;a href=&apos;%1&apos;&gt;download website&lt;/a&gt;.</source>
+        <translation>Oder besuche unsere &lt;a href=&apos;%1&apos;&gt;Download-Website&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>Read all &lt;a href=&apos;%1&apos; style=&apos;color: %2&apos;&gt;licenses&lt;/a&gt;.</source>
-        <translation>Lies alles über &lt;a href=&apos;%1&apos; style=&apos;color: %2&apos;&gt;Lizenzen&lt;/a&gt;.</translation>
+        <source>Read all &lt;a href=&apos;%1&apos;&gt;licenses&lt;/a&gt;.</source>
+        <translation>Lies alles über &lt;a href=&apos;%1&apos;&gt;Lizenzen&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>Kullo for %1 is provided by Kullo&amp;nbsp;GmbH</source>

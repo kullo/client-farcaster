@@ -8,7 +8,7 @@
 #include <kulloclient/api/SyncerListener.h>
 #include <kulloclient/api/SyncProgress.h>
 
-#include "apimirror/enums/DraftParts.h"
+#include "apimirror/enums/DraftPartHolder.h"
 
 namespace ApiMirror {
 
@@ -35,7 +35,7 @@ public:
             int64_t currentSize, int64_t maxSize) override
     {
         emit _draftPartTooBig(convId,
-                              ApiMirror::Enums::DraftParts::convert(part),
+                              ApiMirror::Enums::DraftPartHolder::convert(part),
                               currentSize, maxSize);
     }
 
@@ -57,7 +57,8 @@ public:
 signals:
     void _started();
     void _draftPartTooBig(
-            Kullo::id_type convId, ApiMirror::Enums::DraftParts::DraftPart part,
+            Kullo::id_type convId,
+            ApiMirror::Enums::DraftPartHolder::DraftPart part,
             int64_t currentSize, int64_t maxSize);
     void _progressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress);
     void _finished();

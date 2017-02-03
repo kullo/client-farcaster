@@ -214,7 +214,7 @@ FocusScope {
             syncingBanner.reset()
         }
         onSyncProgressed: {
-            if (phase === SyncPhases.IncomingMessages
+            if (phase === SyncPhase.IncomingMessages
                     && incomingMessagesTotal >= 5) {
                 syncingBanner.text = qsTr("Syncing messages")
                 var processRatio = incomingMessagesTotal > 0
@@ -222,7 +222,7 @@ FocusScope {
                     : 0
                 syncingBanner.progressIndeterminate = processRatio < 0.1
                 syncingBanner.progressValue = processRatio
-            } else if (phase === SyncPhases.OutgoingMessages
+            } else if (phase === SyncPhase.OutgoingMessages
                        && outgoingMessagesTotalBytes > 0) {
                 syncingBanner.text = qsTr("Sending")
                 var uploadRatio = outgoingMessagesTotalBytes > 0
@@ -230,7 +230,7 @@ FocusScope {
                     : 0
                 syncingBanner.progressIndeterminate = uploadRatio < 0.1
                 syncingBanner.progressValue = uploadRatio
-            } else if (phase === SyncPhases.IncomingAttachments
+            } else if (phase === SyncPhase.IncomingAttachments
                        && incomingAttachmentsTotalBytes > 0) {
                 syncingBanner.text = qsTr("Downloading attachments")
                 var downloadRatio = incomingAttachmentsTotalBytes > 0
@@ -261,27 +261,25 @@ FocusScope {
         }
         onSyncError: {
             var errmsg
-            if (error == SyncErrors.ServerError)
-            {
+
+            switch(error) {
+            case NetworkError.Server:
                 errmsg = qsTr("Server error. We're sorry :(")
-            }
-            else if (error == SyncErrors.NetworkError)
-            {
+                break;
+            case NetworkError.Connection:
                 errmsg = qsTr("Couldn't connect to server. Are you online?")
-            }
-            else if (error == SyncErrors.Unauthorized)
-            {
+                break;
+            case NetworkError.Unauthorized:
                 errmsg = qsTr("Login failed.")
-            }
-            else if (error == SyncErrors.UnknownError)
-            {
+                break;
+            case NetworkError.Unknown:
                 errmsg = qsTr("Unknown error while syncing.")
+                break;
+            default:
+                console.error("Unhandled value for error: '" + error + "'")
             }
-            else
-            {
-                console.error("Unknown value for error: '" + error + "'")
-            }
-            syncErrorBanner.show(errmsg)
+
+            if (errmsg) syncErrorBanner.show(errmsg)
         }
         onClientTooOld: {
             clientTooOldBanner.show()
@@ -292,10 +290,10 @@ FocusScope {
             var openErrorDialog = function(obj) {
                 obj.title = qsTr("Message not sent")
                 switch (part) {
-                case DraftParts.Content:
+                case DraftPart.Content:
                     obj.text = qsTr("Message could not be sent because the text is too long.")
                     break;
-                case DraftParts.Attachments:
+                case DraftPart.Attachments:
                     obj.text = qsTr("Message could not be sent because attachments are too big.")
                     break;
                 default:

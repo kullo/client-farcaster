@@ -7,7 +7,8 @@
 #include <apimirror/Client.h>
 #include <apimirror/eventdispatcher.h>
 #include <apimirror/SyncerListener.h>
-#include <apimirror/enums/SyncPhases.h>
+#include <apimirror/enums/NetworkErrorHolder.h>
+#include <apimirror/enums/SyncPhaseHolder.h>
 #include <kulloclient/kulloclient-forwards.h>
 #include <kulloclient/api/LocalError.h>
 #include <kulloclient/api/SyncProgress.h>
@@ -17,25 +18,6 @@
 
 namespace KulloDesktop {
 namespace Qml {
-
-// This is used as Class.EnumValue in QML (e.g. SyncErrors.Unauthorized),
-// so the enum name is skipped.
-class SyncErrors : public QObject
-{
-    Q_OBJECT
-
-public:
-    enum class SyncError
-    {
-        ServerError,
-        NetworkError,
-        Unauthorized,
-        UnknownError
-    };
-    Q_ENUM(SyncError)
-
-    static void registerEnumsInClassForSignalSlot();
-};
 
 class Inbox : public QObject
 {
@@ -87,11 +69,11 @@ signals:
     void unreadMessagesCountChanged(int count);
     void draftPartTooBig(
             Kullo::id_type conversationId,
-            ApiMirror::Enums::DraftParts::DraftPart part,
+            ApiMirror::Enums::DraftPartHolder::DraftPart part,
             int64_t currentSize, int64_t maxSize);
     void syncStarted();
     void syncProgressed(
-            ApiMirror::Enums::SyncPhases::SyncPhase phase,
+            ApiMirror::Enums::SyncPhaseHolder::SyncPhase phase,
             int incomingMessagesProcessed,
             int incomingMessagesTotal,
             int incomingMessagesNew,
@@ -108,7 +90,7 @@ signals:
                       int countMessagesNewUnread = 0,
                       int countMessagesModified = 0,
                       int countMessagesDeleted = 0);
-    void syncError(SyncErrors::SyncError error);
+    void syncError(ApiMirror::Enums::NetworkErrorHolder::NetworkError error);
     void clientTooOld();
     void openConversation(Kullo::id_type conversationId);
 

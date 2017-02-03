@@ -42,11 +42,6 @@
 namespace KulloDesktop {
 namespace Qml {
 
-void SyncErrors::registerEnumsInClassForSignalSlot()
-{
-    qRegisterMetaType<SyncErrors::SyncError>("SyncErrors::SyncError");
-}
-
 Inbox::Inbox(InnerApplication &innerApplication,
              ApiMirror::Client &client,
              Kullo::Util::StlTaskRunner *taskRunner,
@@ -58,8 +53,6 @@ Inbox::Inbox(InnerApplication &innerApplication,
     , syncerListener_(std::make_shared<ApiMirror::SyncerListener>())
     , client_(client)
 {
-    SyncErrors::registerEnumsInClassForSignalSlot();
-
     QString activeUser = innerApplication_.deviceSettings()->activeUser();
     if (!activeUser.isEmpty())  // load UserSettings if we have an active user
     {
@@ -328,7 +321,7 @@ void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &pr
 {
     latestSyncProgress_ = progress;
     emit syncProgressed(
-                ApiMirror::Enums::SyncPhases::convert(progress->phase),
+                ApiMirror::Enums::SyncPhaseHolder::convert(progress->phase),
                 progress->incomingMessagesProcessed,
                 progress->incomingMessagesTotal,
                 progress->incomingMessagesNew,
@@ -366,16 +359,16 @@ void Inbox::onSyncError(Kullo::Api::NetworkError error)
         emit clientTooOld();
         break;
     case NetworkError::Unauthorized:
-        emit syncError(SyncErrors::SyncError::Unauthorized);
+        emit syncError(ApiMirror::Enums::NetworkErrorHolder::convert(error));
         break;
     case NetworkError::Server:
-        emit syncError(SyncErrors::SyncError::ServerError);
+        emit syncError(ApiMirror::Enums::NetworkErrorHolder::convert(error));
         break;
     case NetworkError::Connection:
-        emit syncError(SyncErrors::SyncError::NetworkError);
+        emit syncError(ApiMirror::Enums::NetworkErrorHolder::convert(error));
         break;
     case NetworkError::Unknown:
-        emit syncError(SyncErrors::SyncError::UnknownError);
+        emit syncError(ApiMirror::Enums::NetworkErrorHolder::convert(error));
         if (Applications::KulloApplication::TEST_MODE)
         {
             std::terminate();

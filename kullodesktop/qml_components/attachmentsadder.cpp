@@ -105,7 +105,9 @@ void AttachmentsAdder::onAddingAttachmentProgressed(int64_t bytesProcessed, int6
     }
 }
 
-void AttachmentsAdder::onAddingAttachmentError(ApiMirror::Enums::LocalErrors::LocalError error, const QString &filename)
+void AttachmentsAdder::onAddingAttachmentError(
+        ApiMirror::Enums::LocalErrorHolder::LocalError error,
+        const QString &filename)
 {
     doneAddingAttachments();
     emit addingAttachmentsError(error, filename);

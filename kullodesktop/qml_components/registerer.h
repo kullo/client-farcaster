@@ -48,6 +48,9 @@ public:
     bool locked() const;
     void setLocked(bool locked);
 
+    Q_PROPERTY(QString termsUrl READ termsUrl NOTIFY termsUrlChanged)
+    QString termsUrl() const;
+
     Q_INVOKABLE void generateKeys();
     Q_INVOKABLE void registerAccount(const QString &addr, const QString &challengeAnswer);
 
@@ -55,6 +58,7 @@ signals:
     void applicationChanged();
     void clientChanged();
     void lockedChanged();
+    void termsUrlChanged();
     void keysGenerationProgressChanged(int percent);
     void invalidKulloAddress(const QString &address);
     void addressExists(const QString &address);

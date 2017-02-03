@@ -34,6 +34,7 @@ void QDebugMessageHandler::handler(QtMsgType type, const QMessageLogContext& con
                 QStringLiteral("File not found"),
                 QStringLiteral("failed to load component"),
                 QStringLiteral("is not installed"),
+                QStringLiteral("Cannot assign to non-existent property"),
         };
 
         for (const auto &s : fatalWarnings)

@@ -4,9 +4,10 @@
 #include <QQmlApplicationEngine>
 
 #include <apimirror/Client.h>
-#include <apimirror/enums/DraftParts.h>
-#include <apimirror/enums/LocalErrors.h>
-#include <apimirror/enums/SyncPhases.h>
+#include <apimirror/enums/DraftPartHolder.h>
+#include <apimirror/enums/LocalErrorHolder.h>
+#include <apimirror/enums/NetworkErrorHolder.h>
+#include <apimirror/enums/SyncPhaseHolder.h>
 
 #include "kullodesktop/imageproviders/attachmentpreviewprovider.h"
 #include "kullodesktop/imageproviders/conversationavatarprovider.h"
@@ -75,17 +76,18 @@ void QmlSetup::setupTypes()
     qmlRegisterType<Qml::MessageListModel>("Kullo", 1, 0, "MessageList");
     qmlRegisterType<Qml::MessageModel>("Kullo", 1, 0, "Message");
     qmlRegisterType<Qml::Sender>("Kullo", 1, 0, "Sender");
-    qmlRegisterType<Qml::SyncErrors>("Kullo", 1, 0, "SyncErrors");
 
     qmlRegisterUncreatableType<Qml::UserSettings>("Kullo", 1, 0, "UserSettings", "Do not create in QML");
 
     // Enums
-    qmlRegisterType<ApiMirror::Enums::DraftParts>("Kullo", 1, 0, "DraftParts");
-    qmlRegisterType<ApiMirror::Enums::LocalErrors>("Kullo", 1, 0, "LocalErrors");
-    qmlRegisterType<ApiMirror::Enums::SyncPhases>("Kullo", 1, 0, "SyncPhases");
-    ApiMirror::Enums::DraftParts::registerEnumsInClassForSignalSlot();
-    ApiMirror::Enums::LocalErrors::registerEnumsInClassForSignalSlot();
-    ApiMirror::Enums::SyncPhases::registerEnumsInClassForSignalSlot();
+    qmlRegisterType<ApiMirror::Enums::DraftPartHolder>("Kullo", 1, 0, "DraftPart");
+    qmlRegisterType<ApiMirror::Enums::LocalErrorHolder>("Kullo", 1, 0, "LocalError");
+    qmlRegisterType<ApiMirror::Enums::NetworkErrorHolder>("Kullo", 1, 0, "NetworkError");
+    qmlRegisterType<ApiMirror::Enums::SyncPhaseHolder>("Kullo", 1, 0, "SyncPhase");
+    ApiMirror::Enums::DraftPartHolder::registerEnumsInClassForSignalSlot();
+    ApiMirror::Enums::LocalErrorHolder::registerEnumsInClassForSignalSlot();
+    ApiMirror::Enums::NetworkErrorHolder::registerEnumsInClassForSignalSlot();
+    ApiMirror::Enums::SyncPhaseHolder::registerEnumsInClassForSignalSlot();
 
     // Registered as global objects QQmlContext::setContextProperty()
     // Use qmlRegisterType() with no arguments because "Instances of this

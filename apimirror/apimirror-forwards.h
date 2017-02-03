@@ -3,11 +3,12 @@
 
 namespace ApiMirror {
     namespace Enums {
-        // We cannot forward declare inner classes like LocalErrors::LocalError here:
+        // We cannot forward declare inner classes like LocalErrorHolder::LocalError here:
         // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0289r0.pdf
-        class DraftParts;
-        class LocalErrors;
-        class SyncPhases;
+        class DraftPartHolder;
+        class LocalErrorHolder;
+        class NetworkErrorHolder;
+        class SyncPhaseHolder;
     }
 
     class Client;

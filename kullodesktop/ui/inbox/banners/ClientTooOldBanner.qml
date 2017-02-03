@@ -24,7 +24,7 @@ Rectangle {
 
     y: _showBanner ? -radius : -height
 
-    NativeText {
+    NativeTextWithLinks {
         id: syncingText
         anchors {
             top: parent.top
@@ -37,14 +37,11 @@ Rectangle {
         }
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         color: Style.errorBannerTextColor
-        textFormat: Text.RichText
-
-        text: qsTr("This software is too old to sync with the server.") + " " +
+        html: qsTr("This software is too old to sync with the server.") + " " +
               qsTr("Please download the current version from " +
                    "<a style='color: %1' href='%2'>kullo.net/download</a>")
               .arg(Style.errorBannerTextColor)
               .arg(KulloVersionChecker.updateUrl)
-        onLinkActivated: Qt.openUrlExternally(link)
     }
 
     Behavior on y {

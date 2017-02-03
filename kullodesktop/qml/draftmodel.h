@@ -4,8 +4,9 @@
 #include <memory>
 #include <mutex>
 #include <QObject>
+#include <boost/optional.hpp>
 
-#include <apimirror/enums/LocalErrors.h>
+#include <apimirror/enums/LocalErrorHolder.h>
 #include <apimirror/eventdispatcher.h>
 #include <kulloclient/types.h>
 #include <kulloclient/api/LocalError.h>
@@ -61,7 +62,7 @@ signals:
     void addingAttachmentProgressed(int64_t bytesProcessed, int64_t bytesTotal);
     void addingAttachmentFinished();
     void addingAttachmentError(
-            ApiMirror::Enums::LocalErrors::LocalError error,
+            ApiMirror::Enums::LocalErrorHolder::LocalError error,
             const QString &filename);
 
     // unused signals
@@ -75,7 +76,7 @@ private:
     std::shared_ptr<Kullo::Api::Session> session_;
     Kullo::id_type convId_ = -1;
     std::unique_ptr<DraftAttachmentListModel> attachments_;
-    bool draftEmptyCache_ = true;
+    boost::optional<bool> draftEmptyCache_;
     std::mutex addingAttachmentsInProgress_;
     std::shared_ptr<Kullo::Api::AsyncTask> addAttachmentTask_;
 };

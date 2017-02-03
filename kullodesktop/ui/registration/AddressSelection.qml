@@ -1,5 +1,6 @@
 /* Copyright 2013–2016 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
+import QtQuick.Controls 1.4
 import Kullo 1.0
 
 import "../"
@@ -51,9 +52,9 @@ FForm {
         }
         onChallengeNeeded: {
             registerer.locked = false
-            challengeBlock.type = type
-            challengeBlock.address = address
-            challengeBlock.text = (type === ChallengeTypes.Reservation
+            blockChallenge.type = type
+            blockChallenge.address = address
+            blockChallenge.text = (type === ChallengeTypes.Reservation
                                    ? qsTr("Please enter the reservation code for address '%1'.").arg(address)
                                    : (type === ChallengeTypes.Code
                                       ? qsTr("Please enter an invite code.")
@@ -63,9 +64,9 @@ FForm {
                                          )
                                       )
                                    )
-            challengeBlock.visible = true
+            blockChallenge.visible = true
 
-            challengeBlock.forceActiveFocus()
+            blockChallenge.forceActiveFocus()
         }
         onSucceeded: {
             registerer.locked = false
@@ -88,12 +89,9 @@ FForm {
     }
 
     onAccepted: {
-        // Hide keys generation text at first interaction
-        // blockKeyGeneration.visible = false
-
         var registrationChallengeAnswer = challengeAnswer.text
         var registrationKulloAddress = usernameInput.text + "#" + domainSelection.domain
-        challengeBlock.reset()
+        blockChallenge.reset()
         errorHintGlobal.text = ""
         errorHintUser.text = ""
         registerer.locked = true
@@ -141,7 +139,7 @@ FForm {
                     font.pointSize: Style.fontSize.registrationKulloAdressUsername
                     onTextChanged: {
                         errorHintUser.text = ""
-                        challengeBlock.reset()
+                        blockChallenge.reset()
                         if (text.substr(-10) === "#kullo.net")
                         {
                             text = text.substr(0, text.length-10);
@@ -215,15 +213,15 @@ FForm {
         }
 
         FocusScope {
-            id: challengeBlock
+            id: blockChallenge
             property int type: ChallengeTypes.None
             property string address
             property alias text: challengeText.text
 
             function reset() {
-                challengeBlock.visible = false
-                challengeBlock.address = ""
-                challengeBlock.text = ""
+                blockChallenge.visible = false
+                blockChallenge.address = ""
+                blockChallenge.text = ""
 
                 challengeAnswer.text = ""
             }
@@ -259,17 +257,43 @@ FForm {
                     }
                     focus: true
                     font.pointSize: Style.fontSize.registrationChallengeAnswerInput
-                    placeholderText: (challengeBlock.type === ChallengeTypes.Reservation
+                    placeholderText: (blockChallenge.type === ChallengeTypes.Reservation
                                       ? qsTr("Reservation code")
-                                      : (challengeBlock.type === ChallengeTypes.Code
+                                      : (blockChallenge.type === ChallengeTypes.Code
                                          ? qsTr("Invite code")
-                                         : (challengeBlock.type === ChallengeTypes.Reset
+                                         : (blockChallenge.type === ChallengeTypes.Reset
                                             ? qsTr("Reset code")
                                             : ""
                                             )
                                          )
                                       )
                 }
+            }
+        }
+
+        Item {
+            id: blockTerms
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+            implicitHeight: Math.max(termsAccepted.implicitHeight, termsText.implicitHeight)
+
+            CheckBox {
+                id: termsAccepted
+                anchors {
+                    left: parent.left
+                }
+            }
+
+            NativeTextWithLinks {
+                id: termsText
+                anchors {
+                    left: termsAccepted.right
+                    leftMargin: 5
+                    right: parent.right
+                }
+                html: qsTr("I accept the <a href='%1'>terms of service</a>").arg(registerer.termsUrl)
             }
         }
 
@@ -291,6 +315,7 @@ FForm {
                 FSubmitButton {
                     text: qsTr("Register")
                     enabled: usernameInput.text !== ""
+                             && termsAccepted.checked == true
                              && !registerer.locked
                     style: KulloButtonStyle {}
                 }
