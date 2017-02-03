@@ -6,6 +6,7 @@
 #include <kulloclient/http/ProgressResult.h>
 #include <kulloclient/http/Request.h>
 #include <kulloclient/http/ResponseListener.h>
+#include <kulloclient/http/TransferProgress.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
@@ -28,18 +29,14 @@ public:
     {
     }
 
-    Kullo::Http::ProgressResult progress(
-            int64_t uploadTransferred,
-            int64_t uploadTotal,
-            int64_t downloadTransferred,
-            int64_t downloadTotal)
+    Kullo::Http::ProgressResult progressed(
+            const Kullo::Http::TransferProgress &progress) override
     {
-        K_UNUSED(uploadTransferred);
-        K_UNUSED(uploadTotal);
-        return progressHandler_(downloadTransferred, downloadTotal);
+        return progressHandler_(
+                    progress.downloadTransferred, progress.downloadTotal);
     }
 
-    void dataReceived(const std::vector<uint8_t> &data)
+    void dataReceived(const std::vector<uint8_t> &data) override
     {
         dataReceivedHandler_(data);
     }

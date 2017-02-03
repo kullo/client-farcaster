@@ -22,6 +22,11 @@ public:
         qRegisterMetaType<Kullo::Api::LocalError>("Kullo::Api::LocalError");
     }
 
+    void progressed(int64_t convId, int64_t attId, int64_t bytesProcessed, int64_t bytesTotal) override
+    {
+        emit _progressed(convId, attId, bytesProcessed, bytesTotal);
+    }
+
     void finished(int64_t convId, int64_t attId, const std::string &path) override
     {
         emit _finished(convId, attId, path);
@@ -33,6 +38,7 @@ public:
     }
 
 signals:
+    void _progressed(Kullo::id_type convId, Kullo::id_type attId, int64_t bytesProcessed, int64_t bytesTotal);
     void _finished(Kullo::id_type convId, Kullo::id_type attId, const std::string &path);
     void _error(Kullo::id_type convId, const std::string &path, Kullo::Api::LocalError error);
 };

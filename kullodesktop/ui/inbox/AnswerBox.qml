@@ -23,11 +23,40 @@ FocusScope {
     id: root
     anchors.fill: parent
 
+    ErrorDialog {
+        id: addAttachmentErrorDialog
+    }
+
     AttachmentsAdder {
         id: attachmentsAdder
         target: root.conversation ? root.conversation.draft : null
-        onAddingAttachmentsStarted: workingIndicator.visible = true
-        onAddingAttachmentsFinished: workingIndicator.visible = false
+        onProgressed: {
+            workingIndicator.indeterminate = false
+            workingIndicator.value = percentages
+        }
+        onAddingAttachmentsStarted: {
+            workingIndicator.indeterminate = true
+            workingIndicator.visible = true
+        }
+        onAddingAttachmentsError: {
+            addAttachmentErrorDialog.title = qsTr("Adding attachment failed")
+            switch (error) {
+            case LocalErrors.FileTooBig:
+                addAttachmentErrorDialog.text = qsTr("The file %1 is too big to be added to the draft").arg(filename)
+                break;
+            case LocalErrors.Filesystem:
+                addAttachmentErrorDialog.text = qsTr("Error reading the file %1").arg(filename)
+                break;
+            default:
+                addAttachmentErrorDialog.text = qsTr("Unknown error when adding the file %1").arg(filename)
+            }
+            addAttachmentErrorDialog.open()
+
+            workingIndicator.visible = false
+        }
+        onAddingAttachmentsFinished: {
+            workingIndicator.visible = false
+        }
     }
 
     function addQuoteToAnswer(quoteText) {
@@ -255,19 +284,20 @@ FocusScope {
                         onClicked: fileDialog.openDialog()
                     }
 
-                    AnimatedImage {
+                    CircularProgressBar {
                         id: workingIndicator
+                        property int _padding: 6
                         anchors {
                             top: parent.top
                             right: parent.right
+                            margins: _padding
                         }
-                        width: addAttachmentsButton.width
-                        height: addAttachmentsButton.height
-                        source: "/resources/working-indicator.gif"
-                        fillMode: Image.Pad
-                        verticalAlignment: Image.AlignVCenter
-                        horizontalAlignment: Image.AlignHCenter
+                        width: addAttachmentsButton.width - 2*_padding
+                        height: addAttachmentsButton.height - 2*_padding
+                        color: Style.gray
                         visible: false
+                        minimumValue: 0
+                        maximumValue: 100
                     }
 
                     AdvancedFileOpenDialog {

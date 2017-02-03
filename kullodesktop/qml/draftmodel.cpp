@@ -114,28 +114,6 @@ bool DraftModel::empty() const
     return textEmpty && attachmentsEmpty;
 }
 
-void DraftModel::addAttachment(const QUrl &url)
-{
-    if (!url.isLocalFile())
-    {
-        Log.w() << "Attachment URL " << url << " is not a local file. Skipping.";
-        return;
-    }
-
-    QString localFile = url.toLocalFile();
-    QString mimeType = QMimeDatabase().mimeTypeForFile(localFile).name();
-    Log.i() << "Adding " << localFile << " of type " << mimeType;
-
-    //TODO use the asynchronity to kill AttachmentsAdderModel and call addAsync from the UI thread
-    auto listener = std::make_shared<ApiMirror::DraftAttachmentsAddListener>();
-    session_->draftAttachments()->addAsync(
-                convId_,
-                localFile.toStdString(),
-                mimeType.toStdString(),
-                listener)->waitUntilDone();
-    //TODO handle DraftAttachmentsAddListener::error
-}
-
 void DraftModel::removeAttachment(Kullo::id_type index)
 {
     session_->draftAttachments()->remove(convId_, index);
@@ -155,6 +133,35 @@ void DraftModel::prepareToSend()
         save();
     }
     session_->drafts()->prepareToSend(convId_);
+}
+
+void DraftModel::addAttachment(const QString &localFile)
+{
+    QString mimeType = QMimeDatabase().mimeTypeForFile(localFile).name();
+    Log.i() << "Adding " << localFile << " of type " << mimeType;
+
+    auto listener = std::make_shared<ApiMirror::DraftAttachmentsAddListener>();
+    connect(listener.get(), &ApiMirror::DraftAttachmentsAddListener::_progressed,
+            this, [&] (Kullo::id_type convId, Kullo::id_type attId, int64_t bytesProcessed, int64_t bytesTotal) {
+        K_UNUSED(convId);
+        K_UNUSED(attId);
+        emit addingAttachmentProgressed(bytesProcessed, bytesTotal);
+    });
+    connect(listener.get(), &ApiMirror::DraftAttachmentsAddListener::_finished,
+            this, &DraftModel::addingAttachmentFinished);
+    connect(listener.get(), &ApiMirror::DraftAttachmentsAddListener::_error,
+            this, [&] (Kullo::id_type convId, const std::string &path, Kullo::Api::LocalError error) {
+        K_UNUSED(convId);
+        QString filename = QFileInfo(QString::fromStdString(path)).fileName();
+        emit addingAttachmentError(ApiMirror::Enums::LocalErrors::convert(error), filename);
+    });
+    addAttachmentTask_ = session_->draftAttachments()->addAsync(
+                convId_,
+                localFile.toStdString(),
+                mimeType.toStdString(),
+                listener);
+
+    //TODO handle DraftAttachmentsAddListener::error
 }
 
 std::mutex &DraftModel::addingAttachmentsInProgress()

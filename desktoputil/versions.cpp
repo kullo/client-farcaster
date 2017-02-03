@@ -10,7 +10,7 @@
 
 namespace {
 
-const std::string KULLO_DESKTOP_VERSION = "48.0.0";
+const std::string KULLO_DESKTOP_VERSION = "49.0.0";
 
 bool charCiLess(char c1, char c2)
 {

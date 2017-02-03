@@ -45,7 +45,7 @@ QtObject {
     property string buttonHoverColor: "#22ffffff"
     property string buttonTextColor: "#ffffff"
 
-    property color bannerBackground: "#bbffffff"
+    property color bannerBackground: "#ddffffff"
     property int bannerBorderRadius: 7
     property color errorBannerBackground: red
     property color errorBannerTextColor: "#ffffff"

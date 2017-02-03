@@ -20,6 +20,11 @@ public:
         qRegisterMetaType<Kullo::Api::LocalError>("Kullo::Api::LocalError");
     }
 
+    void migrationStarted(const std::shared_ptr<Kullo::Api::Address> &address) override
+    {
+        emit _migrationStarted(address);
+    }
+
     void finished(const std::shared_ptr<Kullo::Api::Session> &session) override
     {
         emit _finished(session);
@@ -31,6 +36,7 @@ public:
     }
 
 signals:
+    void _migrationStarted(const std::shared_ptr<Kullo::Api::Address> &address);
     void _finished(const std::shared_ptr<Kullo::Api::Session> &session);
     void _error(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
 };

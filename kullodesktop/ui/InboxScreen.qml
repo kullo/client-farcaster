@@ -15,6 +15,7 @@ import "native"
 import "usersettings"
 import "windows"
 import "js/dynamic.js" as Dynamic
+import "js/format.js" as Format
 import "js/shortcut.js" as SC
 
 FocusScope {
@@ -210,16 +211,36 @@ FocusScope {
         }
         onSyncStarted: {
             syncingBannerDelayTimer.restart()
-            syncingBanner.progressText = ""
+            syncingBanner.reset()
         }
         onSyncProgressed: {
-            if (countMessagesTotal >= 10) {
-                var percent = 100.0 * countMessagesProcessed/countMessagesTotal
-                var progressText = Math.floor(percent) + "\u202F%"
-                // U+202F: NARROW NO-BREAK SPACE.
-                // Not necessarily supported, falls back to space on Ubuntu.
-
-                syncingBanner.progressText = progressText
+            if (phase === SyncPhases.IncomingMessages
+                    && incomingMessagesTotal >= 5) {
+                syncingBanner.text = qsTr("Syncing messages")
+                var processRatio = incomingMessagesTotal > 0
+                    ? incomingMessagesProcessed/incomingMessagesTotal
+                    : 0
+                syncingBanner.progressIndeterminate = processRatio < 0.1
+                syncingBanner.progressValue = processRatio
+            } else if (phase === SyncPhases.OutgoingMessages
+                       && outgoingMessagesTotalBytes > 0) {
+                syncingBanner.text = qsTr("Sending")
+                var uploadRatio = outgoingMessagesTotalBytes > 0
+                    ? outgoingMessagesUploadedBytes/outgoingMessagesTotalBytes
+                    : 0
+                syncingBanner.progressIndeterminate = uploadRatio < 0.1
+                syncingBanner.progressValue = uploadRatio
+            } else if (phase === SyncPhases.IncomingAttachments
+                       && incomingAttachmentsTotalBytes > 0) {
+                syncingBanner.text = qsTr("Downloading attachments")
+                var downloadRatio = incomingAttachmentsTotalBytes > 0
+                        ? incomingAttachmentsDownloadedBytes/incomingAttachmentsTotalBytes
+                        : 0
+                syncingBanner.progressIndeterminate = downloadRatio < 0.1
+                syncingBanner.progressValue = downloadRatio
+            } else {
+                syncingBanner.text = qsTr("Syncing")
+                syncingBanner.progressIndeterminate = true
             }
         }
         onSyncFinished: {
@@ -265,20 +286,31 @@ FocusScope {
         onClientTooOld: {
             clientTooOldBanner.show()
         }
-        onDraftAttachmentsTooBig: {
+        onDraftPartTooBig: {
             console.debug("Could not send message from conversation: " + conversationId + ". Creating dialog ...")
 
             var openErrorDialog = function(obj) {
                 obj.title = qsTr("Message not sent")
-                obj.text = qsTr("Message could not be sent because attachments are too big.") + " "
-                        + qsTr("Please edit the message and sent again.")
+                switch (part) {
+                case DraftParts.Content:
+                    obj.text = qsTr("Message could not be sent because the text is too long.")
+                    break;
+                case DraftParts.Attachments:
+                    obj.text = qsTr("Message could not be sent because attachments are too big.")
+                    break;
+                default:
+                    obj.text = ""
+                    console.error("Unknown draft part: " + part)
+                }
+                obj.text +=
+                        " " + qsTr("Current size") + ": " + Format.filesize_human(currentSize) + "," +
+                        " " + qsTr("size limit") + ": " + Format.filesize_human(maxSize) + "." +
+                        " " + qsTr("Please edit the message and send again.")
                 obj.open()
             }
 
             var component = Dynamic.createComponentOrThrow("/dialogs/ErrorDialog.qml")
-
             var incubator = component.incubateObject(parent)
-
             if (incubator.status !== Component.Ready)
             {
                 incubator.onStatusChanged = function(status) {

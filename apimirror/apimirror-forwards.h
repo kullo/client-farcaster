@@ -2,9 +2,26 @@
 #pragma once
 
 namespace ApiMirror {
-class Client;
-class ClientAddressExistsListener;
-class ClientCheckCredentialsListener;
-class ClientGenerateKeysListener;
-class RegistrationRegisterAccountListener;
+    namespace Enums {
+        // We cannot forward declare inner classes like LocalErrors::LocalError here:
+        // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0289r0.pdf
+        class DraftParts;
+        class LocalErrors;
+        class SyncPhases;
+    }
+
+    class Client;
+    class ClientAddressExistsListener;
+    class ClientCheckCredentialsListener;
+    class ClientCreateSessionListener;
+    class ClientGenerateKeysListener;
+    class DraftAttachmentsAddListener;
+    class DraftAttachmentsContentListener;
+    class DraftAttachmentsSaveToListener;
+    class MessageAttachmentsContentListener;
+    class MessageAttachmentsSaveToListener;
+    class RegistrationRegisterAccountListener;
+    class SessionAccountInfoListener;
+    class SessionListener;
+    class SyncerListener;
 }

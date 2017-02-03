@@ -8,6 +8,8 @@
 #include <kulloclient/api/SyncerListener.h>
 #include <kulloclient/api/SyncProgress.h>
 
+#include "apimirror/enums/DraftParts.h"
+
 namespace ApiMirror {
 
 class SyncerListener : public QObject, public Kullo::Api::SyncerListener
@@ -28,9 +30,13 @@ public:
         emit _started();
     }
 
-    void draftAttachmentsTooBig(int64_t convId) override
+    void draftPartTooBig(
+            int64_t convId, Kullo::Api::DraftPart part,
+            int64_t currentSize, int64_t maxSize) override
     {
-        emit _draftAttachmentsTooBig(convId);
+        emit _draftPartTooBig(convId,
+                              ApiMirror::Enums::DraftParts::convert(part),
+                              currentSize, maxSize);
     }
 
     void progressed(const Kullo::Api::SyncProgress &progress) override
@@ -50,7 +56,9 @@ public:
 
 signals:
     void _started();
-    void _draftAttachmentsTooBig(Kullo::id_type convId);
+    void _draftPartTooBig(
+            Kullo::id_type convId, ApiMirror::Enums::DraftParts::DraftPart part,
+            int64_t currentSize, int64_t maxSize);
     void _progressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress);
     void _finished();
     void _error(Kullo::Api::NetworkError error);

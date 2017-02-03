@@ -77,8 +77,8 @@ Inbox::Inbox(InnerApplication &innerApplication,
             this, &Inbox::onSyncFinished);
     connect(syncerListener_.get(), &ApiMirror::SyncerListener::_error,
             this, &Inbox::onSyncError);
-    connect(syncerListener_.get(), &ApiMirror::SyncerListener::_draftAttachmentsTooBig,
-            this, &Inbox::draftAttachmentsTooBig);
+    connect(syncerListener_.get(), &ApiMirror::SyncerListener::_draftPartTooBig,
+            this, &Inbox::draftPartTooBig);
 
     // Pass stuff to Application to be used by the tray icon
     connect(this, &Inbox::loggedInChanged,
@@ -128,6 +128,8 @@ void Inbox::logIn()
             &eventDispatcher_, &ApiMirror::EventDispatcher::onInternalEvent);
 
     auto listener = std::make_shared<ApiMirror::ClientCreateSessionListener>();
+    connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_migrationStarted,
+            this, &Inbox::onCreateSessionMigrationStarted);
     connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_finished,
             this, &Inbox::onCreateSessionFinished);
     connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_error,
@@ -140,6 +142,11 @@ void Inbox::logIn()
                 sessionListener,
                 listener
                 );
+
+    if (Applications::KulloApplication::FAKE_LONG_MIGRATION)
+    {
+        QTimer::singleShot(1000, this, SLOT(onCreateSessionMigrationStarted()));
+    }
 }
 
 void Inbox::logOut()
@@ -265,6 +272,12 @@ ConversationListSource *Inbox::conversationsListSource()
     return conversationsSource_.get();
 }
 
+void Inbox::onCreateSessionMigrationStarted()
+{
+    Log.d() << "Migration started";
+    emit migrationStarted();
+}
+
 void Inbox::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session)
 {
     kulloAssert(session);
@@ -314,18 +327,30 @@ void Inbox::onInternalLoginDone()
 void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress)
 {
     latestSyncProgress_ = progress;
-    emit syncProgressed(latestSyncProgress_->countProcessed,
-                        latestSyncProgress_->countTotal);
+    emit syncProgressed(
+                ApiMirror::Enums::SyncPhases::convert(progress->phase),
+                progress->incomingMessagesProcessed,
+                progress->incomingMessagesTotal,
+                progress->incomingMessagesNew,
+                progress->incomingMessagesNewUnread,
+                progress->incomingMessagesModified,
+                progress->incomingMessagesDeleted,
+                progress->incomingAttachmentsDownloadedBytes,
+                progress->incomingAttachmentsTotalBytes,
+                progress->outgoingMessagesUploadedBytes,
+                progress->outgoingMessagesTotalBytes,
+                progress->runTimeMs
+                );
 }
 
 void Inbox::onSyncFinished()
 {
     kulloAssert(latestSyncProgress_);
     emit syncFinished(true,
-                      latestSyncProgress_->countNew,
-                      latestSyncProgress_->countNewUnread,
-                      latestSyncProgress_->countModified,
-                      latestSyncProgress_->countDeleted);
+                      latestSyncProgress_->incomingMessagesNew,
+                      latestSyncProgress_->incomingMessagesNewUnread,
+                      latestSyncProgress_->incomingMessagesModified,
+                      latestSyncProgress_->incomingMessagesDeleted);
 }
 
 void Inbox::onSyncError(Kullo::Api::NetworkError error)

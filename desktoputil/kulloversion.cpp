@@ -2,18 +2,14 @@
 #include "desktoputil/kulloversion.h"
 
 #include <algorithm>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
-#include <boost/regex.hpp>
 
 namespace DesktopUtil {
 
 namespace {
-const boost::regex SIMPLE_VERSION_REGEX = boost::regex(
-                "\\A"                                // start of the string
-                    "[0-9]+\\.[0-9]+\\.[0-9]+"
-                "\\z"                                // end of the string
-            );
+const std::regex SIMPLE_VERSION_REGEX("[0-9]+\\.[0-9]+\\.[0-9]+");
 }
 
 KulloVersion::KulloVersion(const std::string &inputStr)
@@ -41,7 +37,7 @@ KulloVersion::KulloVersion(const std::string &inputStr)
         version = inputStr;
     }
 
-    if (!boost::regex_match(version, SIMPLE_VERSION_REGEX))
+    if (!std::regex_match(version, SIMPLE_VERSION_REGEX))
     {
         throw std::invalid_argument("Version string has unsupported format. Must be: X.Y.Z");
     }

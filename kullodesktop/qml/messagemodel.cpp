@@ -9,9 +9,9 @@
 #include <kulloclient/api/MessageAttachments.h>
 #include <kulloclient/api/Messages.h>
 #include <kulloclient/util/assert.h>
-#include <kulloclient/util/formatstring.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
+#include <kulloclient/util/strings.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -109,7 +109,7 @@ QString MessageModel::text() const
 QString MessageModel::textAsHtml() const
 {
     std::string result = session_->messages()->text(msgId_);
-    Kullo::Util::FormatString::messageTextToHtml(result);
+    Kullo::Util::Strings::messageTextToHtml(result);
     return QString::fromStdString(result);
 }
 

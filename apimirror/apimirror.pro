@@ -11,6 +11,9 @@ SOURCES += \
     eventdispatcher.cpp
 
 HEADERS += \
+    enums/DraftParts.h \
+    enums/LocalErrors.h \
+    enums/SyncPhases.h \
     apimirror-forwards.h \
     Client.h \
     ClientAddressExistsListener.h \

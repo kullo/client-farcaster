@@ -6,6 +6,10 @@ import "." // QTBUG-34418, singletons require explicit import to load qmldir fil
 import "native"
 
 Item {
+    /* private */
+    property bool _isMigrating: false
+    property var _mainText: null
+
     id: root
     anchors.fill: parent
 
@@ -16,6 +20,10 @@ Item {
 
     Connections {
         target: Inbox
+        onMigrationStarted: {
+            _isMigrating = true
+            _mainText.layout()
+        }
         onLoggedInChanged: {
             timer.stop()
             if (loggedIn)
@@ -35,7 +43,7 @@ Item {
         interval: 250
         repeat: false
         onTriggered: {
-            content.createObject(root);
+            _mainText = content.createObject(root);
         }
     }
 
@@ -44,26 +52,36 @@ Item {
 
         NativeText {
             id: text
+
+            /* private */
+            property int _dotCount: 3
+
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
             }
             Component.onCompleted: {
-                anchors.leftMargin = (root.width - text.implicitWidth)/2
+                layout()
                 dotTimer.start()
             }
+
+            function layout() {
+                anchors.leftMargin = (root.width - text.implicitWidth)/2
+            }
+
             color: Style.gray
             font.pointSize: Style.fontSize.loggingIn
 
-            property int dotCount: 3
-            text: qsTr("Logging in") + " " + "...".slice(0, dotCount);
+            text: !_isMigrating
+                  ? qsTr("Logging in") + " " + "...".slice(0, _dotCount)
+                  : qsTr("Optimizing inbox") + " " + "...".slice(0, _dotCount);
 
             Timer {
                 id: dotTimer
                 interval: 800
                 repeat: true
                 triggeredOnStart: false
-                onTriggered: text.dotCount = (text.dotCount+1)%4;
+                onTriggered: text._dotCount = (text._dotCount+1)%4;
             }
         }
     }

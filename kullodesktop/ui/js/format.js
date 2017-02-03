@@ -2,7 +2,7 @@
 .pragma library
 
 function filesize_human(bytes) {
-    // Use binary multiplyer 1024 here to avoid having a "102 MB" file in Kullo
+    // Use binary multiplier 1024 here to avoid having a "102 MB" file in Kullo
     // indicating that files greater that 100 megabytes can be sent.
     // Use unit titles "MB" and "KB" known from Windows Explorer.
     var MEGA = 1024*1024
@@ -17,7 +17,7 @@ function filesize_human(bytes) {
     else if (bytes >= 1*KILO)
         return (bytes/KILO).toFixed(1) + " KB"
     else
-        return bytes + "  Bytes"
+        return bytes + " Bytes"
 }
 
 function pad_left(input, size, padding_char) {

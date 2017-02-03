@@ -83,6 +83,7 @@
     <qresource prefix="/misc">
         <file alias="BackgroundCover.qml">ui/misc/BackgroundCover.qml</file>
         <file alias="ChessRectangle.qml">ui/misc/ChessRectangle.qml</file>
+        <file alias="CircularProgressBar.qml">ui/misc/CircularProgressBar.qml</file>
         <file alias="CtrlKey.qml">ui/misc/CtrlKey.qml</file>
         <file alias="CutCopyPasteMenu.qml">ui/misc/CutCopyPasteMenu.qml</file>
         <file alias="EmojiList.qml">ui/misc/EmojiList.qml</file>

@@ -7,6 +7,7 @@
 #include <apimirror/Client.h>
 #include <apimirror/eventdispatcher.h>
 #include <apimirror/SyncerListener.h>
+#include <apimirror/enums/SyncPhases.h>
 #include <kulloclient/kulloclient-forwards.h>
 #include <kulloclient/api/LocalError.h>
 #include <kulloclient/api/SyncProgress.h>
@@ -79,13 +80,29 @@ public:
     ConversationListSource *conversationsListSource();
 
 signals:
+    void migrationStarted();
     void userSettingsChanged();
     void conversationsChanged();
     void loggedInChanged(bool loggedIn);
     void unreadMessagesCountChanged(int count);
-    void draftAttachmentsTooBig(Kullo::id_type conversationId);
+    void draftPartTooBig(
+            Kullo::id_type conversationId,
+            ApiMirror::Enums::DraftParts::DraftPart part,
+            int64_t currentSize, int64_t maxSize);
     void syncStarted();
-    void syncProgressed(int countMessagesProcessed, int countMessagesTotal);
+    void syncProgressed(
+            ApiMirror::Enums::SyncPhases::SyncPhase phase,
+            int incomingMessagesProcessed,
+            int incomingMessagesTotal,
+            int incomingMessagesNew,
+            int incomingMessagesNewUnread,
+            int incomingMessagesModified,
+            int incomingMessagesDeleted,
+            int incomingAttachmentsDownloadedBytes,
+            int incomingAttachmentsTotalBytes,
+            int outgoingMessagesUploadedBytes,
+            int outgoingMessagesTotalBytes,
+            int runTimeMs);
     void syncFinished(bool success,
                       int countMessagesNew = 0,
                       int countMessagesNewUnread = 0,
@@ -96,6 +113,7 @@ signals:
     void openConversation(Kullo::id_type conversationId);
 
 private slots:
+    void onCreateSessionMigrationStarted();
     void onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session);
     void onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
     void onInternalLoginDone();

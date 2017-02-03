@@ -103,6 +103,22 @@
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
+    <message>
+        <source>Adding attachment failed</source>
+        <translation>Hinzufügen von Anhang fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>The file %1 is too big to be added to the draft</source>
+        <translation>Die Datei %1 ist zu groß um sie zum aktuellen Entwurf hinzuzufügen</translation>
+    </message>
+    <message>
+        <source>Error reading the file %1</source>
+        <translation>Fehler beim Lesen der Datei %1</translation>
+    </message>
+    <message>
+        <source>Unknown error when adding the file %1</source>
+        <translation>Unbekannter Fehler beim Hinzufügen der Datei %1</translation>
+    </message>
 </context>
 <context>
     <name>AvatarRow</name>
@@ -188,6 +204,10 @@
     <message>
         <source>Do you really want to delete all %1 messages?</source>
         <translation>Willst du wirklich alle %1 Nachrichten löschen?</translation>
+    </message>
+    <message>
+        <source>Do you really want to delete the conversation with one message?</source>
+        <translation>Willst du wirklich die Konversation mit einer Nachricht löschen?</translation>
     </message>
 </context>
 <context>
@@ -686,63 +706,91 @@
     <name>InboxScreen</name>
     <message>
         <source>Error opening file</source>
-        <translation type="unfinished">Fehler beim Dabei-Öffnen</translation>
+        <translation>Fehler beim Öffnen der Datei</translation>
     </message>
     <message>
         <source>File %1 could not be opened</source>
-        <translation type="unfinished">Die Datei %1 konnte nicht geöffnet werden</translation>
+        <translation>Die Datei %1 konnte nicht geöffnet werden</translation>
     </message>
     <message>
         <source>Server error. We&apos;re sorry :(</source>
-        <translation type="unfinished">Server-Fehler. Das tut uns Leid :(</translation>
+        <translation>Server-Fehler. Das tut uns Leid :(</translation>
     </message>
     <message>
         <source>Couldn&apos;t connect to server. Are you online?</source>
-        <translation type="unfinished">Keine Verbindung zum Server. Bist du online?</translation>
+        <translation>Keine Verbindung zum Server. Bist du online?</translation>
     </message>
     <message>
         <source>Login failed.</source>
-        <translation type="unfinished">Anmeldung fehlgeschlagen.</translation>
+        <translation>Anmeldung fehlgeschlagen.</translation>
     </message>
     <message>
         <source>Unknown error while syncing.</source>
-        <translation type="unfinished">Unbekannter Fehler während der Synchronisation.</translation>
+        <translation>Unbekannter Fehler während der Synchronisation.</translation>
     </message>
     <message>
         <source>Message not sent</source>
-        <translation type="unfinished">Nachricht nicht gesendet</translation>
+        <translation>Nachricht nicht gesendet</translation>
     </message>
     <message>
         <source>Message could not be sent because attachments are too big.</source>
-        <translation type="unfinished">Nachricht konnte nicht gesendet werden, da Anhänge zu groß sind.</translation>
-    </message>
-    <message>
-        <source>Please edit the message and sent again.</source>
-        <translation type="unfinished">Bitte bearbeite die Nachricht und sende sie erneut.</translation>
+        <translation>Nachricht konnte nicht gesendet werden, da die Anhänge zu groß sind.</translation>
     </message>
     <message>
         <source>Enter Kullo address:</source>
-        <translation type="unfinished">Kullo-Adresse eingeben:</translation>
+        <translation>Kullo-Adresse eingeben:</translation>
     </message>
     <message>
         <source>Save attachment</source>
-        <translation type="unfinished">Anhang speichern</translation>
+        <translation>Anhang speichern</translation>
     </message>
     <message>
         <source>Save all</source>
-        <translation type="unfinished">Alle speichern</translation>
+        <translation>Alle speichern</translation>
     </message>
     <message>
         <source>Todo
 mode</source>
-        <translation type="unfinished">Todo-
+        <translation>Todo-
 Modus</translation>
     </message>
     <message>
         <source>Sound
 active</source>
-        <translation type="unfinished">Ton
+        <translation>Ton
 aktiv</translation>
+    </message>
+    <message>
+        <source>Message could not be sent because the text is too long.</source>
+        <translation>Nachricht konnte nicht gesendet werden, da der Text zu lang ist.</translation>
+    </message>
+    <message>
+        <source>Current size</source>
+        <translation>Aktuelle Größe</translation>
+    </message>
+    <message>
+        <source>size limit</source>
+        <translation>maximale Größe</translation>
+    </message>
+    <message>
+        <source>Please edit the message and send again.</source>
+        <translation>Bitte bearbeite die Nachricht und sende sie erneut.</translation>
+    </message>
+    <message>
+        <source>Syncing messages</source>
+        <translation>Synchronisiere Nachrichten</translation>
+    </message>
+    <message>
+        <source>Sending</source>
+        <translation>Senden</translation>
+    </message>
+    <message>
+        <source>Downloading attachments</source>
+        <translation>Anhänge herunterladen</translation>
+    </message>
+    <message>
+        <source>Syncing</source>
+        <translation>Synchronisiere</translation>
     </message>
 </context>
 <context>
@@ -849,42 +897,46 @@ aktiv</translation>
     <name>LoggingInScreen</name>
     <message>
         <source>Logging in</source>
-        <translation type="unfinished">Anmelden</translation>
+        <translation>Anmelden</translation>
+    </message>
+    <message>
+        <source>Optimizing inbox</source>
+        <translation>Optimiere Postfach</translation>
     </message>
 </context>
 <context>
     <name>LoginScreen</name>
     <message>
         <source>Import</source>
-        <translation type="unfinished">Importieren</translation>
+        <translation>Importieren</translation>
     </message>
     <message>
         <source>Login failed.</source>
-        <translation type="unfinished">Anmeldung fehlgeschlagen.</translation>
+        <translation>Anmeldung fehlgeschlagen.</translation>
     </message>
     <message>
         <source>Kullo address invalid.</source>
-        <translation type="unfinished">Kullo-Adresse ungültig.</translation>
+        <translation>Kullo-Adresse ungültig.</translation>
     </message>
     <message>
         <source>MasterKey invalid.</source>
-        <translation type="unfinished">MasterKey ungültig.</translation>
+        <translation>MasterKey ungültig.</translation>
     </message>
     <message>
         <source>Server error, please try again later.</source>
-        <translation type="unfinished">Serverfehler, bitte später erneut versuchen.</translation>
+        <translation>Serverfehler, bitte später erneut versuchen.</translation>
     </message>
     <message>
         <source>Protocol error. This is our fault, sorry!</source>
-        <translation type="unfinished">Protokollfehler. Das ist unsere Schuld, Entschuldigung!</translation>
+        <translation>Protokollfehler. Das ist unsere Schuld, Entschuldigung!</translation>
     </message>
     <message>
         <source>Server %1 could not be reached. Is the address correct? Are you online?</source>
-        <translation type="unfinished">Server %1 konnte nicht erreicht werden. Stimmt die Kullo-Adresse? Bist du online?</translation>
+        <translation>Server %1 konnte nicht erreicht werden. Stimmt die Kullo-Adresse? Bist du online?</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished">Anmelden</translation>
+        <translation>Anmelden</translation>
     </message>
 </context>
 <context>
@@ -1425,31 +1477,31 @@ sind deine Nachrichten verloren.</translation>
     <name>WelcomeScreen</name>
     <message>
         <source>Open inbox</source>
-        <translation type="unfinished">Postfach öffnen</translation>
+        <translation>Postfach öffnen</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished">Öffnen</translation>
+        <translation>Öffnen</translation>
     </message>
     <message>
         <source>Login with another account.</source>
-        <translation type="unfinished">Mit einem anderen Account einloggen.</translation>
+        <translation>Mit einem anderen Account einloggen.</translation>
     </message>
     <message>
         <source>Login with your Kullo credentials.</source>
-        <translation type="unfinished">Melde dich mit deinen Kullo-Zugangsdaten an.</translation>
+        <translation>Melde dich mit deinen Kullo-Zugangsdaten an.</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished">Anmelden</translation>
+        <translation>Anmelden</translation>
     </message>
     <message>
         <source>Register, if you don&apos;t have a Kullo address yet.</source>
-        <translation type="unfinished">Registriere dich, wenn du bisher keine Kullo-Adresse hast.</translation>
+        <translation>Registriere dich, wenn du bisher keine Kullo-Adresse hast.</translation>
     </message>
     <message>
         <source>Register</source>
-        <translation type="unfinished">Registrieren</translation>
+        <translation>Registrieren</translation>
     </message>
 </context>
 <context>

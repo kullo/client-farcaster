@@ -18,6 +18,9 @@ inline void registerMetaTypes()
     qRegisterMetaType<Kullo::timestamp_type>("Kullo::timestamp_type");
     qRegisterMetaType<Kullo::metaVersion_type>("Kullo::metaVersion_type");
 
+    // libc types
+    qRegisterMetaType<int64_t>("int64_t");
+
     // std types
     qRegisterMetaType<std::exception_ptr>("std::exception_ptr");
     qRegisterMetaType<std::size_t>("std::size_t");

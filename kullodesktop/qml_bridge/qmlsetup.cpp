@@ -4,6 +4,9 @@
 #include <QQmlApplicationEngine>
 
 #include <apimirror/Client.h>
+#include <apimirror/enums/DraftParts.h>
+#include <apimirror/enums/LocalErrors.h>
+#include <apimirror/enums/SyncPhases.h>
 
 #include "kullodesktop/imageproviders/attachmentpreviewprovider.h"
 #include "kullodesktop/imageproviders/conversationavatarprovider.h"
@@ -75,6 +78,14 @@ void QmlSetup::setupTypes()
     qmlRegisterType<Qml::SyncErrors>("Kullo", 1, 0, "SyncErrors");
 
     qmlRegisterUncreatableType<Qml::UserSettings>("Kullo", 1, 0, "UserSettings", "Do not create in QML");
+
+    // Enums
+    qmlRegisterType<ApiMirror::Enums::DraftParts>("Kullo", 1, 0, "DraftParts");
+    qmlRegisterType<ApiMirror::Enums::LocalErrors>("Kullo", 1, 0, "LocalErrors");
+    qmlRegisterType<ApiMirror::Enums::SyncPhases>("Kullo", 1, 0, "SyncPhases");
+    ApiMirror::Enums::DraftParts::registerEnumsInClassForSignalSlot();
+    ApiMirror::Enums::LocalErrors::registerEnumsInClassForSignalSlot();
+    ApiMirror::Enums::SyncPhases::registerEnumsInClassForSignalSlot();
 
     // Registered as global objects QQmlContext::setContextProperty()
     // Use qmlRegisterType() with no arguments because "Instances of this

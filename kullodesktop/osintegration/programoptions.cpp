@@ -9,7 +9,7 @@
 #include <kulloclient/crypto/info.h>
 #include <kulloclient/util/crash.h>
 #include <kulloclient/util/misc.h>
-#include <kulloclient/util/formatstring.h>
+#include <kulloclient/util/strings.h>
 
 #include <desktoputil/osdetection.h>
 #include <desktoputil/qtypestreamers.h>
@@ -225,7 +225,7 @@ std::string ProgramOptions::getHelp()
         << "" << std::endl // Empty line
         << *optionsDeveloper_;
     std::string outStr = out.str();
-    Kullo::Util::FormatString::trim(outStr);
+    Kullo::Util::Strings::trim(outStr);
     return outStr;
 }
 

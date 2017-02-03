@@ -5,8 +5,10 @@
 #include <mutex>
 #include <QObject>
 
+#include <apimirror/enums/LocalErrors.h>
 #include <apimirror/eventdispatcher.h>
 #include <kulloclient/types.h>
+#include <kulloclient/api/LocalError.h>
 #include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
@@ -43,18 +45,24 @@ public:
     Q_PROPERTY(bool empty READ empty NOTIFY emptyChanged)
     bool empty() const;
 
-    Q_INVOKABLE void addAttachment(const QUrl &url);
     Q_INVOKABLE void removeAttachment(Kullo::id_type index);
     Q_INVOKABLE void save();
     /// Do all preparations, e.g. trim text
     Q_INVOKABLE void prepareToSend();
 
+    void addAttachment(const QString &localFile);
     std::mutex &addingAttachmentsInProgress();
 
 signals:
     void emptyChanged();
     void stateChanged();
     void textChanged();
+
+    void addingAttachmentProgressed(int64_t bytesProcessed, int64_t bytesTotal);
+    void addingAttachmentFinished();
+    void addingAttachmentError(
+            ApiMirror::Enums::LocalErrors::LocalError error,
+            const QString &filename);
 
     // unused signals
     void idChanged();
@@ -69,6 +77,7 @@ private:
     std::unique_ptr<DraftAttachmentListModel> attachments_;
     bool draftEmptyCache_ = true;
     std::mutex addingAttachmentsInProgress_;
+    std::shared_ptr<Kullo::Api::AsyncTask> addAttachmentTask_;
 };
 
 }

@@ -87,7 +87,9 @@ ListView {
         property int conversationId
         property int messagesCount
         icon: StandardIcon.Question
-        text: qsTr("Do you really want to delete all %1 messages?").arg(messagesCount)
+        text: messagesCount == 1
+              ? qsTr("Do you really want to delete the conversation with one message?")
+              : qsTr("Do you really want to delete all %1 messages?").arg(messagesCount)
         standardButtons: StandardButton.Cancel | StandardButton.Yes
         onYes: removeConversation(conversationId)
     }

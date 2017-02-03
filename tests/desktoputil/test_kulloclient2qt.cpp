@@ -28,12 +28,7 @@ TEST_F(KulloClient2Qt, fromUtf8)
     QByteArray c = QByteArrayLiteral("ö");
     QByteArray d = QByteArrayLiteral("äöüÄÖÜß");
     QByteArray e = QByteArrayLiteral("⚡Ƿ➜");
-
-    // echo -n "ß" | hexdump -C
-    // c3 9f = 195 159
-    QByteArray f;
-    f.append(195);
-    f.append(159);
+    QByteArray f = QByteArrayLiteral("\xc3\x9f"); // echo -n "ß" | hexdump -C
 
     EXPECT_THAT(DesktopUtil::KulloClient2Qt::fromUtf8(a), Eq(std::string("")));
     EXPECT_THAT(DesktopUtil::KulloClient2Qt::fromUtf8(b), Eq(std::string("ab")));

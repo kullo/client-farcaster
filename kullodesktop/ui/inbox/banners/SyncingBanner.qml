@@ -3,12 +3,22 @@ import QtQuick 2.4
 
 import "../../"
 import "../../native"
+import "../../misc"
 
 Rectangle {
-    id: _root
+    /* public */
+    property string text: ""
+    property alias progressIndeterminate: progressBar.indeterminate
+    property alias progressValue: progressBar.value
 
-    property string progressText: ""
+    function reset() {
+        text = qsTr("Syncing")
+        progressIndeterminate = true
+        progressValue = 0
+    }
+
     /* private */
+    id: root
     property bool _showBanner: false
     property int _paddingV: 8
 
@@ -26,31 +36,27 @@ Rectangle {
 
     y: _showBanner ? -radius : -height
 
-    NativeText {
-        id: syncingText
+    Row {
+        id: content
         anchors {
             top: parent.top
-            left: parent.left
             topMargin: radius + _paddingV
+            horizontalCenter: parent.horizontalCenter
         }
-        Component.onCompleted: {
-            anchors.leftMargin = (_root.width - syncingText.implicitWidth)/2
+        spacing: 8
+
+        CircularProgressBar {
+            id: progressBar
+            height: 16
+            width: 16
+            value: 0.75
+            indeterminate: true
+            color: syncingText.color
         }
 
-        property int dotCount: 3
-        text: qsTr("Syncing") + " "
-              + ((progressText !== "") ? "(" + progressText + ") " : "")
-              + "...".slice(0, dotCount);
-
-        Timer {
-            running: _showBanner
-            interval: 800
-            repeat: true
-            triggeredOnStart: false
-            onTriggered: {
-                if (syncingText.dotCount < 3) syncingText.dotCount++;
-                else syncingText.dotCount = 0;
-            }
+        NativeText {
+            id: syncingText
+            text: root.text + " …"
         }
     }
 
