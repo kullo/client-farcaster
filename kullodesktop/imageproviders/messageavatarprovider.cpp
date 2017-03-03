@@ -4,6 +4,7 @@
 #include <QBrush>
 #include <QPainter>
 #include <QPen>
+#include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -77,7 +78,7 @@ QPixmap MessageAvatarProvider::drawAvatar(const QString &url, const QSize &rende
     }
     else
     {
-        out = getFallbackAvatar(msg->sender()->name(), renderSize);
+        out = getFallbackAvatar(DesktopUtil::Initials::fromName(msg->sender()->name()), renderSize);
     }
 
     return rounded(out);

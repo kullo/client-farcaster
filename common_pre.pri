@@ -7,14 +7,6 @@ CONFIG += strict_c++
 
 CONFIG(release, debug|release): DEFINES += NDEBUG
 
-CONFIG(release, debug|release):    LIBKULLO_BIN_DIR = $$PWD/../bin-libkullo
-else:CONFIG(debug, debug|release): LIBKULLO_BIN_DIR = $$PWD/../bin-libkullo-debug
-
-# Add farcaster repo root and libkullo include dir to include path
-INCLUDEPATH += $$PWD
-INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
-DEFINES += BOOST_ALL_NO_LIB
-
 defineTest(osx) {
     macx: return(true)
     return(false)
@@ -59,6 +51,28 @@ defineTest(linuxRelease) {
     linux():CONFIG(release, debug|release): return(true)
     return(false)
 }
+
+# For $$QT_ARCH see https://bugreports.qt.io/browse/QTBUG-30263
+contains(QT_ARCH, x86_64) {
+    ARCH = x86_64
+} else {
+    ARCH = x86_32
+}
+
+windowsRelease():    CMAKE_DEPENDENCIES_ROOT = $$BUILD_ROOT\..\build-windows-$$ARCH-release
+else:windowsDebug(): CMAKE_DEPENDENCIES_ROOT = $$BUILD_ROOT\..\build-windows-$$ARCH-debug
+else:osxRelease():   CMAKE_DEPENDENCIES_ROOT = $$BUILD_ROOT/../build-osx-$$ARCH-release
+else:osxDebug():     CMAKE_DEPENDENCIES_ROOT = $$BUILD_ROOT/../build-osx-$$ARCH-debug
+else:linuxRelease(): CMAKE_DEPENDENCIES_ROOT = $$BUILD_ROOT/../build-linux-$$ARCH-release
+else:linuxDebug():   CMAKE_DEPENDENCIES_ROOT = $$BUILD_ROOT/../build-linux-$$ARCH-debug
+else: error("Unknown os")
+
+LIBKULLO_BIN_DIR = $$CMAKE_DEPENDENCIES_ROOT/bin-libkullo
+
+# Add farcaster repo root and libkullo include dir to include path
+INCLUDEPATH += $$PWD
+INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
+DEFINES += BOOST_ALL_NO_LIB
 
 macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9

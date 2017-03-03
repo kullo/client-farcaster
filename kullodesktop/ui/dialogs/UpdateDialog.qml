@@ -10,6 +10,9 @@ BaseDialog {
     objectName: "UpdateDialog"
     property alias textUpdateAvailable: updateAvailableText.text
     property alias state: mainItem.state
+    property string versionAvailable: ""
+
+    signal updateSilenced()
 
     title: state == "downloading" || root.state == "downloaded"
            ? qsTr("Downloading Kullo update")
@@ -123,24 +126,16 @@ BaseDialog {
                         layoutDirection: Qt.RightToLeft
                         spacing: buttonsSpacing
 
-                        Keys.onReturnPressed: {
-                            if (buttonYes.focus) {
-                                buttonYes.clicked()
-                            }
-                            if (buttonNo.focus) {
-                                buttonNo.clicked()
-                            }
-                        }
-
                         NativeButton {
-                            id: buttonNo
-                            text: qsTr("Cancel")
-                            onClicked: root.closeDialog()
+                            text: qsTr("Later")
+                            onClicked: {
+                                root.updateSilenced()
+                                root.closeDialog()
+                            }
                             isDefault: focus
                         }
 
                         NativeButton {
-                            id: buttonYes
                             text: qsTr("Download")
                             onClicked: {
                                 root.downloadUpdate()
@@ -219,7 +214,7 @@ BaseDialog {
                             root.closeDialog()
                             if (updater.installerNeedsClosedApp)
                             {
-                                Qt.quit()
+                                InnerApplication.quit()
                             }
                         }
                         focus: true

@@ -47,6 +47,7 @@ Rectangle {
 
         CircularProgressBar {
             id: progressBar
+            visible: _showBanner
             height: 16
             width: 16
             value: 0.75

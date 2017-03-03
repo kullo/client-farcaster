@@ -21,7 +21,7 @@ public:
 protected:
     virtual QPixmap drawAvatar(const QString &url, const QSize &renderSize) = 0;
     QPixmap getAvatarForAddress(const QString &address, const QSize &renderSize);
-    QPixmap getFallbackAvatar(const QString name, const QSize &renderSize);
+    QPixmap getFallbackAvatar(const QString &text, const QSize &renderSize);
     QPixmap getEmptyAvatar(const QSize &renderSize);
     QPixmap rounded(const QPixmap &in, bool cirlce=false);
 

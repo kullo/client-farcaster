@@ -34,13 +34,18 @@ public:
     Q_PROPERTY(QUrl downloadUrl READ downloadUrl NOTIFY downloadUrlChanged)
     QUrl downloadUrl() const;
 
+    Q_PROPERTY(QDateTime lastSuccessfulCheck READ lastSuccessfulCheck NOTIFY lastSuccessfulCheckChanged)
+    QDateTime lastSuccessfulCheck() const;
+
+    // The internal timer starts automatically. This method can be used to trigger a manual check
     Q_INVOKABLE void run();
 
 signals:
-    void updateAvailable(const QString &versionInstalled, const QString &versionAvailable);
+    void updateNotificationReceived(const QString &versionInstalled, const QString &versionAvailable);
     void updateAvailableChanged();
     void versionAvailableChanged();
     void downloadUrlChanged();
+    void lastSuccessfulCheckChanged();
 
     // unused signals
     void updateUrlChanged();
@@ -54,9 +59,10 @@ private:
     void handleVersionRequestSuccess(const QByteArray &returnBody);
 
     QTimer timer_;
-    QDateTime lastSuccessfulRunUtc_;
+    QDateTime lastSuccessfulCheckUtc_;
     DesktopUtil::AsyncHttpGetManager manager_;
     QString versionAvailable_;
+    bool updateAvailable_ = false;
     InnerApplication &app_;
 
     std::shared_ptr<QByteArray> downloadData_;

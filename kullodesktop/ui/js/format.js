@@ -9,6 +9,32 @@ function scheme_from_url(urlString) {
     return scheme
 }
 
+function humanDatetime(datetime, dateFormat, timeFormat) {
+    var now = new Date()
+    var todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    var yesterdayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() -1)
+
+    if (datetime.getTime() > todayAtMidnight.getTime())
+    {
+        return datetime.toLocaleTimeString(Qt.locale(), timeFormat)
+    }
+    else if (datetime.getTime() > yesterdayAtMidnight.getTime())
+    {
+        return qsTr("yesterday") + ", "
+                + datetime.toLocaleTimeString(Qt.locale(), timeFormat)
+    }
+    else
+    {
+        return datetime.toLocaleDateString(Qt.locale(), dateFormat)
+    }
+}
+
+function humanFullDatetime(datetime, dateFormat, timeFormat) {
+    return datetime.toLocaleDateString(Qt.locale(), dateFormat)
+            + " "
+            + datetime.toLocaleTimeString(Qt.locale(), timeFormat)
+}
+
 function filesize_human(bytes) {
     // Use binary multiplier 1024 here to avoid having a "102 MB" file in Kullo
     // indicating that files greater that 100 megabytes can be sent.

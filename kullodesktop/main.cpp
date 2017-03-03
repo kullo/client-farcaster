@@ -110,10 +110,14 @@ int main(int argc, char *argv[])
         /*
          * Translator
          */
-        QString lang = QLocale::system().name();
-        Log.i() << "System language: " << lang;
+        QLocale locale;
+        Log.i() << "Locale: " << locale.name();
         QTranslator translator;
-        translator.load(QStringLiteral(":/translations/farcaster_%1").arg(lang));
+        translator.load(
+                    locale,
+                    QStringLiteral("farcaster"),       // filename
+                    QStringLiteral("_"),               // prefix
+                    QStringLiteral(":/translations")); // directory
         QApplication::installTranslator(&translator);
 
         /*
@@ -141,9 +145,9 @@ int main(int argc, char *argv[])
 
         DesktopUtil::registerMetaTypes();
 
-        Kullo::Http::Registry::setHttpClientFactory(
-                    std::shared_ptr<Kullo::Http::HttpClientFactory>(
-                        new HttpClient::HttpClientFactoryImpl()));
+        auto httpClientFactory = std::make_shared<HttpClient::HttpClientFactoryImpl>();
+        httpClientFactory->setAcceptLanguage(locale.bcp47Name().toStdString());
+        Kullo::Http::Registry::setHttpClientFactory(httpClientFactory);
 
         auto taskRunner = std::make_shared<Kullo::Util::StlTaskRunner>();
         Kullo::Api::Registry::setTaskRunner(taskRunner);
@@ -168,6 +172,12 @@ int main(int argc, char *argv[])
          * Create GUI Engine
          */
         QQmlApplicationEngine engine;
+        QObject::connect(&engine, &QQmlApplicationEngine::quit, [] () {
+            Log.f() << "Do not use QML's Qt.quit() because it is evil: "
+                    << "it closes windows and may or may not quit the application, depending on magic signaling that does not match the documentation. "
+                    << "Use InnerApplication.quit()";
+        });
+
         QmlBridge::QmlSetup::setupTypes();
         QmlBridge::QmlSetup::setupImageproviders(engine, inbox);
 

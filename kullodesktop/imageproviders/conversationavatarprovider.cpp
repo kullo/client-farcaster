@@ -57,7 +57,8 @@ QPixmap ConversationAvatarProvider::drawAvatar(const QString &url, const QSize &
     }
     else
     {
-        out = getFallbackAvatar(QString::number(participantsAddresses.size()), renderSize);
+        const QString textContent = QStringLiteral("%1+1").arg(participantsAddresses.size());
+        out = getFallbackAvatar(textContent, renderSize);
     }
 
     return rounded(out);

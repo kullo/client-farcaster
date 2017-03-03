@@ -70,6 +70,10 @@ public:
     QString updateLane() const;
     void setUpdateLane(const QString &lane);
 
+    Q_PROPERTY(QString silencedUpdate READ silencedUpdate WRITE setSilencedUpdate NOTIFY silencedUpdateChanged)
+    QString silencedUpdate() const;
+    void setSilencedUpdate(const QString &version);
+
     Q_PROPERTY(QString activeUser READ activeUser NOTIFY activeUserChanged)
     QString activeUser();
 
@@ -90,6 +94,7 @@ signals:
     void closeToTrayChanged(bool value);
     void answerWidthChanged();
     void updateLaneChanged();
+    void silencedUpdateChanged();
     void activeUserChanged();
     void lastActiveUserChanged();
     void usersListChanged();

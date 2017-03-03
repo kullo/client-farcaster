@@ -19,6 +19,7 @@ FocusScope {
     /* private */
     readonly property bool _enabled: conversation && conversation.draft.state === "editing"
     readonly property bool _empty: !conversation || conversation.draft.empty
+    readonly property bool _userSettingsReadyForSending: Inbox.userSettings.name.trim() !== ""
 
     id: root
     anchors.fill: parent
@@ -88,17 +89,35 @@ FocusScope {
         messageText.text = pre + '"' + quoteText + '"' + post
     }
 
+    ErrorDialog {
+        id: setUserSettingsPrompt
+        title: qsTr("Profile not ready")
+        text: qsTr("Profile not ready for sending messages.") + "\n"
+              + qsTr("Set now?")
+        standardButtons: StandardButton.Yes | StandardButton.Cancel
+        onYes: {
+            profileOverlay.fadeIn()
+        }
+        onRejected: {
+            // just do the default action: close dialog
+        }
+    }
+
     function tryToSend()
     {
-        if (!_empty)
+        if (!_userSettingsReadyForSending)
+        {
+            setUserSettingsPrompt.open()
+        }
+        else if (_empty)
+        {
+            console.debug("tryToSend(): Draft is empty. Not sent.")
+        }
+        else
         {
             console.debug("Send message ...")
             conversation.draft.prepareToSend()
             heartbeat.syncAsap()
-        }
-        else
-        {
-            console.debug("tryToSend(): Draft is empty. Not sent.")
         }
     }
 

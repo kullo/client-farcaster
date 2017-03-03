@@ -85,7 +85,7 @@ QPixmap AbstractAvatarProvider::getAvatarForAddress(const QString &address, cons
     }
     else if (!part->name().isEmpty())
     {
-        return getFallbackAvatar(part->name(), renderSize);
+        return getFallbackAvatar(DesktopUtil::Initials::fromName(part->name()), renderSize);
     }
     else
     {
@@ -93,7 +93,7 @@ QPixmap AbstractAvatarProvider::getAvatarForAddress(const QString &address, cons
     }
 }
 
-QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString name, const QSize &renderSize)
+QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString &text, const QSize &renderSize)
 {
     QPixmap pixmap(renderSize);
 
@@ -104,7 +104,7 @@ QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString name, const QSiz
     textPainter.setOpacity(FALLBACK_AVATAR_FOREGROUND_OPACITY);
     textPainter.setFont(QFont("Arial", fontSize, QFont::Bold));
     textPainter.setPen(QPen(FALLBACK_AVATAR_FOREGROUND_COLOR));
-    textPainter.drawText(rect, Qt::AlignCenter, DesktopUtil::Initials::fromName(name));
+    textPainter.drawText(rect, Qt::AlignCenter, text);
 
     return pixmap;
 }

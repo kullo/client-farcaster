@@ -1,6 +1,7 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "usersettingsavatarprovider.h"
 
+#include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -60,7 +61,7 @@ QPixmap UserSettingsAvatarProvider::getUserAvatarData(const QString &url, const 
     QPixmap out;
     if (avatar.isNull())
     {
-        out = getFallbackAvatar(userSettings->name(), renderSize);
+        out = getFallbackAvatar(DesktopUtil::Initials::fromName(userSettings->name()), renderSize);
     }
     else
     {

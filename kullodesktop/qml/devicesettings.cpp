@@ -2,6 +2,7 @@
 #include "devicesettings.h"
 
 #include <QSettings>
+#include <desktoputil/kulloversion.h>
 #include <desktoputil/qtypestreamers.h>
 #include <desktoputil/osdetection.h>
 #include <kulloclient/util/assert.h>
@@ -366,6 +367,39 @@ void DeviceSettings::setUpdateLane(const QString &lane)
     settings.endGroup();
 
     emit updateLaneChanged();
+}
+
+QString DeviceSettings::silencedUpdate() const
+{
+    QString silencedUpdate;
+
+    QSettings settings;
+    settings.beginGroup("global");
+    QVariant data = settings.value("silencedUpdate");
+    if (data.isValid()) silencedUpdate = data.toString();
+    settings.endGroup();
+
+    if (!silencedUpdate.isEmpty()) {
+        DesktopUtil::KulloVersion(silencedUpdate.toStdString()); // validate format
+    }
+
+    return silencedUpdate;
+}
+
+void DeviceSettings::setSilencedUpdate(const QString &version)
+{
+    if (!version.isEmpty()) {
+        DesktopUtil::KulloVersion(version.toStdString()); // validate format
+    }
+
+    if (this->silencedUpdate() == version) return;
+
+    QSettings settings;
+    settings.beginGroup("global");
+    settings.setValue("silencedUpdate", version);
+    settings.endGroup();
+
+    emit silencedUpdateChanged();
 }
 
 QString DeviceSettings::activeUser()

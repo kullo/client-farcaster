@@ -16,7 +16,6 @@ ApplicationWindow {
 
     Component.onCompleted: {
         app.forceActiveFocus()
-        KulloVersionChecker.run()
     }
 
     /* private */
@@ -33,13 +32,21 @@ ApplicationWindow {
     UpdateDialog {
         id: updateDialog
         textUpdateAvailable: qsTr("A new version of Kullo is available. Download now?")
+
+        onUpdateSilenced: {
+            InnerApplication.deviceSettings.silencedUpdate = versionAvailable
+        }
     }
 
     Connections {
         target: KulloVersionChecker
-        onUpdateAvailable: {
-            updateDialog.state = "updateAvailable"
-            updateDialog.openDialog();
+        onUpdateNotificationReceived: {
+            updateDialog.versionAvailable = versionAvailable
+
+            if (versionAvailable !== InnerApplication.deviceSettings.silencedUpdate) {
+                updateDialog.state = "updateAvailable"
+                updateDialog.openDialog()
+            }
         }
     }
 
@@ -51,7 +58,7 @@ ApplicationWindow {
             if (SC.isCtrlAndKey(Qt.Key_Q, event))
             {
                 event.accepted = true
-                Qt.quit()
+                InnerApplication.quit()
             }
             else if (SC.isCtrlAndKey(Qt.Key_W, event))
             {

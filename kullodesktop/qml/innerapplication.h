@@ -26,6 +26,8 @@ public:
     Q_PROPERTY(KulloDesktop::Qml::DeviceSettings *deviceSettings READ deviceSettings NOTIFY deviceSettingsChanged)
     DeviceSettings *deviceSettings();
 
+    Q_INVOKABLE void quit();
+
     const DesktopUtil::DatabaseFiles &databaseFiles() const;
     Applications::KulloApplication &mainApplication();
 

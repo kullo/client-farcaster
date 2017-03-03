@@ -22,6 +22,8 @@ ButtonStyle {
     property color hoverColor: Style.buttonHoverColor
     property color textColor: Style.buttonTextColor
 
+    property bool badgeEnabled: false
+
     property color progressBarColor: textColor
     property color progressBarBorderColor:"#55000000"
     property color progressBarBackgroundColor: Style.white
@@ -176,6 +178,20 @@ ButtonStyle {
                             rightMargin: iconPosition == root._POSITION_LEFT ? row.labelIconSpacing : 0
 
                             verticalCenter: parent.verticalCenter
+                        }
+
+                        Rectangle {
+                            visible: root.badgeEnabled
+                            color: Style.orange
+                            anchors {
+                                top: parent.top
+                                right: parent.right
+                                topMargin: -3
+                                rightMargin: -3
+                            }
+                            width: 8
+                            height: 8
+                            radius: 8/2
                         }
                     }
                 }

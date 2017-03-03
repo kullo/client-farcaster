@@ -31,53 +31,9 @@ else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../desktop
 else:unix:                                PRE_TARGETDEPS += $$OUT_PWD/../desktoputil/libdesktoputil.a
 # END desktoputil
 
-# BEGIN libkullo
-INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
-LIBS += -L$$LIBKULLO_BIN_DIR/lib \
-    -lkulloclient -ljsoncpp -lgmock -lsmartsqlite \
-    -lboost_program_options -lz \
-    -lboost_filesystem \
-    -lboost_system
-
-DEPENDPATH += $$LIBKULLO_BIN_DIR/include
-win32 {
-    TD_PREFIX = $${LIBKULLO_BIN_DIR}/lib/
-    TD_SUFFIX = .lib
-} else {
-    TD_PREFIX = $${LIBKULLO_BIN_DIR}/lib/lib
-    TD_SUFFIX = .a
-}
-PRE_TARGETDEPS += \
-    $${TD_PREFIX}kulloclient$${TD_SUFFIX} \
-    $${TD_PREFIX}jsoncpp$${TD_SUFFIX} \
-    $${TD_PREFIX}gmock$${TD_SUFFIX} \
-    $${TD_PREFIX}smartsqlite$${TD_SUFFIX} \
-    $${TD_PREFIX}boost_program_options$${TD_SUFFIX} \
-    $${TD_PREFIX}z$${TD_SUFFIX} \
-    $${TD_PREFIX}boost_filesystem$${TD_SUFFIX} \
-    $${TD_PREFIX}boost_system$${TD_SUFFIX}
-
-windows(): {
-    PRE_TARGETDEPS += $${TD_PREFIX}boost_regex$${TD_SUFFIX}
-    LIBS += -lboost_regex
-}
-# END libkullo
-
-# BEGIN botan
-CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../bin-botan/lib/       -lbotan
-CONFIG(debug, debug|release):   LIBS += -L$$OUT_PWD/../../bin-botan-debug/lib/ -lbotan
-
-CONFIG(release, debug|release): DEPENDPATH += $$PWD/../../bin-botan/lib
-CONFIG(debug, debug|release):   DEPENDPATH += $$PWD/../../bin-botan-debug/lib
-
-win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan/lib/botan.lib
-else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan-debug/lib/botan.lib
-else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan/lib/libbotan.a
-else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$OUT_PWD/../../bin-botan-debug/lib/libbotan.a
-
-CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-botan/include
-CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-botan-debug/include
-# END botan
+# include order is important for linking order
+include(../qmake-modules/libkullo.pri)
+include(../qmake-modules/botan.pri)
 
 folder_01.source = ./data
 folder_01.target = .

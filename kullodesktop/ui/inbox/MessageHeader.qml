@@ -5,6 +5,7 @@ import QtQuick.Controls 1.3
 import "../"
 import "../misc"
 import "../native"
+import "../js/format.js" as Format
 
 Rectangle {
     /* public */
@@ -137,30 +138,10 @@ Rectangle {
                 horizontalAlignment = Text.AlignRight
             }
 
-            text: {
-                var now = new Date();
-                var todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-                var yesterdayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() -1)
-
-                if (date.getTime() > todayAtMidnight.getTime())
-                {
-                    return date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
-                }
-                else if (date.getTime() > yesterdayAtMidnight.getTime())
-                {
-                    return qsTr("yesterday") + ", "
-                            + date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
-                }
-                else
-                {
-                    return date.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
-                }
-            }
+            text: Format.humanDatetime(date, Locale.ShortFormat, Locale.ShortFormat)
 
             TooltipArea {
-                text: date.toLocaleDateString(Qt.locale())
-                      + " "
-                      + date.toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+                text: Format.humanFullDatetime(date, Locale.LongFormat, Locale.ShortFormat)
             }
         }
 

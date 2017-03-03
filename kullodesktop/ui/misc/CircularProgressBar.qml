@@ -103,6 +103,7 @@ ProgressBar {
                         }
 
                         RotationAnimation on rotation {
+                            running: root.visible && parent.visible
                             loops: Animation.Infinite
                             from: 0
                             to: 360

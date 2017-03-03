@@ -54,6 +54,11 @@ DeviceSettings *InnerApplication::deviceSettings()
     return out;
 }
 
+void InnerApplication::quit()
+{
+    mainApplication_.quit();
+}
+
 const DesktopUtil::DatabaseFiles &InnerApplication::databaseFiles() const
 {
     return databaseFiles_;

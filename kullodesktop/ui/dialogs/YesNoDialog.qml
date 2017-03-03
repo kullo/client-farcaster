@@ -57,15 +57,6 @@ BaseDialog {
                     layoutDirection: Qt.RightToLeft
                     spacing: buttonsSpacing
 
-                    Keys.onReturnPressed: {
-                        if (buttonYes.focus) {
-                            buttonYes.clicked()
-                        }
-                        if (buttonNo.focus) {
-                            buttonNo.clicked()
-                        }
-                    }
-
                     NativeButton {
                         id: buttonNo
                         text: qsTr("No")

@@ -45,8 +45,7 @@ HEADERS += \
     desktoputil-forwards.h
 
 # BEGIN httpclient-curl
-CONFIG(release, debug|release): INCLUDEPATH += $$PWD/../../bin-httpclient-curl/include
-CONFIG(debug, debug|release):   INCLUDEPATH += $$PWD/../../bin-httpclient-curl-debug/include
+INCLUDEPATH += $$CMAKE_DEPENDENCIES_ROOT/bin-httpclient-curl/include
 # END httpclient-curl
 
 include(../common_post.pri)

@@ -66,6 +66,9 @@ SingleInstanceLock::AcquireResult SingleInstanceLock::acquire()
             else
             {
                 Log.f() << "Received invalid message.";
+
+                // silence "control may reach end of non-void function" warning
+                return AcquireResult::InformedOtherInstance;
             }
         }
         else

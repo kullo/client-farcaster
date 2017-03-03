@@ -123,6 +123,18 @@
         <source>Unknown error when adding the file %1</source>
         <translation>Unbekannter Fehler beim Hinzufügen der Datei %1</translation>
     </message>
+    <message>
+        <source>Profile not ready</source>
+        <translation>Profil nicht vollständig</translation>
+    </message>
+    <message>
+        <source>Profile not ready for sending messages.</source>
+        <translation>Es fehlen Angaben im Profil um Nachrichten zu senden.</translation>
+    </message>
+    <message>
+        <source>Set now?</source>
+        <translation>Jetzt setzen?</translation>
+    </message>
 </context>
 <context>
     <name>AvatarChooser</name>
@@ -881,6 +893,14 @@ Modus</translation>
         <source>Kudos to %1.</source>
         <translation>Kudos an %1.</translation>
     </message>
+    <message>
+        <source>Kullo is up to date, yeah!</source>
+        <translation>Kullo ist auf dem neusten Stand, super!</translation>
+    </message>
+    <message>
+        <source>Last version check: %1</source>
+        <translation>Letzte Versionsprüfung: %1</translation>
+    </message>
 </context>
 <context>
     <name>Keygen</name>
@@ -1092,10 +1112,6 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Sending …</source>
         <translation>Senden …</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>gestern</translation>
     </message>
     <message>
         <source>Copy Kullo address</source>
@@ -1419,10 +1435,6 @@ sind deine Nachrichten verloren.</translation>
         <translation>Kullo-Update verfügbar</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Abbrechen</translation>
-    </message>
-    <message>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -1441,6 +1453,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Changelog not available.</source>
         <translation>Changelog nicht verfügbar.</translation>
+    </message>
+    <message>
+        <source>Later</source>
+        <translation>Später</translation>
     </message>
 </context>
 <context>
@@ -1483,6 +1499,13 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Yes</source>
         <translation>Ja</translation>
+    </message>
+</context>
+<context>
+    <name>format</name>
+    <message>
+        <source>yesterday</source>
+        <translation>gestern</translation>
     </message>
 </context>
 <context>

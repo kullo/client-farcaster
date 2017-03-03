@@ -200,6 +200,7 @@ FocusScope {
 
     Connections {
         target: Inbox
+        property bool _firstSuccessfulSync: true
         onOpenConversation: {
             leftColumn.openConversation(conversationId)
         }
@@ -251,7 +252,7 @@ FocusScope {
             if (countMessagesNewUnread > 0) newMessageSound.play()
 
             // during logout this slot might still be running when there is no user anymore
-            if (Inbox.userSettings)
+            if (Inbox.userSettings && _firstSuccessfulSync)
             {
                 if (Inbox.userSettings.name.trim() === "")
                 {
@@ -261,6 +262,8 @@ FocusScope {
                     profileOverlay.fadeIn()
                 }
             }
+
+            _firstSuccessfulSync = false
         }
         onSyncError: {
             var errmsg
@@ -527,6 +530,7 @@ FocusScope {
                     backgroundColor: "transparent"
                     hoverColor: "#33ffffff"
                     textColor: Style.white
+                    badgeEnabled: KulloVersionChecker.updateAvailable
                 }
             }
 

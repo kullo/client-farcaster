@@ -7,6 +7,7 @@ NativeButton {
     property url source
     property color backgroundColor: "transparent"
     property color hoverColor: "#22000000"
+    property bool badgeEnabled: false
     id: root
     width: 36
     height: 36
@@ -18,5 +19,6 @@ NativeButton {
         borderRadius: 3
         backgroundColor: root.backgroundColor
         hoverColor: root.hoverColor
+        badgeEnabled: root.badgeEnabled
     }
 }

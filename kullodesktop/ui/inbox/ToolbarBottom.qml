@@ -77,6 +77,7 @@ Rectangle {
             rightMargin: 5
         }
         source: "/resources/scalable/more_b.svg"
+        badgeEnabled: KulloVersionChecker.updateAvailable
 
         onClicked: {
             if (!popupMenu.opened)

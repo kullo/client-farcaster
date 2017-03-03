@@ -8,6 +8,7 @@ import ".."
 import "../buttons"
 import "../misc"
 import "../native"
+import "../js/format.js" as Format
 import "../js/shortcut.js" as SC
 
 NativeModalWindow {
@@ -18,8 +19,10 @@ NativeModalWindow {
     signal downloadUpdate()
 
     /* private */
-    property int _DEFAULT_WINDOW_WIDTH: 300
-    property int _DEFAULT_WINDOW_HEIGHT: 450
+    property int _DEFAULT_WINDOW_WIDTH: 310
+    property int _DEFAULT_WINDOW_HEIGHT: 460
+
+    property int _PADDING: 12
 
     width: _DEFAULT_WINDOW_WIDTH
     height: _DEFAULT_WINDOW_HEIGHT
@@ -31,6 +34,8 @@ NativeModalWindow {
             root.height = _DEFAULT_WINDOW_HEIGHT
 
             mainItem.forceActiveFocus()
+
+            KulloVersionChecker.run() // check again in case user was offline during last check
         }
     }
 
@@ -39,7 +44,7 @@ NativeModalWindow {
         id: mainItem
         anchors {
             fill: parent
-            margins: 10
+            margins: _PADDING
         }
 
         Keys.onEscapePressed: root.closeWindow()
@@ -48,9 +53,9 @@ NativeModalWindow {
         Column {
             anchors {
                 fill: parent
-                margins: 10
+                topMargin: 10
             }
-            spacing: 30
+            spacing: 25
 
             Column {
                 anchors {
@@ -88,6 +93,7 @@ NativeModalWindow {
             }
 
             Column {
+                id: updateAvailableBlock
                 visible: KulloVersionChecker.updateAvailable
                 anchors {
                     left: parent.left
@@ -120,6 +126,37 @@ NativeModalWindow {
                     }
                     html: qsTr("Or visit our <a href='%1'>download website</a>.")
                           .arg(KulloVersionChecker.updateUrl)
+                }
+            }
+
+            Column {
+                visible: !updateAvailableBlock.visible
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                spacing: 7
+
+                NativeText {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    property var date: KulloVersionChecker.lastSuccessfulCheck
+
+                    function dateIsValid(date) {
+                        return date && !isNaN(date.getTime())
+                    }
+
+                    property string dateStr: dateIsValid(date)
+                                             ? Format.humanDatetime(date, Locale.ShortFormat, Locale.ShortFormat)
+                                             : "–"
+
+                    property bool recentlyChecked: dateIsValid(date)
+                                                   && ((new Date()).getTime() - date.getTime()) < 24*3600*1000
+
+                    text: (recentlyChecked ? qsTr("Kullo is up to date, yeah!") + " " : "")
+                          + qsTr("Last version check: %1").arg(dateStr)
                 }
             }
 
