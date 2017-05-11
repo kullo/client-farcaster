@@ -21,6 +21,7 @@ Item {
     property int messageId: id_
     property bool attachmentsReady: attachmentsReady_
     property string highlightColor: "#bbbbbb"
+    property int deleteAnimationDuration: 300 /* ms */
 
     /* private */
     property bool _selected: ListView.isCurrentItem
@@ -46,7 +47,7 @@ Item {
     }
 
     transitions: Transition {
-        NumberAnimation { properties: "opacity,height"; duration: deleteTimer.interval }
+        NumberAnimation { properties: "opacity,height"; duration: root.deleteAnimationDuration }
     }
 
     on_SelectedChanged: {
@@ -124,7 +125,7 @@ Item {
                 name: senderName_
                 organization: senderOrganization_
                 address: senderAddress_
-                avatarSource: "image://messageavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId_ + "/" + id_
+                avatarSource: "image://messagesenderavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId_ + "/" + id_
 
                 onAvatarClicked: root.avatarClicked()
                 onAvatarDoubleClicked: root.avatarDoubleClicked()
@@ -398,17 +399,11 @@ Item {
                     tooltip: qsTr("Delete message")
                     source: "/resources/scalable/delete_b.svg"
 
-                    StableTimer {
-                        id: deleteTimer
-                        interval: 350
-                        onTriggered: {
-                            messagesList.model.deleteMessage(id_)
-                        }
-                    }
-
                     onClicked: {
-                        root.state = "deleting"
-                        deleteTimer.start()
+                        var deletionStarted = messagesList.triggerDelayedDeletion(messageId, deleteAnimationDuration + 50)
+                        if (deletionStarted) {
+                            root.state = "deleting"
+                        }
                     }
                 }
             }

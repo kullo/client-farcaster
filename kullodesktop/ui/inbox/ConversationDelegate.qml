@@ -25,17 +25,13 @@ Item {
         border.color: "#eee"
         border.width: hasSecondaryHighlight ? 2 : 0
 
-        Image {
+        NativeImage {
             id: avatar
             width: 56
             height: 56
             anchors.verticalCenter: parent.verticalCenter
-            // Use source size to achieve smooth
-            // scaling via c++
-            sourceSize.width: width
-            sourceSize.height: height
-            source: avatarSrc_
-            asynchronous: false
+            source: "image://conversationavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId + "?" + latestMessageTimestamp_
+            asynchronous: true
             clip: true
 
             AdvancedRectangle {

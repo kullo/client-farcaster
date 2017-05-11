@@ -1,7 +1,7 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
-#include <memory>
+#include <functional>
 
 #include "kullodesktop/applications/exceptionawareqapplication.h"
 
@@ -14,6 +14,8 @@ class KulloApplication : public ExceptionAwareQApplication
 
 public:
     explicit KulloApplication(int &argc, char **argv);
+
+    static void runOnMainThread(const std::function<void()> & function);
 
     static QString GUID;
     static QString GUID_DEBUG;

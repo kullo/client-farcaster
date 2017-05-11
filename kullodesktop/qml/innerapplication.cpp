@@ -74,9 +74,9 @@ void InnerApplication::setMainWindow(QWindow *mainWindow)
     mainWindow_ = mainWindow;
 }
 
-void InnerApplication::onLoggedInChanged(bool loggedIn)
+void InnerApplication::onHasSessionChanged(bool hasSession)
 {
-    emit loggedInChanged(loggedIn);
+    emit hasSessionChanged(hasSession);
 }
 
 void InnerApplication::onUnreadMessagesCountChanged(int count)
@@ -138,8 +138,8 @@ void InnerApplication::setCloseToTray(bool closeToTray)
         icon_ = Kullo::make_unique<OsIntegration::KulloTrayIcon>(*this, nullptr);
 
         // app -> icon
-        connect(this, &InnerApplication::loggedInChanged,
-                icon_.get(), &OsIntegration::KulloTrayIcon::onLoggedInChanged);
+        connect(this, &InnerApplication::hasSessionChanged,
+                icon_.get(), &OsIntegration::KulloTrayIcon::onHasSessionChanged);
         connect(this, &InnerApplication::unreadMessagesCountChanged,
                 icon_.get(), &OsIntegration::KulloTrayIcon::onUnreadMessagesCountChanged);
         connect(this, &InnerApplication::syncFinished,

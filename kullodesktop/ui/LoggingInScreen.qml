@@ -15,7 +15,7 @@ Item {
 
     Component.onCompleted: {
         timer.start()
-        Inbox.logIn()
+        Inbox.createSession()
     }
 
     Connections {
@@ -24,9 +24,9 @@ Item {
             _isMigrating = true
             _mainText.layout()
         }
-        onLoggedInChanged: {
+        onHasSessionChanged: {
             timer.stop()
-            if (loggedIn)
+            if (hasSession)
             {
                 console.info("Opening inbox view ...")
                 app.state = "inbox"

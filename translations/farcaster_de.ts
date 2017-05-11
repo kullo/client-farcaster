@@ -2,6 +2,36 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de_DE">
 <context>
+    <name>AccountDelegate</name>
+    <message>
+        <source>Open inbox</source>
+        <translation>Postfach öffnen</translation>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation>Abmelden</translation>
+    </message>
+</context>
+<context>
+    <name>AccountsList</name>
+    <message>
+        <source>Log out and delete data</source>
+        <translation>Abmelden und Daten löschen</translation>
+    </message>
+    <message>
+        <source>Make sure you have a backup of your MasterKey before logging out. Otherwise, you will lose access to your account!</source>
+        <translation>Stelle sicher dass du ein Backup deines MasterKey hast. Andernfalls verlierst du den Zugang zu deinem Account!</translation>
+    </message>
+    <message>
+        <source>Do you really want to log out?</source>
+        <translation>Möchtest du dich wirklich abmelden?</translation>
+    </message>
+    <message>
+        <source>Logged in accounts</source>
+        <translation>Angemeldete Accounts</translation>
+    </message>
+</context>
+<context>
     <name>AddressSelection</name>
     <message>
         <source>Invalid Kullo address format.</source>
@@ -176,24 +206,32 @@
 <context>
     <name>ConversationInfoWindow</name>
     <message>
-        <source>Conversation Info</source>
-        <translation>Infos zur Konversation</translation>
-    </message>
-    <message>
-        <source>Participants</source>
-        <translation>Teilnehmer</translation>
-    </message>
-    <message>
-        <source>Message counts</source>
-        <translation>Nachrichten-Anzahl</translation>
-    </message>
-    <message>
         <source>incoming</source>
         <translation>eingehende</translation>
     </message>
     <message>
         <source>outgoing</source>
         <translation>ausgehende</translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation>Nachrichten</translation>
+    </message>
+    <message>
+        <source>Conversation info</source>
+        <translation>Infos zur Konversation</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation>Statistik</translation>
+    </message>
+    <message>
+        <source>Create new conversation</source>
+        <translation>Neue Konversation erstellen</translation>
+    </message>
+    <message>
+        <source>Create new conversation with selected participants</source>
+        <translation>Neue Konversation mit ausgewählten Teilnehmern erstellen</translation>
     </message>
 </context>
 <context>
@@ -661,72 +699,6 @@
     </message>
 </context>
 <context>
-    <name>GroupConversationChangeDialog</name>
-    <message>
-        <source>Recipients:</source>
-        <translation>Empfänger:</translation>
-    </message>
-    <message>
-        <source>Monologues not supported.</source>
-        <translation>Monologe werden nicht unterstützt.</translation>
-    </message>
-    <message>
-        <source>Address already added.</source>
-        <translation>Adresse bereits hinzugefügt.</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Abbrechen</translation>
-    </message>
-    <message>
-        <source>Remove this recipient</source>
-        <translation>Empfänger entfernen</translation>
-    </message>
-    <message>
-        <source>Address could not be verified. Are you online? Is the address correct?</source>
-        <translation>Adresse konnte nicht verifiziert werden. Bist du online? Ist die Adresse korrekt?</translation>
-    </message>
-    <message>
-        <source>Address does not exist.</source>
-        <translation>Adresse existiert nicht.</translation>
-    </message>
-</context>
-<context>
-    <name>GroupConversationStartDialog</name>
-    <message>
-        <source>Recipients:</source>
-        <translation>Empfänger:</translation>
-    </message>
-    <message>
-        <source>Monologues not supported.</source>
-        <translation>Monologe werden nicht unterstützt.</translation>
-    </message>
-    <message>
-        <source>Address already added.</source>
-        <translation>Adresse bereits hinzugefügt.</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Abbrechen</translation>
-    </message>
-    <message>
-        <source>Address does not exist.</source>
-        <translation>Adresse existiert nicht.</translation>
-    </message>
-    <message>
-        <source>Address could not be verified. Are you online? Is the address correct?</source>
-        <translation>Adresse konnte nicht verifiziert werden. Bist du online? Ist die Adresse korrekt?</translation>
-    </message>
-</context>
-<context>
     <name>InboxScreen</name>
     <message>
         <source>Error opening file</source>
@@ -832,7 +804,7 @@ Modus</translation>
     </message>
     <message>
         <source>Leave inbox</source>
-        <translation>Posteingang verlassen</translation>
+        <translation>Postfach verlassen</translation>
     </message>
     <message>
         <source>Go to start screen</source>
@@ -1125,14 +1097,6 @@ sind deine Nachrichten verloren.</translation>
         <translation>Alle Nachrichten in dieser Konversation als &apos;erledigt&apos; markieren.</translation>
     </message>
     <message>
-        <source>Change recipients</source>
-        <translation>Empfänger ändern</translation>
-    </message>
-    <message>
-        <source>Create new conversation</source>
-        <translation>Neue Konversation erstellen</translation>
-    </message>
-    <message>
         <source>Add or remove recipients</source>
         <translation>Empfänger hinzufügen oder entfernen</translation>
     </message>
@@ -1143,6 +1107,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Write</source>
         <translation>Schreiben</translation>
+    </message>
+    <message>
+        <source>Conversation info</source>
+        <translation>Infos zur Konversation</translation>
     </message>
 </context>
 <context>
@@ -1325,7 +1293,7 @@ sind deine Nachrichten verloren.</translation>
     </message>
     <message>
         <source>Leave current inbox</source>
-        <translation>Posteingang verlassen</translation>
+        <translation>Postfach verlassen</translation>
     </message>
     <message>
         <source>Reply to the current conversation</source>
@@ -1358,6 +1326,37 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Open emoji keyboard</source>
         <translation>Emoji-Tastatur öffnen</translation>
+    </message>
+</context>
+<context>
+    <name>StartConversationDialog</name>
+    <message>
+        <source>Recipients:</source>
+        <translation>Empfänger:</translation>
+    </message>
+    <message>
+        <source>Address does not exist.</source>
+        <translation>Adresse existiert nicht.</translation>
+    </message>
+    <message>
+        <source>Address could not be verified. Are you online? Is the address correct?</source>
+        <translation>Adresse konnte nicht verifiziert werden. Bist du online? Ist die Adresse korrekt?</translation>
+    </message>
+    <message>
+        <source>Monologues not supported.</source>
+        <translation>Monologe werden nicht unterstützt.</translation>
+    </message>
+    <message>
+        <source>Address already added.</source>
+        <translation>Adresse bereits hinzugefügt.</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -1461,14 +1460,6 @@ sind deine Nachrichten verloren.</translation>
 </context>
 <context>
     <name>WelcomeScreen</name>
-    <message>
-        <source>Open inbox</source>
-        <translation>Postfach öffnen</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>Öffnen</translation>
-    </message>
     <message>
         <source>Login with another account.</source>
         <translation>Mit einem anderen Account einloggen.</translation>

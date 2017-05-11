@@ -7,51 +7,67 @@ import Kullo.Visuals 1.0
 import "../"
 import "../misc"
 import "../native"
-import "../js/js_helpers.js" as JSHelpers
 import "../js/shortcut.js" as SC
 
 BaseDialog {
-    id: root
-    objectName: "GroupConversationChangeDialog"
+    objectName: "StartConversationDialog"
 
-    property var initialParticipants: [] // string list
-    property string text
-    property alias buttonOkEnabled: buttonOk.enabled
-    property alias buttonCancelEnabled: buttonCancel.enabled
-    property alias errorHintText: errorHint.text
-    property bool errorHintVisible: errorHintText != ""
-    property var addresses: [] // string list
+    /* public */
+    property alias inputText: input.editText
     property string result
-    property bool state_closing: false
+
+    /* private */
+    property var _addresses
+    property alias _errorHintText: errorHint.text
+    property bool _errorHintVisible: _errorHintText !== ""
+    property bool _stateClosing: false
 
     signal addressAccepted()
     signal addressAdded()
-    signal addressRemoved()
 
+    id: root
     width: 400
     minimumHeight: mainItem.implicitHeight + 2*verticalPadding
     height: mainItem.implicitHeight + 2*verticalPadding
-    title: text
 
     Component.onCompleted: {
         mainItem.forceActiveFocus()
     }
 
-    function buttonOkEnablesValidator() {
-        if (addresses.length)
-            return true
-        else
-            return false
+    function reset() {
+        // Reset model first to ensure text input is cleared afterwards
+        input.reloadAutocompletionModel()
+
+        _addresses = []
+        result = ""
+        input.editText = ""
+        for(var i = stagedAddresses.children.length; i > 1; i--)
+        {
+            stagedAddresses.children[i-1].destroy()
+        }
     }
 
-    function reset() {
-        addresses = initialParticipants
-        result = ""
-        input.text = ""
+    function addAddresses(addressList) {
+        for (var i = 0; i < addressList.length; ++i) {
+            var address = addressList[i]
+            addAddress(address)
+        }
+    }
+
+    function addAddress(address)
+    {
+        _addresses.push(address)
+        stagedAddresses.add(address)
+        root.addressAdded()
+        input.editText = ""
     }
 
     // on open window
-    onVisibleChanged: if (visible) reset()
+    onVisibleChanged: {
+        if (visible) {
+            reset()
+        }
+    }
 
     // Main Qt Quick Item required for attached property `Keys`
     FocusScope {
@@ -75,95 +91,38 @@ BaseDialog {
                 right: parent.right
             }
 
-            implicitHeight: stagedAddressesBox.height
+            implicitHeight: stagedAddresses.implicitHeight
                             + inputRowBox.anchors.topMargin
                             + inputRowBox.implicitHeight
                             + errorHint.height
 
-
-            NativeText {
-                id: stagedAddressesLabel
-                text: qsTr("Recipients:")
-            }
-
-            ScrollView {
-                id: stagedAddressesBox
+            Flow {
+                id: stagedAddresses
                 anchors {
                     top: parent.top
-                    left: stagedAddressesLabel.right
-                    leftMargin: 20
+                    left: parent.left
                     right: parent.right
                 }
-                height: 100
+                spacing: 5
 
-                ListView {
-                    id: stagedAddresses
-                    anchors.fill: parent
-                    clip: true
-                    interactive: false
-                    model: addresses
+                NativeText {
+                    id: stagedAddressesLabel
+                    text: qsTr("Recipients:")
+                }
 
-                    function removeValueFromList(address)
-                    {
-                        var copy = addresses.slice(addresses, addresses.length)
-                        JSHelpers.removeFromArray(copy, address)
-                        addresses = copy
-                        root.addressRemoved()
+                Component {
+                    id: stagedAddress
+
+                    NativeText {
+                        font.family: FontList.MonospaceFamily
+                        height: stagedAddressesLabel.implicitHeight
+                        verticalAlignment: Text.AlignBottom
                     }
+                }
 
-                    delegate: Item {
-                        height: 32
-
-                        property string address: modelData
-
-                        Image {
-                            id: avatar
-                            source: "image://participantavatars/" + Utils.urlencode(address)
-                            property int size: 30
-                            width: size
-                            height: size
-                            sourceSize.width: size
-                            sourceSize.height: size
-
-                            anchors {
-                                left: parent.left
-                                top: parent.top
-                                topMargin: 1
-                            }
-                        }
-
-                        NativeText {
-                            id: label
-                            anchors {
-                                left: avatar.right
-                                leftMargin: 8
-                                top: parent.top
-                                topMargin: 1
-                            }
-                            text: address
-                            height: avatar.height
-                            verticalAlignment: Text.AlignVCenter
-                        }
-
-                        NativeImage {
-                            source: "/resources/scalable/minus_b.svg"
-                            width: 14
-                            height: 14
-                            anchors {
-                                top: parent.top
-                                topMargin: (parent.height-height) / 2
-                                left: label.right
-                                leftMargin: 5
-                            }
-
-                            TooltipArea {
-                                text: qsTr("Remove this recipient")
-                                onClicked: {
-                                    stagedAddresses.removeValueFromList(address)
-                                }
-                            }
-                        }
-                    }
+                function add(address) {
+                    var obj = stagedAddress.createObject(stagedAddresses, {"text": address});
+                    if (!obj) console.error("Error creating object");
                 }
             }
 
@@ -171,7 +130,7 @@ BaseDialog {
                 id: inputRowBox
 
                 anchors {
-                    top: stagedAddressesBox.bottom
+                    top: stagedAddresses.bottom
                     topMargin: 5
                     left: parent.left
                     right: parent.right
@@ -179,7 +138,7 @@ BaseDialog {
                 implicitHeight: input.implicitHeight
                 height: implicitHeight
 
-                TextFieldKulloAddress {
+                ComboBoxKulloAddress {
                     id: input
 
                     anchors {
@@ -188,11 +147,12 @@ BaseDialog {
                         right: addButton.left
                         rightMargin: 2
                     }
+
                     focus: true
-                    text: ""
+                    editText: ""
                     enabled: !existenceChecker.locked
 
-                    onTextChanged: errorHintText = ""
+                    onEditTextChanged: _errorHintText = ""
 
                     ExistenceChecker {
                         id: existenceChecker
@@ -201,29 +161,29 @@ BaseDialog {
                         onExistenceChecked: {
                             if (ok) {
                                 console.info("Existence ok: '" + address + "'")
-                                errorHintText = ""
-                                input.addValueToList(address)
+                                _errorHintText = ""
+                                root.addAddress(address)
 
-                                if (root.state_closing)
+                                if (root._stateClosing)
                                 {
                                     root.accepted()
                                 }
                             }
                             else {
-                                console.info("Existence failed: '" + address + "'")
-                                errorHintText = qsTr("Address does not exist.")
+                                console.info("Existence failed: " + address)
+                                _errorHintText = qsTr("Address does not exist.")
                             }
-                            root.state_closing = false
+                            root._stateClosing = false
                         }
                         onNetworkError: {
-                            console.info("Existence failed: '" + address + "'")
-                            errorHintText = qsTr("Address could not be verified. Are you online? Is the address correct?")
+                            console.info("Start: Existence failed: " + address)
+                            _errorHintText = qsTr("Address could not be verified. Are you online? Is the address correct?")
                         }
                     }
 
                     function tryToAddValueToList()
                     {
-                        var address = text.trim().toLowerCase()
+                        var address = editText.trim().toLowerCase()
 
                         if (!Utils.isValidKulloAddress(address))
                         {
@@ -231,29 +191,18 @@ BaseDialog {
                         }
                         if (Utils.kulloAddressEqual(address, Inbox.userSettings.address))
                         {
-                            errorHintText = qsTr("Monologues not supported.")
+                            _errorHintText = qsTr("Monologues not supported.")
                             return false
                         }
-                        if (addresses.indexOf(address) !== -1)
+                        if (_addresses.indexOf(address) !== -1)
                         {
-                            errorHintText = qsTr("Address already added.")
+                            _errorHintText = qsTr("Address already added.")
                             return false
                         }
 
                         existenceChecker.checkExistence(address)
 
                         return true
-                    }
-
-                    function addValueToList(address)
-                    {
-                        var copy = addresses.slice(addresses, addresses.length)
-                        copy.push(address)
-
-                        addresses = copy
-
-                        root.addressAdded()
-                        input.text = ""
                     }
 
                     onAccepted: tryToAddValueToList()
@@ -312,7 +261,7 @@ BaseDialog {
                 NativeButton {
                     id: buttonOk
                     text: qsTr("OK")
-                    enabled: buttonOkEnablesValidator()
+                    enabled: true
 
                     onClicked: root.accepted()
                 }
@@ -327,11 +276,13 @@ BaseDialog {
         }
     }
 
-    onErrorHintVisibleChanged: buttonOkEnabled = !errorHintVisible
+    on_ErrorHintVisibleChanged: {
+        buttonOk.enabled = !_errorHintVisible
+    }
 
     onAccepted: {
         // Something in input?
-        if (input.text.trim() != "")
+        if (input.editText.trim() != "")
         {
             if (!input.tryToAddValueToList())
             {
@@ -340,20 +291,20 @@ BaseDialog {
             else
             {
                 // Wait for existence checker ...
-                root.state_closing = true
+                root._stateClosing = true
                 return
             }
         }
 
         // Called from OK button click or Ctrl+Enter
         // Double check input here
-        if (addresses.length)
+        if (_addresses.length)
         {
             result = ""
-            for (var i = 0; i < addresses.length; ++i)
+            for (var i = 0; i < _addresses.length; ++i)
             {
                 if (i) result += ","
-                result += addresses[i]
+                result += _addresses[i]
             }
             root.addressAccepted()
             root.closeDialog()

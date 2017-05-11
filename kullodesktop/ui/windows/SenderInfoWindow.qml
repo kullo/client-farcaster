@@ -52,8 +52,9 @@ NativeWindow {
                 leftMargin: 10
             }
             source: messageId != -1
-                    ? "image://messageavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId + "/" + messageId
+                    ? "image://messagesenderavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId + "/" + messageId
                     : ""
+            asynchronous: true
             height: 200
             width: 200
         }

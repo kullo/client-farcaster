@@ -17,8 +17,9 @@ protected:
     QPixmap drawAvatar(const QString &url, const QSize &renderSize) override;
 
 private:
-    QPixmap avatarForAddress(QString &participantAddress, const QSize &renderSize);
-    QPixmap composeAvatar(const QStringList &participantsAddresses, const QSize &renderSize);
+    static QPixmap composeAvatar(const QList<QPixmap> participantAvatars, const QSize &renderSize);
+
+    Qml::Inbox &inbox_;
 };
 
 }

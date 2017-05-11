@@ -5,9 +5,10 @@ import Kullo 1.0
 
 Button {
     Keys.onPressed: {
+        // Key_Enter always comes with KeypadModifier
         if (!Os.osx
                 && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
-                && event.modifiers === Qt.NoModifier)
+                && (event.modifiers === Qt.NoModifier || event.modifiers === Qt.KeypadModifier))
         {
             event.accepted = true
             clicked()

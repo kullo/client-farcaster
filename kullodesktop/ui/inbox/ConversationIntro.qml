@@ -1,5 +1,5 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
-import QtQuick 2.4
+import QtQuick 2.6
 
 import ".."
 import "../native"
@@ -23,17 +23,8 @@ Column {
 
     height: implicitHeight + paddingBottom
 
+    topPadding: paddingTop
     spacing: 3
-
-    // Replace this top spacing element by Column.topPadding
-    // as soon as Qt 5.6 is available
-    Item {
-        height: root.paddingTop - root.spacing
-        anchors {
-            left: parent.left
-            right: parent.right
-        }
-    }
 
     NativeText {
         id: textLine1

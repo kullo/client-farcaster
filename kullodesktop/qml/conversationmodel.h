@@ -35,8 +35,8 @@ public:
     Q_PROPERTY(QString participantsList READ participantsList NOTIFY participantsListChanged)
     QString participantsList() const;
 
-    Q_PROPERTY(QVariantMap participants READ participants NOTIFY participantsChanged)
-    QVariantMap participants() const;
+    Q_PROPERTY(QVariantMap participantNames READ participantNames NOTIFY participantNamesChanged)
+    QVariantMap participantNames() const;
 
     Q_PROPERTY(qint32 count READ count NOTIFY countChanged)
     qint32 count() const;
@@ -70,11 +70,12 @@ public:
 
     // Non-QML methods
 
+    // Let central point (conversations list) collect and distribute changed
+    // signals in order to avoid that every conversation needs to listen on every
+    // conversation changed event and check id
     void notifyChanged();
 
 signals:
-    void latestMessageTimestampChanged();
-
     // These signals are emitted at once in notifyChanged()
     // to properly update QML properties like in
     // conversationList.model.get(id).count
@@ -83,11 +84,12 @@ signals:
     void countUndoneChanged();
     void countIncomingChanged();
     void countOutgoingChanged();
+    void latestMessageTimestampChanged();
     void draftEmptyChanged();
 
     // unused signals
     void idChanged();                    // constant
-    void participantsChanged();          // constant
+    void participantNamesChanged();      // constant
     void participantsListChanged();      // constant
     void participantsAddressesChanged(); // constant
     void draftChanged();                 // constant

@@ -15,18 +15,17 @@ Rectangle {
 
     /* private */
     property int _participantsCount: conversation
-                                     ? JSHelpers.sizeOfMapObject(conversation.participants)
+                                     ? JSHelpers.sizeOfMapObject(conversation.participantNames)
                                      : 0
 
     function rebuildReceiversList()
     {
         if (conversation)
         {
-            var participants = conversation.participants
+            var participantNames = conversation.participantNames
             participantsModel.clear()
-            for (var address in participants)
-            {
-                participantsModel.append({ address: address, name: participants[address] });
+            for (var address in participantNames) {
+                participantsModel.append({ address: address, name: participantNames[address] });
             }
         }
     }
@@ -105,6 +104,7 @@ Rectangle {
                         }
                         width: 40
                         height: 40
+                        asynchronous: true
                         source: "image://participantavatars/" + Utils.urlencode(address)
                     }
 

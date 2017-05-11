@@ -1,17 +1,14 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "abstractavatarprovider.h"
 
+#include <QCryptographicHash>
 #include <QPainter>
 #include <cmath>
 
-#include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
-
-#include "kullodesktop/qml/inbox.h"
-#include "kullodesktop/qml/sender.h"
 
 namespace {
 const int RELATIVE_CORNER_RADIUS = 15; // %
@@ -24,9 +21,8 @@ const qreal FALLBACK_AVATAR_FOREGROUND_OPACITY = 0.8;
 namespace KulloDesktop {
 namespace Imageproviders {
 
-AbstractAvatarProvider::AbstractAvatarProvider(Qml::Inbox &inbox)
+AbstractAvatarProvider::AbstractAvatarProvider()
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
-    , inbox_(inbox)
 {
 }
 
@@ -63,37 +59,51 @@ QPixmap AbstractAvatarProvider::requestPixmap(const QString &id, QSize *size, co
     return drawAvatar(id, renderSize);
 }
 
-QPixmap AbstractAvatarProvider::getAvatarForAddress(const QString &address, const QSize &renderSize)
+QPixmap AbstractAvatarProvider::getEmptyAvatar(const QSize &renderSize)
 {
-    auto part = inbox_.latestSenderForAddress(Kullo::Api::Address::create(address.toStdString()));
-    if (!part)
-    {
-        return getEmptyAvatar(renderSize);
-    }
+    const auto key = cacheKey(QStringLiteral("empty"), renderSize);
 
-    auto avatar = part->avatar();
-    if (!avatar.isNull())
+    QPixmap out;
+
     {
-        if (avatar.width() != avatar.height())
+        std::lock_guard<std::mutex> lock(avatarsCacheMutex_); K_RAII(lock);
+
+        if (!avatarsCache_.contains(key))
         {
-            Log.w() << "Participant avatar must be square at this point "
-                    << "(" << QSize(avatar.width(), avatar.height()) << ")"
-                    << ": " << part->address();
+            QImage image(QStringLiteral(":/resources/empty_avatar.png"));
+            kulloAssert(!image.isNull());
+            QImage resized = image.scaled(renderSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+
+            avatarsCache_[key] = QPixmap::fromImage(resized);
         }
 
-        return avatar.scaled(renderSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        out = avatarsCache_[key];
     }
-    else if (!part->name().isEmpty())
-    {
-        return getFallbackAvatar(DesktopUtil::Initials::fromName(part->name()), renderSize);
-    }
-    else
-    {
-        return getEmptyAvatar(renderSize);
-    }
+
+    return out;
 }
 
-QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString &text, const QSize &renderSize)
+QPixmap AbstractAvatarProvider::getTextAvatar(const QString &text, const QSize &renderSize)
+{
+    const auto key = cacheKey(QStringLiteral("text=%1").arg(text), renderSize);
+
+    QPixmap out;
+
+    {
+        std::lock_guard<std::mutex> lock(avatarsCacheMutex_); K_RAII(lock);
+
+        if (!avatarsCache_.contains(key))
+        {
+            avatarsCache_[key] = makeTextAvatar(text, renderSize);
+        }
+
+        out = avatarsCache_[key];
+    }
+
+    return out;
+}
+
+QPixmap AbstractAvatarProvider::makeTextAvatar(const QString &text, const QSize &renderSize)
 {
     QPixmap pixmap(renderSize);
 
@@ -109,24 +119,10 @@ QPixmap AbstractAvatarProvider::getFallbackAvatar(const QString &text, const QSi
     return pixmap;
 }
 
-QPixmap AbstractAvatarProvider::getEmptyAvatar(const QSize &renderSize)
-{
-    std::uint32_t key = (renderSize.width() << 16) | renderSize.height();
-
-    if (!emptyAvatarCache_.count(key))
-    {
-        QImage image(QStringLiteral(":/resources/empty_avatar.png"));
-        kulloAssert(!image.isNull());
-        QImage resized = image.scaled(renderSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-
-        emptyAvatarCache_.emplace(key, Kullo::make_unique<QPixmap>(QPixmap::fromImage(resized)));
-    }
-
-    return *emptyAvatarCache_[key];
-}
-
 QPixmap AbstractAvatarProvider::rounded(const QPixmap &in, bool cirlce)
 {
+    if (in.isNull()) return QPixmap();
+
     QImage out(in.width(), in.height(), QImage::Format_ARGB32);
     out.fill(Qt::transparent);
 
@@ -149,6 +145,43 @@ QPixmap AbstractAvatarProvider::rounded(const QPixmap &in, bool cirlce)
     painter.drawRoundedRect(bounds, relativeCornerRadius, relativeCornerRadius, Qt::RelativeSize);
 
     return QPixmap::fromImage(out);
+}
+
+QString AbstractAvatarProvider::cacheKey(const QString &contentIdentifier, const QSize &renderSize)
+{
+    return QStringLiteral("%1/%2/%3")
+            .arg(contentIdentifier)
+            .arg(renderSize.width())
+            .arg(renderSize.height());
+}
+
+QString AbstractAvatarProvider::cacheKey(const QByteArray &data, const QSize &renderSize)
+{
+    const auto hash = QString::fromLatin1(QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex());
+    const auto contentIdentifier = QStringLiteral("raw=") + hash;
+    return cacheKey(contentIdentifier, renderSize);
+}
+
+QPixmap AbstractAvatarProvider::decodeAvatar(const QByteArray &data, const QString &mimeType, const QSize &renderSize)
+{
+    QByteArray type;
+    if (mimeType == "image/png")  type = "png";
+    if (mimeType == "image/jpeg") type = "jpeg";
+
+    QPixmap newPixmap;
+    newPixmap.loadFromData(data, type.constData());
+
+    if (!newPixmap.isNull()) {
+        if (newPixmap.width() != newPixmap.height())
+        {
+            Log.w() << "Avatar must be square at this point "
+                    << "(" << QSize(newPixmap.width(), newPixmap.height()) << ")";
+        }
+
+        newPixmap = newPixmap.scaled(renderSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    return newPixmap;
 }
 
 }

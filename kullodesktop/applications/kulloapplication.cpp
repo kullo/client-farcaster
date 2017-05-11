@@ -22,5 +22,16 @@ KulloApplication::KulloApplication(int &argc, char **argv)
     });
 }
 
+void KulloApplication::runOnMainThread(const std::function<void ()> &function)
+{
+    QObject dummyObjectLivingInCallerThread;
+
+    // qApp lives on main thread, so this slot will be calles on main thread.
+    // As this is a AutoConnection, code will run immediately if called from main thread
+    QObject::connect(&dummyObjectLivingInCallerThread, &QObject::destroyed, qApp, [=](QObject*) {
+        function();
+    });
+}
+
 }
 }

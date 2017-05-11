@@ -11,9 +11,8 @@
 
 #include "kullodesktop/imageproviders/attachmentpreviewprovider.h"
 #include "kullodesktop/imageproviders/conversationavatarprovider.h"
-#include "kullodesktop/imageproviders/messageavatarprovider.h"
+#include "kullodesktop/imageproviders/messagesenderavatarprovider.h"
 #include "kullodesktop/imageproviders/participantavatarprovider.h"
-#include "kullodesktop/imageproviders/senderavatarprovider.h"
 #include "kullodesktop/imageproviders/usersettingsavatarprovider.h"
 
 #include "kullodesktop/qml/attachmentlistmodel.h"
@@ -104,9 +103,8 @@ void QmlSetup::setupImageproviders(QQmlApplicationEngine &engine, Qml::Inbox &cl
     using namespace KulloDesktop::Imageproviders;
     engine.addImageProvider(QStringLiteral("attachmentpreview"),   new AttachmentPreviewProvider(clientModel));
     engine.addImageProvider(QStringLiteral("conversationavatars"), new ConversationAvatarProvider(clientModel));
-    engine.addImageProvider(QStringLiteral("messageavatars"),      new MessageAvatarProvider(clientModel));
-    engine.addImageProvider(QStringLiteral("participantavatars"),  new ParticipantAvatarProvider(clientModel));
-    engine.addImageProvider(QStringLiteral("senderavatars"),       new SenderAvatarProvider(clientModel));
+    engine.addImageProvider(QStringLiteral("messagesenderavatars"), new MessageSenderAvatarProvider(clientModel));
+    engine.addImageProvider(QStringLiteral("participantavatars"), new ParticipantAvatarProvider(clientModel));
     engine.addImageProvider(QStringLiteral("usersettingsavatars"), new UserSettingsAvatarProvider(clientModel));
 }
 

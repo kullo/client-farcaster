@@ -5,7 +5,7 @@ Item {
     default property alias children: column.children
     property int padding: 5
     property color backgroundColor: "#303030"
-    width: 220
+    width: 200
 
     z: 1
 

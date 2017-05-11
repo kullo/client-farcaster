@@ -20,7 +20,6 @@
         <file>resources/scalable/logout2_w.svg</file>
         <file>resources/scalable/info_b.svg</file>
         <file>resources/scalable/info_w.svg</file>
-        <file>resources/scalable/minus_b.svg</file>
         <file>resources/scalable/more_b.svg</file>
         <file>resources/scalable/ok_w.svg</file>
         <file>resources/scalable/profile_b.svg</file>
@@ -30,6 +29,7 @@
         <file>resources/scalable/settings2_w.svg</file>
         <file>resources/scalable/sound_muted_b.svg</file>
         <file>resources/scalable/sound_unmuted_b.svg</file>
+        <file>resources/scalable/star_w.svg</file>
         <file>resources/scalable/state_unread_b.svg</file>
         <file>resources/scalable/state_undone_b.svg</file>
         <file>resources/scalable/state_done_b.svg</file>

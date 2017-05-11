@@ -25,6 +25,13 @@ QtObject {
     property color redLight: "#D33447"
     property color white: "#FFFFFF"
 
+    property color welcomeAccountsBackground: "#fafafa"
+    property color welcomeAccountsForeground: black
+    property color welcomeAccountsHighlightedBackground: blue
+    property color welcomeAccountsHighlightedForeground: white
+    property color welcomeAccountsSecondaryHighlightedBackground: "#ccc"
+    property color welcomeAccountsSecondaryHighlightedForeground: black
+
     property color conversationsListBackground: "#FFFFFF"
     property color messagesListBackground: "#CCCCCC"
     property color answerColumnBackground: "#999999"
@@ -67,6 +74,7 @@ QtObject {
         property real shortcutOverlayKey: 10*sp
         property real answerTextInput: InnerApplication.deviceSettings.messagesFontPreview.pointSize*sp
         property real bigTextInput: 14*sp
+        property real big: 13*sp
         property real normal: 11*sp
         property real small: 10*sp
         property real attachmentFilename: 9*sp

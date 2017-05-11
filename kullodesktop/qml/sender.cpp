@@ -2,8 +2,10 @@
 #include "sender.h"
 
 #include <desktoputil/stlqt.h>
+#include <kulloclient/api/Address.h>
 #include <kulloclient/api/Messages.h>
-#include <kulloclient/crypto/hasher.h>
+#include <kulloclient/api/Senders.h>
+#include <kulloclient/api/Session.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -42,25 +44,14 @@ QString Sender::organization() const
     return QString::fromStdString(session_->senders()->organization(msgId_));
 }
 
-QPixmap Sender::avatar() const
+QString Sender::avatarMimeType() const
 {
-    auto mimeType = session_->senders()->avatarMimeType(msgId_);
-    auto data = session_->senders()->avatar(msgId_);
+    return QString::fromStdString(session_->senders()->avatarMimeType(msgId_));
+}
 
-    QByteArray type;
-    if (mimeType == "image/png")  type = "png";
-    if (mimeType == "image/jpeg") type = "jpeg";
-
-    // Loading image data into a QPixmap takes a lot of time and is repeated
-    // often with the same data, so let's cache it
-    auto dataHash = Kullo::Crypto::Hasher::sha256(data);
-    if (dataHash != avatarCacheDataHash_)
-    {
-        avatarCacheDataHash_ = dataHash;
-        QByteArray avatarData = DesktopUtil::StlQt::toQByteArray(data);
-        avatarCache_.loadFromData(avatarData, type.constData());
-    }
-    return avatarCache_;
+QByteArray Sender::avatar() const
+{
+    return DesktopUtil::StlQt::toQByteArray(session_->senders()->avatar(msgId_));
 }
 
 }

@@ -23,12 +23,16 @@ ConversationListModel::ConversationListModel(ConversationListSource *conversatio
     : QSortFilterProxyModel(parent)
     , source_(conversations)
 {
+    // Do not sort automatically. Sort when source emits conversationsChanged
+    setDynamicSortFilter(false);
+
     setSourceModel(source_);
     sort(0, Qt::DescendingOrder);
-    setDynamicSortFilter(true);
 
-    connect(source_, &ConversationListSource::conversationsChanged,
-            this, &ConversationListModel::conversationsChanged);
+    connect(source_, &ConversationListSource::conversationsChanged, this, [&]() {
+        sort(0, Qt::DescendingOrder);
+        emit conversationsChanged();
+    });
 }
 
 ConversationListModel::~ConversationListModel()
@@ -45,7 +49,11 @@ void ConversationListModel::setTodoMode(bool active)
     if (todoMode_ == active) return;
 
     todoMode_ = active;
-    invalidateFilter();
+
+    // When elements are added to the result (todo mode on -> off), resorting is required
+    if (active) invalidateFilter();
+    else invalidate();
+
     emit todoModeChanged();
 }
 

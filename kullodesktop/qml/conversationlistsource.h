@@ -6,8 +6,7 @@
 #include <QAbstractListModel>
 
 #include <apimirror/eventdispatcher.h>
-#include <kulloclient/api/Address.h>
-#include <kulloclient/api/Session.h>
+#include <kulloclient/kulloclient-forwards.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 
@@ -23,13 +22,11 @@ public:
         IdRole = Qt::UserRole, // 256
         ParticipantsAddressesRole,
         ParticipantsListRole,
-        ParticipantsRole,
         CountRole,
         CountUndoneRole,
         CountUnreadRole,
         LatestMessageTimestampRole,
         DraftEmptyRole,
-        AvatarSrcRole
     };
 
     explicit ConversationListSource(ApiMirror::EventDispatcher &eventDispatcher, QObject *parent = nullptr);
@@ -54,9 +51,9 @@ signals:
 
 private slots:
     void onConversationAdded(Kullo::id_type conversationId);
-    void onConversationChanged(Kullo::id_type conversationId);
     void onConversationRemoved(Kullo::id_type conversationId);
-    void onParticipantChanged(Kullo::id_type conversationId);
+    void onConversationChanged(Kullo::id_type conversationId);
+    void onConversationLatestMessageTimestampChanged(Kullo::id_type conversationId);
     void onSingleConversationCountUnreadChanged();
 
 private:

@@ -1,5 +1,6 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
+import Kullo 1.0
 
 import "../windows"
 
@@ -37,6 +38,26 @@ ListView {
         var newContentY = contentY + pixels
         newContentY = Math.max(newContentY, 0);
         contentY = newContentY
+    }
+
+    StableTimer {
+        id: deleteTimer
+        property int currentlyDeletionMessageId: -1
+        repeat: false
+        onTriggered: {
+            root.model.deleteMessage(currentlyDeletionMessageId)
+            currentlyDeletionMessageId = -1
+        }
+    }
+
+    // Calling this function makes deletion independent of the lifetime of the delegate
+    function triggerDelayedDeletion(messageId, timeout) {
+        if (deleteTimer.currentlyDeletionMessageId != -1) return false // in deletion process
+
+        deleteTimer.interval = timeout
+        deleteTimer.currentlyDeletionMessageId = messageId
+        deleteTimer.start()
+        return true
     }
 
     Keys.onSpacePressed: {

@@ -21,7 +21,7 @@ ListView {
         if (convId < 0) return false;
 
         console.info("Conversation ID stored to be opened: " + convId);
-        currentIndex = model.find(convId)
+        inboxScreen.openConversation(convId)
         inboxScreen.openAnswer()
         return true
     }
@@ -29,12 +29,21 @@ ListView {
     onCurrentIndexChanged: {
         // Reset secondary highlight when main highlight changes
         _currentSecondaryIndex = -1
+
+        if (root.currentItem)
+        {
+            if (_lastSelectedConversationId !== root.currentItem.conversationId)
+            {
+                inboxScreen.openConversation(root.currentItem.conversationId)
+            }
+        }
     }
 
-    function openConversation(convId)
+    function selectConversation(convId)
     {
         var pos = model.find(convId)
         root.currentIndex = pos
+        _lastSelectedConversationId = convId
     }
 
     function openFirstConversationCheck()
@@ -50,20 +59,6 @@ ListView {
     }
 
     onCountChanged: openFirstConversationCheck()
-
-    onCurrentItemChanged: {
-        if (root.currentItem)
-        {
-            if (_lastSelectedConversationId !== root.currentItem.conversationId)
-            {
-                // lastSelectedConversationId must be set first because
-                // inbox.openConversation() will trigger postConversationsChanged()
-                // if messages are marked as read.
-                _lastSelectedConversationId = root.currentItem.conversationId
-                inboxScreen.openConversation(root.currentItem.conversationId)
-            }
-        }
-    }
 
     function postConversationsChanged()
     {
@@ -245,9 +240,10 @@ ListView {
             text: qsTr("Info")
             onTriggered: {
                 conversationInfoWindow.conversationId = contextMenu.selectedConversationId
-                conversationInfoWindow.participantsAddresses = root.model.get(contextMenu.selectedConversationId).participantsAddresses
-                conversationInfoWindow.participants = root.model.get(contextMenu.selectedConversationId).participants
+                conversationInfoWindow.participantNames = root.model.get(contextMenu.selectedConversationId).participantNames
                 conversationInfoWindow.openWindow()
+                conversationInfoWindow.raise()
+                conversationInfoWindow.requestActivate()
             }
         }
 

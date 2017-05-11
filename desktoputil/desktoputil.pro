@@ -22,6 +22,7 @@ SOURCES += \
     qdebugmessagehandler.cpp \
     qtypestreamers.cpp \
     stlqt.cpp \
+    threadblocker.cpp \
     versions.cpp
 
 HEADERS += \
@@ -41,6 +42,7 @@ HEADERS += \
     qdebugmessagehandler.h \
     qtypestreamers.h \
     stlqt.h \
+    threadblocker.h \
     versions.h \
     desktoputil-forwards.h
 

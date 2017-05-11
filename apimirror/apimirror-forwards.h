@@ -19,6 +19,7 @@ namespace ApiMirror {
     class DraftAttachmentsAddListener;
     class DraftAttachmentsContentListener;
     class DraftAttachmentsSaveToListener;
+    class EventDispatcher;
     class MessageAttachmentsContentListener;
     class MessageAttachmentsSaveToListener;
     class RegistrationRegisterAccountListener;

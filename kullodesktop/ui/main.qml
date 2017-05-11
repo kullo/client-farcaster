@@ -169,11 +169,14 @@ ApplicationWindow {
                     visibility: "AutomaticVisibility"
                 }
                 PropertyChanges {
+                    // accounts list width: 250
+                    // right column width: 250-300
+                    // height: 400-500
                     target: appWindow
-                    width: 300
+                    width: 300 + (InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0)
                     height: 500
-                    minimumWidth: 0
-                    minimumHeight: 0
+                    minimumWidth: 250 + (InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0)
+                    minimumHeight: 400
                 }
             },
             State {

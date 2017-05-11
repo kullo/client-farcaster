@@ -14,6 +14,8 @@
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/MasterKey.h>
 
+#include "apimirror/apimirror-forwards.h"
+
 class QSettings;
 
 namespace KulloDesktop {
@@ -30,9 +32,11 @@ public:
         Accept  // accept an empty value
     };
 
-    explicit UserSettings(const std::shared_ptr<Kullo::Api::Address> &address,
-                          const std::shared_ptr<Kullo::Api::MasterKey> &masterKey,
-                          QObject *parent = nullptr);
+    explicit UserSettings(
+            ApiMirror::EventDispatcher &eventDispatcher,
+            const std::shared_ptr<Kullo::Api::Address> &address,
+            const std::shared_ptr<Kullo::Api::MasterKey> &masterKey,
+            QObject *parent = nullptr);
 
     void setUserSettings(const std::shared_ptr<Kullo::Api::UserSettings> &userSettings);
 
@@ -95,7 +99,10 @@ public:
 
     static void storeCredentials(const std::shared_ptr<Kullo::Api::Address> &address,
                                  const std::shared_ptr<Kullo::Api::MasterKey> &masterKey);
-    static std::unique_ptr<UserSettings> loadCredentialsForAddress(const QString &addressString);
+    static std::unique_ptr<UserSettings> loadCredentialsForAddress(
+            ApiMirror::EventDispatcher &eventDispatcher,
+            const QString &addressString);
+    static void deleteCredentials(const std::shared_ptr<Kullo::Api::Address> &address);
     static bool loadAvatarFile(QByteArray &avatarData, QString &avatarMimeType, const QUrl &filename);
 
     std::shared_ptr<Kullo::Api::Address> rawAddress() const;
@@ -124,6 +131,8 @@ private:
     static QImage scaleDown(const QImage &image);
     static QString mimeTypeToFormat(const QString &mimeType);
     static QString formatToMimeType(const QString &format);
+
+    ApiMirror::EventDispatcher &eventDispatcher_;
 
     const std::shared_ptr<Kullo::Api::Address> rawAddress_;
     const std::shared_ptr<Kullo::Api::MasterKey> rawMasterKey_;

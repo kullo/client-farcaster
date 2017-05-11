@@ -73,6 +73,7 @@ Rectangle {
             }
             height: 40
             width: 40
+            asynchronous: true
 
             MouseArea {
                 anchors.fill: parent

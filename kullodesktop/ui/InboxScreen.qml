@@ -163,7 +163,7 @@ FocusScope {
         if (SC.isCtrlAndKey(Qt.Key_N, event)) { event.accepted = true; inboxScreen.startConversation()      }
         if (SC.isCtrlAndKey(Qt.Key_R, event)) { event.accepted = true; inboxScreen.toggleAnswer()           }
         if (SC.isCtrlAndKey(Qt.Key_G, event)) { event.accepted = true; inboxScreen.showUserSettingsWindow() }
-        if (SC.isCtrlAndKey(Qt.Key_O, event)) { event.accepted = true; inboxScreen.logout()                 }
+        if (SC.isCtrlAndKey(Qt.Key_O, event)) { event.accepted = true; inboxScreen.closeSession()           }
         if (SC.isCtrlAndKey(Qt.Key_T, event)) { event.accepted = true; inboxScreen.toggleTodoMode()         }
         if (!event.accepted)
         {
@@ -202,7 +202,7 @@ FocusScope {
         target: Inbox
         property bool _firstSuccessfulSync: true
         onOpenConversation: {
-            leftColumn.openConversation(conversationId)
+            openConversation(conversationId)
         }
         onSyncStarted: {
             syncingBannerDelayTimer.restart()
@@ -251,7 +251,7 @@ FocusScope {
             if (heartbeat.needResync) heartbeat.resync()
             if (countMessagesNewUnread > 0) newMessageSound.play()
 
-            // during logout this slot might still be running when there is no user anymore
+            // when closing the session this slot might still be running when there is no user anymore
             if (Inbox.userSettings && _firstSuccessfulSync)
             {
                 if (Inbox.userSettings.name.trim() === "")
@@ -333,7 +333,17 @@ FocusScope {
         }
     }
 
-    GroupConversationStartDialog {
+    ConversationInfoWindow {
+        id: conversationInfoWindow
+
+        onStartConversationWithParticipants: {
+            startConversationPrompt.openDialog()
+            participants.sort()
+            startConversationPrompt.addAddresses(participants)
+        }
+    }
+
+    StartConversationDialog {
         id: startConversationPrompt
         title: qsTr("Start conversation")
         onAddressAccepted: {
@@ -408,8 +418,8 @@ FocusScope {
         infoWindow.openWindow()
     }
 
-    function logout() {
-        Inbox.logOut()
+    function closeSession() {
+        Inbox.closeSession()
         app.state = "welcome"
     }
 
@@ -420,8 +430,8 @@ FocusScope {
         if (!conv.messages) console.error("conv.messages is null in inbox.openConversation() for conversation: " + convId)
         if (!conv.draft) console.error("conv.draft is null in inbox.openConversation() for conversation: " + convId)
 
-        middleColumn.setModel(conv.messages)
-        middleColumn.participantsAddresses = conv.participantsAddresses
+        leftColumn.selectConversation(convId)
+        middleColumn.conversation = conv
         rightColumn.conversation = conv
 
         conv.markAllMessagesAsRead()
@@ -540,7 +550,7 @@ FocusScope {
                          + " (%1)".arg(SC.nameOfCtrlAndKey("O", Os.osx))
                 onClicked: {
                     popupMenu.close()
-                    inboxScreen.logout()
+                    inboxScreen.closeSession()
                 }
 
                 width: parent.width-2*parent.padding

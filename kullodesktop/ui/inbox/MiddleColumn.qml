@@ -1,6 +1,7 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import Kullo 1.0
 
 import "../"
 import "../buttons"
@@ -10,11 +11,19 @@ import "../windows"
 import "../js/shortcut.js" as SC
 
 FocusScope {
+    property Conversation conversation
     property var participantsAddresses: [] // stringlist
 
-    function setModel(m) {
-        messagesList.model = m
-        messagesList.model.todoMode = Qt.binding(function() { return inboxScreen.todoMode })
+    onConversationChanged: {
+        if (conversation) {
+            var messagesModel = conversation.messages
+            messagesModel.todoMode = Qt.binding(function() { return inboxScreen.todoMode })
+            messagesList.model = messagesModel
+            participantsAddresses = conversation.participantsAddresses
+        } else {
+            messagesList.model = null
+            participantsAddresses = []
+        }
     }
 
     Rectangle {
@@ -55,20 +64,15 @@ FocusScope {
                 }
 
                 ConversationButton {
-                    text: qsTr("Change recipients")
+                    text: qsTr("Conversation info")
                     tooltip: qsTr("Add or remove recipients")
                     iconSource: "/resources/scalable/change_recipients_g.svg"
-                    onClicked: groupConversationChangeDialog.openDialog()
-
-                    GroupConversationChangeDialog {
-                        id: groupConversationChangeDialog
-                        title: qsTr("Create new conversation")
-                        initialParticipants: participantsAddresses
-
-                        onAddressAccepted: {
-                            console.info("Start conversation with '" + result + "' ...")
-                            Inbox.addConversation(result)
-                        }
+                    onClicked: {
+                        conversationInfoWindow.conversationId = conversation.id
+                        conversationInfoWindow.participantNames = conversation.participantNames
+                        conversationInfoWindow.openWindow()
+                        conversationInfoWindow.raise()
+                        conversationInfoWindow.requestActivate()
                     }
                 }
             }

@@ -7,12 +7,35 @@ import "buttons"
 import "formelements"
 import "misc"
 import "native"
+import "welcome"
 
 FocusScope {
     anchors.fill: parent
 
     Rectangle {
-        anchors.fill: parent
+        id: leftColumn
+        anchors {
+            left: parent.left
+            top: parent.top
+            bottom: parent.bottom
+        }
+        width: InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0
+        color: Style.welcomeAccountsBackground
+
+        AccountsList {
+            anchors.fill: parent
+            focus: true
+        }
+    }
+
+    Rectangle {
+        id: rightColumn
+        anchors {
+            left: leftColumn.right
+            top: parent.top
+            bottom: parent.bottom
+            right: parent.right
+        }
         color: Style.beigeLight
 
         Logo {
@@ -27,79 +50,16 @@ FocusScope {
 
         Column {
             id: column1
-            width: 260
             anchors {
                 top: logo.bottom
-                topMargin: 50
+                topMargin: 60
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
                 leftMargin: 20
                 rightMargin: 20
             }
-            spacing: 30
-
-            Column {
-                id: blockOpen
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                spacing: 10
-                visible: InnerApplication.deviceSettings.usersList().length > 0
-
-                NativeText {
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                    }
-                    text: qsTr("Open inbox")
-                }
-
-                FForm {
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                    }
-                    height: Math.max(userSelection.implicitHeight, openInboxButton.implicitHeight)
-                    focus: true
-
-                    onAccepted: {
-                        var loginAddress = userSelection.currentText
-                        Inbox.loadCredentials(loginAddress)
-                        app.state = "loggingIn"
-                    }
-
-                    FComboBox {
-                        property var userList: InnerApplication.deviceSettings.usersList()
-                        id: userSelection
-                        anchors {
-                            left: parent.left
-                            right: openInboxButton.left
-                            rightMargin: 10
-                        }
-                        model: userList
-
-                        Component.onCompleted: {
-                            currentIndex = find(InnerApplication.deviceSettings.lastActiveUser);
-
-                            if (currentIndex == -1 && InnerApplication.deviceSettings.usersList().length > 0)
-                            {
-                                currentIndex = 0
-                            }
-                        }
-                    }
-
-                    FSubmitButton {
-                        id: openInboxButton
-                        anchors {
-                            right: parent.right
-                        }
-                        text: qsTr("Open")
-                        style: KulloButtonStyle {}
-                    }
-                }
-            }
+            spacing: 40
 
             Column {
                 id: blockLogin
@@ -131,7 +91,7 @@ FocusScope {
                     FSubmitButton {
                         id: loginButton
                         anchors {
-                            right: parent.right
+                            left: parent.left
                         }
                         text: qsTr("Login")
                         style: KulloButtonStyle {
@@ -169,10 +129,12 @@ FocusScope {
                     FSubmitButton {
                         id: registerButton
                         anchors {
-                            right: parent.right
+                            left: parent.left
                         }
                         text: qsTr("Register")
-                        style: KulloButtonStyle { }
+                        style: KulloButtonStyle {
+                            source: "/resources/scalable/star_w.svg"
+                        }
                     }
                 }
             }

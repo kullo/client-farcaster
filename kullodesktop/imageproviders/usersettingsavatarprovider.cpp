@@ -3,8 +3,10 @@
 
 #include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
+#include <desktoputil/threadblocker.h>
 #include <kulloclient/util/librarylogger.h>
 
+#include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/usersettings.h"
 
@@ -12,25 +14,66 @@ namespace KulloDesktop {
 namespace Imageproviders {
 
 UserSettingsAvatarProvider::UserSettingsAvatarProvider(Qml::Inbox &inbox)
-    : AbstractAvatarProvider(inbox)
+    : AbstractAvatarProvider()
+    , inbox_(inbox)
 {
 }
 
 QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &renderSize)
 {
-    auto userSettings = inbox_.userSettings();
-
     // Cut query string from URL
-    QString path = url.split("?").at(0);
-    bool styleRounded = url.split("?").at(1).contains("rounded");
-    bool styleCircle = url.split("?").at(1).contains("circle");
+    const QString path = url.split("?").at(0);
+    const bool styleRounded = url.split("?").at(1).contains("rounded");
+    const bool styleCircle = url.split("?").at(1).contains("circle");
 
-    if (path != userSettings->address())
+    // filled in main thread
+    QString userName;
+    QPixmap userAvatar;
+
+    DesktopUtil::ThreadBlocker tb;
+
+    Applications::KulloApplication::runOnMainThread([&]() {
+        auto userSettings = inbox_.userSettings();
+        if (path != userSettings->address())
+        {
+            Log.w() << "Requested avatar url does not match user's Kullo address: " << url;
+        }
+
+        if (userSettings->tmpAvatarActive())
+        {
+            userAvatar = userSettings->tmpAvatar();
+        }
+        if (userAvatar.isNull())
+        {
+            userAvatar = userSettings->avatar();
+        }
+
+        userName = userSettings->name();
+
+        tb.release(true);
+    });
+
+    auto success = tb.block();
+    if (!success) return QPixmap();
+
+    QPixmap out;
+
+    if (userAvatar.isNull())
     {
-        Log.w() << "Requested avatar url does not match user's Kullo address: " << url;
+        auto text = DesktopUtil::Initials::fromName(userName);
+        out = getTextAvatar(text, renderSize);
     }
+    else
+    {
+        if (userAvatar.width() != userAvatar.height())
+        {
+            Log.w() << "Avatar must be square at this point "
+                    << "(" << QSize(userAvatar.width(), userAvatar.height()) << ")"
+                    << ": " << url;
+        }
 
-    QPixmap out = getUserAvatarData(url, renderSize, userSettings);
+        out = userAvatar.scaled(renderSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
 
     if (styleRounded)
     {
@@ -44,38 +87,6 @@ QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &
     {
         return out;
     }
-}
-
-QPixmap UserSettingsAvatarProvider::getUserAvatarData(const QString &url, const QSize &renderSize, const Qml::UserSettings *userSettings)
-{
-    QPixmap avatar;
-    if (userSettings->tmpAvatarActive())
-    {
-        avatar = userSettings->tmpAvatar();
-    }
-    if (avatar.isNull())
-    {
-        avatar = userSettings->avatar();
-    }
-
-    QPixmap out;
-    if (avatar.isNull())
-    {
-        out = getFallbackAvatar(DesktopUtil::Initials::fromName(userSettings->name()), renderSize);
-    }
-    else
-    {
-        if (avatar.width() != avatar.height())
-        {
-            Log.w() << "Avatar must be square at this point "
-                    << "(" << QSize(avatar.width(), avatar.height()) << ")"
-                    << ": " << url;
-        }
-
-        out = avatar.scaled(renderSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-
-    return out;
 }
 
 }

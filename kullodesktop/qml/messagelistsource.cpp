@@ -3,8 +3,10 @@
 
 #include <QQmlEngine>
 
+#include <kulloclient/api/Address.h>
 #include <kulloclient/api/Conversations.h>
 #include <kulloclient/api/Messages.h>
+#include <kulloclient/api/Session.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 

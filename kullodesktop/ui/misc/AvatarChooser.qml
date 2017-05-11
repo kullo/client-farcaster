@@ -40,7 +40,7 @@ Rectangle {
             height: parent.height
 
             smooth: true
-
+            asynchronous: true
             cache: false
 
             AdvancedFileOpenDialog {

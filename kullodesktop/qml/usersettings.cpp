@@ -13,6 +13,7 @@
 #include <QImageReader>
 #include <QBuffer>
 
+#include <apimirror/eventdispatcher.h>
 #include <desktoputil/stlqt.h>
 #include <desktoputil/kulloclient2qt.h>
 #include <desktoputil/qtypestreamers.h>
@@ -34,15 +35,25 @@ const auto AVATAR_MAX_BYTES  = 24*1024;
 const auto SETTING_DOESNT_EXIST = std::numeric_limits<int>::max();
 }
 
-UserSettings::UserSettings(const std::shared_ptr<Kullo::Api::Address> &address,
-                           const std::shared_ptr<Kullo::Api::MasterKey> &masterKey,
-                           QObject *parent)
+UserSettings::UserSettings(
+        ApiMirror::EventDispatcher &eventDispatcher,
+        const std::shared_ptr<Kullo::Api::Address> &address,
+        const std::shared_ptr<Kullo::Api::MasterKey> &masterKey,
+        QObject *parent)
     : QObject(parent)
+    , eventDispatcher_(eventDispatcher)
     , rawAddress_(address)
     , rawMasterKey_(masterKey)
 {
     kulloAssert(rawAddress_);
     kulloAssert(rawMasterKey_);
+
+    connect(&eventDispatcher_, &ApiMirror::EventDispatcher::userSettingsChanged, this, [&]() {
+        emit nameChanged();
+        emit organizationChanged();
+        emit footerChanged();
+        // TODO: connect avatar changes (maybe via avatar hash string as part of the imageprovider url)
+    });
 }
 
 void UserSettings::setUserSettings(
@@ -423,7 +434,9 @@ std::pair<QByteArray, QString> UserSettings::compressAvatar(const QImage &scaled
     return std::pair<QByteArray, QString>(avatarData, compressedFormat);
 }
 
-std::unique_ptr<UserSettings> UserSettings::loadCredentialsForAddress(const QString &addressString)
+std::unique_ptr<UserSettings> UserSettings::loadCredentialsForAddress(
+        ApiMirror::EventDispatcher &eventDispatcher,
+        const QString &addressString)
 {
     QSettings settings;
 
@@ -448,7 +461,17 @@ std::unique_ptr<UserSettings> UserSettings::loadCredentialsForAddress(const QStr
     const auto masterKey = Kullo::Api::MasterKey::createFromDataBlocks(
                 DesktopUtil::StlQt::toVector(data.toStringList()));
 
-    return Kullo::make_unique<UserSettings>(address, masterKey);
+    return Kullo::make_unique<UserSettings>(eventDispatcher, address, masterKey);
+}
+
+void UserSettings::deleteCredentials(const std::shared_ptr<Kullo::Api::Address> &address)
+{
+    QString groupName = "usersettings-" + QString::fromStdString(address->toString());
+
+    QSettings settings;
+    settings.beginGroup(groupName);
+    settings.remove(""); // removes the group
+    settings.endGroup();
 }
 
 /**

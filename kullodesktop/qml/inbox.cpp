@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QQmlEngine>
 #include <QSettings>
+#include <QSet>
 #include <QTimer>
 
 #include <apimirror/ClientCreateSessionListener.h>
@@ -57,7 +58,7 @@ Inbox::Inbox(InnerApplication &innerApplication,
     if (!activeUser.isEmpty())  // load UserSettings if we have an active user
     {
         Log.d() << "Active user: " << activeUser;
-        userSettingsModel_ = UserSettings::loadCredentialsForAddress(activeUser);
+        userSettingsModel_ = UserSettings::loadCredentialsForAddress(eventDispatcher_, activeUser);
     }
     else
     {
@@ -74,8 +75,8 @@ Inbox::Inbox(InnerApplication &innerApplication,
             this, &Inbox::draftPartTooBig);
 
     // Pass stuff to Application to be used by the tray icon
-    connect(this, &Inbox::loggedInChanged,
-            &innerApplication_, &InnerApplication::loggedInChanged);
+    connect(this, &Inbox::hasSessionChanged,
+            &innerApplication_, &InnerApplication::hasSessionChanged);
     connect(this, &Inbox::unreadMessagesCountChanged,
             &innerApplication_, &InnerApplication::unreadMessagesCountChanged);
     connect(this, &Inbox::syncFinished,
@@ -86,7 +87,7 @@ Inbox::~Inbox()
 {
 }
 
-bool Inbox::loggedIn() const
+bool Inbox::hasSession() const
 {
     return session_ != nullptr;
 }
@@ -98,23 +99,24 @@ ConversationListModel *Inbox::conversations()
     return ptr;
 }
 
-void Inbox::logIn()
+void Inbox::createSession()
 {
-    if (loggedIn()) return;
+    if (hasSession()) return;
 
-    // Set active user on login
-    auto addr = userSettingsModel_->address();
-    kulloAssert(!addr.isEmpty());
-    innerApplication_.deviceSettings()->setActiveUser(addr);
-    innerApplication_.deviceSettings()->setLastActiveUser(addr);
+    auto addressString = userSettingsModel_->address();
+    kulloAssert(!addressString.isEmpty());
+    auto address = Kullo::Api::Address::create(addressString.toStdString());
+    kulloAssert(address);
 
-    auto currentUserAddress = Kullo::Api::Address::create(addr.toStdString());
+    // Set active user
+    innerApplication_.deviceSettings()->setActiveUser(addressString);
+    innerApplication_.deviceSettings()->setLastActiveUser(addressString);
 
-    auto dbFilePath = innerApplication_.databaseFiles().databaseFilepath(currentUserAddress);
-    innerApplication_.databaseFiles().prepareDatabaseFolder(currentUserAddress);
-    Log.i() << "Logging in using database file " << dbFilePath << " ...";
+    auto dbFilePath = innerApplication_.databaseFiles().databaseFilepath(address);
+    innerApplication_.databaseFiles().prepareDatabaseFolder(address);
+    Log.i() << "Creating session using database file " << dbFilePath << " ...";
 
-    setLocalDatabaseKulloVersion(currentUserAddress, DesktopUtil::KulloVersion("0.0.0"));
+    setLocalDatabaseKulloVersion(address, DesktopUtil::KulloVersion("0.0.0"));
 
     auto sessionListener = std::make_shared<ApiMirror::SessionListener>();
     connect(sessionListener.get(), &ApiMirror::SessionListener::_internalEvent,
@@ -142,11 +144,13 @@ void Inbox::logIn()
     }
 }
 
-void Inbox::logOut()
+void Inbox::closeSession()
 {
-    if (!loggedIn()) return;
+    if (!hasSession()) return;
 
-    Log.i() << "Logging out ...";
+    Log.i() << "Closing session ...";
+
+    session_->syncer()->cancel();
 
     taskRunner_->wait();
 
@@ -170,7 +174,35 @@ void Inbox::logOut()
 
     taskRunner_->reset();
 
-    emit loggedInChanged(false);
+    emit hasSessionChanged(false);
+}
+
+void Inbox::deleteAccountData(const QString &addressString)
+{
+    auto address = Kullo::Api::Address::create(addressString.toStdString());
+    kulloAssert(address);
+
+    UserSettings::deleteCredentials(address);
+    innerApplication_.databaseFiles().removeDatabase(address);
+}
+
+QStringList Inbox::allKnownUsersSorted() const
+{
+    if (!session_) return QStringList();
+
+    QSet<QString> addressStrings;
+
+    for (const auto convId : session_->conversations()->all())
+    {
+        for (const auto &address : session_->conversations()->participants(convId))
+        {
+            addressStrings.insert(QString::fromStdString(address->toString()));
+        }
+    }
+
+    QStringList out(addressStrings.toList());
+    out.sort();
+    return out;
 }
 
 UserSettings *Inbox::userSettings()
@@ -213,7 +245,7 @@ void Inbox::removeConversation(Kullo::id_type conversationId)
 
 bool Inbox::sync()
 {
-    if (!loggedIn()) return false;
+    if (!hasSession()) return false;
 
     auto syncAlreadyRunning = session_->syncer()->isSyncing();
     session_->syncer()->requestSync(Kullo::Api::SyncMode::Everything);
@@ -235,7 +267,7 @@ void Inbox::clearDatabaseAndStoreCredentials(const QString &addressString, const
 
 void Inbox::loadCredentials(const QString &addressString)
 {
-    userSettingsModel_ = UserSettings::loadCredentialsForAddress(addressString);
+    userSettingsModel_ = UserSettings::loadCredentialsForAddress(eventDispatcher_, addressString);
     emit userSettingsChanged();
 }
 
@@ -280,11 +312,11 @@ void Inbox::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &
 
     if (Applications::KulloApplication::FAKE_LONG_MIGRATION)
     {
-        QTimer::singleShot(4000, this, SLOT(onInternalLoginDone()));
+        QTimer::singleShot(4000, this, SLOT(onInternalCreateSessionDone()));
     }
     else
     {
-        onInternalLoginDone();
+        onInternalCreateSessionDone();
     }
 }
 
@@ -295,7 +327,7 @@ void Inbox::onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &add
     K_UNUSED(error);
 }
 
-void Inbox::onInternalLoginDone()
+void Inbox::onInternalCreateSessionDone()
 {
     kulloAssert(session_);
 
@@ -314,7 +346,7 @@ void Inbox::onInternalLoginDone()
 
     emit conversationsChanged();
 
-    emit loggedInChanged(true);
+    emit hasSessionChanged(true);
 }
 
 void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress)

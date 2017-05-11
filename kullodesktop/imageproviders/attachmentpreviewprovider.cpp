@@ -2,9 +2,11 @@
 #include "attachmentpreviewprovider.h"
 
 #include <desktoputil/qtypestreamers.h>
+#include <desktoputil/threadblocker.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
+#include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/attachmentmodel.h"
 #include "kullodesktop/qml/inbox.h"
 #include "kullodesktop/qml/conversationlistmodel.h"
@@ -25,11 +27,6 @@ AttachmentPreviewProvider::AttachmentPreviewProvider(Qml::Inbox &inbox)
 
 QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size, const QSize &requestedSize)
 {
-    if (!inbox_.loggedIn())
-    {
-        return QPixmap();
-    }
-
     QSize renderSize;
     if (requestedSize.isValid())
     {
@@ -69,26 +66,42 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     if (attachmentId == -1) return QPixmap(); // empty delegate
 
     QByteArray imageData;
-    if (msgId < 0) // Draft
-    {
-        auto conversation = inbox_.conversationsListSource()->get(convId);
-        kulloAssert(conversation);
-        auto draft = conversation->draft();
-        kulloAssert(draft);
-        auto attachment = draft->attachments()->get(attachmentId);
-        kulloAssert(attachment);
-        imageData = attachment->content();
-    }
-    else
-    {
-        auto conversation = inbox_.conversationsListSource()->get(convId);
-        kulloAssert(conversation);
-        auto message = conversation->messages()->get(msgId);
-        kulloAssert(message);
-        auto attachment = message->attachments()->get(attachmentId);
-        kulloAssert(attachment);
-        imageData = attachment->content();
-    }
+
+    DesktopUtil::ThreadBlocker tb;
+
+    Applications::KulloApplication::runOnMainThread([&](){
+        if (!inbox_.hasSession())
+        {
+            tb.release(false);
+            return;
+        }
+
+        if (msgId < 0) // Draft
+        {
+            auto conversation = inbox_.conversationsListSource()->get(convId);
+            kulloAssert(conversation);
+            auto draft = conversation->draft();
+            kulloAssert(draft);
+            auto attachment = draft->attachments()->get(attachmentId);
+            kulloAssert(attachment);
+            imageData = attachment->content();
+        }
+        else
+        {
+            auto conversation = inbox_.conversationsListSource()->get(convId);
+            kulloAssert(conversation);
+            auto message = conversation->messages()->get(msgId);
+            kulloAssert(message);
+            auto attachment = message->attachments()->get(attachmentId);
+            kulloAssert(attachment);
+            imageData = attachment->content();
+        }
+
+        tb.release(true);
+    });
+
+    auto success = tb.block();
+    if (!success) return QPixmap();
 
     QImage image;
     bool ok = image.loadFromData(imageData);

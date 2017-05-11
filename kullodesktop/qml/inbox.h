@@ -35,8 +35,8 @@ public:
     Q_PROPERTY(KulloDesktop::Qml::UserSettings *userSettings READ userSettings NOTIFY userSettingsChanged)
     UserSettings *userSettings();
 
-    Q_PROPERTY(bool loggedIn READ loggedIn NOTIFY loggedInChanged)
-    bool loggedIn() const;
+    Q_PROPERTY(bool hasSession READ hasSession NOTIFY hasSessionChanged)
+    bool hasSession() const;
 
     Q_PROPERTY(KulloDesktop::Qml::ConversationListModel *conversations READ conversations NOTIFY conversationsChanged)
     ConversationListModel *conversations();
@@ -53,8 +53,11 @@ public:
     Q_INVOKABLE void clearDatabaseAndStoreCredentials(const QString &addressString, const QString &masterKeyPem);
 
     Q_INVOKABLE void loadCredentials(const QString &addressString);
-    Q_INVOKABLE void logIn();
-    Q_INVOKABLE void logOut();
+    Q_INVOKABLE void createSession();
+    Q_INVOKABLE void closeSession();
+    Q_INVOKABLE void deleteAccountData(const QString &addressString);
+
+    Q_INVOKABLE QStringList allKnownUsersSorted() const;
 
     Q_INVOKABLE ApiMirror::Client *client() const;
 
@@ -67,7 +70,7 @@ signals:
     void migrationStarted();
     void userSettingsChanged();
     void conversationsChanged();
-    void loggedInChanged(bool loggedIn);
+    void hasSessionChanged(bool hasSession);
     void unreadMessagesCountChanged(int count);
     void draftPartTooBig(
             Kullo::id_type conversationId,
@@ -101,7 +104,7 @@ private slots:
     void onCreateSessionMigrationStarted();
     void onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session);
     void onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
-    void onInternalLoginDone();
+    void onInternalCreateSessionDone();
 
     void onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress);
     void onSyncFinished();

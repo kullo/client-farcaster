@@ -34,7 +34,7 @@ public:
     void setMainWindow(QWindow *mainWindow);
 
 signals:
-    void loggedInChanged(bool loggedIn);
+    void hasSessionChanged(bool hasSession);
     void unreadMessagesCountChanged(int count);
     void syncFinished(bool success,
                       int countMessagesNew = 0,
@@ -46,7 +46,7 @@ signals:
     void deviceSettingsChanged();
 
 public slots:
-    void onLoggedInChanged(bool loggedIn);
+    void onHasSessionChanged(bool hasSession);
     void onUnreadMessagesCountChanged(int count);
     void showMainWindowIfPossible();
 

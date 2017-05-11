@@ -88,9 +88,9 @@ KulloTrayIcon::~KulloTrayIcon()
 {
 }
 
-void KulloTrayIcon::onLoggedInChanged(bool loggedIn)
+void KulloTrayIcon::onHasSessionChanged(bool hasSession)
 {
-    if (loggedIn)
+    if (hasSession)
     {
         setIcon(IconState(true, iconState_.unreadMessages));
     }

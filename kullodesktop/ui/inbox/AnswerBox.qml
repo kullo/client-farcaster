@@ -30,11 +30,10 @@ FocusScope {
 
     onConversationChanged: {
         // initial text backend->UI
-        if (conversation) {
-            messageText.text = conversation.draft.text
-        } else {
-            messageText.text
-        }
+        var newText = conversation ? conversation.draft.text : ""
+        messageText.cursorPosition = 0
+        messageText.text = newText
+        messageText.cursorPosition = newText.length
     }
 
     Connections {
@@ -44,7 +43,14 @@ FocusScope {
 
         // text updates backend->UI
         onTextChanged: {
-            messageText.text = root.conversation.draft.text
+            var newText = root.conversation.draft.text
+
+            // avoid warning when new text is shorter than old cursor position
+            if (messageText.cursorPosition > newText.length) {
+                messageText.cursorPosition = 0
+            }
+
+            messageText.text = newText
         }
     }
 

@@ -7,19 +7,14 @@ import "../"
 import "../windows"
 
 FocusScope {
-    function openConversation(convId)
-    {
-        conversationsList.openConversation(convId)
+    function selectConversation(convId) {
+        conversationsList.selectConversation(convId)
     }
 
     Behavior on width {
         NumberAnimation {
             duration: 100
         }
-    }
-
-    ConversationInfoWindow {
-        id: conversationInfoWindow
     }
 
     Rectangle {

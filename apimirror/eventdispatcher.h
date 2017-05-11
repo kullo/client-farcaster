@@ -30,8 +30,9 @@ public:
 
 signals:
     void conversationAdded(Kullo::id_type conversationId);
-    void conversationChanged(Kullo::id_type conversationId);
     void conversationRemoved(Kullo::id_type conversationId);
+    void conversationChanged(Kullo::id_type conversationId);
+    void conversationLatestMessageTimestampChanged(Kullo::id_type conversationId);
     void draftStateChanged(Kullo::id_type conversationId);
     void draftTextChanged(Kullo::id_type conversationId);
     void draftAttachmentAdded(Kullo::id_type conversationId, Kullo::id_type attachmentId);
@@ -41,7 +42,7 @@ signals:
     void messageStateChanged(Kullo::id_type conversationId, Kullo::id_type messageId);
     void messageAttachmentsDownloadedChanged(Kullo::id_type conversationId, Kullo::id_type messageId);
     void messageRemoved(Kullo::id_type conversationId, Kullo::id_type messageId);
-    void latestSenderChanged(Kullo::id_type conversationId);
+    void userSettingsChanged();
 
 public slots:
     void onInternalEvent(const std::shared_ptr<Kullo::Api::InternalEvent> &internalEvent);

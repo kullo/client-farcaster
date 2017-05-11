@@ -20,12 +20,11 @@
         <file alias="AdvancedFileOpenDialog.qml">ui/dialogs/AdvancedFileOpenDialog.qml</file>
         <file alias="AdvancedFileSaveDialog.qml">ui/dialogs/AdvancedFileSaveDialog.qml</file>
         <file alias="BaseDialog.qml">ui/dialogs/BaseDialog.qml</file>
-        <file alias="YesNoDialog.qml">ui/dialogs/YesNoDialog.qml</file>
-        <file alias="PromptDialog.qml">ui/dialogs/PromptDialog.qml</file>
-        <file alias="GroupConversationStartDialog.qml">ui/dialogs/GroupConversationStartDialog.qml</file>
-        <file alias="UpdateDialog.qml">ui/dialogs/UpdateDialog.qml</file>
         <file alias="ErrorDialog.qml">ui/dialogs/ErrorDialog.qml</file>
-        <file alias="GroupConversationChangeDialog.qml">ui/dialogs/GroupConversationChangeDialog.qml</file>
+        <file alias="PromptDialog.qml">ui/dialogs/PromptDialog.qml</file>
+        <file alias="StartConversationDialog.qml">ui/dialogs/StartConversationDialog.qml</file>
+        <file alias="UpdateDialog.qml">ui/dialogs/UpdateDialog.qml</file>
+        <file alias="YesNoDialog.qml">ui/dialogs/YesNoDialog.qml</file>
     </qresource>
     <qresource prefix="/formelements">
         <file alias="FButton.qml">ui/formelements/FButton.qml</file>
@@ -75,6 +74,7 @@
         <file alias="NativeTextWithLinks.qml">ui/native/NativeTextWithLinks.qml</file>
         <file alias="NativeWindow.qml">ui/native/NativeWindow.qml</file>
         <file alias="TextFieldKulloAddress.qml">ui/native/TextFieldKulloAddress.qml</file>
+        <file alias="ComboBoxKulloAddress.qml">ui/native/ComboBoxKulloAddress.qml</file>
         <file alias="NativeModalWindow.qml">ui/native/NativeModalWindow.qml</file>
         <file alias="NativeButton.qml">ui/native/NativeButton.qml</file>
         <file alias="NativeImage.qml">ui/native/NativeImage.qml</file>
@@ -113,6 +113,10 @@
         <file alias="SelectableTextRow.qml">ui/usersettings/SelectableTextRow.qml</file>
         <file alias="TextAreaRow.qml">ui/usersettings/TextAreaRow.qml</file>
         <file alias="TextFieldRow.qml">ui/usersettings/TextFieldRow.qml</file>
+    </qresource>
+    <qresource prefix="/welcome">
+        <file alias="AccountDelegate.qml">ui/welcome/AccountDelegate.qml</file>
+        <file alias="AccountsList.qml">ui/welcome/AccountsList.qml</file>
     </qresource>
     <qresource prefix="/windows">
         <file alias="ConversationInfoWindow.qml">ui/windows/ConversationInfoWindow.qml</file>

@@ -80,8 +80,7 @@ BaseDialog {
         }
         Keys.onEscapePressed: root.closeDialog()
 
-        Item
-        {
+        Item {
             id: content
             anchors {
                 left: parent.left

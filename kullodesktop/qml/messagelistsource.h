@@ -5,8 +5,8 @@
 #include <QAbstractListModel>
 
 #include <apimirror/eventdispatcher.h>
+#include <kulloclient/kulloclient-forwards.h>
 #include <kulloclient/types.h>
-#include <kulloclient/api/Session.h>
 
 #include "kullodesktop/farcaster-forwards.h"
 

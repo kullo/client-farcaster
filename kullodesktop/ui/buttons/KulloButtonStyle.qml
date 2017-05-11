@@ -170,6 +170,7 @@ ButtonStyle {
                         width: (iconSource && iconSource != "") ? iconSize : 0
                         height: iconSize
                         smooth: true
+                        asynchronous: true
                         anchors {
                             left: iconPosition == root._POSITION_RIGHT ? labelBlock.right : undefined
                             leftMargin: iconPosition == root._POSITION_RIGHT ? row.labelIconSpacing : 0

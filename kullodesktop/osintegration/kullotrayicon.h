@@ -43,7 +43,7 @@ signals:
     void showMainWindowRequested();
 
 public slots:
-    void onLoggedInChanged(bool loggedIn);
+    void onHasSessionChanged(bool hasSession);
     void onUnreadMessagesCountChanged(int count);
     void onSyncFinished(bool success,
                         int countMessagesNew = 0,

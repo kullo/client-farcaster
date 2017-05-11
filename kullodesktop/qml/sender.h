@@ -3,12 +3,9 @@
 
 #include <memory>
 #include <QObject>
-#include <QPixmap>
 
+#include <kulloclient/kulloclient-forwards.h>
 #include <kulloclient/types.h>
-#include <kulloclient/api/Address.h>
-#include <kulloclient/api/Senders.h>
-#include <kulloclient/api/Session.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -32,14 +29,14 @@ public:
     Q_PROPERTY(QString organization READ organization)
     QString organization() const;
 
-    Q_PROPERTY(QPixmap avatar READ avatar)
-    QPixmap avatar() const;
+    // Non-QML
+
+    QString avatarMimeType() const;
+    QByteArray avatar() const;
 
 private:
     std::shared_ptr<Kullo::Api::Session> session_;
     Kullo::id_type msgId_ = -1;
-    mutable std::vector<unsigned char> avatarCacheDataHash_;
-    mutable QPixmap avatarCache_;
 };
 
 }

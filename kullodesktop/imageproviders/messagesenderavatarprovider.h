@@ -6,10 +6,10 @@
 namespace KulloDesktop {
 namespace Imageproviders {
 
-class UserSettingsAvatarProvider : public AbstractAvatarProvider
+class MessageSenderAvatarProvider : public AbstractAvatarProvider
 {
 public:
-    UserSettingsAvatarProvider(Qml::Inbox &inbox);
+    MessageSenderAvatarProvider(Qml::Inbox &inbox);
 
 protected:
     virtual QPixmap drawAvatar(const QString &url, const QSize &renderSize) override;

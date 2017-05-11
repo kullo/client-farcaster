@@ -12,10 +12,6 @@
 namespace KulloDesktop {
 namespace Qml {
 
-namespace {
-const auto SORT_ROLE = MessageListSource::MessageDateReceivedRole;
-}
-
 MessageListModel::MessageListModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
@@ -95,10 +91,10 @@ bool MessageListModel::filterAcceptsRow(int sourceRow, const QModelIndex &source
 
 bool MessageListModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    QVariant leftData  = sourceModel()->data(left, SORT_ROLE);
-    QVariant rightData = sourceModel()->data(right, SORT_ROLE);
-    auto leftValue  = leftData.toDateTime();
-    auto rightValue = rightData.toDateTime();
+    QVariant leftData  = sourceModel()->data(left, MessageListSource::MessageIdRole);
+    QVariant rightData = sourceModel()->data(right, MessageListSource::MessageIdRole);
+    auto leftValue  = leftData.toLongLong();
+    auto rightValue = rightData.toLongLong();
     return leftValue < rightValue;
 }
 

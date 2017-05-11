@@ -76,9 +76,8 @@ SOURCES += \
     imageproviders/abstractavatarprovider.cpp \
     imageproviders/attachmentpreviewprovider.cpp \
     imageproviders/conversationavatarprovider.cpp \
-    imageproviders/messageavatarprovider.cpp \
+    imageproviders/messagesenderavatarprovider.cpp \
     imageproviders/participantavatarprovider.cpp \
-    imageproviders/senderavatarprovider.cpp \
     imageproviders/usersettingsavatarprovider.cpp \
     osintegration/kullotrayicon.cpp \
     osintegration/programoptions.cpp \
@@ -133,9 +132,8 @@ HEADERS += \
     imageproviders/abstractavatarprovider.h \
     imageproviders/attachmentpreviewprovider.h \
     imageproviders/conversationavatarprovider.h \
-    imageproviders/messageavatarprovider.h \
+    imageproviders/messagesenderavatarprovider.h \
     imageproviders/participantavatarprovider.h \
-    imageproviders/senderavatarprovider.h \
     imageproviders/usersettingsavatarprovider.h \
     osintegration/kullotrayicon.h \
     osintegration/programoptions.h \

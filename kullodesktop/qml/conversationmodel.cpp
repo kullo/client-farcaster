@@ -61,7 +61,7 @@ QString ConversationModel::participantsList() const
     QStringList names;
     // Can't rewrite this to use a modern for loop because we need iter.key(),
     // not iter->key(). Here, QMap differs from std::map.
-    auto ps = participants();
+    auto ps = participantNames();
     for (auto iter = ps.begin(); iter != ps.end(); ++iter)
     {
         auto address = iter.key();
@@ -71,7 +71,7 @@ QString ConversationModel::participantsList() const
     return names.join(", ");
 }
 
-QVariantMap ConversationModel::participants() const
+QVariantMap ConversationModel::participantNames() const
 {
     QVariantMap out;
     for (const auto &addr : session_->conversations()->participants(convId_))
@@ -167,6 +167,9 @@ void ConversationModel::notifyChanged()
     emit countChanged();
     emit countUnreadChanged();
     emit countUndoneChanged();
+    emit countIncomingChanged();
+    emit countOutgoingChanged();
+    emit latestMessageTimestampChanged();
     emit draftEmptyChanged();
 }
 

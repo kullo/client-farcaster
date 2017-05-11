@@ -25,11 +25,14 @@ void EventDispatcher::onInternalEvent(const std::shared_ptr<Kullo::Api::Internal
             case EventType::ConversationAdded:
                 emit conversationAdded(event.conversationId);
                 break;
+            case EventType::ConversationRemoved:
+                emit conversationRemoved(event.conversationId);
+                break;
             case EventType::ConversationChanged:
                 emit conversationChanged(event.conversationId);
                 break;
-            case EventType::ConversationRemoved:
-                emit conversationRemoved(event.conversationId);
+            case EventType::ConversationLatestMessageTimestampChanged:
+                emit conversationLatestMessageTimestampChanged(event.conversationId);
                 break;
             case EventType::DraftStateChanged:
                 emit draftStateChanged(event.conversationId);
@@ -58,8 +61,8 @@ void EventDispatcher::onInternalEvent(const std::shared_ptr<Kullo::Api::Internal
             case EventType::MessageRemoved:
                 emit messageRemoved(event.conversationId, event.messageId);
                 break;
-            case EventType::LatestSenderChanged:
-                emit latestSenderChanged(event.conversationId);
+            case EventType::UserSettingsChanged:
+                emit userSettingsChanged();
                 break;
             }
         }

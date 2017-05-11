@@ -4,7 +4,9 @@
 #include <algorithm>
 #include <QQmlEngine>
 
+#include <kulloclient/api/Address.h>
 #include <kulloclient/api/Conversations.h>
+#include <kulloclient/api/Session.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
@@ -21,12 +23,12 @@ ConversationListSource::ConversationListSource(ApiMirror::EventDispatcher &event
 {
     connect(&eventDispatcher_, &ApiMirror::EventDispatcher::conversationAdded,
             this, &ConversationListSource::onConversationAdded);
-    connect(&eventDispatcher_, &ApiMirror::EventDispatcher::conversationChanged,
-            this, &ConversationListSource::onConversationChanged);
     connect(&eventDispatcher_, &ApiMirror::EventDispatcher::conversationRemoved,
             this, &ConversationListSource::onConversationRemoved);
-    connect(&eventDispatcher_, &ApiMirror::EventDispatcher::latestSenderChanged,
-            this, &ConversationListSource::onParticipantChanged);
+    connect(&eventDispatcher_, &ApiMirror::EventDispatcher::conversationChanged,
+            this, &ConversationListSource::onConversationChanged);
+    connect(&eventDispatcher_, &ApiMirror::EventDispatcher::conversationLatestMessageTimestampChanged,
+            this, &ConversationListSource::onConversationLatestMessageTimestampChanged);
 }
 
 ConversationListSource::~ConversationListSource()
@@ -39,13 +41,11 @@ QHash<int, QByteArray> ConversationListSource::roleNames() const
     roles[IdRole]                     = QByteArrayLiteral("id_");
     roles[ParticipantsAddressesRole]  = QByteArrayLiteral("participantsAddresses_");
     roles[ParticipantsListRole]       = QByteArrayLiteral("participantsList_");
-    roles[ParticipantsRole]           = QByteArrayLiteral("participants_");
     roles[CountRole]                  = QByteArrayLiteral("count_");
     roles[CountUndoneRole]            = QByteArrayLiteral("countUndone_");
     roles[CountUnreadRole]            = QByteArrayLiteral("countUnread_");
     roles[LatestMessageTimestampRole] = QByteArrayLiteral("latestMessageTimestamp_");
     roles[DraftEmptyRole]             = QByteArrayLiteral("draftEmpty_");
-    roles[AvatarSrcRole]              = QByteArrayLiteral("avatarSrc_");
     return roles;
 }
 
@@ -65,8 +65,6 @@ QVariant ConversationListSource::data(const QModelIndex &index, int role) const
         return conversationModels_.at(row)->participantsAddresses();
     case ParticipantsListRole:
         return conversationModels_.at(row)->participantsList();
-    case ParticipantsRole:
-        return conversationModels_.at(row)->participants();
     case CountRole:
         return conversationModels_.at(row)->count();
     case CountUndoneRole:
@@ -77,11 +75,6 @@ QVariant ConversationListSource::data(const QModelIndex &index, int role) const
         return conversationModels_.at(row)->latestMessageTimestamp();
     case DraftEmptyRole:
         return conversationModels_.at(row)->draftEmpty();
-    case AvatarSrcRole:
-        return QStringLiteral("image://conversationavatars/%1?%2")
-                        .arg(conversationModels_.at(row)->id())
-                        .arg(QTime(0, 0, 0, 0).msecsTo(QTime::currentTime()) // rnd = 0,...,86400000
-        );
     default:
         Log.e() << "ConversationList::data(): Unknown role: " << role;
         return QVariant();
@@ -135,6 +128,14 @@ void ConversationListSource::onConversationAdded(Kullo::id_type conversationId)
     emit conversationsChanged();
 }
 
+void ConversationListSource::onConversationRemoved(Kullo::id_type conversationId)
+{
+    K_UNUSED(conversationId);
+
+    // TODO: Remove conversation efficiently
+    refreshConversations();
+}
+
 void ConversationListSource::onConversationChanged(Kullo::id_type conversationId)
 {
     int position = getIndexForId(conversationId);
@@ -157,31 +158,15 @@ void ConversationListSource::onConversationChanged(Kullo::id_type conversationId
                              DraftEmptyRole,
                              LatestMessageTimestampRole
                          });
-        emit conversationsChanged();
     }
 }
 
-void ConversationListSource::onConversationRemoved(Kullo::id_type conversationId)
+void ConversationListSource::onConversationLatestMessageTimestampChanged(Kullo::id_type conversationId)
 {
     K_UNUSED(conversationId);
 
-    // TODO: Remove conversation efficiently
-    refreshConversations();
-}
-
-void ConversationListSource::onParticipantChanged(Kullo::id_type conversationId)
-{
-    int position = getIndexForId(conversationId);
-
-    if (position == -1)
-    {
-        Log.w() << "Conversation not found";
-    }
-    else
-    {
-        QModelIndex rowIndex = createIndex(position, 0);
-        emit dataChanged(rowIndex, rowIndex, QVector<int>{AvatarSrcRole});
-    }
+    // this may have changed the order of conversations
+    emit conversationsChanged();
 }
 
 void ConversationListSource::onSingleConversationCountUnreadChanged()
