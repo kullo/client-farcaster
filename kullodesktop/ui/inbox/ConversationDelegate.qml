@@ -9,6 +9,7 @@ import "../native"
 Item {
     property int conversationId: id_
     property bool hasSecondaryHighlight: false
+    property string title: title_
 
     id: root
     width: 230
@@ -75,8 +76,7 @@ Item {
                 rightMargin: 8
             }
             height: avatar.height
-            text: participantsList_
-                  + (!draftEmpty_ ? " ..." : "")
+            text: root.title + (!draftEmpty_ ? " ..." : "")
             verticalAlignment: Text.AlignVCenter
             anchors.verticalCenter: parent.verticalCenter
             font.bold: countUnread_ > 0 // bold if unread message exists

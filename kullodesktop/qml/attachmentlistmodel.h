@@ -36,7 +36,7 @@ public:
 
     Q_INVOKABLE KulloDesktop::Qml::AttachmentModel* get(quint32 position) const;
     Q_INVOKABLE int count() const;
-    Q_INVOKABLE bool saveAllTo(const QUrl &directory) const;
+    Q_INVOKABLE bool saveAllToAsync(const QUrl &directory) const;
 
 private:
     void refreshAttachmentModels();

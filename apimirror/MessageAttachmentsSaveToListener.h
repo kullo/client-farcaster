@@ -6,6 +6,8 @@
 #include <kulloclient/types.h>
 #include <kulloclient/api/MessageAttachmentsSaveToListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class MessageAttachmentsSaveToListener
@@ -19,7 +21,7 @@ public:
         : QObject(parent)
     {
         // registered in registerMetaTypes(): Kullo::id_type, std::string
-        qRegisterMetaType<Kullo::Api::LocalError>("Kullo::Api::LocalError");
+        K_REGISTER_QT_META_TYPE(Kullo::Api::LocalError);
     }
 
     void finished(int64_t msgId, int64_t attId, const std::string &path) override

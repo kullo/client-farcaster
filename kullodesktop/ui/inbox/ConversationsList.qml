@@ -17,7 +17,7 @@ ListView {
 
     function checkOpenWhenCreated()
     {
-        var convId = Inbox.conversations.openWhenCreated();
+        var convId = Inbox.visibleConversations.openWhenCreated();
         if (convId < 0) return false;
 
         console.info("Conversation ID stored to be opened: " + convId);
@@ -99,51 +99,20 @@ ListView {
         onConversationsChanged: postConversationsChanged()
     }
 
-    property string quickKeySearchLastCharacter: ""
-    property int quickKeySearchLastCharacterPosition: 0
+    property string _quickKeySearchLastCharacter: ""
+    property int _quickKeySearchLastCharacterPosition: -1
 
     function resetQuickKeySearch()
     {
-        quickKeySearchLastCharacter = ""
-        quickKeySearchLastCharacterPosition = 0
-    }
-
-    function searchCharInConversation(character, conv)
-    {
-        var participants = conv['participants_']
-
-        for (var addr in participants)
-        {
-            if (addr.substring(0, 1) === character)
-            {
-                return true
-            }
-
-            var name = participants[addr].trim().toLowerCase();
-            if (name !== "")
-            {
-                var name_parts = name.split(' ', 5)
-
-                for (var index in name_parts)
-                {
-                    var part = name_parts[index].trim()
-
-                    if (part.substring(0, 1) === character)
-                    {
-                        return true
-                    }
-                }
-            }
-        }
-
-        return false
+        _quickKeySearchLastCharacter = ""
+        _quickKeySearchLastCharacterPosition = -1
     }
 
     Keys.onPressed: {
         if (event.modifiers === 0 && event.key === Qt.Key_Home) {
             event.accepted = true
             resetQuickKeySearch()
-            if (Inbox.conversations.count() > 0)
+            if (Inbox.visibleConversations.count() > 0)
             {
                 root.currentIndex = 0
             }
@@ -151,7 +120,7 @@ ListView {
         else if (event.modifiers === 0 && event.key === Qt.Key_End) {
             event.accepted = true
             resetQuickKeySearch()
-            if (Inbox.conversations.count() > 0)
+            if (Inbox.visibleConversations.count() > 0)
             {
                 root.currentIndex = root.count-1
             }
@@ -168,64 +137,30 @@ ListView {
             console.debug("Search for contact: '" + ch + "' "
                           + (reverseDirection ? 'up' : 'down'))
 
-            var hitsCount = 0
-            var skipsRemaining = 0
-            if (quickKeySearchLastCharacter === ch)
-            {
-                if (reverseDirection)
-                    quickKeySearchLastCharacterPosition--
-                else
-                    quickKeySearchLastCharacterPosition++
-
-                skipsRemaining = quickKeySearchLastCharacterPosition - 1
-            }
-            else
+            if (_quickKeySearchLastCharacter !== ch)
             {
                 // User changed quick search character
-                quickKeySearchLastCharacter = ch
-                quickKeySearchLastCharacterPosition = 1
+                _quickKeySearchLastCharacter = ch
+                _quickKeySearchLastCharacterPosition = -1
             }
 
-            var posFirstFind = -1
-            var posLastFind = -1
-            for (var p = 0; p < count; ++p)
-            {
-                if (searchCharInConversation(ch, Inbox.conversations.at(p)))
-                {
-                    if (posFirstFind == -1) posFirstFind = p
-                    if (p > posLastFind) posLastFind = p
+            var direction = reverseDirection ? -1 : 1
 
-                    if (skipsRemaining == 0)
-                    {
-                        root.currentIndex = p
-                        return
-                    }
-                    else if (skipsRemaining > 0)
-                    {
-                        skipsRemaining -= 1
-                    }
-
-                    hitsCount++
-                }
+            var result
+            result = Inbox.visibleConversations.searchChar(ch, direction, _quickKeySearchLastCharacterPosition)
+            if (result === -1) {
+                // restart from beginning
+                var beginning = reverseDirection ? root.count : -1
+                result = Inbox.visibleConversations.searchChar(ch, direction, beginning)
             }
 
-            if (posFirstFind === -1)
-            {
-                // character not found at all
+            if (result === -1) {
                 resetQuickKeySearch()
+            } else {
+                root.currentIndex = result
+                _quickKeySearchLastCharacterPosition = result
             }
-            else if (reverseDirection)
-            {
-                root.currentIndex = posLastFind
-                quickKeySearchLastCharacterPosition = hitsCount
-            }
-            else
-            {
-                // not found anymore after skipping too many results:
-                // Loop back to the top
-                quickKeySearchLastCharacterPosition = 1
-                root.currentIndex = posFirstFind
-            }
+
         }
     }
 
@@ -325,10 +260,10 @@ ListView {
         }
     }
 
-    model: Inbox.conversations
+    model: Inbox.visibleConversations
 
     Component.onCompleted: {
-        Inbox.conversations.todoMode = Qt.binding(function() { return inboxScreen.todoMode })
+        Inbox.visibleConversations.todoMode = Qt.binding(function() { return inboxScreen.todoMode })
     }
 
     highlight: ConversationHighlighter {}

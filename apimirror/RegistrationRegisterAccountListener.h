@@ -5,6 +5,8 @@
 
 #include <kulloclient/api/RegistrationRegisterAccountListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class RegistrationRegisterAccountListener
@@ -17,11 +19,11 @@ public:
     explicit RegistrationRegisterAccountListener(QObject *parent = 0)
         : QObject(parent)
     {
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::Address>>("std::shared_ptr<Kullo::Api::Address>");
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::Challenge>>("std::shared_ptr<Kullo::Api::Challenge>");
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::MasterKey>>("std::shared_ptr<Kullo::Api::MasterKey>");
-        qRegisterMetaType<Kullo::Api::AddressNotAvailableReason>("Kullo::Api::AddressNotAvailableReason");
-        qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Challenge>);
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::MasterKey>);
+        K_REGISTER_QT_META_TYPE(Kullo::Api::AddressNotAvailableReason);
+        K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
     }
 
     void challengeNeeded(const std::shared_ptr<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::Challenge> &challenge) override

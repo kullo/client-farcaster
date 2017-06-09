@@ -2,19 +2,18 @@
 #include "attachmentpreviewprovider.h"
 
 #include <desktoputil/qtypestreamers.h>
+#include <desktoputil/stlqt.h>
 #include <desktoputil/threadblocker.h>
+#include <kulloclient/api/AsyncTask.h>
+#include <kulloclient/api/DraftAttachments.h>
+#include <kulloclient/api/DraftAttachmentsContentListener.h>
+#include <kulloclient/api/MessageAttachments.h>
+#include <kulloclient/api/MessageAttachmentsContentListener.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
-#include "kullodesktop/qml/attachmentmodel.h"
 #include "kullodesktop/qml/inbox.h"
-#include "kullodesktop/qml/conversationlistmodel.h"
-#include "kullodesktop/qml/conversationlistsource.h"
-#include "kullodesktop/qml/conversationmodel.h"
-#include "kullodesktop/qml/draftattachmentlistmodel.h"
-#include "kullodesktop/qml/draftattachmentmodel.h"
-#include "kullodesktop/qml/messagemodel.h"
 
 namespace KulloDesktop {
 namespace Imageproviders {
@@ -51,51 +50,70 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     QStringList pathParts = path.split('/');
     if (pathParts.size() != 4) return QPixmap();
 
-    bool okConvId;
-    bool okMsgId;
+    bool okConversationId;
+    bool okMessageId;
     bool okAttachmentId;
-    auto convId       = pathParts[1].toInt(&okConvId);
-    auto msgId        = pathParts[2].toInt(&okMsgId);
-    auto attachmentId = pathParts[3].toInt(&okAttachmentId);
-    if (!okConvId || !okMsgId || !okAttachmentId || convId == -1)
+    auto conversationId = pathParts[1].toInt(&okConversationId);
+    auto messageId      = pathParts[2].toInt(&okMessageId);
+    auto attachmentId   = pathParts[3].toInt(&okAttachmentId);
+    if (!okConversationId || !okMessageId || !okAttachmentId || conversationId == -1)
     {
         Log.w() << "Invalid attachment preview string: " << url;
         return QPixmap();
     }
+    bool isDraft = (messageId < 0);
 
     if (attachmentId == -1) return QPixmap(); // empty delegate
 
-    QByteArray imageData;
+    std::shared_ptr<std::vector<uint8_t>> imageData = std::make_shared<std::vector<uint8_t>>();
+
+    std::shared_ptr<Kullo::Api::AsyncTask> contentTask;
+    std::shared_ptr<Kullo::Api::DraftAttachmentsContentListener> draftAttachmentContentListener;
+    std::shared_ptr<Kullo::Api::MessageAttachmentsContentListener> messageAttachmentContentListener;
+
+    if (isDraft)
+    {
+        class DraftAttachmentContentListener: public Kullo::Api::DraftAttachmentsContentListener {
+        public:
+            explicit DraftAttachmentContentListener(std::shared_ptr<std::vector<uint8_t>> target)
+                : target_(target) {}
+
+            void finished(int64_t, int64_t, const std::vector<uint8_t> & content) override {
+                target_->assign(content.begin(), content.end());
+            }
+        private:
+            std::shared_ptr<std::vector<uint8_t>> target_;
+        };
+        draftAttachmentContentListener = std::make_shared<DraftAttachmentContentListener>(imageData);
+    }
+    else
+    {
+        class MessageAttachmentsContentListener: public Kullo::Api::MessageAttachmentsContentListener {
+        public:
+            explicit MessageAttachmentsContentListener(std::shared_ptr<std::vector<uint8_t>> target)
+                : target_(target) {}
+
+            void finished(int64_t, int64_t, const std::vector<uint8_t> & content) override {
+                target_->assign(content.begin(), content.end());
+            }
+        private:
+            std::shared_ptr<std::vector<uint8_t>> target_;
+        };
+        messageAttachmentContentListener = std::make_shared<MessageAttachmentsContentListener>(imageData);
+    }
 
     DesktopUtil::ThreadBlocker tb;
-
     Applications::KulloApplication::runOnMainThread([&](){
-        if (!inbox_.hasSession())
+        auto session = inbox_.session();
+        if (!session)
         {
             tb.release(false);
             return;
         }
 
-        if (msgId < 0) // Draft
-        {
-            auto conversation = inbox_.conversationsListSource()->get(convId);
-            kulloAssert(conversation);
-            auto draft = conversation->draft();
-            kulloAssert(draft);
-            auto attachment = draft->attachments()->get(attachmentId);
-            kulloAssert(attachment);
-            imageData = attachment->content();
-        }
-        else
-        {
-            auto conversation = inbox_.conversationsListSource()->get(convId);
-            kulloAssert(conversation);
-            auto message = conversation->messages()->get(msgId);
-            kulloAssert(message);
-            auto attachment = message->attachments()->get(attachmentId);
-            kulloAssert(attachment);
-            imageData = attachment->content();
-        }
+        contentTask = isDraft
+                ? session->draftAttachments()->contentAsync(conversationId, attachmentId, draftAttachmentContentListener)
+                : session->messageAttachments()->contentAsync(messageId, attachmentId, messageAttachmentContentListener);
 
         tb.release(true);
     });
@@ -103,8 +121,12 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
     auto success = tb.block();
     if (!success) return QPixmap();
 
+    // done starting task
+
+    contentTask->waitUntilDone();
+
     QImage image;
-    bool ok = image.loadFromData(imageData);
+    bool ok = image.loadFromData(DesktopUtil::StlQt::toQByteArray(*imageData));
     if (!ok)
     {
         Log.w() << "Could not load image data from attachment into image: " << url;

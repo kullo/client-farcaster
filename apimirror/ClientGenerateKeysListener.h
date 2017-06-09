@@ -6,6 +6,8 @@
 #include <kulloclient/api/ClientGenerateKeysListener.h>
 #include <kulloclient/api/Registration.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class ClientGenerateKeysListener
@@ -19,7 +21,7 @@ public:
         : QObject(parent)
     {
         // no registration needed for: int
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::Registration>>("std::shared_ptr<Kullo::Api::Registration>");
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Registration>);
     }
 
     void progress(int8_t progress) override

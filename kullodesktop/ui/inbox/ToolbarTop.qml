@@ -52,6 +52,12 @@ Rectangle {
         spacing: 5
 
         IconButton {
+            source: "/resources/scalable/search_b.svg"
+            tooltip: qsTr("Search")
+            onClicked: inboxScreen.openSearch()
+        }
+
+        IconButton {
             source: inboxScreen.todoMode
                     ? "/resources/scalable/todo_active_b.svg"
                     : "/resources/scalable/todo_b.svg"

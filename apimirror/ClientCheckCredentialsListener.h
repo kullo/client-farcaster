@@ -6,6 +6,8 @@
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/ClientCheckCredentialsListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class ClientCheckCredentialsListener
@@ -19,11 +21,9 @@ public:
         : QObject(parent)
     {
         // no registration needed for: bool
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::Address>>(
-                    "std::shared_ptr<Kullo::Api::Address>");
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::MasterKey>>(
-                    "std::shared_ptr<Kullo::Api::MasterKey>");
-        qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::MasterKey>);
+        K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
     }
 
     void finished(

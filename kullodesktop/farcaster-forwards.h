@@ -10,7 +10,8 @@ namespace KulloDesktop {
     }
     namespace Qml {
         class AttachmentModel;
-        class ConversationListModel;
+        class ConversationListSorted;
+        class ConversationListSortedFiltered;
         class ConversationListSource;
         class ConversationModel;
         class DeviceSettings;

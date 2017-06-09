@@ -84,7 +84,8 @@ SOURCES += \
     osintegration/singleinstancelock.cpp \
     qml/attachmentlistmodel.cpp \
     qml/attachmentmodel.cpp \
-    qml/conversationlistmodel.cpp \
+    qml/conversationlistsorted.cpp \
+    qml/conversationlistsortedfiltered.cpp \
     qml/conversationlistsource.cpp \
     qml/conversationmodel.cpp \
     qml/devicesettings.cpp \
@@ -123,7 +124,8 @@ SOURCES += \
     util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
     util/logfilecleaner.cpp \
-    main.cpp
+    main.cpp \
+    qml_components/searchmodel.cpp
 
 HEADERS += \
     applications/exceptionawareqapplication.h \
@@ -140,7 +142,8 @@ HEADERS += \
     osintegration/singleinstancelock.h \
     qml/attachmentmodel.h \
     qml/attachmentlistmodel.h \
-    qml/conversationlistmodel.h \
+    qml/conversationlistsorted.h \
+    qml/conversationlistsortedfiltered.h \
     qml/conversationlistsource.h \
     qml/conversationmodel.h \
     qml/devicesettings.h \
@@ -180,7 +183,8 @@ HEADERS += \
     util/htmlfileloglistener.h \
     util/kullofoldersetup.h \
     util/logfilecleaner.h \
-    farcaster-forwards.h
+    farcaster-forwards.h \
+    qml_components/searchmodel.h
 
 # BEGIN apimirror
 win32:CONFIG(release, debug|release):     LIBS += -L$$OUT_PWD/../apimirror/release/ -lapimirror

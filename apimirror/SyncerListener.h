@@ -9,6 +9,8 @@
 #include <kulloclient/api/SyncProgress.h>
 
 #include "apimirror/enums/DraftPartHolder.h"
+#include "apimirror/misc.h"
+#include "apimirror/signalslotvalue.h"
 
 namespace ApiMirror {
 
@@ -21,11 +23,8 @@ public:
         : QObject(parent)
     {
         // registered in registerMetaTypes(): Kullo::id_type
-        qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
-
-        // wrap in shared_ptr to make it Qt meta type compatible
-        // (i.e. public default constructor + public copy constructor + public destructor)
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::SyncProgress>>("std::shared_ptr<Kullo::Api::SyncProgress>");
+        K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
+        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress>);
     }
 
     void started() override
@@ -44,7 +43,7 @@ public:
 
     void progressed(const Kullo::Api::SyncProgress &progress) override
     {
-        emit _progressed(std::make_shared<Kullo::Api::SyncProgress>(progress));
+        emit _progressed(progress);
     }
 
     void finished() override
@@ -63,7 +62,7 @@ signals:
             Kullo::id_type convId,
             ApiMirror::Enums::DraftPartHolder::DraftPart part,
             int64_t currentSize, int64_t maxSize);
-    void _progressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress);
+    void _progressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress);
     void _finished();
     void _error(Kullo::Api::NetworkError error);
 };

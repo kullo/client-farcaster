@@ -103,19 +103,21 @@ ApplicationWindow {
                 // Known issue: Loaded only once per client start.
                 // Values should be re-loaded when re-opening inbox
                 //
-                // Never set visibility: Windowed to avoid error:
+                // Never set visibility: "Windowed" to avoid error:
                 // Conflicting properties 'visible' and 'visibility' for Window 'root'
                 // visible is false by default.
                 // This check is bullshit:
                 // https://qt.gitorious.org/qt/qtdeclarative/source/c1c7a952bc11d3bd9edcd3739c57df15b60a9e79:src/quick/items/qquickwindowmodule.cpp#L132-136
                 PropertyChanges {
                     target: appWindow
+                    explicit: true // do not bind properties
                     visibility: InnerApplication.deviceSettings.getMainWindowMaximized()
                                 ? "Maximized"
                                 : "AutomaticVisibility"
                 }
                 PropertyChanges {
                     target: appWindow
+                    explicit: true // do not bind properties
                     width: InnerApplication.deviceSettings.getMainWindowWidth()
                     height: InnerApplication.deviceSettings.getMainWindowHeight()
                     minimumWidth: InnerApplication.deviceSettings.mainWindowMinWidth

@@ -68,6 +68,7 @@ BackgroundCover {
 
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
             onClicked: {} // do nothing. Prevents overlay from closing
         }
 

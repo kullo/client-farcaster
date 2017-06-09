@@ -69,6 +69,20 @@ MessageModel *MessageListModel::get(Kullo::id_type messageId) const
     return source_->get(messageId);
 }
 
+int MessageListModel::find(Kullo::id_type messageId) const
+{
+    for (int row = 0; row < rowCount(); ++row)
+    {
+        QModelIndex idx = index(row, 0);
+        if (idx.data(MessageListSource::MessageIdRole).toLongLong() == messageId)
+        {
+            return row;
+        }
+    }
+
+    return -1;
+}
+
 void MessageListModel::deleteMessage(Kullo::id_type messageId)
 {
     source_->deleteMessage(messageId);

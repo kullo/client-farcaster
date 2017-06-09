@@ -22,6 +22,7 @@ BackgroundCover {
 
         MouseArea {
             anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
             onClicked: {} // do nothing. Prevents overlay from closing
         }
 
@@ -74,6 +75,18 @@ BackgroundCover {
 
                     NativeText {
                         text: qsTr("Create new conversation")
+                    }
+                }
+
+                ShortcutRow {
+                    ShortcutBlock {
+                        CtrlKey {}
+                        NativeText { text: "+" }
+                        Key { text: "F" }
+                    }
+
+                    NativeText {
+                        text: qsTr("Search")
                     }
                 }
 

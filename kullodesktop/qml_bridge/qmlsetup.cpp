@@ -18,7 +18,8 @@
 #include "kullodesktop/qml/attachmentlistmodel.h"
 #include "kullodesktop/qml/attachmentmodel.h"
 #include "kullodesktop/qml/inbox.h"
-#include "kullodesktop/qml/conversationlistmodel.h"
+#include "kullodesktop/qml/conversationlistsorted.h"
+#include "kullodesktop/qml/conversationlistsortedfiltered.h"
 #include "kullodesktop/qml/conversationmodel.h"
 #include "kullodesktop/qml/devicesettings.h"
 #include "kullodesktop/qml/draftmodel.h"
@@ -42,6 +43,7 @@
 #include "kullodesktop/qml_components/loginchecker.h"
 #include "kullodesktop/qml_components/registerer.h"
 #include "kullodesktop/qml_components/scheduler.h"
+#include "kullodesktop/qml_components/searchmodel.h"
 #include "kullodesktop/qml_components/stabletimer.h"
 
 namespace KulloDesktop {
@@ -61,6 +63,7 @@ void QmlSetup::setupTypes()
     qmlRegisterType<QmlComponents::LibraryLoggerQmlConnector>("Kullo", 1, 0, "LibraryLoggerQmlConnector");
     qmlRegisterType<QmlComponents::LoginChecker>("Kullo", 1, 0, "LoginChecker");
     qmlRegisterType<QmlComponents::Registerer>("Kullo", 1, 0, "Registerer");
+    qmlRegisterType<QmlComponents::SearchModel>("Kullo", 1, 0, "SearchModel");
     qmlRegisterType<QmlComponents::Scheduler>("Kullo", 1, 0, "Scheduler");
     qmlRegisterType<QmlComponents::StableTimer>("Kullo", 1, 0, "StableTimer");
     qmlRegisterType<QmlComponents::Visuals::AdvancedRectangle>("Kullo.Visuals", 1, 0, "AdvancedRectangle");
@@ -68,7 +71,8 @@ void QmlSetup::setupTypes()
 
     qmlRegisterType<Qml::AttachmentListModel>("Kullo", 1, 0, "AttachmentList");
     qmlRegisterType<Qml::AttachmentModel>("Kullo", 1, 0, "Attachment");
-    qmlRegisterType<Qml::ConversationListModel>("Kullo", 1, 0, "ConversationList");
+    qmlRegisterType<Qml::ConversationListSorted>("Kullo", 1, 0, "ConversationListSorted");
+    qmlRegisterType<Qml::ConversationListSortedFiltered>("Kullo", 1, 0, "ConversationListSortedFiltered");
     qmlRegisterType<Qml::ConversationModel>("Kullo", 1, 0, "Conversation");
     qmlRegisterType<Qml::DeviceSettings>("Kullo", 1, 0, "DeviceSettings");
     qmlRegisterType<Qml::DraftModel>("Kullo", 1, 0, "Draft");

@@ -1,5 +1,5 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
-#include "conversationlistmodel.h"
+#include "conversationlistsorted.h"
 
 #include <QDateTime>
 #include <kulloclient/util/librarylogger.h>
@@ -13,13 +13,13 @@ namespace {
 const auto SORT_ROLE = ConversationListSource::LatestMessageTimestampRole;
 }
 
-ConversationListModel::ConversationListModel(QObject *parent)
+ConversationListSorted::ConversationListSorted(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    Log.f() << "Don't instantiate ConversationListModel in QML.";
+    Log.f() << "Don't instantiate in QML.";
 }
 
-ConversationListModel::ConversationListModel(ConversationListSource *conversations, QObject *parent)
+ConversationListSorted::ConversationListSorted(ConversationListSource *conversations, QObject *parent)
     : QSortFilterProxyModel(parent)
     , source_(conversations)
 {
@@ -35,39 +35,16 @@ ConversationListModel::ConversationListModel(ConversationListSource *conversatio
     });
 }
 
-ConversationListModel::~ConversationListModel()
+ConversationListSorted::~ConversationListSorted()
 {
 }
 
-bool ConversationListModel::todoMode() const
-{
-    return todoMode_;
-}
-
-void ConversationListModel::setTodoMode(bool active)
-{
-    if (todoMode_ == active) return;
-
-    todoMode_ = active;
-
-    // When elements are added to the result (todo mode on -> off), resorting is required
-    if (active) invalidateFilter();
-    else invalidate();
-
-    emit todoModeChanged();
-}
-
-ConversationModel *ConversationListModel::get(Kullo::id_type conversationId) const
+ConversationModel *ConversationListSorted::get(Kullo::id_type conversationId) const
 {
     return source_->get(conversationId);
 }
 
-int ConversationListModel::count() const
-{
-    return source_->rowCount();
-}
-
-int ConversationListModel::find(Kullo::id_type conversationId) const
+int ConversationListSorted::find(Kullo::id_type conversationId) const
 {
     for (int row = 0; row < rowCount(); ++row)
     {
@@ -81,7 +58,7 @@ int ConversationListModel::find(Kullo::id_type conversationId) const
     return -1;
 }
 
-QVariantMap ConversationListModel::at(int row)
+QVariantMap ConversationListSorted::at(int row)
 {
     QHash<int, QByteArray> roles = roleNames();
     QHashIterator<int, QByteArray> rolesIterator(roles);
@@ -96,27 +73,7 @@ QVariantMap ConversationListModel::at(int row)
     return out;
 }
 
-Kullo::id_type ConversationListModel::openWhenCreated()
-{
-    return source_->openWhenCreated();
-}
-
-bool ConversationListModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
-{
-    if (todoMode_)
-    {
-        QModelIndex sourceIndex = source_->index(sourceRow, 0, sourceParent);
-        bool countUndone = source_->data(sourceIndex, ConversationListSource::CountUndoneRole).toInt();
-        if (countUndone == 0)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool ConversationListModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
+bool ConversationListSorted::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     QVariant leftData  = sourceModel()->data(left, SORT_ROLE);
     QVariant rightData = sourceModel()->data(right, SORT_ROLE);

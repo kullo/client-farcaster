@@ -299,7 +299,7 @@ FocusScope {
                     MenuItem {
                         text: qsTr("Open")
                         onTriggered: {
-                            root.conversation.draft.attachments.get(contextMenu.attachmentIndex).open()
+                            root.conversation.draft.attachments.get(contextMenu.attachmentIndex).openAsync()
                         }
                     }
 
@@ -408,7 +408,7 @@ FocusScope {
                             }
                             onDoubleClicked: {
                                 var attachment = root.conversation.draft.attachments.get(attachmentIndex_)
-                                if (!attachment.open()) {
+                                if (!attachment.openAsync()) {
                                     inboxScreen.showOpenFileError(attachment.filename)
                                 }
                             }

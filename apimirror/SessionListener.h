@@ -5,6 +5,8 @@
 
 #include <kulloclient/api/SessionListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class SessionListener : public QObject, public Kullo::Api::SessionListener
@@ -15,7 +17,7 @@ public:
     explicit SessionListener(QObject *parent = nullptr)
         : QObject(parent)
     {
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::InternalEvent>>("std::shared_ptr<Kullo::Api::InternalEvent>");
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::InternalEvent>);
     }
 
     void internalEvent(const std::shared_ptr<Kullo::Api::InternalEvent> &event) override

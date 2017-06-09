@@ -34,7 +34,8 @@
 #include <kulloclient/util/stltaskrunner.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
-#include "kullodesktop/qml/conversationlistmodel.h"
+#include "kullodesktop/qml/conversationlistsorted.h"
+#include "kullodesktop/qml/conversationlistsortedfiltered.h"
 #include "kullodesktop/qml/conversationlistsource.h"
 #include "kullodesktop/qml/innerapplication.h"
 #include "kullodesktop/qml/sender.h"
@@ -92,9 +93,16 @@ bool Inbox::hasSession() const
     return session_ != nullptr;
 }
 
-ConversationListModel *Inbox::conversations()
+ConversationListSorted *Inbox::allConversations()
 {
-    auto ptr = conversationsProxy_.get();
+    auto ptr = conversationsAll_.get();
+    QQmlEngine::setObjectOwnership(ptr, QQmlEngine::CppOwnership);
+    return ptr;
+}
+
+ConversationListSortedFiltered *Inbox::visibleConversations()
+{
+    auto ptr = conversationsVisible_.get();
     QQmlEngine::setObjectOwnership(ptr, QQmlEngine::CppOwnership);
     return ptr;
 }
@@ -163,7 +171,7 @@ void Inbox::closeSession()
     //             -> including Sender
     //             -> AttachmentListModel
     //                -> list of AttachmentModel
-    conversationsProxy_ = nullptr;
+    conversationsVisible_ = nullptr;
     conversationsSource_ = nullptr;
 
     createSessionTask_ = nullptr;
@@ -342,17 +350,16 @@ void Inbox::onInternalCreateSessionDone()
             this, &Inbox::unreadMessagesCountChanged);
     conversationsSource_->setSession(session_);
 
-    conversationsProxy_ = Kullo::make_unique<Qml::ConversationListModel>(conversationsSource_.get(), nullptr);
+    conversationsAll_ = Kullo::make_unique<Qml::ConversationListSorted>(conversationsSource_.get(), nullptr);
+    conversationsVisible_ = Kullo::make_unique<Qml::ConversationListSortedFiltered>(conversationsSource_.get(), nullptr);
 
-    emit conversationsChanged();
+    emit visibleConversationsChanged();
 
     emit hasSessionChanged(true);
 }
 
-void Inbox::onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress)
+void Inbox::onSyncProgressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress)
 {
-    kulloAssert(progress);
-
     if (!latestSyncProgress_ || progress->phase != latestSyncProgress_->phase)
     {
         emit syncPhaseChanged(ApiMirror::Enums::SyncPhaseHolder::convert(progress->phase));

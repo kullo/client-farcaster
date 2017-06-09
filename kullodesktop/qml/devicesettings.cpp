@@ -15,6 +15,7 @@ namespace Qml {
 namespace {
 const int MAIN_WINDOW_DEFAULT_WIDTH  = 1000;
 const int MAIN_WINDOW_DEFAULT_HEIGHT =  600;
+const auto MAIN_WINDOW_DEFAULT_MAXIMIZED = false;
 const int MAIN_WINDOW_MIN_WIDTH  = 800;
 const int MAIN_WINDOW_MIN_HEIGHT = 400;
 const auto DEFAULT_UPDATE_BRANCH = QStringLiteral("important");
@@ -116,8 +117,6 @@ void DeviceSettings::setMainWindowWidth(int width)
     if (width < MAIN_WINDOW_MIN_WIDTH) return;
     if (getMainWindowWidth() == width) return;
 
-    Log.d() << "Width: " << width;
-
     if (!mainWindowSettings_) initMainWindowSettings();
     mainWindowSettings_->setValue("global/mainWindowWidth", width);
 }
@@ -138,21 +137,17 @@ void DeviceSettings::setMainWindowHeight(int height)
     if (height < MAIN_WINDOW_MIN_HEIGHT) return;
     if (getMainWindowHeight() == height) return;
 
-    Log.d() << "Height: " << height;
-
     if (!mainWindowSettings_) initMainWindowSettings();
     mainWindowSettings_->setValue("global/mainWindowHeight", height);
 }
 
 bool DeviceSettings::getMainWindowMaximized()
 {
-    auto out = false;
+    auto out = MAIN_WINDOW_DEFAULT_MAXIMIZED;
 
     if (!mainWindowSettings_) initMainWindowSettings();
     QVariant data = mainWindowSettings_->value("global/mainWindowMaximized");
     if (data.isValid()) out = data.toBool();
-    Log.d() << "Maximized from storage: " << out << "; "
-            << "Raw value: " << data;
 
     return out;
 }

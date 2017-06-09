@@ -35,6 +35,7 @@ public:
     Q_INVOKABLE void markAllMessagesAsReadAndDone();
 
     Q_INVOKABLE KulloDesktop::Qml::MessageModel *get(Kullo::id_type messageId) const;
+    Q_INVOKABLE int find(Kullo::id_type messageId) const;
     Q_INVOKABLE void deleteMessage(Kullo::id_type messageId);
 
 signals:

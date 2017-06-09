@@ -27,9 +27,12 @@ HEADERS += \
     eventdispatcher.h \
     MessageAttachmentsContentListener.h \
     MessageAttachmentsSaveToListener.h \
+    misc.h \
     RegistrationRegisterAccountListener.h \
     SessionAccountInfoListener.h \
     SessionListener.h \
-    SyncerListener.h
+    signalslotvalue.h \
+    SyncerListener.h \
+    MessagesSearchListener.h
 
 include(../common_post.pri)

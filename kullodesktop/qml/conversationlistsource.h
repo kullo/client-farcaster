@@ -20,8 +20,9 @@ class ConversationListSource : public QAbstractListModel
 public:
     enum ConversationRoles {
         IdRole = Qt::UserRole, // 256
+        TitleRole,
+        TitleShortRole,
         ParticipantsAddressesRole,
-        ParticipantsListRole,
         CountRole,
         CountUndoneRole,
         CountUnreadRole,

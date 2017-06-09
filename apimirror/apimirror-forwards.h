@@ -22,6 +22,7 @@ namespace ApiMirror {
     class EventDispatcher;
     class MessageAttachmentsContentListener;
     class MessageAttachmentsSaveToListener;
+    class MessagesSearchListener;
     class RegistrationRegisterAccountListener;
     class SessionAccountInfoListener;
     class SessionListener;

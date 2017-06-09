@@ -5,12 +5,12 @@ import "../"
 import "../native"
 
 NativeButton {
-    id: _root
+    id: root
 
     style: KulloButtonStyle {
         iconPosition: _POSITION_LEFT
         paddingH: paddingV
-        source: _root.iconSource
+        source: root.iconSource
         textColor: Style.gray
         backgroundColor: "transparent"
         hoverColor: "#55ffffff"

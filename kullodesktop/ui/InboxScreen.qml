@@ -13,6 +13,7 @@ import "buttons"
 import "dialogs"
 import "misc"
 import "native"
+import "search"
 import "usersettings"
 import "windows"
 import "js/dynamic.js" as Dynamic
@@ -92,6 +93,32 @@ FocusScope {
         middleColumn.forceActiveFocus()
     }
 
+    function openSearch(searchText, conversationId, global) {
+        searchText = typeof searchText !== 'undefined' ? searchText : "";
+        conversationId = typeof conversationId !== 'undefined'
+                ? conversationId
+                : middleColumn.conversation.id;
+        global = typeof global !== 'undefined' ? global : true;
+
+        searchOverlay.active = true
+        searchOverlay.item.searchText = searchText
+        searchOverlay.item.conversationId = conversationId
+        searchOverlay.item.global = global
+        searchOverlay.item.direction = "both"
+        searchOverlay.item.updateResults()
+        searchOverlay.item.fadeIn()
+    }
+
+    function openSaveAttachmentDialog(attachment) {
+        globalSaveAttachmentDialog.attachment = attachment
+        globalSaveAttachmentDialog.openDialog()
+    }
+
+    function openSaveAttachmentsDialog(attachments) {
+        globalSaveAttachmentsDialog.attachments = attachments
+        globalSaveAttachmentsDialog.open()
+    }
+
     MessageDialog {
         id: openFileErrorDialog
         property string filename: ""
@@ -141,6 +168,22 @@ FocusScope {
         id: profileOverlay
     }
 
+    Loader {
+        id: searchOverlay
+        active: false
+        source: "/search/SearchOverlay.qml"
+        anchors.fill: parent
+        z: 4
+        onLoaded: {
+            item.contentWidth = Qt.binding(function() {
+                return Math.min(0.92*inboxScreen.width, 1100)
+            })
+            item.contentHeight = Qt.binding(function() {
+                return inboxScreen.height - 40
+            })
+        }
+    }
+
     SettingsWindow {
         id: settingsWindow
     }
@@ -160,6 +203,7 @@ FocusScope {
     }
 
     Keys.onPressed: {
+        if (SC.isCtrlAndKey(Qt.Key_F, event)) { event.accepted = true; inboxScreen.openSearch()             }
         if (SC.isCtrlAndKey(Qt.Key_N, event)) { event.accepted = true; inboxScreen.startConversation()      }
         if (SC.isCtrlAndKey(Qt.Key_R, event)) { event.accepted = true; inboxScreen.toggleAnswer()           }
         if (SC.isCtrlAndKey(Qt.Key_G, event)) { event.accepted = true; inboxScreen.showUserSettingsWindow() }
@@ -360,7 +404,7 @@ FocusScope {
         filename: attachment ? attachment.filename : ""
 
         onAccepted: {
-            if (!attachment.saveTo(fileUrl))
+            if (!attachment.saveToAsync(fileUrl))
             {
                 console.error("Error while saving file: " + fileUrl)
             }
@@ -377,7 +421,7 @@ FocusScope {
 
         onAccepted: {
             console.log("Save all attachments to " + fileUrl)
-            attachments.saveAllTo(fileUrl)
+            attachments.saveAllToAsync(fileUrl)
         }
     }
 
@@ -424,7 +468,7 @@ FocusScope {
     }
 
     function openConversation(convId) {
-        var conv = Inbox.conversations.get(convId)
+        var conv = Inbox.visibleConversations.get(convId)
 
         if (!conv) console.error("conv is null in inbox.openConversation() for conversation: " + convId)
         if (!conv.messages) console.error("conv.messages is null in inbox.openConversation() for conversation: " + convId)
@@ -435,6 +479,10 @@ FocusScope {
         rightColumn.conversation = conv
 
         conv.markAllMessagesAsRead()
+    }
+
+    function selectMessage(messageId) {
+        middleColumn.selectMessage(messageId)
     }
 
     FocusScope {

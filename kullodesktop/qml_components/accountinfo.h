@@ -5,6 +5,8 @@
 #include <memory>
 #include <QObject>
 
+#include <apimirror/signalslotvalue.h>
+#include <kulloclient/api/AccountInfo.h>
 #include <kulloclient/kulloclient-forwards.h>
 
 #include "kullodesktop/farcaster-forwards.h"
@@ -45,13 +47,13 @@ signals:
     void storageUsedChanged();
 
 private slots:
-    void onNewAccountInfoReceived(const std::shared_ptr<Kullo::Api::AccountInfo> accountInfo);
+    void onNewAccountInfoReceived(const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo);
 
 private:
     Qml::Inbox *inbox_ = nullptr;
     std::atomic<bool> locked_;
     std::shared_ptr<Kullo::Api::AsyncTask> task_;
-    std::shared_ptr<Kullo::Api::AccountInfo> accountInfo_;
+    boost::optional<Kullo::Api::AccountInfo> accountInfo_;
 };
 
 }

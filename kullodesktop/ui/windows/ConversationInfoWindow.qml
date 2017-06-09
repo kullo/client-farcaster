@@ -21,7 +21,7 @@ NativeWindow {
     property int _DEFAULT_WINDOW_WIDTH: 550
     property int _DEFAULT_WINDOW_HEIGHT: 250
     property Conversation _conversation: conversationId !== -1
-                                         ? Inbox.conversations.get(conversationId)
+                                         ? Inbox.allConversations.get(conversationId)
                                          : null
     property var _selectedParticipants: [] // array of addresses
 

@@ -6,6 +6,8 @@
 #include <kulloclient/api/Address.h>
 #include <kulloclient/api/ClientAddressExistsListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class ClientAddressExistsListener
@@ -20,7 +22,7 @@ public:
     {
         // no registration needed for: bool
         // registered in registerMetaTypes(): std::string
-        qRegisterMetaType<Kullo::Api::NetworkError>("Kullo::Api::NetworkError");
+        K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
     }
 
     void finished(const std::shared_ptr<Kullo::Api::Address> &address, bool exists) override

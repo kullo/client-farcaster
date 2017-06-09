@@ -6,6 +6,8 @@
 #include <kulloclient/types.h>
 #include <kulloclient/api/DraftAttachmentsAddListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class DraftAttachmentsAddListener
@@ -19,7 +21,7 @@ public:
         : QObject(parent)
     {
         // registered in registerMetaTypes(): Kullo::id_type, std::string
-        qRegisterMetaType<Kullo::Api::LocalError>("Kullo::Api::LocalError");
+        K_REGISTER_QT_META_TYPE(Kullo::Api::LocalError);
     }
 
     void progressed(int64_t convId, int64_t attId, int64_t bytesProcessed, int64_t bytesTotal) override

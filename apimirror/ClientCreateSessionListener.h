@@ -5,6 +5,8 @@
 
 #include <kulloclient/api/ClientCreateSessionListener.h>
 
+#include "apimirror/misc.h"
+
 namespace ApiMirror {
 
 class ClientCreateSessionListener : public QObject, public Kullo::Api::ClientCreateSessionListener
@@ -15,9 +17,9 @@ public:
     explicit ClientCreateSessionListener(QObject *parent = nullptr)
         : QObject(parent)
     {
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::Session>>("std::shared_ptr<Kullo::Api::Session>");
-        qRegisterMetaType<std::shared_ptr<Kullo::Api::Address>>("std::shared_ptr<Kullo::Api::Address>");
-        qRegisterMetaType<Kullo::Api::LocalError>("Kullo::Api::LocalError");
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Session>);
+        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(Kullo::Api::LocalError);
     }
 
     void migrationStarted(const std::shared_ptr<Kullo::Api::Address> &address) override

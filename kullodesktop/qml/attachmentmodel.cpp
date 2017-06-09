@@ -7,7 +7,6 @@
 #include <QDir>
 #include <QUrl>
 
-#include <apimirror/MessageAttachmentsContentListener.h>
 #include <apimirror/MessageAttachmentsSaveToListener.h>
 #include <desktoputil/filesystem.h>
 #include <desktoputil/qtypestreamers.h>
@@ -18,6 +17,8 @@
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
+
+#include "kullodesktop/applications/kulloapplication.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -61,8 +62,7 @@ quint32 AttachmentModel::size() const
     return session_->messageAttachments()->size(msgId_, attId_);
 }
 
-//TODO make AttachmentModel::saveTo asynchronous
-bool AttachmentModel::saveTo(const QUrl &url) const
+bool AttachmentModel::saveToAsync(const QUrl &url)
 {
     if (!url.isLocalFile())
     {
@@ -70,11 +70,10 @@ bool AttachmentModel::saveTo(const QUrl &url) const
         return false;
     }
 
-    return doSaveTo(url.toLocalFile().toStdString());
+    return doSaveTo(url.toLocalFile().toStdString(), [](bool){});
 }
 
-//TODO make AttachmentModel::open asynchronous
-bool AttachmentModel::open() const
+bool AttachmentModel::openAsync()
 {
     QString tmpFilename = DesktopUtil::Filesystem::prepareTmpFilename(filename());
 
@@ -102,29 +101,14 @@ bool AttachmentModel::open() const
         return false;
     }
 
-    if (!doSaveTo(tmpFileInfo.absoluteFilePath().toStdString())) return false;
-
-    Log.i() << "Opening file " << tmpFileInfo.absoluteFilePath();
-    QUrl tmpFileUrl = QUrl::fromLocalFile(tmpFileInfo.absoluteFilePath());
-    return QDesktopServices::openUrl(tmpFileUrl);
-}
-
-QByteArray AttachmentModel::content() const
-{
-    auto listener = std::make_shared<ApiMirror::MessageAttachmentsContentListener>();
-    std::vector<unsigned char> data;
-    connect(listener.get(), &ApiMirror::MessageAttachmentsContentListener::_finished,
-            [&data](int64_t msgId, int64_t attId, const std::vector<uint8_t> &content)
-    {
-        K_UNUSED(msgId);
-        K_UNUSED(attId);
-        data = content;
+    const auto startedOk = doSaveTo(tmpFileInfo.absoluteFilePath().toStdString(), [=](bool success) {
+        if (success) {
+            Log.i() << "Opening file " << tmpFileInfo.absoluteFilePath();
+            QUrl tmpFileUrl = QUrl::fromLocalFile(tmpFileInfo.absoluteFilePath());
+            QDesktopServices::openUrl(tmpFileUrl);
+        }
     });
-
-    // Synchronous operation is no problem here, as content() is only used for
-    // ImageProviders which operate asynchronously.
-    session_->messageAttachments()->contentAsync(msgId_, attId_, listener)->waitUntilDone();
-    return DesktopUtil::StlQt::toQByteArray(data);
+    return startedOk;
 }
 
 Kullo::id_type AttachmentModel::messageId() const
@@ -132,27 +116,45 @@ Kullo::id_type AttachmentModel::messageId() const
     return msgId_;
 }
 
-bool AttachmentModel::doSaveTo(const std::string &path) const
+void AttachmentModel::pruneDoneTasks()
 {
-    auto listener = std::make_shared<ApiMirror::MessageAttachmentsSaveToListener>();
-    boost::optional<Kullo::Api::LocalError> saveErr;
-    connect(listener.get(), &ApiMirror::MessageAttachmentsSaveToListener::_error,
-            [&saveErr](int64_t msgId, int64_t attId, const std::string &path, Kullo::Api::LocalError error)
+    if (saveToTask_ && saveToTask_->isDone())
+    {
+        saveToTask_ = nullptr;
+    }
+}
+
+bool AttachmentModel::doSaveTo(const std::string &path, const std::function<void (bool /* success */)> &callback)
+{
+    pruneDoneTasks();
+    if (saveToTask_) return false; // only one save to action is allowed at the same time
+
+    saveToListener_ = std::make_shared<ApiMirror::MessageAttachmentsSaveToListener>();
+    connect(saveToListener_.get(), &ApiMirror::MessageAttachmentsSaveToListener::_error,
+            [=](int64_t msgId, int64_t attId, const std::string &path, Kullo::Api::LocalError error)
+    {
+        K_UNUSED(msgId);
+        K_UNUSED(attId);
+        Log.e() << "File could not be saved to " << path << ", error " << error;
+
+        Applications::KulloApplication::runOnMainThread([=]() {
+            callback(false);
+        });
+    });
+
+    connect(saveToListener_.get(), &ApiMirror::MessageAttachmentsSaveToListener::_finished,
+            [=](Kullo::id_type msgId, Kullo::id_type attId, const std::string &path)
     {
         K_UNUSED(msgId);
         K_UNUSED(attId);
         K_UNUSED(path);
-        saveErr = error;
+        Applications::KulloApplication::runOnMainThread([=]() {
+            callback(true);
+        });
     });
 
-    session_->messageAttachments()->saveToAsync(msgId_, attId_, path, listener)->waitUntilDone();
-
-    if (saveErr)
-    {
-        Log.e() << "File could not be saved to " << path << ", error " << saveErr;
-        return false;
-    }
-    return true;
+    saveToTask_ = session_->messageAttachments()->saveToAsync(msgId_, attId_, path, saveToListener_);
+    return true; // started successfully, may result in error
 }
 
 }

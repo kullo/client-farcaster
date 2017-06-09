@@ -19,6 +19,28 @@
 namespace KulloDesktop {
 namespace Qml {
 
+namespace {
+
+QString makeShortTitle(const QStringList &allNames, int count) {
+    QStringList usedNames;
+    for (int i = 0; i < count; ++i)
+    {
+        usedNames.append(allNames.at(i));
+    }
+
+    QString out = usedNames.join(", ");
+
+    auto namesLeft = allNames.size() - count;
+    if (namesLeft > 0)
+    {
+        out.append(QStringLiteral(" + %1").arg(namesLeft));
+    }
+
+    return out;
+}
+
+}
+
 ConversationModel::ConversationModel(QObject *parent)
     : QObject(parent)
 {
@@ -45,18 +67,7 @@ Kullo::id_type ConversationModel::id() const
     return convId_;
 }
 
-QStringList ConversationModel::participantsAddresses() const
-{
-    QStringList addresses;
-    for (const auto &addr : session_->conversations()->participants(convId_))
-    {
-        addresses << QString::fromStdString(addr->toString());
-    }
-    addresses.sort();
-    return addresses;
-}
-
-QString ConversationModel::participantsList() const
+QString ConversationModel::title(int maxChars) const
 {
     QStringList names;
     // Can't rewrite this to use a modern for loop because we need iter.key(),
@@ -68,7 +79,40 @@ QString ConversationModel::participantsList() const
         auto name = iter.value().toString();
         names << (!name.isEmpty() ? name : address);
     }
-    return names.join(", ");
+
+    if (maxChars != -1)
+    {
+        kulloAssert(maxChars >= 3);
+        QString out = makeShortTitle(names, 1);
+        if (out.size() > maxChars) return out.left(maxChars - 2) + " …";
+
+        // out is valid, try to use more names
+        for (int namesCount = 2; namesCount <= names.size(); ++namesCount)
+        {
+            QString attempt = makeShortTitle(names, namesCount);
+            if (attempt.size() <= maxChars) {
+                out = attempt;
+            } else {
+                // string too long
+                break;
+            }
+        }
+
+        return out;
+    } else {
+        return names.join(", ");
+    }
+}
+
+QStringList ConversationModel::participantsAddresses() const
+{
+    QStringList addresses;
+    for (const auto &addr : session_->conversations()->participants(convId_))
+    {
+        addresses << QString::fromStdString(addr->toString());
+    }
+    addresses.sort();
+    return addresses;
 }
 
 QVariantMap ConversationModel::participantNames() const
@@ -164,6 +208,7 @@ void ConversationModel::markAllMessagesAsDone()
 
 void ConversationModel::notifyChanged()
 {
+    emit titleChanged();
     emit countChanged();
     emit countUnreadChanged();
     emit countUndoneChanged();

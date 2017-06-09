@@ -7,12 +7,20 @@ import "../"
 import "../buttons"
 import "../dialogs"
 import "../native"
+import "../search"
 import "../windows"
 import "../js/shortcut.js" as SC
 
 FocusScope {
     property Conversation conversation
     property var participantsAddresses: [] // stringlist
+
+    function selectMessage(messageId) {
+        var pos = conversation.messages.find(messageId)
+        messagesList.currentIndex = pos
+        messagesList.positionViewAtIndex(pos, ListView.Center)
+        messagesList.forceActiveFocus()
+    }
 
     onConversationChanged: {
         if (conversation) {
@@ -24,6 +32,8 @@ FocusScope {
             messagesList.model = null
             participantsAddresses = []
         }
+
+        search.text = ""
     }
 
     Rectangle {
@@ -54,6 +64,14 @@ FocusScope {
                     rightMargin: 15
                 }
                 spacing: 10
+
+                SearchInput {
+                    id: search
+                    placeholderText: qsTr("Search conversation")
+                    onSearchRequested: {
+                        inboxScreen.openSearch(query, conversation.id, false)
+                    }
+                }
 
                 ConversationButton {
                     text: qsTr("Mark all as done")

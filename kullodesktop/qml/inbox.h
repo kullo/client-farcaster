@@ -38,8 +38,13 @@ public:
     Q_PROPERTY(bool hasSession READ hasSession NOTIFY hasSessionChanged)
     bool hasSession() const;
 
-    Q_PROPERTY(KulloDesktop::Qml::ConversationListModel *conversations READ conversations NOTIFY conversationsChanged)
-    ConversationListModel *conversations();
+    Q_PROPERTY(KulloDesktop::Qml::ConversationListSorted *allConversations
+               READ allConversations NOTIFY allConversationsChanged)
+    ConversationListSorted *allConversations();
+
+    Q_PROPERTY(KulloDesktop::Qml::ConversationListSortedFiltered *visibleConversations
+               READ visibleConversations NOTIFY visibleConversationsChanged)
+    ConversationListSortedFiltered *visibleConversations();
 
     Q_INVOKABLE void addConversation(QString participants);
 
@@ -69,7 +74,8 @@ public:
 signals:
     void migrationStarted();
     void userSettingsChanged();
-    void conversationsChanged();
+    void allConversationsChanged();
+    void visibleConversationsChanged();
     void hasSessionChanged(bool hasSession);
     void unreadMessagesCountChanged(int count);
     void draftPartTooBig(
@@ -106,7 +112,7 @@ private slots:
     void onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
     void onInternalCreateSessionDone();
 
-    void onSyncProgressed(const std::shared_ptr<Kullo::Api::SyncProgress> &progress);
+    void onSyncProgressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress);
     void onSyncFinished();
     void onSyncError(Kullo::Api::NetworkError error);
 
@@ -121,7 +127,8 @@ private:
     ApiMirror::Client &client_;
     std::shared_ptr<Kullo::Api::Session> session_;
     std::unique_ptr<ConversationListSource> conversationsSource_;
-    std::unique_ptr<ConversationListModel> conversationsProxy_;
+    std::unique_ptr<ConversationListSorted> conversationsAll_;
+    std::unique_ptr<ConversationListSortedFiltered> conversationsVisible_;
     std::unique_ptr<UserSettings> userSettingsModel_;
 
     std::shared_ptr<Kullo::Api::AsyncTask> createSessionTask_;

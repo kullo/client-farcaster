@@ -9,7 +9,7 @@
 
 #include "kullodesktop/applications/kulloapplication.h"
 #include "kullodesktop/qml/inbox.h"
-#include "kullodesktop/qml/conversationlistmodel.h"
+#include "kullodesktop/qml/conversationlistsortedfiltered.h"
 #include "kullodesktop/qml/conversationlistsource.h"
 #include "kullodesktop/qml/conversationmodel.h"
 #include "kullodesktop/qml/messagemodel.h"

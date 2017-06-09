@@ -1,10 +1,14 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
+#include <functional>
+#include <memory>
+
 #include <QObject>
 
+#include <apimirror/apimirror-forwards.h>
 #include <kulloclient/types.h>
-#include <kulloclient/api/Session.h>
+#include <kulloclient/kulloclient-forwards.h>
 
 namespace KulloDesktop {
 namespace Qml {
@@ -37,9 +41,9 @@ public:
     Kullo::id_type size() const;
 
     Q_INVOKABLE void deletePermanently();
-    Q_INVOKABLE bool open();
 
-    QByteArray content() const;
+    // returns true if async saving/opening started successfully. Error might occur during operation
+    Q_INVOKABLE bool openAsync();
 
 signals:
     void filenameChanged();
@@ -48,11 +52,14 @@ signals:
     void sizeChanged();
 
 private:
-    bool doSaveTo(const std::string &path) const;
+    void pruneDoneTasks();
+    bool doSaveTo(const std::string &path, const std::function<void (bool)> &callback);
 
     std::shared_ptr<Kullo::Api::Session> session_;
     Kullo::id_type convId_ = -1;
     Kullo::id_type attId_ = -1;
+    std::shared_ptr<Kullo::Api::AsyncTask> saveToTask_;
+    std::shared_ptr<ApiMirror::DraftAttachmentsSaveToListener> saveToListener_;
 };
 
 }

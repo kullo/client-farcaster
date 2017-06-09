@@ -1112,6 +1112,10 @@ sind deine Nachrichten verloren.</translation>
         <source>Conversation info</source>
         <translation>Infos zur Konversation</translation>
     </message>
+    <message>
+        <source>Search conversation</source>
+        <translation>Konversation durchsuchen</translation>
+    </message>
 </context>
 <context>
     <name>ProfileOverlay</name>
@@ -1171,6 +1175,53 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Close reply</source>
         <translation>Antwort schließen</translation>
+    </message>
+</context>
+<context>
+    <name>SearchOverlay</name>
+    <message>
+        <source>Close (Esc)</source>
+        <translation>Schließen (Esc)</translation>
+    </message>
+    <message>
+        <source>Search Kullo</source>
+        <translation>Kullo durchsuchen</translation>
+    </message>
+    <message>
+        <source>Search conversation</source>
+        <translation>Konversation durchsuchen</translation>
+    </message>
+    <message>
+        <source>in conversation</source>
+        <translation>in Konversation</translation>
+    </message>
+    <message>
+        <source>all</source>
+        <translation>alle</translation>
+    </message>
+    <message>
+        <source>received</source>
+        <translation>empfangen</translation>
+    </message>
+    <message>
+        <source>sent</source>
+        <translation>gesendet</translation>
+    </message>
+    <message>
+        <source>everywhere</source>
+        <translation>überall</translation>
+    </message>
+    <message>
+        <source>Type to search</source>
+        <translation>Tippen zum Suchen</translation>
+    </message>
+    <message>
+        <source>No result for &quot;%1&quot;</source>
+        <translation>Keine Ergebnisse für &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Try searching &lt;a href=&quot;searchEverywhere:&quot;&gt;everywhere&lt;/a&gt;</source>
+        <translation>Versuche &lt;a href=&quot;searchEverywhere:&quot;&gt;überall&lt;/a&gt; zu suchen</translation>
     </message>
 </context>
 <context>
@@ -1327,6 +1378,10 @@ sind deine Nachrichten verloren.</translation>
         <source>Open emoji keyboard</source>
         <translation>Emoji-Tastatur öffnen</translation>
     </message>
+    <message>
+        <source>Search</source>
+        <translation>Suchen</translation>
+    </message>
 </context>
 <context>
     <name>StartConversationDialog</name>
@@ -1401,6 +1456,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Switch todo mode on</source>
         <translation>Todo-Modus aktivieren</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Suche</translation>
     </message>
 </context>
 <context>

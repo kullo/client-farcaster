@@ -8,6 +8,7 @@
 #include <QQuickWindow>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
+#include <QSysInfo>
 
 #include <desktoputil/breakpadsetup.h>
 #include <desktoputil/metatypes.h>
@@ -106,6 +107,10 @@ int main(int argc, char *argv[])
             Log.i() << "Quit the application (user request signal = " << sig << ")";
             Applications::KulloApplication::quit();
         });
+
+        Log.i() << QSysInfo::buildCpuArchitecture() << " app "
+                << "running on " << QSysInfo::currentCpuArchitecture() << "; "
+                << "OS: " << QSysInfo::prettyProductName();
 
         /*
          * Translator

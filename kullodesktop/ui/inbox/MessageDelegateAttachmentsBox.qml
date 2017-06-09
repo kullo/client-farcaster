@@ -7,6 +7,9 @@ Item {
     property int conversationId
     property int messageId
     property bool attachmentsReady
+    property var attachments
+    signal saveAttachmentRequested(var attachment)
+    signal saveAttachmentsRequested(var attachments)
 
     id: root
 
@@ -33,7 +36,7 @@ Item {
         interactive: false
         currentIndex: -1
 
-        model: attachments_
+        model: attachments
         delegate: MessageAttachmentDelegate {
             width: attachmentsList.cellWidth
             onImplicitHeightChanged: attachmentsList.cellHeight = implicitHeight
@@ -48,8 +51,8 @@ Item {
                 MenuItem {
                     text: qsTr('Open')
                     onTriggered: {
-                        var attachment = attachments_.get(index)
-                        if (!attachment.open()) {
+                        var attachment = attachments.get(index)
+                        if (!attachment.openAsync()) {
                             inboxScreen.showOpenFileError(attachment.filename)
                         }
                     }
@@ -58,21 +61,19 @@ Item {
                 MenuItem {
                     text: qsTr('Save as')
                     onTriggered: {
-                        globalSaveAttachmentDialog.attachment = attachments_.get(index)
-                        globalSaveAttachmentDialog.openDialog()
+                        root.saveAttachmentRequested(attachments.get(index))
                     }
                 }
 
                 MenuSeparator {
-                    visible: attachments_.count() > 1
+                    visible: attachments.count() > 1
                 }
 
                 MenuItem {
                     text: qsTr('Save all')
-                    visible: attachments_.count() > 1
+                    visible: attachments.count() > 1
                     onTriggered: {
-                        globalSaveAttachmentsDialog.attachments = attachments_
-                        globalSaveAttachmentsDialog.open()
+                        root.saveAttachmentsRequested(attachments)
                     }
                 }
             }
@@ -81,7 +82,7 @@ Item {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 propagateComposedEvents: false
-                enabled: attachmentsReady_
+                enabled: attachmentsReady
                 onClicked: {
                     selectThisMessage()
                     attachmentsList.forceActiveFocus()
@@ -95,8 +96,8 @@ Item {
                 onDoubleClicked: {
                     selectThisMessage()
 
-                    var attachment = attachments_.get(index)
-                    if (!attachment.open()) {
+                    var attachment = attachments.get(index)
+                    if (!attachment.openAsync()) {
                         inboxScreen.showOpenFileError(attachment.filename)
                     }
                 }

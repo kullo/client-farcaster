@@ -95,9 +95,8 @@ void AccountInfo::openSettingsLocationUrl()
 
     // success
     connect(listener.get(), &ApiMirror::SessionAccountInfoListener::_finished,
-            this, [this](const std::shared_ptr<Kullo::Api::AccountInfo> accountInfo)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)
     {
-        kulloAssert(accountInfo);
         const auto urlString = QString::fromStdString(accountInfo->settingsUrl.get_value_or(""));
         const auto url = QUrl(urlString);
 
@@ -155,13 +154,13 @@ void AccountInfo::reload()
     task_ = session->accountInfoAsync(listener);
 }
 
-void AccountInfo::onNewAccountInfoReceived(const std::shared_ptr<Kullo::Api::AccountInfo> accountInfo)
+void AccountInfo::onNewAccountInfoReceived(const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)
 {
     this->locked_ = false;
 
     auto old = accountInfo_;
 
-    accountInfo_ = accountInfo; // set before emitting changed signals
+    accountInfo_ = *accountInfo; // set before emitting changed signals
 
     if (!old || old->storageQuota != accountInfo->storageQuota)
     {

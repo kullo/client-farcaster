@@ -17,20 +17,36 @@ Item {
     property int paddingRight: 5
     property int paddingBottom: 5
     property int paddingLeft: 5
-    property int conversationId: conversationId_
-    property int messageId: id_
-    property bool attachmentsReady: attachmentsReady_
+    property int borderWidth: 4
+    property int conversationId: -1
+    property int messageId: -1
     property string highlightColor: "#bbbbbb"
     property int deleteAnimationDuration: 300 /* ms */
+    property string textAsHtml
+    property string footer
+    property string senderAddress
+    property string senderName
+    property string senderOrganization
+    property bool read
+    property bool done
+    property string deliveryStatus
+    property bool incoming
+    property date dateReceived
+    property var attachments
+    property bool attachmentsReady
+
+    signal avatarClicked()
+    signal avatarDoubleClicked()
+    signal quoteRequested(var quoteText)
+    signal saveAttachmentRequested(var attachment)
+    signal saveAttachmentsRequested(var attachments)
 
     /* private */
     property bool _selected: ListView.isCurrentItem
     property bool _showFooter: false
-    property bool _hasFooter: footer_.trim() !== ""
+    property bool _hasFooter: footer.trim() !== ""
     property real _maxTextWidth: 600*Hdpi.FontScalingFactor
 
-    signal avatarClicked();
-    signal avatarDoubleClicked();
 
     id: root
 
@@ -70,7 +86,9 @@ Item {
     }
 
     function selectThisMessage() {
-        messagesList.currentIndex = index
+        if (messagesList) {
+            messagesList.currentIndex = index
+        }
     }
 
     // Keep border a separate component because "The border is rendered within the
@@ -80,7 +98,7 @@ Item {
         color: "transparent"
         border {
             color: _selected ? highlightColor : "transparent"
-            width: 1
+            width: root.borderWidth
         }
 
         y: paddingTop
@@ -90,7 +108,7 @@ Item {
             leftMargin: paddingLeft
             rightMargin: paddingRight
         }
-        height: messageBackground.height + 2
+        height: messageBackground.height + 2*root.borderWidth
 
         Rectangle {
             id: messageBackground
@@ -100,32 +118,35 @@ Item {
                 top: parent.top
                 left: parent.left
                 right: parent.right
-                topMargin: 1
-                leftMargin: 1
-                rightMargin: 1
+                topMargin: root.borderWidth
+                leftMargin: root.borderWidth
+                rightMargin: root.borderWidth
             }
-            height: header.height + body.height + footer.height
+            height: header.height + body.height + footerContainer.height
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    messagesList.currentIndex = index
-                    messagesList.forceActiveFocus()
+                    if (messagesList) {
+                        selectThisMessage()
+                        messagesList.forceActiveFocus()
+                    }
                 }
             }
 
             MessageHeader {
                 id: header
-                date: dateReceived_
-                showMessageState: incoming_
-                showMessageDeliveryStatus: !incoming_
-                messageDeliveryStatus: deliveryStatus_
-                read: read_
-                done: done_
-                name: senderName_
-                organization: senderOrganization_
-                address: senderAddress_
-                avatarSource: "image://messagesenderavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId_ + "/" + id_
+                date: root.dateReceived
+                showMessageState: root.incoming
+                showMessageDeliveryStatus: !root.incoming
+                messageDeliveryStatus: root.deliveryStatus
+                read: root.read
+                done: root.done
+                name: root.senderName
+                organization: root.senderOrganization
+                address: root.senderAddress
+                avatarSource: "image://messagesenderavatars/" + Utils.urlencode(Inbox.userSettings.address)
+                              + "/" + root.conversationId + "/" + root.messageId
 
                 onAvatarClicked: root.avatarClicked()
                 onAvatarDoubleClicked: root.avatarDoubleClicked()
@@ -145,7 +166,7 @@ Item {
 
                 NativeSelectableText {
                     id: messageTextBox
-                    text: "<div style='white-space: pre-wrap;'>" + textAsHtml_ + "</div>"
+                    text: "<div style='white-space: pre-wrap;'>" + textAsHtml + "</div>"
                     anchors {
                         top: parent.top
                         left: parent.left
@@ -183,8 +204,7 @@ Item {
 
                     function quoteSelectedText() {
                         var quoteText = messageTextBox.selectedText.trim()
-                        inboxScreen.openAnswer()
-                        rightColumn.addQuoteToAnswer(quoteText)
+                        root.quoteRequested(quoteText)
                     }
 
                     Menu {
@@ -268,23 +288,29 @@ Item {
                     conversationId: root.conversationId
                     messageId: root.messageId
                     attachmentsReady: root.attachmentsReady
+                    attachments: root.attachments
 
                     anchors {
                         top: messageTextBox.bottom
                         left: parent.left
                         right: parent.right
                     }
-                    height: (attachments_.count() === 0)
+                    height: (!root.attachments || root.attachments.count() === 0)
                             ? 0
                             : implicitHeight
 
                     opacity: root.attachmentsReady ? 1 : 0.3
+
+                    Component.onCompleted: {
+                        saveAttachmentRequested.connect(root.saveAttachmentRequested)
+                        saveAttachmentsRequested.connect(root.saveAttachmentsRequested)
+                    }
                 }
             }
 
             //Rectangle { color: "#8800ff00"
             Item {
-                id: footer
+                id: footerContainer
 
                 anchors {
                     top: body.bottom
@@ -363,7 +389,7 @@ Item {
 
                 NativeSelectableText {
                     id: footerText
-                    text: footer_
+                    text: footer
 
                     color: Style.messageFooter
                     height: _showFooter ? implicitHeight : 0
@@ -398,6 +424,7 @@ Item {
                     }
                     tooltip: qsTr("Delete message")
                     source: "/resources/scalable/delete_b.svg"
+                    visible: !!messagesList
 
                     onClicked: {
                         var deletionStarted = messagesList.triggerDelayedDeletion(messageId, deleteAnimationDuration + 50)

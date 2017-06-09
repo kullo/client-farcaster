@@ -39,8 +39,9 @@ QHash<int, QByteArray> ConversationListSource::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[IdRole]                     = QByteArrayLiteral("id_");
+    roles[TitleRole]                  = QByteArrayLiteral("title_");
+    roles[TitleShortRole]             = QByteArrayLiteral("titleShort_");
     roles[ParticipantsAddressesRole]  = QByteArrayLiteral("participantsAddresses_");
-    roles[ParticipantsListRole]       = QByteArrayLiteral("participantsList_");
     roles[CountRole]                  = QByteArrayLiteral("count_");
     roles[CountUndoneRole]            = QByteArrayLiteral("countUndone_");
     roles[CountUnreadRole]            = QByteArrayLiteral("countUnread_");
@@ -61,10 +62,12 @@ QVariant ConversationListSource::data(const QModelIndex &index, int role) const
     {
     case IdRole:
         return QVariant::fromValue(conversationModels_.at(row)->id());
+    case TitleRole:
+        return conversationModels_.at(row)->title();
+    case TitleShortRole:
+        return conversationModels_.at(row)->title(35);
     case ParticipantsAddressesRole:
         return conversationModels_.at(row)->participantsAddresses();
-    case ParticipantsListRole:
-        return conversationModels_.at(row)->participantsList();
     case CountRole:
         return conversationModels_.at(row)->count();
     case CountUndoneRole:
@@ -151,7 +154,7 @@ void ConversationListSource::onConversationChanged(Kullo::id_type conversationId
         QModelIndex rowIndex = createIndex(position, 0);
         emit dataChanged(rowIndex, rowIndex,
                          QVector<int>{
-                             ParticipantsListRole,
+                             TitleRole,
                              CountRole,
                              CountUndoneRole,
                              CountUnreadRole,

@@ -86,7 +86,7 @@ int AttachmentListModel::count() const
     return attachmentModels_.size();
 }
 
-bool AttachmentListModel::saveAllTo(const QUrl &directory) const
+bool AttachmentListModel::saveAllToAsync(const QUrl &directory) const
 {
     kulloAssert(directory.isLocalFile());
     auto localDirectory = directory.toLocalFile();
@@ -99,7 +99,7 @@ bool AttachmentListModel::saveAllTo(const QUrl &directory) const
             target = DesktopUtil::Filesystem::increaseFilenameCounter(QUrl::fromLocalFile(target)).toLocalFile();
         }
         Log.d() << "Save to " << target;
-        if (!attachment->saveTo(QUrl::fromLocalFile(target))) return false;
+        if (!attachment->saveToAsync(QUrl::fromLocalFile(target))) return false;
     }
 
     return true;

@@ -100,13 +100,28 @@ ListView {
     }
 
     delegate: MessageDelegate {
+        messagesList: root
+        highlightColor: root.activeFocus ? "#999999" : "#bbbbbb"
+
+        conversationId: conversationId_
+        messageId: id_
+        textAsHtml: textAsHtml_
+        footer: footer_
+        senderAddress: senderAddress_
+        senderName: senderName_
+        senderOrganization: senderOrganization_
+        read: read_
+        done: done_
+        deliveryStatus: deliveryStatus_
+        incoming: incoming_
+        dateReceived: dateReceived_
+        attachments: attachments_
+        attachmentsReady: attachmentsReady_
+
         anchors {
             left: parent.left
             right: parent.right
         }
-
-        messagesList: root
-        highlightColor: root.activeFocus ? "#999999" : "#bbbbbb"
 
         onAvatarDoubleClicked: {
             senderInfoWindow.conversationId = conversationId_
@@ -115,6 +130,16 @@ ListView {
             senderInfoWindow.senderOrganization = senderOrganization_
             senderInfoWindow.senderAddress = senderAddress_
             senderInfoWindow.openWindow()
+        }
+
+        onQuoteRequested: {
+            inboxScreen.openAnswer()
+            rightColumn.addQuoteToAnswer(quoteText)
+        }
+
+        Component.onCompleted: {
+            saveAttachmentRequested.connect(inboxScreen.openSaveAttachmentDialog)
+            saveAttachmentsRequested.connect(inboxScreen.openSaveAttachmentsDialog)
         }
     }
 

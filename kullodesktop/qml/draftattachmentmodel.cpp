@@ -1,24 +1,24 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "draftattachmentmodel.h"
 
-#include <boost/optional.hpp>
-#include <boost/optional/optional_io.hpp>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
 #include <QUrl>
 
-#include <apimirror/DraftAttachmentsContentListener.h>
 #include <apimirror/DraftAttachmentsSaveToListener.h>
 #include <desktoputil/filesystem.h>
 #include <desktoputil/stlqt.h>
 #include <desktoputil/qtypestreamers.h>
 #include <kulloclient/api/AsyncTask.h>
 #include <kulloclient/api/DraftAttachments.h>
+#include <kulloclient/api/Session.h>
 #include <kulloclient/api_impl/debug.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
+
+#include "kullodesktop/applications/kulloapplication.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -72,8 +72,7 @@ void DraftAttachmentModel::deletePermanently()
     session_->draftAttachments()->remove(convId_, attId_);
 }
 
-//TODO make DraftAttachmentModel::open asynchronous
-bool DraftAttachmentModel::open()
+bool DraftAttachmentModel::openAsync()
 {
     QString tmpFilename = DesktopUtil::Filesystem::prepareTmpFilename(filename());
 
@@ -97,50 +96,53 @@ bool DraftAttachmentModel::open()
         return false;
     }
 
-    if (!doSaveTo(tmpFileInfo.absoluteFilePath().toStdString())) return false;
-
-    QUrl tmpFileUrl = QUrl::fromLocalFile(tmpFileInfo.absoluteFilePath());
-    return QDesktopServices::openUrl(tmpFileUrl);
-}
-
-QByteArray DraftAttachmentModel::content() const
-{
-    auto listener = std::make_shared<ApiMirror::DraftAttachmentsContentListener>();
-    std::vector<unsigned char> data;
-    connect(listener.get(), &ApiMirror::DraftAttachmentsContentListener::_finished,
-            [&data](int64_t convId, int64_t attId, const std::vector<uint8_t> &content)
-    {
-        K_UNUSED(convId);
-        K_UNUSED(attId);
-        data = content;
+    auto startedOk = doSaveTo(tmpFileInfo.absoluteFilePath().toStdString(), [=](bool success) {
+        if (success) {
+            QUrl tmpFileUrl = QUrl::fromLocalFile(tmpFileInfo.absoluteFilePath());
+            QDesktopServices::openUrl(tmpFileUrl);
+        }
     });
-
-    // Synchronous operation is no problem here, as content() is only used for
-    // ImageProviders which operate asynchronously.
-    session_->draftAttachments()->contentAsync(convId_, attId_, listener)->waitUntilDone();
-    return DesktopUtil::StlQt::toQByteArray(data);
+    return startedOk;
 }
 
-bool DraftAttachmentModel::doSaveTo(const std::string &path) const
+void DraftAttachmentModel::pruneDoneTasks()
 {
-    auto listener = std::make_shared<ApiMirror::DraftAttachmentsSaveToListener>();
-    boost::optional<Kullo::Api::LocalError> saveErr;
-    connect(listener.get(), &ApiMirror::DraftAttachmentsSaveToListener::_error,
-            [&saveErr](int64_t convId, int64_t attId, const std::string &path, Kullo::Api::LocalError error)
+    if (saveToTask_ && saveToTask_->isDone())
+    {
+        saveToTask_ = nullptr;
+    }
+}
+
+bool DraftAttachmentModel::doSaveTo(const std::string &path, const std::function<void(bool /* success */)> &callback)
+{
+    pruneDoneTasks();
+    if (saveToTask_) return false; // only one save to action is allowed at the same time
+
+    saveToListener_ = std::make_shared<ApiMirror::DraftAttachmentsSaveToListener>();
+    connect(saveToListener_.get(), &ApiMirror::DraftAttachmentsSaveToListener::_error,
+            [=](int64_t convId, int64_t attId, const std::string &path, Kullo::Api::LocalError error)
     {
         K_UNUSED(convId);
         K_UNUSED(attId);
         K_UNUSED(path);
-        saveErr = error;
+        Log.e() << "File could not be saved to " << path << ", error " << error;
+        Applications::KulloApplication::runOnMainThread([=]() {
+            callback(false);
+        });
+    });
+    connect(saveToListener_.get(), &ApiMirror::DraftAttachmentsSaveToListener::_finished,
+            [=](int64_t convId, int64_t attId, const std::string &path)
+    {
+        K_UNUSED(convId);
+        K_UNUSED(attId);
+        K_UNUSED(path);
+        Applications::KulloApplication::runOnMainThread([=]() {
+            callback(true);
+        });
     });
 
-    session_->draftAttachments()->saveToAsync(convId_, attId_, path, listener)->waitUntilDone();
+    saveToTask_ = session_->draftAttachments()->saveToAsync(convId_, attId_, path, saveToListener_);
 
-    if (saveErr)
-    {
-        Log.e() << "File could not be saved to " << path << ", error " << saveErr;
-        return false;
-    }
     return true;
 }
 

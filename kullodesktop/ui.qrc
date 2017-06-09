@@ -103,6 +103,11 @@
         <file alias="Toast.qml">ui/misc/Toast.qml</file>
         <file alias="TooltipArea.qml">ui/misc/TooltipArea.qml</file>
     </qresource>
+    <qresource prefix="/search">
+        <file alias="SearchInput.qml">ui/search/SearchInput.qml</file>
+        <file alias="SearchOverlay.qml">ui/search/SearchOverlay.qml</file>
+        <file alias="SearchResult.qml">ui/search/SearchResult.qml</file>
+    </qresource>
     <qresource prefix="/usersettings">
         <file alias="AvatarRow.qml">ui/usersettings/AvatarRow.qml</file>
         <file alias="ButtonRow.qml">ui/usersettings/ButtonRow.qml</file>

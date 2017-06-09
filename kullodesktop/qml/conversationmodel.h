@@ -29,11 +29,11 @@ public:
     Q_PROPERTY(Kullo::id_type id READ id NOTIFY idChanged)
     Kullo::id_type id() const;
 
+    Q_PROPERTY(QString title READ title NOTIFY titleChanged)
+    QString title(int maxChars = -1) const;
+
     Q_PROPERTY(QStringList participantsAddresses READ participantsAddresses NOTIFY participantsAddressesChanged)
     QStringList participantsAddresses() const;
-
-    Q_PROPERTY(QString participantsList READ participantsList NOTIFY participantsListChanged)
-    QString participantsList() const;
 
     Q_PROPERTY(QVariantMap participantNames READ participantNames NOTIFY participantNamesChanged)
     QVariantMap participantNames() const;
@@ -79,6 +79,7 @@ signals:
     // These signals are emitted at once in notifyChanged()
     // to properly update QML properties like in
     // conversationList.model.get(id).count
+    void titleChanged();
     void countChanged();
     void countUnreadChanged();
     void countUndoneChanged();
@@ -90,7 +91,6 @@ signals:
     // unused signals
     void idChanged();                    // constant
     void participantNamesChanged();      // constant
-    void participantsListChanged();      // constant
     void participantsAddressesChanged(); // constant
     void draftChanged();                 // constant
     void messagesChanged();              // constant
