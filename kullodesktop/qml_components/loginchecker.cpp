@@ -7,9 +7,12 @@
 #include <apimirror/Client.h>
 #include <apimirror/ClientCheckCredentialsListener.h>
 #include <desktoputil/stlqt.h>
+#include <kulloclient/api/AddressHelpers.h>
 #include <kulloclient/api/Client.h>
-#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/MasterKeyHelpers.h>
 #include <kulloclient/api/NetworkError.h>
+#include <kulloclient/api_impl/Address.h>
+#include <kulloclient/api_impl/MasterKey.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -22,16 +25,16 @@ LoginChecker::LoginChecker(QObject *parent)
     listener_ = std::make_shared<ApiMirror::ClientCheckCredentialsListener>();
 
     connect(listener_.get(), &ApiMirror::ClientCheckCredentialsListener::_finished,
-            this, [this](std::shared_ptr<Kullo::Api::Address> address, std::shared_ptr<Kullo::Api::MasterKey> masterKey, bool exists)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, ApiMirror::SignalSlotValue<Kullo::Api::MasterKey> masterKey, bool exists)
     {
         setLocked(false);
         emit loginChecked(QString::fromStdString(address->toString()),
-                          QString::fromStdString(masterKey->pem()),
+                          QString::fromStdString(Kullo::Api::MasterKeyHelpers::toPem(*masterKey)),
                           exists);
     });
 
     connect(listener_.get(), &ApiMirror::ClientCheckCredentialsListener::_error,
-            this, [this](std::shared_ptr<Kullo::Api::Address> address, Kullo::Api::NetworkError error)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::NetworkError error)
     {
         setLocked(false);
         switch (error) {
@@ -84,7 +87,7 @@ void LoginChecker::run(const QString &addr, const QStringList &masterKeyBlocks)
 
     auto masterKeyBlocksStd = DesktopUtil::StlQt::toVector(masterKeyBlocks);
 
-    auto address = Kullo::Api::Address::create(addr.toStdString());
+    auto address = Kullo::Api::AddressHelpers::create(addr.toStdString());
     if (!address)
     {
         emit invalidKulloAddress();
@@ -92,7 +95,7 @@ void LoginChecker::run(const QString &addr, const QStringList &masterKeyBlocks)
         return;
     }
 
-    auto masterKey = Kullo::Api::MasterKey::createFromDataBlocks(masterKeyBlocksStd);
+    auto masterKey = Kullo::Api::MasterKeyHelpers::createFromDataBlocks(masterKeyBlocksStd);
     if (!masterKey)
     {
         emit invalidMasterKey();
@@ -101,9 +104,10 @@ void LoginChecker::run(const QString &addr, const QStringList &masterKeyBlocks)
     }
 
     bgTask_ = client_->raw()->checkCredentialsAsync(
-                address,
-                masterKey,
-                listener_);
+                *address,
+                *masterKey,
+                kulloForcedNn(listener_)
+                ).as_nullable();
 }
 
 void LoginChecker::setLocked(bool locked)

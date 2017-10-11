@@ -3,14 +3,14 @@
 
 #include <boost/optional.hpp>
 
-#include <kulloclient/api/Address.h>
 #include <kulloclient/api/AddressNotAvailableReason.h>
 #include <kulloclient/api/AsyncTask.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/ClientGenerateKeysListener.h>
-#include <kulloclient/api/MasterKey.h>
 #include <kulloclient/api/Registration.h>
 #include <kulloclient/api/RegistrationRegisterAccountListener.h>
+#include <kulloclient/api_impl/Address.h>
+#include <kulloclient/api_impl/MasterKey.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
@@ -25,9 +25,9 @@ public:
         Log.i() << "Key generation: "  << static_cast<int>(progress) << " %";
     }
 
-    void finished(const std::shared_ptr<Kullo::Api::Registration> &registration) override
+    void finished(const Kullo::nn_shared_ptr<Kullo::Api::Registration> &registration) override
     {
-        registration_ = registration;
+        registration_ = registration.as_nullable();
     }
 
     std::shared_ptr<Kullo::Api::Registration> registration() const
@@ -43,8 +43,8 @@ class RegAccListener: public Kullo::Api::RegistrationRegisterAccountListener
 {
 public:
     void challengeNeeded(
-            const std::shared_ptr<Kullo::Api::Address> &address,
-            const std::shared_ptr<Kullo::Api::Challenge> &challenge) override
+            const Kullo::Api::Address &address,
+            const Kullo::nn_shared_ptr<Kullo::Api::Challenge> &challenge) override
     {
         K_UNUSED(address);
         K_UNUSED(challenge);
@@ -52,24 +52,24 @@ public:
     }
 
     void addressNotAvailable(
-            const std::shared_ptr<Kullo::Api::Address> &address,
+            const Kullo::Api::Address &address,
             Kullo::Api::AddressNotAvailableReason reason) override
     {
         //FIXME log reason
         K_UNUSED(reason);
-        Log.f() << "Address " << address->toString() << " not available.";
+        Log.f() << "Address " << address << " not available.";
     }
 
     void finished(
-            const std::shared_ptr<Kullo::Api::Address> &address,
-            const std::shared_ptr<Kullo::Api::MasterKey> &masterKey) override
+            const Kullo::Api::Address &address,
+            const Kullo::Api::MasterKey &masterKey) override
     {
-        Log.i() << "Successfully registered address " << address->toString();
+        Log.i() << "Successfully registered address " << address;
         masterKey_ = masterKey;
     }
 
     void error(
-            const std::shared_ptr<Kullo::Api::Address> &address,
+            const Kullo::Api::Address &address,
             Kullo::Api::NetworkError error) override
     {
         K_UNUSED(address);
@@ -78,28 +78,28 @@ public:
         Log.f() << "Error while registering address.";
     }
 
-    std::shared_ptr<Kullo::Api::MasterKey> masterKey() const
+    boost::optional<Kullo::Api::MasterKey> masterKey() const
     {
         return masterKey_;
     }
 
 private:
-    std::shared_ptr<Kullo::Api::MasterKey> masterKey_;
+    boost::optional<Kullo::Api::MasterKey> masterKey_;
 };
 
 }
 
-std::shared_ptr<Kullo::Api::MasterKey> Registerer::run(
-        const std::shared_ptr<Kullo::Api::Address> &address)
+Kullo::Api::MasterKey Registerer::run(
+        const Kullo::Api::Address &address)
 {
     auto client = Kullo::Api::Client::create();
 
-    auto genKeysL = std::make_shared<GenKeysListener>();
+    auto genKeysL = Kullo::nn_make_shared<GenKeysListener>();
     client->generateKeysAsync(genKeysL)->waitUntilDone();
 
     auto registration = genKeysL->registration();
     kulloAssert(registration);
-    auto regAccL = std::make_shared<RegAccListener>();
+    auto regAccL = Kullo::nn_make_shared<RegAccListener>();
     registration->registerAccountAsync(
                 address,
                 boost::none, // terms
@@ -108,5 +108,5 @@ std::shared_ptr<Kullo::Api::MasterKey> Registerer::run(
                 regAccL)->
             waitUntilDone();
 
-    return regAccL->masterKey();
+    return *regAccL->masterKey();
 }

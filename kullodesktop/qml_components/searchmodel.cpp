@@ -1,3 +1,4 @@
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "kullodesktop/qml_components/searchmodel.h"
 
 #include <QQmlEngine>
@@ -5,7 +6,6 @@
 
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
-#include <kulloclient/api/Address.h>
 #include <kulloclient/api/MessageAttachments.h>
 #include <kulloclient/api/Messages.h>
 #include <kulloclient/api/MessagesSearchResult.h>
@@ -13,6 +13,7 @@
 #include <kulloclient/api/Senders.h>
 #include <kulloclient/api/Session.h>
 #include <kulloclient/api/UserSettings.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/util/strings.h>
 
 #include <apimirror/MessagesSearchListener.h>
@@ -37,7 +38,7 @@ QString highlightHtml(const QString &snippetRaw, const QString &boundary)
 
 SearchModel::SearchModel(QObject *parent)
     : QAbstractListModel(parent)
-    , searchListener_(std::make_shared<ApiMirror::MessagesSearchListener>())
+    , searchListener_(Kullo::nn_make_shared<ApiMirror::MessagesSearchListener>())
 {
     connect(searchListener_.get(), &ApiMirror::MessagesSearchListener::_finished, this, [&](const std::vector<Kullo::Api::MessagesSearchResult> & results) {
         beginResetModel();
@@ -175,13 +176,13 @@ void SearchModel::updateResults()
     {
         senderPredicate = Kullo::Api::SenderPredicate(
                     Kullo::Api::SearchPredicateOperator::IsNot,
-                    inbox_->session()->userSettings()->address()->toString());
+                    inbox_->session()->userSettings()->address().toString());
     }
     else if (direction_ == "outgoing")
     {
         senderPredicate = Kullo::Api::SenderPredicate(
                     Kullo::Api::SearchPredicateOperator::Is,
-                    inbox_->session()->userSettings()->address()->toString());
+                    inbox_->session()->userSettings()->address().toString());
     }
     else
     {
@@ -194,7 +195,8 @@ void SearchModel::updateResults()
                 senderPredicate,
                 100,
                 boost::none,
-                searchListener_);
+                searchListener_
+                ).as_nullable();
 }
 
 }

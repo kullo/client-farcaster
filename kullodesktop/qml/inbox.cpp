@@ -16,11 +16,11 @@
 #include <desktoputil/kulloversion.h>
 #include <desktoputil/qtypestreamers.h>
 #include <desktoputil/versions.h>
-#include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressHelpers.h>
 #include <kulloclient/api/AsyncTask.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/Conversations.h>
-#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/MasterKeyHelpers.h>
 #include <kulloclient/api/Messages.h>
 #include <kulloclient/api/NetworkError.h>
 #include <kulloclient/api/Syncer.h>
@@ -113,8 +113,7 @@ void Inbox::createSession()
 
     auto addressString = userSettingsModel_->address();
     kulloAssert(!addressString.isEmpty());
-    auto address = Kullo::Api::Address::create(addressString.toStdString());
-    kulloAssert(address);
+    auto address = *Kullo::Api::AddressHelpers::create(addressString.toStdString());
 
     // Set active user
     innerApplication_.deviceSettings()->setActiveUser(addressString);
@@ -126,11 +125,11 @@ void Inbox::createSession()
 
     setLocalDatabaseKulloVersion(address, DesktopUtil::KulloVersion("0.0.0"));
 
-    auto sessionListener = std::make_shared<ApiMirror::SessionListener>();
+    auto sessionListener = Kullo::nn_make_shared<ApiMirror::SessionListener>();
     connect(sessionListener.get(), &ApiMirror::SessionListener::_internalEvent,
             &eventDispatcher_, &ApiMirror::EventDispatcher::onInternalEvent);
 
-    auto listener = std::make_shared<ApiMirror::ClientCreateSessionListener>();
+    auto listener = Kullo::nn_make_shared<ApiMirror::ClientCreateSessionListener>();
     connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_migrationStarted,
             this, &Inbox::onCreateSessionMigrationStarted);
     connect(listener.get(), &ApiMirror::ClientCreateSessionListener::_finished,
@@ -144,7 +143,7 @@ void Inbox::createSession()
                 dbFilePath.toStdString(),
                 sessionListener,
                 listener
-                );
+                ).as_nullable();
 
     if (Applications::KulloApplication::FAKE_LONG_MIGRATION)
     {
@@ -187,8 +186,7 @@ void Inbox::closeSession()
 
 void Inbox::deleteAccountData(const QString &addressString)
 {
-    auto address = Kullo::Api::Address::create(addressString.toStdString());
-    kulloAssert(address);
+    auto address = *Kullo::Api::AddressHelpers::create(addressString.toStdString());
 
     UserSettings::deleteCredentials(address);
     innerApplication_.databaseFiles().removeDatabase(address);
@@ -204,7 +202,7 @@ QStringList Inbox::allKnownUsersSorted() const
     {
         for (const auto &address : session_->conversations()->participants(convId))
         {
-            addressStrings.insert(QString::fromStdString(address->toString()));
+            addressStrings.insert(QString::fromStdString(address.toString()));
         }
     }
 
@@ -222,10 +220,10 @@ UserSettings *Inbox::userSettings()
 
 void Inbox::addConversation(QString participants)
 {
-    std::unordered_set<std::shared_ptr<Kullo::Api::Address>> participantsSet;
+    std::unordered_set<Kullo::Api::Address> participantsSet;
     foreach (QString address, participants.trimmed().split(','))
     {
-        participantsSet.insert(Kullo::Api::Address::create(address.toStdString()));
+        participantsSet.insert(*Kullo::Api::AddressHelpers::create(address.toStdString()));
     }
 
     if (!participantsSet.empty())
@@ -263,8 +261,8 @@ bool Inbox::sync()
 
 void Inbox::clearDatabaseAndStoreCredentials(const QString &addressString, const QString &masterKeyPem)
 {
-    const auto address = Kullo::Api::Address::create(addressString.toStdString());
-    const auto masterKey = Kullo::Api::MasterKey::createFromPem(masterKeyPem.toStdString());
+    const auto address = *Kullo::Api::AddressHelpers::create(addressString.toStdString());
+    const auto masterKey = *Kullo::Api::MasterKeyHelpers::createFromPem(masterKeyPem.toStdString());
 
     // Clear old user stuff
     innerApplication_.databaseFiles().removeDatabase(address);
@@ -285,8 +283,7 @@ ApiMirror::Client *Inbox::client() const
     return &client_;
 }
 
-std::shared_ptr<Sender> Inbox::latestSenderForAddress(
-        const std::shared_ptr<Kullo::Api::Address> &address) const
+std::shared_ptr<Sender> Inbox::latestSenderForAddress(const Kullo::Api::Address &address) const
 {
     if (!session_) return nullptr;
 
@@ -328,7 +325,9 @@ void Inbox::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &
     }
 }
 
-void Inbox::onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error)
+void Inbox::onCreateSessionError(
+        const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address,
+        Kullo::Api::LocalError error)
 {
     //TODO handle create session error
     K_UNUSED(address);
@@ -340,7 +339,7 @@ void Inbox::onInternalCreateSessionDone()
     kulloAssert(session_);
 
     Log.i() << "Logged in.";
-    session_->syncer()->setListener(syncerListener_);
+    session_->syncer()->setListener(kulloForcedNn(syncerListener_));
 
     userSettingsModel_->setUserSettings(session_->userSettings());
     userSettingsModel_->migrate();
@@ -431,9 +430,11 @@ void Inbox::onSyncError(Kullo::Api::NetworkError error)
     latestSyncProgress_ = boost::none;
 }
 
-void Inbox::setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr, const DesktopUtil::KulloVersion &version)
+void Inbox::setLocalDatabaseKulloVersion(
+        const Kullo::Api::Address &address,
+        const DesktopUtil::KulloVersion &version)
 {
-    const QString key = QStringLiteral("kulloVersion-") + QString::fromStdString(addr->toString());
+    const QString key = QStringLiteral("kulloVersion-") + QString::fromStdString(address.toString());
     const QString value = QString::fromStdString(version.toString());
 
     QSettings settings;

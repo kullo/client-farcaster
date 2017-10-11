@@ -91,7 +91,7 @@ void AccountInfo::openSettingsLocationUrl()
     if (locked_) return;
     locked_ = true;
 
-    auto listener = std::make_shared<ApiMirror::SessionAccountInfoListener>();
+    auto listener = Kullo::nn_make_shared<ApiMirror::SessionAccountInfoListener>();
 
     // success
     connect(listener.get(), &ApiMirror::SessionAccountInfoListener::_finished,
@@ -124,7 +124,7 @@ void AccountInfo::openSettingsLocationUrl()
         this->locked_ = false;
     });
 
-    task_ = session->accountInfoAsync(listener);
+    task_ = session->accountInfoAsync(listener).as_nullable();
 }
 
 void AccountInfo::reload()
@@ -137,7 +137,7 @@ void AccountInfo::reload()
     if (locked_) return;
     locked_ = true;
 
-    auto listener = std::make_shared<ApiMirror::SessionAccountInfoListener>();
+    auto listener = Kullo::nn_make_shared<ApiMirror::SessionAccountInfoListener>();
 
     // success
     connect(listener.get(), &ApiMirror::SessionAccountInfoListener::_finished,
@@ -151,7 +151,7 @@ void AccountInfo::reload()
         this->locked_ = false;
     });
 
-    task_ = session->accountInfoAsync(listener);
+    task_ = session->accountInfoAsync(listener).as_nullable();
 }
 
 void AccountInfo::onNewAccountInfoReceived(const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)

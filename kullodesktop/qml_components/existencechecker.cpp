@@ -6,7 +6,7 @@
 #include <apimirror/Client.h>
 #include <apimirror/ClientAddressExistsListener.h>
 
-#include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressHelpers.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/NetworkError.h>
 #include <kulloclient/util/assert.h>
@@ -55,7 +55,7 @@ bool ExistenceChecker::checkExistence(const QString &addr)
     if (locked_) return false;
     setLocked(true);
 
-    auto address = Kullo::Api::Address::create(addr.toStdString());
+    auto address = Kullo::Api::AddressHelpers::create(addr.toStdString());
     if (!address)
     {
         Log.e() << "Existence check run with invalid Kullo address: "
@@ -65,7 +65,9 @@ bool ExistenceChecker::checkExistence(const QString &addr)
         return true;
     }
 
-    bgTask_ = client_->raw()->addressExistsAsync(address, listener_);
+    bgTask_ = client_->raw()->addressExistsAsync(
+                *address, kulloForcedNn(listener_)
+                ).as_nullable();
     return true;
 }
 

@@ -15,7 +15,7 @@ class KulloApplication : public ExceptionAwareQApplication
 public:
     explicit KulloApplication(int &argc, char **argv);
 
-    static void runOnMainThread(const std::function<void()> & function);
+    static void runOnMainThread(const std::function<void()> &function);
 
     static QString GUID;
     static QString GUID_DEBUG;

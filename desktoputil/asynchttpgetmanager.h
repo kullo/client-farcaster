@@ -47,7 +47,7 @@ private slots:
     void onBgJobFinished(const Response &response);
 
 private:
-    std::shared_ptr<Kullo::Http::HttpClient> client_;
+    Kullo::nn_shared_ptr<Kullo::Http::HttpClient> client_;
     std::atomic<bool> canceled_;
     std::shared_ptr<QIODevice> target_;
     std::thread backgroundJob_;

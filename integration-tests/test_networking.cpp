@@ -41,7 +41,7 @@ public:
     Networking() {
         auto httpClientFactory = std::make_shared<HttpClient::HttpClientFactoryImpl>();
         Registry::setHttpClientFactory(httpClientFactory);
-        httpClient_ = Registry::httpClientFactory()->createHttpClient();
+        httpClient_ = Registry::httpClientFactory()->createHttpClient().as_nullable();
     }
 
 protected:

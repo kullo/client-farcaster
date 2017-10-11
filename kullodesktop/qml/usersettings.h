@@ -8,11 +8,10 @@
 #include <QStringList>
 #include <QUrl>
 #include <QVariant>
-#include <boost/optional.hpp>
 
 #include <kulloclient/kulloclient-forwards.h>
-#include <kulloclient/api/Address.h>
-#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api_impl/Address.h>
+#include <kulloclient/api_impl/MasterKey.h>
 
 #include "apimirror/apimirror-forwards.h"
 
@@ -34,8 +33,8 @@ public:
 
     explicit UserSettings(
             ApiMirror::EventDispatcher &eventDispatcher,
-            const std::shared_ptr<Kullo::Api::Address> &address,
-            const std::shared_ptr<Kullo::Api::MasterKey> &masterKey,
+            const Kullo::Api::Address &address,
+            const Kullo::Api::MasterKey &masterKey,
             QObject *parent = nullptr);
 
     void setUserSettings(const std::shared_ptr<Kullo::Api::UserSettings> &userSettings);
@@ -97,16 +96,16 @@ public:
     QString masterKeyBackupDontRemindBefore() const;
     void setMasterKeyBackupDontRemindBefore(const QString &rfc3339time);
 
-    static void storeCredentials(const std::shared_ptr<Kullo::Api::Address> &address,
-                                 const std::shared_ptr<Kullo::Api::MasterKey> &masterKey);
+    static void storeCredentials(const Kullo::Api::Address &address,
+                                 const Kullo::Api::MasterKey &masterKey);
     static std::unique_ptr<UserSettings> loadCredentialsForAddress(
             ApiMirror::EventDispatcher &eventDispatcher,
             const QString &addressString);
-    static void deleteCredentials(const std::shared_ptr<Kullo::Api::Address> &address);
+    static void deleteCredentials(const Kullo::Api::Address &address);
     static bool loadAvatarFile(QByteArray &avatarData, QString &avatarMimeType, const QUrl &filename);
 
-    std::shared_ptr<Kullo::Api::Address> rawAddress() const;
-    std::shared_ptr<Kullo::Api::MasterKey> rawMasterKey() const;
+    Kullo::Api::Address rawAddress() const;
+    Kullo::Api::MasterKey rawMasterKey() const;
 
 signals:
     void nameChanged();
@@ -134,8 +133,8 @@ private:
 
     ApiMirror::EventDispatcher &eventDispatcher_;
 
-    const std::shared_ptr<Kullo::Api::Address> rawAddress_;
-    const std::shared_ptr<Kullo::Api::MasterKey> rawMasterKey_;
+    const Kullo::Api::Address rawAddress_;
+    const Kullo::Api::MasterKey rawMasterKey_;
     std::shared_ptr<Kullo::Api::UserSettings> settings_;
 
     QUrl tmpAvatarFileUrl_;

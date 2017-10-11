@@ -150,11 +150,11 @@ int main(int argc, char *argv[])
 
         DesktopUtil::registerMetaTypes();
 
-        auto httpClientFactory = std::make_shared<HttpClient::HttpClientFactoryImpl>();
+        auto httpClientFactory = Kullo::nn_make_shared<HttpClient::HttpClientFactoryImpl>();
         httpClientFactory->setAcceptLanguage(locale.bcp47Name().toStdString());
         Kullo::Http::Registry::setHttpClientFactory(httpClientFactory);
 
-        auto taskRunner = std::make_shared<Kullo::Util::StlTaskRunner>();
+        auto taskRunner = Kullo::nn_make_shared<Kullo::Util::StlTaskRunner>();
         Kullo::Api::Registry::setTaskRunner(taskRunner);
 
         Qml::InnerApplication innerApplication(app);

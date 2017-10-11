@@ -3,10 +3,11 @@
 
 #include <QUrl>
 #include <boost/optional.hpp>
+#include <desktoputil/concurrency.h>
 #include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
-#include <desktoputil/threadblocker.h>
-#include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressHelpers.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
@@ -27,28 +28,22 @@ QPixmap ParticipantAvatarProvider::drawAvatar(const QString &url, const QSize &r
     // Cut query string from URL
     QString path = url.split("?").at(0);
 
-    std::shared_ptr<Kullo::Api::Address> address;
-    try {
-        auto addressString = QUrl::fromPercentEncoding(path.toUtf8());;
-        address = Kullo::Api::Address::create(addressString.toStdString());
-    }
-    catch (std::invalid_argument)
-    {
+    auto nullableAdress = Kullo::Api::AddressHelpers::create(QUrl::fromPercentEncoding(path.toUtf8()).toStdString());
+    if (!nullableAdress) {
         Log.e() << "Invalid Kullo address in avatar request string: " << url;
         return QPixmap();
     }
-
+    auto address = *nullableAdress;
 
     boost::optional<QByteArray> participantAvatar;
     boost::optional<QString> participantAvatarMimeType;
     boost::optional<QString> participantName;
 
-    DesktopUtil::ThreadBlocker tb;
-
+    std::promise<bool> successPromise;
     Applications::KulloApplication::runOnMainThread([&](){
         if (!inbox_.hasSession())
         {
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
@@ -60,11 +55,9 @@ QPixmap ParticipantAvatarProvider::drawAvatar(const QString &url, const QSize &r
             participantName = part->name();
         }
 
-        tb.release(true);
+        successPromise.set_value(true);
     });
-
-    auto success = tb.block();
-    if (!success) return QPixmap();
+    if (!DesktopUtil::waitOrCrash(successPromise)) return QPixmap();
 
     QPixmap out;
     if (participantAvatar)

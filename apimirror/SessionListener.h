@@ -20,7 +20,7 @@ public:
         K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::InternalEvent>);
     }
 
-    void internalEvent(const std::shared_ptr<Kullo::Api::InternalEvent> &event) override
+    void internalEvent(const Kullo::nn_shared_ptr<Kullo::Api::InternalEvent> &event) override
     {
         emit _internalEvent(event);
     }

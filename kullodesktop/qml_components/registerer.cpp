@@ -7,15 +7,17 @@
 #include <apimirror/ClientGenerateKeysListener.h>
 #include <apimirror/RegistrationRegisterAccountListener.h>
 #include <desktoputil/qtypestreamers.h>
-#include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressHelpers.h>
 #include <kulloclient/api/AddressNotAvailableReason.h>
 #include <kulloclient/api/Challenge.h>
 #include <kulloclient/api/ChallengeType.h>
 #include <kulloclient/api/Client.h>
 #include <kulloclient/api/AsyncTask.h>
-#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/MasterKeyHelpers.h>
 #include <kulloclient/api/NetworkError.h>
 #include <kulloclient/api/Registration.h>
+#include <kulloclient/api_impl/Address.h>
+#include <kulloclient/api_impl/MasterKey.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
@@ -37,10 +39,10 @@ void ChallengeTypes::init()
 
 Registerer::Registerer(QObject *parent)
     : QObject(parent)
+    , listenerKeygen_(Kullo::nn_make_shared<ApiMirror::ClientGenerateKeysListener>())
+    , listenerRegistration_(Kullo::nn_make_shared<ApiMirror::RegistrationRegisterAccountListener>())
 {
     ChallengeTypes::init();
-
-    listenerKeygen_ = std::make_shared<ApiMirror::ClientGenerateKeysListener>();
 
     connect(listenerKeygen_.get(), &ApiMirror::ClientGenerateKeysListener::_progress,
             this, &Registerer::keysGenerationProgressChanged);
@@ -50,10 +52,8 @@ Registerer::Registerer(QObject *parent)
         registration_ = registration;
     });
 
-    listenerRegistration_ = std::make_shared<ApiMirror::RegistrationRegisterAccountListener>();
-
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_addressNotAvailable,
-            this, [this](const std::shared_ptr<Kullo::Api::Address> & address, Kullo::Api::AddressNotAvailableReason reason)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::AddressNotAvailableReason reason)
     {
         auto addressString = QString::fromStdString(address->toString());
 
@@ -68,7 +68,7 @@ Registerer::Registerer(QObject *parent)
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_challengeNeeded,
-            this, [this](const std::shared_ptr<Kullo::Api::Address> & address, const std::shared_ptr<Kullo::Api::Challenge> & challenge)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::Challenge> & challenge)
     {
         lastChallenge_ = challenge;
 
@@ -94,18 +94,18 @@ Registerer::Registerer(QObject *parent)
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_finished,
-            this, [this](const std::shared_ptr<Kullo::Api::Address> & address, const std::shared_ptr<Kullo::Api::MasterKey> & masterKey)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, const ApiMirror::SignalSlotValue<Kullo::Api::MasterKey> &masterKey)
     {
-        application_->databaseFiles().removeDatabase(address);
-        Qml::UserSettings::storeCredentials(address, masterKey);
+        application_->databaseFiles().removeDatabase(*address);
+        Qml::UserSettings::storeCredentials(*address, *masterKey);
 
         auto addressString = QString::fromStdString(address->toString());
-        auto masterKeyString = QString::fromStdString(masterKey->pem());
+        auto masterKeyString = QString::fromStdString(Kullo::Api::MasterKeyHelpers::toPem(*masterKey));
         emit succeeded(addressString, masterKeyString);
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_error,
-            this, [this](const std::shared_ptr<Kullo::Api::Address> & address, Kullo::Api::NetworkError error)
+            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::NetworkError error)
     {
         K_UNUSED(address);
 
@@ -182,7 +182,7 @@ void Registerer::generateKeys()
     kulloAssert(!keyGenerationStarted_);
     keyGenerationStarted_ = true;
 
-    taskKeygen_ = client_->raw()->generateKeysAsync(listenerKeygen_);
+    taskKeygen_ = client_->raw()->generateKeysAsync(listenerKeygen_).as_nullable();
 }
 
 void Registerer::registerAccount(const QString &addr, const QString &challengeAnswer)
@@ -194,7 +194,7 @@ void Registerer::registerAccount(const QString &addr, const QString &challengeAn
 
     Log.i() << "Trying to register " << addressStr << " ...";
 
-    auto address = Kullo::Api::Address::create(addressStr);
+    auto address = Kullo::Api::AddressHelpers::create(addressStr);
     if (address)
     {
         if (!answer.empty() && !lastChallenge_)
@@ -211,11 +211,12 @@ void Registerer::registerAccount(const QString &addr, const QString &challengeAn
             Log.i() << "No challenge used.";
         }
         taskRegister_ = registration_->registerAccountAsync(
-                    address,
+                    *address,
                     TERMS_URL.toStdString(),
                     lastChallenge_,
                     answer,
-                    listenerRegistration_);
+                    listenerRegistration_
+                    ).as_nullable();
     }
     else
     {

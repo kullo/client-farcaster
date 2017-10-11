@@ -74,8 +74,8 @@ int main(int argc, char *argv[])
     Kullo::Util::LibraryLogger::setCurrentThreadName("main");
 
     Kullo::Http::Registry::setHttpClientFactory(
-                std::shared_ptr<Kullo::Http::HttpClientFactory>(
-                    new HttpClient::HttpClientFactoryImpl()));
+                kulloForcedNn(std::shared_ptr<Kullo::Http::HttpClientFactory>(
+                                  new HttpClient::HttpClientFactoryImpl())));
 
     QCommandLineParser parser;
     Metadata meta = getCommandLineArgs(app, parser);

@@ -5,7 +5,7 @@
 #include <QFileInfo>
 
 #include <desktoputil/qtypestreamers.h>
-#include <kulloclient/api/Address.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/util/librarylogger.h>
 
 namespace DesktopUtil {
@@ -15,12 +15,12 @@ DatabaseFiles::DatabaseFiles(const QString &dbFilenameTemplate)
 {
 }
 
-QString DatabaseFiles::databaseFilepath(const std::shared_ptr<Kullo::Api::Address> &address) const
+QString DatabaseFiles::databaseFilepath(const Kullo::Api::Address &address) const
 {
-    return dbFilenameTemplate_.arg(QString::fromStdString(address->toString()));
+    return dbFilenameTemplate_.arg(QString::fromStdString(address.toString()));
 }
 
-void DatabaseFiles::prepareDatabaseFolder(const std::shared_ptr<Kullo::Api::Address> &address) const
+void DatabaseFiles::prepareDatabaseFolder(const Kullo::Api::Address &address) const
 {
     const QDir dbParentDirectoryAbsolute = QFileInfo(databaseFilepath(address)).absoluteDir();
 
@@ -40,7 +40,7 @@ void DatabaseFiles::prepareDatabaseFolder(const std::shared_ptr<Kullo::Api::Addr
     }
 }
 
-void DatabaseFiles::removeDatabase(const std::shared_ptr<Kullo::Api::Address> & address) const
+void DatabaseFiles::removeDatabase(const Kullo::Api::Address & address) const
 {
     const QString dbFile = databaseFilepath(address);
     const QString dbFileShm = dbFile + "-shm";

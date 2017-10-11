@@ -2,10 +2,11 @@
 #include "conversationavatarprovider.h"
 
 #include <QPainter>
+#include <desktoputil/concurrency.h>
 #include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
-#include <desktoputil/threadblocker.h>
-#include <kulloclient/api/Address.h>
+#include <kulloclient/api/AddressHelpers.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -42,17 +43,16 @@ QPixmap ConversationAvatarProvider::drawAvatar(const QString &url, const QSize &
         return QPixmap();
     }
 
-    QList<std::shared_ptr<Kullo::Api::Address>> participantsAddresses;
+    QList<Kullo::Api::Address> participantsAddresses;
     QList<boost::optional<QByteArray>> participantAvatars;
     QList<boost::optional<QString>> participantAvatarMimeTypes;
     QList<boost::optional<QString>> participantNames;
 
-    DesktopUtil::ThreadBlocker tb;
-
+    std::promise<bool> successPromise;
     Applications::KulloApplication::runOnMainThread([&]() {
         if (!inbox_.hasSession())
         {
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
@@ -60,13 +60,13 @@ QPixmap ConversationAvatarProvider::drawAvatar(const QString &url, const QSize &
         if (!conv)
         {
             Log.e() << "Conversation for conversation avatar not found: " << convId;
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
         for (const auto &addressString : conv->participantsAddresses())
         {
-            participantsAddresses.append(Kullo::Api::Address::create(addressString.toStdString()));
+            participantsAddresses.append(*Kullo::Api::AddressHelpers::create(addressString.toStdString()));
         }
 
         if (participantsAddresses.size() <= 4)
@@ -93,11 +93,9 @@ QPixmap ConversationAvatarProvider::drawAvatar(const QString &url, const QSize &
             // too large for composition, don't read any data
         }
 
-        tb.release(true);
+        successPromise.set_value(true);
     });
-
-    auto success = tb.block();
-    if (!success) return QPixmap();
+    if (!DesktopUtil::waitOrCrash(successPromise)) return QPixmap();
 
     QList<QPixmap> participantAvatarPixmaps;
     for (int pos = 0; pos < participantAvatars.length(); ++pos)

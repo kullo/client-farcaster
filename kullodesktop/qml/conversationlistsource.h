@@ -6,6 +6,7 @@
 #include <QAbstractListModel>
 
 #include <apimirror/eventdispatcher.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/kulloclient-forwards.h>
 
 #include "kullodesktop/farcaster-forwards.h"
@@ -36,7 +37,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
     Kullo::id_type openWhenCreated();
-    void setOpenWhenCreated(std::unordered_set<std::shared_ptr<Kullo::Api::Address>> participants);
+    void setOpenWhenCreated(std::unordered_set<Kullo::Api::Address> participants);
 
     qint32 unreadMessagesCount() const;
 
@@ -64,7 +65,7 @@ private:
     ApiMirror::EventDispatcher &eventDispatcher_;
     std::shared_ptr<Kullo::Api::Session> session_;
     std::vector<std::unique_ptr<ConversationModel>> conversationModels_;
-    std::unordered_set<std::shared_ptr<Kullo::Api::Address>> openWhenCreated_;
+    std::unordered_set<Kullo::Api::Address> openWhenCreated_;
     int lastUnreadMessagesCount_ = -1;
 };
 

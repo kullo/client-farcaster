@@ -139,7 +139,7 @@ void DraftModel::addAttachment(const QString &localFile)
     QString mimeType = QMimeDatabase().mimeTypeForFile(localFile).name();
     Log.i() << "Adding " << localFile << " of type " << mimeType;
 
-    auto listener = std::make_shared<ApiMirror::DraftAttachmentsAddListener>();
+    auto listener = Kullo::nn_make_shared<ApiMirror::DraftAttachmentsAddListener>();
     connect(listener.get(), &ApiMirror::DraftAttachmentsAddListener::_progressed,
             this, [&] (Kullo::id_type convId, Kullo::id_type attId, int64_t bytesProcessed, int64_t bytesTotal) {
         K_UNUSED(convId);
@@ -158,7 +158,7 @@ void DraftModel::addAttachment(const QString &localFile)
                 convId_,
                 localFile.toStdString(),
                 mimeType.toStdString(),
-                listener);
+                listener).as_nullable();
 }
 
 std::mutex &DraftModel::addingAttachmentsInProgress()

@@ -1,9 +1,11 @@
+/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #pragma once
 
 #include <memory>
 #include <QAbstractListModel>
 
 #include <kulloclient/kulloclient-forwards.h>
+#include <kulloclient/nn.h>
 #include <apimirror/apimirror-forwards.h>
 
 #include "kullodesktop/farcaster-forwards.h"
@@ -63,13 +65,12 @@ signals:
     void resultsChanged();
 
 private:
-
     Qml::Inbox *inbox_ = nullptr;
     QString query_;
     qlonglong conversationId_ = -1;
     QString direction_;
     std::vector<Kullo::Api::MessagesSearchResult> results_;
-    std::shared_ptr<ApiMirror::MessagesSearchListener> searchListener_;
+    Kullo::nn_shared_ptr<ApiMirror::MessagesSearchListener> searchListener_;
     std::shared_ptr<Kullo::Api::AsyncTask> searchTask_;
 };
 

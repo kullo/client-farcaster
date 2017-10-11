@@ -3,10 +3,10 @@
 
 #include <QQmlEngine>
 
-#include <kulloclient/api/Address.h>
 #include <kulloclient/api/Conversations.h>
 #include <kulloclient/api/Messages.h>
 #include <kulloclient/api/Session.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
 
@@ -72,11 +72,11 @@ QHash<int, QByteArray> MessageListSource::roleNames() const
 namespace {
 bool addressInParticipants(
         const std::string &address,
-        const std::unordered_set<std::shared_ptr<Kullo::Api::Address>> &participants)
+        const std::unordered_set<Kullo::Api::Address> &participants)
 {
-    for (const auto &addr : participants)
+    for (const auto &participant : participants)
     {
-        if (addr->toString() == address) return true;
+        if (participant.toString() == address) return true;
     }
     return false;
 }

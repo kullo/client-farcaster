@@ -33,8 +33,8 @@ protected:
 
     // Loading image data into a QPixmap takes a lot of time and is repeated
     // often with the same data, so let's cache it
-    // This caches pixmaps for each size, that are not styled (roundes/cicle) and
-    // not yet composed to group avatars
+    // This caches pixmaps for each size, that are not styled (roundes/circle)
+    // and not yet composed to group avatars
     QMap<QString, QPixmap> avatarsCache_;
     std::mutex avatarsCacheMutex_;
 };

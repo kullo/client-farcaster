@@ -43,7 +43,7 @@ private slots:
     void onBgJobFinished(const Response &response);
 
 private:
-    std::shared_ptr<Kullo::Http::HttpClient> client_;
+    Kullo::nn_shared_ptr<Kullo::Http::HttpClient> client_;
     std::thread backgroundJob_;
     std::mutex running_;
 };

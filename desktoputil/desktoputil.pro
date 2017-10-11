@@ -11,6 +11,7 @@ SOURCES += \
     asynchttppostmanager.cpp \
     asynctask.cpp \
     breakpadsetup.cpp \
+    concurrency.cpp \
     databasefiles.cpp \
     filesystem.cpp \
     initials.cpp \
@@ -22,7 +23,6 @@ SOURCES += \
     qdebugmessagehandler.cpp \
     qtypestreamers.cpp \
     stlqt.cpp \
-    threadblocker.cpp \
     versions.cpp
 
 HEADERS += \
@@ -30,6 +30,7 @@ HEADERS += \
     asynchttppostmanager.h \
     asynctask.h \
     breakpadsetup.h \
+    concurrency.h \
     databasefiles.h \
     filesystem.h \
     initials.h \
@@ -42,7 +43,6 @@ HEADERS += \
     qdebugmessagehandler.h \
     qtypestreamers.h \
     stlqt.h \
-    threadblocker.h \
     versions.h \
     desktoputil-forwards.h
 

@@ -11,9 +11,9 @@ class DatabaseFiles
 {
 public:
     explicit DatabaseFiles(const QString &dbFilenameTemplate);
-    QString databaseFilepath(const std::shared_ptr<Kullo::Api::Address> &address) const;
-    void prepareDatabaseFolder(const std::shared_ptr<Kullo::Api::Address> &address) const;
-    void removeDatabase(const std::shared_ptr<Kullo::Api::Address> &address) const;
+    QString databaseFilepath(const Kullo::Api::Address &address) const;
+    void prepareDatabaseFolder(const Kullo::Api::Address &address) const;
+    void removeDatabase(const Kullo::Api::Address &address) const;
 
 private:
     QString dbFilenameTemplate_;

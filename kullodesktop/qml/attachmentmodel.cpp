@@ -153,7 +153,8 @@ bool AttachmentModel::doSaveTo(const std::string &path, const std::function<void
         });
     });
 
-    saveToTask_ = session_->messageAttachments()->saveToAsync(msgId_, attId_, path, saveToListener_);
+    saveToTask_ = session_->messageAttachments()->saveToAsync(
+                msgId_, attId_, path, kulloForcedNn(saveToListener_)).as_nullable();
     return true; // started successfully, may result in error
 }
 

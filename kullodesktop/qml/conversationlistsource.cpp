@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <QQmlEngine>
 
-#include <kulloclient/api/Address.h>
 #include <kulloclient/api/Conversations.h>
 #include <kulloclient/api/Session.h>
 #include <kulloclient/util/assert.h>
@@ -218,7 +217,7 @@ Kullo::id_type ConversationListSource::openWhenCreated()
     QStringList openWhenCreatedAddresses;
     for (const auto &addr : openWhenCreated_)
     {
-        openWhenCreatedAddresses << QString::fromStdString(addr->toString());
+        openWhenCreatedAddresses << QString::fromStdString(addr.toString());
     }
     openWhenCreatedAddresses.sort();
 
@@ -239,7 +238,7 @@ Kullo::id_type ConversationListSource::openWhenCreated()
 }
 
 void ConversationListSource::setOpenWhenCreated(
-        std::unordered_set<std::shared_ptr<Kullo::Api::Address>> participants)
+        std::unordered_set<Kullo::Api::Address> participants)
 {
     if (openWhenCreated_ == participants) return;
     openWhenCreated_ = participants;

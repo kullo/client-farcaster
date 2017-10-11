@@ -29,9 +29,9 @@ public:
         emit _progress(progress);
     }
 
-    void finished(const std::shared_ptr<Kullo::Api::Registration> &registration) override
+    void finished(const Kullo::nn_shared_ptr<Kullo::Api::Registration> &registration) override
     {
-        emit _finished(registration);
+        emit _finished(registration.as_nullable());
     }
 
 signals:

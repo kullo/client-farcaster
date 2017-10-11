@@ -141,7 +141,9 @@ bool DraftAttachmentModel::doSaveTo(const std::string &path, const std::function
         });
     });
 
-    saveToTask_ = session_->draftAttachments()->saveToAsync(convId_, attId_, path, saveToListener_);
+    saveToTask_ = session_->draftAttachments()->saveToAsync(
+                convId_, attId_, path, kulloForcedNn(saveToListener_)
+                ).as_nullable();
 
     return true;
 }

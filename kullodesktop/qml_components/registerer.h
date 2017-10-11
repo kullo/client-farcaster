@@ -7,6 +7,7 @@
 #include <apimirror/apimirror-forwards.h>
 #include <kullodesktop/farcaster-forwards.h>
 #include <kulloclient/kulloclient-forwards.h>
+#include <kulloclient/nn.h>
 
 namespace KulloDesktop {
 namespace QmlComponents {
@@ -72,8 +73,8 @@ signals:
 private:
     Qml::InnerApplication *application_ = nullptr;
     ApiMirror::Client *client_ = nullptr;
-    std::shared_ptr<ApiMirror::ClientGenerateKeysListener> listenerKeygen_;
-    std::shared_ptr<ApiMirror::RegistrationRegisterAccountListener> listenerRegistration_;
+    Kullo::nn_shared_ptr<ApiMirror::ClientGenerateKeysListener> listenerKeygen_;
+    Kullo::nn_shared_ptr<ApiMirror::RegistrationRegisterAccountListener> listenerRegistration_;
     std::shared_ptr<Kullo::Api::Registration> registration_;
     std::shared_ptr<Kullo::Api::AsyncTask> taskKeygen_;
     std::shared_ptr<Kullo::Api::AsyncTask> taskRegister_;

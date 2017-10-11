@@ -12,13 +12,14 @@
 #include <QPrintDialog>
 #include <QImageReader>
 #include <QBuffer>
+#include <boost/optional.hpp>
 
 #include <apimirror/eventdispatcher.h>
 #include <desktoputil/stlqt.h>
 #include <desktoputil/kulloclient2qt.h>
 #include <desktoputil/qtypestreamers.h>
-#include <kulloclient/api/Address.h>
-#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/AddressHelpers.h>
+#include <kulloclient/api/MasterKeyHelpers.h>
 #include <kulloclient/api/UserSettings.h>
 #include <kulloclient/api_impl/DateTime.h>
 #include <kulloclient/util/assert.h>
@@ -35,19 +36,15 @@ const auto AVATAR_MAX_BYTES  = 24*1024;
 const auto SETTING_DOESNT_EXIST = std::numeric_limits<int>::max();
 }
 
-UserSettings::UserSettings(
-        ApiMirror::EventDispatcher &eventDispatcher,
-        const std::shared_ptr<Kullo::Api::Address> &address,
-        const std::shared_ptr<Kullo::Api::MasterKey> &masterKey,
+UserSettings::UserSettings(ApiMirror::EventDispatcher &eventDispatcher,
+        const Kullo::Api::Address &address,
+        const Kullo::Api::MasterKey &masterKey,
         QObject *parent)
     : QObject(parent)
     , eventDispatcher_(eventDispatcher)
     , rawAddress_(address)
     , rawMasterKey_(masterKey)
 {
-    kulloAssert(rawAddress_);
-    kulloAssert(rawMasterKey_);
-
     connect(&eventDispatcher_, &ApiMirror::EventDispatcher::userSettingsChanged, this, [&]() {
         emit nameChanged();
         emit organizationChanged();
@@ -60,8 +57,8 @@ void UserSettings::setUserSettings(
         const std::shared_ptr<Kullo::Api::UserSettings> &userSettings)
 {
     kulloAssert(userSettings);
-    kulloAssert(userSettings->address()->isEqualTo(rawAddress_));
-    kulloAssert(userSettings->masterKey()->isEqualTo(rawMasterKey_));
+    kulloAssert(userSettings->address() == rawAddress_);
+    kulloAssert(userSettings->masterKey() == rawMasterKey_);
 
     settings_ = userSettings;
 
@@ -73,12 +70,12 @@ void UserSettings::setUserSettings(
 
 QString UserSettings::address() const
 {
-    return rawAddress_ ? QString::fromStdString(rawAddress_->toString()) : "";
+    return QString::fromStdString(rawAddress_.toString());
 }
 
 QString UserSettings::masterKeyPem() const
 {
-    return rawMasterKey_ ? QString::fromStdString(rawMasterKey_->pem()) : "";
+    return QString::fromStdString(Kullo::Api::MasterKeyHelpers::toPem(rawMasterKey_));
 }
 
 QString UserSettings::name() const
@@ -322,13 +319,12 @@ void UserSettings::setMasterKeyBackupDontRemindBefore(const QString &rfc3339time
     }
 }
 
-void UserSettings::storeCredentials(const std::shared_ptr<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::MasterKey> &masterKey)
+void UserSettings::storeCredentials(
+        const Kullo::Api::Address &address,
+        const Kullo::Api::MasterKey &masterKey)
 {
-    kulloAssert(address);
-    kulloAssert(masterKey);
-
-    auto addressString = QString::fromStdString(address->toString());
-    auto masterKeyBlocks = DesktopUtil::StlQt::toQStringList(masterKey->dataBlocks());
+    auto addressString = QString::fromStdString(address.toString());
+    auto masterKeyBlocks = DesktopUtil::StlQt::toQStringList(masterKey.blocks);
 
     QString groupName = "usersettings-" + addressString;
 
@@ -457,16 +453,16 @@ std::unique_ptr<UserSettings> UserSettings::loadCredentialsForAddress(
 
     settings.endGroup();
 
-    const auto address = Kullo::Api::Address::create(addressString.toStdString());
-    const auto masterKey = Kullo::Api::MasterKey::createFromDataBlocks(
+    const auto address = *Kullo::Api::AddressHelpers::create(addressString.toStdString());
+    const auto masterKey = *Kullo::Api::MasterKeyHelpers::createFromDataBlocks(
                 DesktopUtil::StlQt::toVector(data.toStringList()));
 
     return Kullo::make_unique<UserSettings>(eventDispatcher, address, masterKey);
 }
 
-void UserSettings::deleteCredentials(const std::shared_ptr<Kullo::Api::Address> &address)
+void UserSettings::deleteCredentials(const Kullo::Api::Address &address)
 {
-    QString groupName = "usersettings-" + QString::fromStdString(address->toString());
+    QString groupName = "usersettings-" + QString::fromStdString(address.toString());
 
     QSettings settings;
     settings.beginGroup(groupName);
@@ -539,12 +535,12 @@ bool UserSettings::loadAvatarFile(QByteArray &avatarData, QString &avatarMimeTyp
     return true;
 }
 
-std::shared_ptr<Kullo::Api::Address> UserSettings::rawAddress() const
+Kullo::Api::Address UserSettings::rawAddress() const
 {
     return rawAddress_;
 }
 
-std::shared_ptr<Kullo::Api::MasterKey> UserSettings::rawMasterKey() const
+Kullo::Api::MasterKey UserSettings::rawMasterKey() const
 {
     return rawMasterKey_;
 }
@@ -554,7 +550,7 @@ void UserSettings::migrate()
     if (!settings_) return;
     QSettings settings;
 
-    auto groupName = QString::fromStdString("usersettings-" + settings_->address()->toString());
+    auto groupName = QString::fromStdString("usersettings-" + settings_->address().toString());
     settings.beginGroup(groupName);
 
     QVariant data;
@@ -606,8 +602,7 @@ void UserSettings::migrate()
 
 QStringList UserSettings::masterKeyBlocks()
 {
-    if (!rawMasterKey_) return QStringList();
-    return DesktopUtil::StlQt::toQStringList(rawMasterKey_->dataBlocks());
+    return DesktopUtil::StlQt::toQStringList(rawMasterKey_.blocks);
 }
 
 QByteArray UserSettings::avatarData() const

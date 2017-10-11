@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include <kulloclient/api/Address.h>
 #include <kulloclient/api/ClientAddressExistsListener.h>
+#include <kulloclient/api_impl/Address.h>
 
 #include "apimirror/misc.h"
 
@@ -25,14 +25,14 @@ public:
         K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
     }
 
-    void finished(const std::shared_ptr<Kullo::Api::Address> &address, bool exists) override
+    void finished(const Kullo::Api::Address &address, bool exists) override
     {
-        emit _finished(address->toString(), exists);
+        emit _finished(address.toString(), exists);
     }
 
-    void error(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::NetworkError e) override
+    void error(const Kullo::Api::Address &address, Kullo::Api::NetworkError e) override
     {
-        emit _error(address->toString(), e);
+        emit _error(address.toString(), e);
     }
 
 signals:

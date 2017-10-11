@@ -3,9 +3,11 @@
 
 #include <httpclient/httpclientfactoryimpl.h>
 
-#include <kulloclient/api/Address.h>
-#include <kulloclient/api/MasterKey.h>
+#include <kulloclient/api/AddressHelpers.h>
+#include <kulloclient/api/MasterKeyHelpers.h>
 #include <kulloclient/api/Registry.h>
+#include <kulloclient/api_impl/Address.h>
+#include <kulloclient/api_impl/MasterKey.h>
 #include <kulloclient/http/Registry.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
@@ -22,24 +24,23 @@ int main(int argc, char *argv[])
     }
 
     const auto adressString = std::string(argv[1]);
-    auto address = Kullo::Api::Address::create(adressString);
+    auto address = Kullo::Api::AddressHelpers::create(adressString);
     if (!address)
     {
         Log.e() << "Invalid adress format: " << adressString;
         return 1;
     }
 
-    auto taskRunner = std::make_shared<Kullo::Util::StlTaskRunner>();
+    auto taskRunner = Kullo::nn_make_shared<Kullo::Util::StlTaskRunner>();
     Kullo::Api::Registry::setTaskRunner(taskRunner);
 
     Kullo::Http::Registry::setHttpClientFactory(
-                std::shared_ptr<Kullo::Http::HttpClientFactory>(
-                    new HttpClient::HttpClientFactoryImpl()));
+                kulloForcedNn(std::shared_ptr<Kullo::Http::HttpClientFactory>(
+                                  new HttpClient::HttpClientFactoryImpl())));
 
     Log.i() << "Registering " << address->toString();
-    auto masterKey = Registerer().run(address);
-    kulloAssert(masterKey);
-    std::cout << masterKey->pem();
+    auto masterKey = Registerer().run(*address);
+    std::cout << Kullo::Api::MasterKeyHelpers::toPem(masterKey);
 
     taskRunner->wait();
     return 0;

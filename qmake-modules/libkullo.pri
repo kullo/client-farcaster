@@ -1,6 +1,7 @@
 INCLUDEPATH += $$LIBKULLO_BIN_DIR/include
 LIBS += -L$$LIBKULLO_BIN_DIR/lib \
     -lkulloclient \
+    -largon2 \
     -ljsoncpp \
     -lgmock \
     -lsmartsqlite \
@@ -19,6 +20,7 @@ win32 {
 }
 PRE_TARGETDEPS += \
     $${TD_PREFIX}kulloclient$${TD_SUFFIX} \
+    $${TD_PREFIX}argon2$${TD_SUFFIX} \
     $${TD_PREFIX}jsoncpp$${TD_SUFFIX} \
     $${TD_PREFIX}gmock$${TD_SUFFIX} \
     $${TD_PREFIX}smartsqlite$${TD_SUFFIX} \

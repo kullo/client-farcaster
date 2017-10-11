@@ -18,7 +18,7 @@ void EventDispatcher::onInternalEvent(const std::shared_ptr<Kullo::Api::Internal
 
     if (auto session = session_.lock())
     {
-        for (const auto &event : session->notify(internalEvent))
+        for (const auto &event : session->notify(kulloForcedNn(internalEvent)))
         {
             switch (event.event)
             {

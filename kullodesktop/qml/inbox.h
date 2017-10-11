@@ -67,7 +67,7 @@ public:
     Q_INVOKABLE ApiMirror::Client *client() const;
 
     // non-QML
-    std::shared_ptr<Sender> latestSenderForAddress(const std::shared_ptr<Kullo::Api::Address> &address) const;
+    std::shared_ptr<Sender> latestSenderForAddress(const Kullo::Api::Address &address) const;
     std::shared_ptr<Kullo::Api::Session> session() const;
     ConversationListSource *conversationsListSource();
 
@@ -109,7 +109,9 @@ signals:
 private slots:
     void onCreateSessionMigrationStarted();
     void onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session);
-    void onCreateSessionError(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
+    void onCreateSessionError(
+            const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address,
+            Kullo::Api::LocalError error);
     void onInternalCreateSessionDone();
 
     void onSyncProgressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress);
@@ -117,7 +119,9 @@ private slots:
     void onSyncError(Kullo::Api::NetworkError error);
 
 private:
-    void setLocalDatabaseKulloVersion(const std::shared_ptr<Kullo::Api::Address> &addr, const DesktopUtil::KulloVersion &version);
+    void setLocalDatabaseKulloVersion(
+            const Kullo::Api::Address &address,
+            const DesktopUtil::KulloVersion &version);
 
     InnerApplication &innerApplication_;
     Kullo::Util::StlTaskRunner *taskRunner_;

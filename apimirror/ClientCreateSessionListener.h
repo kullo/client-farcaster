@@ -4,8 +4,10 @@
 #include <QObject>
 
 #include <kulloclient/api/ClientCreateSessionListener.h>
+#include <kulloclient/api_impl/Address.h>
 
 #include "apimirror/misc.h"
+#include "apimirror/signalslotvalue.h"
 
 namespace ApiMirror {
 
@@ -18,29 +20,29 @@ public:
         : QObject(parent)
     {
         K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Session>);
-        K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::Address>);
         K_REGISTER_QT_META_TYPE(Kullo::Api::LocalError);
     }
 
-    void migrationStarted(const std::shared_ptr<Kullo::Api::Address> &address) override
+    void migrationStarted(const Kullo::Api::Address &address) override
     {
         emit _migrationStarted(address);
     }
 
-    void finished(const std::shared_ptr<Kullo::Api::Session> &session) override
+    void finished(const Kullo::nn_shared_ptr<Kullo::Api::Session> &session) override
     {
         emit _finished(session);
     }
 
-    void error(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error) override
+    void error(const Kullo::Api::Address &address, Kullo::Api::LocalError error) override
     {
         emit _error(address, error);
     }
 
 signals:
-    void _migrationStarted(const std::shared_ptr<Kullo::Api::Address> &address);
+    void _migrationStarted(const SignalSlotValue<Kullo::Api::Address> &address);
     void _finished(const std::shared_ptr<Kullo::Api::Session> &session);
-    void _error(const std::shared_ptr<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
+    void _error(const SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::LocalError error);
 };
 
 }

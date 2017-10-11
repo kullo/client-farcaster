@@ -1,9 +1,9 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "messagesenderavatarprovider.h"
 
+#include <desktoputil/concurrency.h>
 #include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
-#include <desktoputil/threadblocker.h>
 #include <kulloclient/util/librarylogger.h>
 #include <kulloclient/util/misc.h>
 
@@ -50,12 +50,11 @@ QPixmap MessageSenderAvatarProvider::drawAvatar(const QString &url, const QSize 
     QString senderAvatarMimeType;
     QByteArray senderAvatar;
 
-    DesktopUtil::ThreadBlocker tb;
-
+    std::promise<bool> successPromise;
     Applications::KulloApplication::runOnMainThread([&]() {
         if (!inbox_.hasSession())
         {
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
@@ -63,7 +62,7 @@ QPixmap MessageSenderAvatarProvider::drawAvatar(const QString &url, const QSize 
         if (!conv)
         {
             Log.e() << "Conversation for message avatar not found: " << convId;
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
@@ -71,18 +70,16 @@ QPixmap MessageSenderAvatarProvider::drawAvatar(const QString &url, const QSize 
         if (!msg)
         {
             Log.e() << "Message for avatar not found: " << msgId;
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
         senderName = msg->sender()->name();
         senderAvatarMimeType = msg->sender()->avatarMimeType();
         senderAvatar = msg->sender()->avatar();
-        tb.release(true);
+        successPromise.set_value(true);
     });
-
-    auto success = tb.block();
-    if (!success) return QPixmap();
+    if (!DesktopUtil::waitOrCrash(successPromise)) return QPixmap();
 
     const auto cacheKey = AbstractAvatarProvider::cacheKey(senderAvatar, renderSize);
 

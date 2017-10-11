@@ -5,11 +5,11 @@
 #include <QStringList>
 
 #include <desktoputil/kulloclient2qt.h>
-#include <kulloclient/api/Address.h>
 #include <kulloclient/api/Conversations.h>
 #include <kulloclient/api/Messages.h>
 #include <kulloclient/api/Senders.h>
 #include <kulloclient/api/Session.h>
+#include <kulloclient/api_impl/Address.h>
 #include <kulloclient/api_impl/DateTime.h>
 #include <kulloclient/util/assert.h>
 #include <kulloclient/util/librarylogger.h>
@@ -107,9 +107,9 @@ QString ConversationModel::title(int maxChars) const
 QStringList ConversationModel::participantsAddresses() const
 {
     QStringList addresses;
-    for (const auto &addr : session_->conversations()->participants(convId_))
+    for (const auto &participant : session_->conversations()->participants(convId_))
     {
-        addresses << QString::fromStdString(addr->toString());
+        addresses << QString::fromStdString(participant.toString());
     }
     addresses.sort();
     return addresses;
@@ -118,15 +118,15 @@ QStringList ConversationModel::participantsAddresses() const
 QVariantMap ConversationModel::participantNames() const
 {
     QVariantMap out;
-    for (const auto &addr : session_->conversations()->participants(convId_))
+    for (const auto &participant : session_->conversations()->participants(convId_))
     {
-        auto senderMsgId = session_->messages()->latestForSender(addr);
+        auto senderMsgId = session_->messages()->latestForSender(participant);
         std::string senderName;
         if (senderMsgId >= 0)
         {
             senderName = session_->senders()->name(senderMsgId);
         }
-        out.insert(QString::fromStdString(addr->toString()), QString::fromStdString(senderName));
+        out.insert(QString::fromStdString(participant.toString()), QString::fromStdString(senderName));
     }
     return out;
 }

@@ -1,9 +1,9 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "attachmentpreviewprovider.h"
 
+#include <desktoputil/concurrency.h>
 #include <desktoputil/qtypestreamers.h>
 #include <desktoputil/stlqt.h>
-#include <desktoputil/threadblocker.h>
 #include <kulloclient/api/AsyncTask.h>
 #include <kulloclient/api/DraftAttachments.h>
 #include <kulloclient/api/DraftAttachmentsContentListener.h>
@@ -102,24 +102,26 @@ QPixmap AttachmentPreviewProvider::requestPixmap(const QString &url, QSize *size
         messageAttachmentContentListener = std::make_shared<MessageAttachmentsContentListener>(imageData);
     }
 
-    DesktopUtil::ThreadBlocker tb;
+    std::promise<bool> successPromise;
     Applications::KulloApplication::runOnMainThread([&](){
         auto session = inbox_.session();
         if (!session)
         {
-            tb.release(false);
+            successPromise.set_value(false);
             return;
         }
 
         contentTask = isDraft
-                ? session->draftAttachments()->contentAsync(conversationId, attachmentId, draftAttachmentContentListener)
-                : session->messageAttachments()->contentAsync(messageId, attachmentId, messageAttachmentContentListener);
+                ? session->draftAttachments()->contentAsync(
+                      conversationId, attachmentId, kulloForcedNn(draftAttachmentContentListener)
+                      ).as_nullable()
+                : session->messageAttachments()->contentAsync(
+                      messageId, attachmentId, kulloForcedNn(messageAttachmentContentListener)
+                      ).as_nullable();
 
-        tb.release(true);
+        successPromise.set_value(true);
     });
-
-    auto success = tb.block();
-    if (!success) return QPixmap();
+    if (!DesktopUtil::waitOrCrash(successPromise)) return QPixmap();
 
     // done starting task
 

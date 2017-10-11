@@ -1,9 +1,9 @@
 /* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
 #include "usersettingsavatarprovider.h"
 
+#include <desktoputil/concurrency.h>
 #include <desktoputil/initials.h>
 #include <desktoputil/qtypestreamers.h>
-#include <desktoputil/threadblocker.h>
 #include <kulloclient/util/librarylogger.h>
 
 #include "kullodesktop/applications/kulloapplication.h"
@@ -30,8 +30,7 @@ QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &
     QString userName;
     QPixmap userAvatar;
 
-    DesktopUtil::ThreadBlocker tb;
-
+    std::promise<bool> successPromise;
     Applications::KulloApplication::runOnMainThread([&]() {
         auto userSettings = inbox_.userSettings();
         if (path != userSettings->address())
@@ -50,11 +49,9 @@ QPixmap UserSettingsAvatarProvider::drawAvatar(const QString &url, const QSize &
 
         userName = userSettings->name();
 
-        tb.release(true);
+        successPromise.set_value(true);
     });
-
-    auto success = tb.block();
-    if (!success) return QPixmap();
+    if (!DesktopUtil::waitOrCrash(successPromise)) return QPixmap();
 
     QPixmap out;
 
