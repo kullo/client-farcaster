@@ -244,15 +244,16 @@ BaseDialog {
                                ? changelogTextbox.anchors.topMargin + changelogTextbox.implicitHeight
                                : 0)
 
-            NativeTextWithLinks {
+            NativeText {
                 id: showDetailsText
                 anchors {
                     left: parent.left
                 }
-                html: "<a href='showUpdateDetails://'>"
+                textFormat: Text.StyledText
+                text: "<a href='showUpdateDetails://'>"
                       + (changelogTextbox.visible ? qsTr("Hide details") : qsTr("Show details"))
                       + "</a>"
-                handleOnLinkActivated: function() {
+                onLinkActivated: {
                     changelogTextbox.visible = !changelogTextbox.visible
                     recalculateContentHeight()
                 }

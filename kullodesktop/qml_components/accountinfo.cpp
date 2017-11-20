@@ -95,7 +95,7 @@ void AccountInfo::openSettingsLocationUrl()
 
     // success
     connect(listener.get(), &ApiMirror::SessionAccountInfoListener::_finished,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)
+            this, [this](const SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)
     {
         const auto urlString = QString::fromStdString(accountInfo->settingsUrl.get_value_or(""));
         const auto url = QUrl(urlString);
@@ -154,7 +154,7 @@ void AccountInfo::reload()
     task_ = session->accountInfoAsync(listener).as_nullable();
 }
 
-void AccountInfo::onNewAccountInfoReceived(const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)
+void AccountInfo::onNewAccountInfoReceived(const SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo)
 {
     this->locked_ = false;
 

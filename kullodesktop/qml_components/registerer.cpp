@@ -53,7 +53,7 @@ Registerer::Registerer(QObject *parent)
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_addressNotAvailable,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::AddressNotAvailableReason reason)
+            this, [this](const SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::AddressNotAvailableReason reason)
     {
         auto addressString = QString::fromStdString(address->toString());
 
@@ -68,7 +68,7 @@ Registerer::Registerer(QObject *parent)
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_challengeNeeded,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::Challenge> & challenge)
+            this, [this](const SignalSlotValue<Kullo::Api::Address> &address, const std::shared_ptr<Kullo::Api::Challenge> & challenge)
     {
         lastChallenge_ = challenge;
 
@@ -94,7 +94,7 @@ Registerer::Registerer(QObject *parent)
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_finished,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, const ApiMirror::SignalSlotValue<Kullo::Api::MasterKey> &masterKey)
+            this, [this](const SignalSlotValue<Kullo::Api::Address> &address, const SignalSlotValue<Kullo::Api::MasterKey> &masterKey)
     {
         application_->databaseFiles().removeDatabase(*address);
         Qml::UserSettings::storeCredentials(*address, *masterKey);
@@ -105,7 +105,7 @@ Registerer::Registerer(QObject *parent)
     });
 
     connect(listenerRegistration_.get(), &ApiMirror::RegistrationRegisterAccountListener::_error,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::NetworkError error)
+            this, [this](const SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::NetworkError error)
     {
         K_UNUSED(address);
 

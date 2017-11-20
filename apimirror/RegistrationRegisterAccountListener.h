@@ -22,8 +22,8 @@ public:
     explicit RegistrationRegisterAccountListener(QObject *parent = 0)
         : QObject(parent)
     {
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::Address>);
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::MasterKey>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::MasterKey>);
         K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Challenge>);
         K_REGISTER_QT_META_TYPE(Kullo::Api::AddressNotAvailableReason);
         K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);

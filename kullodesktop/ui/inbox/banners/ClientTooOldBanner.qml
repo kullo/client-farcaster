@@ -37,10 +37,9 @@ Rectangle {
         }
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         color: Style.errorBannerTextColor
-        html: qsTr("This software is too old to sync with the server.") + " " +
+        text: qsTr("This software is too old to sync with the server.") + " " +
               qsTr("Please download the current version from " +
-                   "<a style='color: %1' href='%2'>kullo.net/download</a>")
-              .arg(Style.errorBannerTextColor)
+                   "<a href='%1'>kullo.net/download</a>")
               .arg(KulloVersionChecker.updateUrl)
     }
 

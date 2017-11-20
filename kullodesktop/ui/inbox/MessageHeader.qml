@@ -160,16 +160,23 @@ Rectangle {
             NativeImage {
                 width: 20
                 height: 20
-                source: !read ? "/resources/scalable/state_unread_b.svg" :
-                                (!done ? "/resources/scalable/state_undone_b.svg" : "/resources/scalable/state_done_b.svg")
+                source: !read
+                        ? "/resources/scalable/state_unread_b.svg"
+                        : (!done ? "/resources/scalable/state_undone_b.svg" : "/resources/scalable/state_done_b.svg")
             }
 
-            MouseArea {
-                id: mouseArea
+            TooltipArea {
                 anchors.fill: parent
-                onClicked: {
-                    if (!done) markAsDone();
-                    else markAsUndone();
+                text: done
+                      ? qsTr("Mark as undone")
+                      : qsTr("Mark as done")
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (!done) markAsDone();
+                        else markAsUndone();
+                    }
                 }
             }
         }

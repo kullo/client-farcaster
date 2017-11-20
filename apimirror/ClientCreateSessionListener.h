@@ -20,7 +20,7 @@ public:
         : QObject(parent)
     {
         K_REGISTER_QT_META_TYPE(std::shared_ptr<Kullo::Api::Session>);
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::Address>);
         K_REGISTER_QT_META_TYPE(Kullo::Api::LocalError);
     }
 

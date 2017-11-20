@@ -118,7 +118,7 @@ BackgroundCover {
                 color: Style.profileHeadline
             }
 
-            NativeText {
+            NativeSelectableText {
                 id: subheadline
                 anchors {
                     top: headline.bottom
@@ -129,6 +129,15 @@ BackgroundCover {
                 text: Inbox.userSettings.address
                 horizontalAlignment: Text.AlignLeft
                 color: Style.profileHeadlineSecondary
+
+                CutCopyPasteMenu {
+                    hasCopy: true
+                    hasCut: false
+                    hasPaste: false
+                    hasSelectAll: true
+                    onCopy: subheadline.copy()
+                    onSelectAll: subheadline.selectAll()
+                }
             }
 
             Item {
@@ -230,6 +239,11 @@ BackgroundCover {
 
                 spacing: 10
 
+                AccountInfo {
+                    id: accountInfo
+                    inbox: Inbox
+                }
+
                 Button {
                     height: 40
                     text: qsTr("Show MasterKey")
@@ -250,6 +264,13 @@ BackgroundCover {
 
                 Button {
                     height: 40
+                    text: qsTr("Account settings")
+                    style: KulloButtonStyle {}
+                    onClicked: accountInfo.openSettingsLocationUrl()
+                }
+
+                Button {
+                    height: 40
                     text: qsTr("Plan: %1 (%2/%3 GB)")
                     .arg(accountInfo.planName)
                     .arg((accountInfo.storageUsed/(1024*1024*1024)).toLocaleString(Qt.locale(), 'f', 2))
@@ -263,11 +284,6 @@ BackgroundCover {
                     }
 
                     onClicked: accountInfo.openSettingsLocationUrl()
-
-                    AccountInfo {
-                        id: accountInfo
-                        inbox: Inbox
-                    }
                 }
             }
         }

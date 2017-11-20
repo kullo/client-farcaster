@@ -293,7 +293,7 @@ FForm {
                     leftMargin: 5
                     right: parent.right
                 }
-                html: qsTr("I accept the <a href='%1'>terms of service</a>").arg(registerer.termsUrl)
+                text: qsTr("I accept the <a href='%1'>terms of service</a>").arg(registerer.termsUrl)
             }
         }
 

@@ -23,7 +23,7 @@ public:
     {
         // registered in registerMetaTypes(): std::string
         K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::AccountInfo>);
     }
 
     void finished(const Kullo::Api::AccountInfo &accountInfo) override
@@ -37,7 +37,7 @@ public:
     }
 
 signals:
-    void _finished(const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo);
+    void _finished(const SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo);
     void _error(Kullo::Api::NetworkError error);
 };
 

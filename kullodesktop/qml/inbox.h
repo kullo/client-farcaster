@@ -110,11 +110,11 @@ private slots:
     void onCreateSessionMigrationStarted();
     void onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &session);
     void onCreateSessionError(
-            const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address,
+            const SignalSlotValue<Kullo::Api::Address> &address,
             Kullo::Api::LocalError error);
     void onInternalCreateSessionDone();
 
-    void onSyncProgressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress);
+    void onSyncProgressed(const SignalSlotValue<Kullo::Api::SyncProgress> &progress);
     void onSyncFinished();
     void onSyncError(Kullo::Api::NetworkError error);
 

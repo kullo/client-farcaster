@@ -177,10 +177,11 @@ NativeModalWindow {
                     }
                 }
 
-                NativeTextWithLinks {
+                NativeText {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    html: qsTr("<a href='showMasterKey://'>Show MasterKey and print now</a>")
-                    handleOnLinkActivated: function() {
+                    textFormat: Text.StyledText
+                    text: qsTr("<a href='showMasterKey://'>Show MasterKey and print now</a>")
+                    onLinkActivated: {
                         confirmation.enabled = true
 
                         masterKeyShowWindow.openWindow()

@@ -23,8 +23,8 @@ public:
         : QObject(parent)
     {
         // no registration needed for: bool
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::Address>);
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::MasterKey>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::Address>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::MasterKey>);
         K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
     }
 

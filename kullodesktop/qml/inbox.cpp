@@ -326,7 +326,7 @@ void Inbox::onCreateSessionFinished(const std::shared_ptr<Kullo::Api::Session> &
 }
 
 void Inbox::onCreateSessionError(
-        const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address,
+        const SignalSlotValue<Kullo::Api::Address> &address,
         Kullo::Api::LocalError error)
 {
     //TODO handle create session error
@@ -357,7 +357,7 @@ void Inbox::onInternalCreateSessionDone()
     emit hasSessionChanged(true);
 }
 
-void Inbox::onSyncProgressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress)
+void Inbox::onSyncProgressed(const SignalSlotValue<Kullo::Api::SyncProgress> &progress)
 {
     if (!latestSyncProgress_ || progress->phase != latestSyncProgress_->phase)
     {

@@ -10,6 +10,7 @@ Text {
     renderType: Text.NativeRendering
     font.pointSize: Style.fontSize.normal
     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+    linkColor: color
 
     SystemPalette {
         id: palette

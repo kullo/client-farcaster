@@ -418,7 +418,7 @@ BackgroundCover {
                               : qsTr("No result for \"%1\"").arg(searchInput.text.trim())
                     }
 
-                    NativeTextWithLinks {
+                    NativeText {
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -427,8 +427,9 @@ BackgroundCover {
                         font.pointSize: Style.fontSize.big
                         visible: searchInput.text.trim().length !== 0
                                  && (!root.global || root.direction != "both")
-                        html: "<br>" + qsTr("Try searching <a href=\"searchEverywhere:\">everywhere</a>")
-                        handleOnLinkActivated: function() {
+                        textFormat: Text.StyledText
+                        text: "<br>" + qsTr("Try searching <a href=\"searchEverywhere:\">everywhere</a>")
+                        onLinkActivated: {
                             root.global = true
                             root.direction = "both"
                             root.updateResults()

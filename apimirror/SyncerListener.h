@@ -24,7 +24,7 @@ public:
     {
         // registered in registerMetaTypes(): Kullo::id_type
         K_REGISTER_QT_META_TYPE(Kullo::Api::NetworkError);
-        K_REGISTER_QT_META_TYPE(ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress>);
+        K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::SyncProgress>);
     }
 
     void started() override
@@ -62,7 +62,7 @@ signals:
             Kullo::id_type convId,
             ApiMirror::Enums::DraftPartHolder::DraftPart part,
             int64_t currentSize, int64_t maxSize);
-    void _progressed(const ApiMirror::SignalSlotValue<Kullo::Api::SyncProgress> &progress);
+    void _progressed(const SignalSlotValue<Kullo::Api::SyncProgress> &progress);
     void _finished();
     void _error(Kullo::Api::NetworkError error);
 };

@@ -199,8 +199,8 @@
         <translation>Diese Software ist zu alt, um mit diesem Server zu synchronisieren.</translation>
     </message>
     <message>
-        <source>Please download the current version from &lt;a style=&apos;color: %1&apos; href=&apos;%2&apos;&gt;kullo.net/download&lt;/a&gt;</source>
-        <translation>Bitte lade die aktuelle Version herunter: &lt;a style=&apos;color: %1&apos; href=&apos;%2&apos;&gt;kullo.net/download&lt;/a&gt;</translation>
+        <source>Please download the current version from &lt;a href=&apos;%1&apos;&gt;kullo.net/download&lt;/a&gt;</source>
+        <translation>Bitte lade die aktuelle Version herunter: &lt;a href=&apos;%1&apos;&gt;kullo.net/download&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -1089,6 +1089,14 @@ sind deine Nachrichten verloren.</translation>
         <source>Copy Kullo address</source>
         <translation>Kopiere Kullo-Adresse</translation>
     </message>
+    <message>
+        <source>Mark as undone</source>
+        <translation>Als nicht erledigt markieren</translation>
+    </message>
+    <message>
+        <source>Mark as done</source>
+        <translation>Als erledigt markieren</translation>
+    </message>
 </context>
 <context>
     <name>MiddleColumn</name>
@@ -1150,6 +1158,10 @@ sind deine Nachrichten verloren.</translation>
     <message>
         <source>Name must be set in order to send messages</source>
         <translation>Name muss gesetzt sein um Nachrichten zu verschicken</translation>
+    </message>
+    <message>
+        <source>Account settings</source>
+        <translation>Account-Einstellungen</translation>
     </message>
 </context>
 <context>

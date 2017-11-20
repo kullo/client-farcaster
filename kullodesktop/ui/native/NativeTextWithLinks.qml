@@ -2,39 +2,14 @@
 import QtQuick 2.0
 
 NativeText {
-    /* public */
-    property string html: ""
-    property color linkColor: root.color
+    textFormat: Text.StyledText
 
-    property var handleOnLinkActivated: superHandleOnLinkActivated
-    // "super" from the instance's perspective. Use this in implementations of handleOnLinkActivated
-    property var superHandleOnLinkActivated: handleOnLinkActivated_NativeTextWithLinks
-
-    /* private */
-    function _makeText() {
-        var cssColor = root.linkColor
-        var modifiedHtml = html.replace(
-                    "<a ",
-                    "<a style='color: " + cssColor + "' "
-                    )
-        root.text = modifiedHtml
-    }
-
-    onHtmlChanged: _makeText()
-    onLinkColorChanged: _makeText()
-
-    id: root
-    text: html
-    textFormat: Text.RichText
-
-    function handleOnLinkActivated_NativeTextWithLinks(link) {
+    // Only use this component for default links like http:// or file://
+    // because we cannot override slots like onLinkActivated
+    onLinkActivated: {
         if (!Qt.openUrlExternally(link))
         {
             console.warn("Could not open url: " + link)
         }
     }
-
-    // We cannot override slots
-    // http://stackoverflow.com/questions/34948874/prevent-inherited-signal-handlers-from-executing
-    onLinkActivated: handleOnLinkActivated(link)
 }

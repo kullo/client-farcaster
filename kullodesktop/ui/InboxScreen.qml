@@ -231,6 +231,11 @@ FocusScope {
         id: clientTooOldBanner
     }
 
+    function resetSyncErrorBanners() {
+        syncErrorBanner.hide()
+        clientTooOldBanner.hide()
+    }
+
     StableTimer {
         id: syncingBannerDelayTimer
         // first syncer is slow at the moment
@@ -253,6 +258,13 @@ FocusScope {
             syncingBanner.reset()
         }
         onSyncProgressed: {
+            var anythingHappened = incomingMessagesProcessed > 0
+                    || incomingAttachmentsDownloadedBytes > 0
+                    || outgoingMessagesUploadedBytes > 0
+            if (anythingHappened) {
+                resetSyncErrorBanners()
+            }
+
             if (phase === SyncPhase.IncomingMessages
                     && incomingMessagesTotal >= 5) {
                 syncingBanner.text = qsTr("Syncing messages")
@@ -288,8 +300,7 @@ FocusScope {
         onSyncFinished: {
             syncingBannerDelayTimer.stop()
             if (success) {
-                syncErrorBanner.hide()
-                clientTooOldBanner.hide()
+                resetSyncErrorBanners()
             }
             syncingBanner.hide()
             if (heartbeat.needResync) heartbeat.resync()

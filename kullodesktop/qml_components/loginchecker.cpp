@@ -25,7 +25,7 @@ LoginChecker::LoginChecker(QObject *parent)
     listener_ = std::make_shared<ApiMirror::ClientCheckCredentialsListener>();
 
     connect(listener_.get(), &ApiMirror::ClientCheckCredentialsListener::_finished,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, ApiMirror::SignalSlotValue<Kullo::Api::MasterKey> masterKey, bool exists)
+            this, [this](const SignalSlotValue<Kullo::Api::Address> &address, SignalSlotValue<Kullo::Api::MasterKey> masterKey, bool exists)
     {
         setLocked(false);
         emit loginChecked(QString::fromStdString(address->toString()),
@@ -34,7 +34,7 @@ LoginChecker::LoginChecker(QObject *parent)
     });
 
     connect(listener_.get(), &ApiMirror::ClientCheckCredentialsListener::_error,
-            this, [this](const ApiMirror::SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::NetworkError error)
+            this, [this](const SignalSlotValue<Kullo::Api::Address> &address, Kullo::Api::NetworkError error)
     {
         setLocked(false);
         switch (error) {

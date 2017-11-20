@@ -4,9 +4,10 @@
 #include <stdexcept>
 #include <boost/optional.hpp>
 
-namespace ApiMirror {
-
 // Wrapper of Type with a dummy default constructor that compiles but must not be used
+// Note: This must always be used with absolute namespaces to ensure signal/slot
+//       string based magick works. We use the global namespace to avoid any kind
+//       of runtime suprises that pass compiler.
 
 template <class Type>
 class SignalSlotValue final
@@ -38,5 +39,3 @@ public:
 private:
     const boost::optional<Type> container_;
 };
-
-}

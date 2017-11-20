@@ -124,7 +124,7 @@ NativeModalWindow {
                         left: parent.left
                         right: parent.right
                     }
-                    html: qsTr("Or visit our <a href='%1'>download website</a>.")
+                    text: qsTr("Or visit our <a href='%1'>download website</a>.")
                           .arg(KulloVersionChecker.updateUrl)
                 }
             }
@@ -177,7 +177,7 @@ NativeModalWindow {
                     out += qsTr(" and ") + list[list.length-1]
                     return out
                 }
-                html: qsTr("Kullo is proudly based on open source software.") + " "
+                text: qsTr("Kullo is proudly based on open source software.") + " "
                       + qsTr("Kudos to %1.").arg(composeVersions())
                       + " "
                       + qsTr("Read all <a href='%1'>licenses</a>.")
@@ -189,7 +189,7 @@ NativeModalWindow {
                     left: parent.left
                     right: parent.right
                 }
-                html: qsTr("Kullo for %1 is provided by Kullo&nbsp;GmbH").arg(Os.familyPretty)
+                text: qsTr("Kullo for %1 is provided by Kullo&nbsp;GmbH").arg(Os.familyPretty)
                       + ": "
                       + "<a href='https://www.kullo.net/'>www.kullo.net</a>"
             }

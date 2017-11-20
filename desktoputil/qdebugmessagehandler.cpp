@@ -35,6 +35,7 @@ void QDebugMessageHandler::handler(QtMsgType type, const QMessageLogContext& con
                 QStringLiteral("failed to load component"),
                 QStringLiteral("is not installed"),
                 QStringLiteral("Cannot assign to non-existent property"),
+                QStringLiteral("Cannot queue arguments of type"), // QObject::connect: Cannot queue arguments of type 'SignalSlotValue<Kullo::Api::Address>' (Make sure 'SignalSlotValue<Kullo::Api::Address>' is registered using qRegisterMetaType().)
         };
 
         for (const auto &s : fatalWarnings)

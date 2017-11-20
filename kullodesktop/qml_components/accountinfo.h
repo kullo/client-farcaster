@@ -47,7 +47,7 @@ signals:
     void storageUsedChanged();
 
 private slots:
-    void onNewAccountInfoReceived(const ApiMirror::SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo);
+    void onNewAccountInfoReceived(const SignalSlotValue<Kullo::Api::AccountInfo> &accountInfo);
 
 private:
     Qml::Inbox *inbox_ = nullptr;
