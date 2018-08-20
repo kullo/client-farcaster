@@ -15,8 +15,10 @@ SOURCES += \
     registerer.cpp
 
 linux() {
+    linuxRelease(): OPENSSL_BUILD_DIR = $$BUILD_ROOT/../build-linux-x86_64-release/build-openssl
+    linuxDebug():   OPENSSL_BUILD_DIR = $$BUILD_ROOT/../build-linux-x86_64-debug/build-openssl
     copyOpenSslCommand = @echo Copying OpenSSL ...
-    copyOpenSslCommand += ; rsync -pgo --update \"$$BUILD_ROOT/../build-openssl/lib/libcrypto.so.1.0.0\" \"$$BUILD_ROOT/../build-openssl/lib/libssl.so.1.0.0\" \"$$OUT_PWD/\"
+    copyOpenSslCommand += ; rsync -pgo --update \"$$OPENSSL_BUILD_DIR/lib/libcrypto.so.1.0.0\" \"$$OPENSSL_BUILD_DIR/lib/libssl.so.1.0.0\" \"$$OUT_PWD/\"
     copyOpenSsl.commands = $$copyOpenSslCommand
     QMAKE_EXTRA_TARGETS += copyOpenSsl
     all.depends += copyOpenSsl

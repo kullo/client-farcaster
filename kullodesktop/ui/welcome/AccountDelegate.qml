@@ -1,4 +1,4 @@
-/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
 import QtQuick 2.4
 import QtQuick.Controls 1.4
 

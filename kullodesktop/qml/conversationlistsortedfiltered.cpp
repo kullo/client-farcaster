@@ -1,4 +1,4 @@
-/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
 #include "conversationlistsortedfiltered.h"
 
 #include <QDateTime>

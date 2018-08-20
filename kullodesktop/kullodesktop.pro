@@ -44,8 +44,10 @@ linux() {
 }
 
 linux() {
+    linuxRelease(): OPENSSL_BUILD_DIR = $$BUILD_ROOT/../build-linux-x86_64-release/build-openssl
+    linuxDebug():   OPENSSL_BUILD_DIR = $$BUILD_ROOT/../build-linux-x86_64-debug/build-openssl
     copyOpenSslCommand = @echo Copying OpenSSL ...
-    copyOpenSslCommand += ; rsync -pgo --update \"$$BUILD_ROOT/../build-openssl/lib/libcrypto.so.1.0.0\" \"$$BUILD_ROOT/../build-openssl/lib/libssl.so.1.0.0\" \"$$OUT_PWD/\"
+    copyOpenSslCommand += ; rsync -pgo --update \"$$OPENSSL_BUILD_DIR/lib/libcrypto.so.1.0.0\" \"$$OPENSSL_BUILD_DIR/lib/libssl.so.1.0.0\" \"$$OUT_PWD/\"
     copyOpenSsl.commands = $$copyOpenSslCommand
     QMAKE_EXTRA_TARGETS += copyOpenSsl
     all.depends += copyOpenSsl
@@ -222,17 +224,24 @@ include(../qmake-modules/curl.pri)
 # BEGIN breakpad
 win32 {
     CONFIG(debug, debug|release) {
-        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/handler/Debug/lib -lexception_handler
-        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/crash_generation/Debug/lib -lcrash_generation_client
-        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/Debug/lib -lcommon
+        LIBS += -L$$PWD/../../build-windows-x86_32-debug/build-breakpad/src/client/windows/handler/Debug/lib -lexception_handler
+        LIBS += -L$$PWD/../../build-windows-x86_32-debug/build-breakpad/src/client/windows/crash_generation/Debug/lib -lcrash_generation_client
+        LIBS += -L$$PWD/../../build-windows-x86_32-debug/build-breakpad/src/client/windows/Debug/lib -lcommon
     }
     CONFIG(release, debug|release) {
-        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/handler/Release/lib -lexception_handler
-        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/crash_generation/Release/lib -lcrash_generation_client
-        LIBS += -L$$PWD/../../build-breakpad/src/client/windows/Release/lib -lcommon
+        LIBS += -L$$PWD/../../build-windows-x86_32-release/build-breakpad/src/client/windows/handler/Release/lib -lexception_handler
+        LIBS += -L$$PWD/../../build-windows-x86_32-release/build-breakpad/src/client/windows/crash_generation/Release/lib -lcrash_generation_client
+        LIBS += -L$$PWD/../../build-windows-x86_32-release/build-breakpad/src/client/windows/Release/lib -lcommon
     }
 }
-linux(): LIBS += -L$$PWD/../../build-breakpad/src/client/linux -lbreakpad_client
+linux() {
+    CONFIG(debug, debug|release) {
+        LIBS += -L$$PWD/../../build-linux-x86_64-debug/build-breakpad/src/client/linux -lbreakpad_client
+    }
+    CONFIG(release, debug|release) {
+        LIBS += -L$$PWD/../../build-linux-x86_64-release/build-breakpad/src/client/linux -lbreakpad_client
+    }
+}
 # END breakpad
 
 

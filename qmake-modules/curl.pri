@@ -19,4 +19,5 @@ win32:     LIBS += -L$$CURLWRAPPER_ROOT/lib -lcurlcpp -llibcurl -lws2_32 -lcrypt
 else:macx: LIBS += -L$$CURLWRAPPER_ROOT/lib -lcurlcpp -lcurl -framework Security -framework Foundation -lz
 else:      LIBS += -L$$CURLWRAPPER_ROOT/lib -lcurlcpp -lcurl -lz
 
-linux():   LIBS += -L$$SOURCE_ROOT/../build-openssl/lib -lssl -lcrypto
+linuxRelease(): LIBS += -L$$SOURCE_ROOT/../build-linux-x86_64-release/build-openssl/lib -lssl -lcrypto
+linuxDebug():   LIBS += -L$$SOURCE_ROOT/../build-linux-x86_64-debug/build-openssl/lib -lssl -lcrypto

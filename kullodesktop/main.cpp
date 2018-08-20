@@ -1,4 +1,4 @@
-/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
 #include <cstdlib>
 #include <exception>
 #include <signal.h>
@@ -262,5 +262,10 @@ int main(int argc, char *argv[])
 
     Log.i() << "Closing application with status " << execStatus;
     Kullo::Api::Registry::setLogListener(nullptr);
+
+    // Uninstall LibraryLogger handler to avoid crashing when Qt creates log messages
+    // during static destruction, e.g. https://bugreports.qt.io/browse/QTBUG-66910
+    qInstallMessageHandler(0);
+
     return execStatus;
 }

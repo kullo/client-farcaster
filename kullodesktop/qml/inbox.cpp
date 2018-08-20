@@ -1,4 +1,4 @@
-/* Copyright 2013–2017 Kullo GmbH. All rights reserved. */
+/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
 #include "inbox.h"
 
 #include <exception>
@@ -180,6 +180,8 @@ void Inbox::closeSession()
     userSettingsModel_ = nullptr;
 
     taskRunner_->reset();
+
+    Log.i() << "Done closing session.";
 
     emit hasSessionChanged(false);
 }
