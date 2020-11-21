@@ -27,7 +27,7 @@ public:
         DateRole,
     };
 
-    explicit SearchModel(QObject *parent = 0);
+    explicit SearchModel(QObject *parent = nullptr);
     ~SearchModel();
 
     Q_PROPERTY(KulloDesktop::Qml::Inbox* inbox READ inbox WRITE setInbox NOTIFY inboxChanged)

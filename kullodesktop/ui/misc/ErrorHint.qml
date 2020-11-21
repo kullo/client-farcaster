@@ -15,9 +15,9 @@ Hint {
            ? errorHintTextBox.implicitWidth
            : Math.min(errorHintTextBox.implicitWidth, maxWidth)
     height: visible
-            ? 11+errorHintTextBox.implicitHeight
+            ? paddingTop + errorHintTextBox.implicitHeight
             : 0
-    paddingTop: 11
+    paddingTop: 11 * Hdpi.FontScalingFactor
     direction: "topright"
     color: Style.errorBannerBackground
     clip: true
@@ -42,11 +42,11 @@ Hint {
             id: errorHintText
             anchors {
                 left: parent.left
-                leftMargin: 10
+                leftMargin: 10 * Hdpi.FontScalingFactor
                 right: parent.right
-                rightMargin: 10
+                rightMargin: 10 * Hdpi.FontScalingFactor
                 top: parent.top
-                topMargin: 4
+                topMargin: 4 * Hdpi.FontScalingFactor
             }
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             color: Style.errorBannerTextColor

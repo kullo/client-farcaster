@@ -145,10 +145,10 @@ ListView {
 
     footer: ConversationIntro {
         conversationParticipantsAddresses: participantsAddresses
-        paddingTop: 5
-        paddingRight: 5
-        paddingBottom: 10
-        paddingLeft: 5
+        paddingTop: 5 * Hdpi.FontScalingFactor
+        paddingRight: 5 * Hdpi.FontScalingFactor
+        paddingBottom: 10 * Hdpi.FontScalingFactor
+        paddingLeft: 5 * Hdpi.FontScalingFactor
     }
 
     cacheBuffer: 1000 // px

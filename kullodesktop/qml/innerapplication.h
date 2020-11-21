@@ -20,7 +20,7 @@ class InnerApplication : public QObject
     Q_OBJECT
 
 public:
-    explicit InnerApplication(Applications::KulloApplication &mainApplication, QObject *parent = 0);
+    explicit InnerApplication(Applications::KulloApplication &mainApplication, QObject *parent = nullptr);
     ~InnerApplication();
 
     Q_PROPERTY(KulloDesktop::Qml::DeviceSettings *deviceSettings READ deviceSettings NOTIFY deviceSettingsChanged)

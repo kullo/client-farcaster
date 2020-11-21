@@ -19,9 +19,10 @@ Rectangle {
             left: parent.left
             leftMargin: theButtonsRowLeft.spacing
             top: parent.top
-            topMargin: 5 + 2 // the FSubmitButton is 4px smaller than the IconButton, thus add 2
+            // the FSubmitButton is 4px smaller than the IconButton, thus add 2
+            topMargin: 5 * Hdpi.FontScalingFactor + 2 * Hdpi.FontScalingFactor
         }
-        spacing: 5
+        spacing: 5 * Hdpi.FontScalingFactor
 
         FForm {
             onAccepted: inboxScreen.startConversation()
@@ -47,9 +48,9 @@ Rectangle {
             right: parent.right
             rightMargin: theButtonsRowRight.spacing
             top: parent.top
-            topMargin: 5
+            topMargin: 5 * Hdpi.FontScalingFactor
         }
-        spacing: 5
+        spacing: 5 * Hdpi.FontScalingFactor
 
         IconButton {
             source: "/resources/scalable/search_b.svg"
@@ -75,8 +76,8 @@ Rectangle {
             bottom: parent.bottom
             left: parent.left
             right: parent.right
-            leftMargin: 3
-            rightMargin: 3
+            leftMargin: 3 * Hdpi.FontScalingFactor
+            rightMargin: 3 * Hdpi.FontScalingFactor
         }
     }
 }

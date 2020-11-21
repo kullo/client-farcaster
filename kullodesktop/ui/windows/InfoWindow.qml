@@ -19,10 +19,10 @@ NativeModalWindow {
     signal downloadUpdate()
 
     /* private */
-    property int _DEFAULT_WINDOW_WIDTH: 310
-    property int _DEFAULT_WINDOW_HEIGHT: 460
+    property int _DEFAULT_WINDOW_WIDTH: 310 * Hdpi.FontScalingFactor
+    property int _DEFAULT_WINDOW_HEIGHT: 460 * Hdpi.FontScalingFactor
 
-    property int _PADDING: 12
+    property int _PADDING: 12 * Hdpi.FontScalingFactor
 
     width: _DEFAULT_WINDOW_WIDTH
     height: _DEFAULT_WINDOW_HEIGHT
@@ -53,9 +53,9 @@ NativeModalWindow {
         Column {
             anchors {
                 fill: parent
-                topMargin: 10
+                topMargin: 10 * Hdpi.FontScalingFactor
             }
-            spacing: 25
+            spacing: 25 * Hdpi.FontScalingFactor
 
             Column {
                 anchors {
@@ -99,7 +99,7 @@ NativeModalWindow {
                     left: parent.left
                     right: parent.right
                 }
-                spacing: 7
+                spacing: 7 * Hdpi.FontScalingFactor
 
                 NativeText {
                     id: downloadText
@@ -135,7 +135,7 @@ NativeModalWindow {
                     left: parent.left
                     right: parent.right
                 }
-                spacing: 7
+                spacing: 7 * Hdpi.FontScalingFactor
 
                 NativeText {
                     anchors {

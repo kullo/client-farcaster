@@ -11,7 +11,7 @@ class Hdpi : public QObject
     Q_OBJECT
 
 public:
-    explicit Hdpi(QObject *parent = 0);
+    explicit Hdpi(QObject *parent = nullptr);
 
     Q_PROPERTY(qreal FontScalingFactor READ fontScalingFactor NOTIFY somethingChanged)
     qreal fontScalingFactor() const;

@@ -24,21 +24,24 @@ Rectangle {
     /* public */
     property alias text: label.text
     property alias fontFamily: label.font.family
-    property int textPaddingTop: Os.osx ? 5 : -1
+    // a negative value means unset
+    property int textPaddingTop: Os.osx
+                                 ? 5 * Hdpi.FontScalingFactor
+                                 : -1
 
     /* private */
-    property int _TEXT_PADDING_TOP_DEFAULT: 3
+    property int _TEXT_PADDING_TOP_DEFAULT: 3 * Hdpi.FontScalingFactor
 
     color: "#f7f7f7"
-    radius: 3
+    radius: 3 * Hdpi.FontScalingFactor
     border {
         color: "#ccc"
-        width: 1
+        width: 1 * Hdpi.FontScalingFactor
     }
     width: label.contentWidth
            + label.anchors.leftMargin
            + label.anchors.rightMargin
-    height: 20
+    height: 20 * Hdpi.FontScalingFactor
 
     NativeText {
         id: label
@@ -46,8 +49,8 @@ Rectangle {
             left: parent.left
             top: parent.top
             topMargin: textPaddingTop >= 0 ? textPaddingTop : _TEXT_PADDING_TOP_DEFAULT
-            leftMargin: 6
-            rightMargin: 6
+            leftMargin: 6 * Hdpi.FontScalingFactor
+            rightMargin: 6 * Hdpi.FontScalingFactor
         }
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.NoWrap

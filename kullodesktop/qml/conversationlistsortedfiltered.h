@@ -16,8 +16,8 @@ class ConversationListSortedFiltered : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    explicit ConversationListSortedFiltered(QObject *parent = 0);
-    explicit ConversationListSortedFiltered(ConversationListSource *conversations, QObject *parent = 0);
+    explicit ConversationListSortedFiltered(QObject *parent = nullptr);
+    explicit ConversationListSortedFiltered(ConversationListSource *conversations, QObject *parent = nullptr);
     ~ConversationListSortedFiltered();
 
     Q_PROPERTY(bool todoMode READ todoMode WRITE setTodoMode NOTIFY todoModeChanged)

@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
             QStringLiteral("qrc:/main.qml")
         };
 
-        for (const auto url : INITIAL_QML_FILES)
+        for (const auto &url : INITIAL_QML_FILES)
         {
             engine.load(QUrl(url));
         }
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
 
     // Uninstall LibraryLogger handler to avoid crashing when Qt creates log messages
     // during static destruction, e.g. https://bugreports.qt.io/browse/QTBUG-66910
-    qInstallMessageHandler(0);
+    qInstallMessageHandler(nullptr);
 
     return execStatus;
 }

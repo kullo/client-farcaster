@@ -5,7 +5,7 @@ import "../native"
 
 NativeImage {
     source: "/resources/scalable/logo.svg"
-    width: 150
-    height: 45
+    width: 150 * Hdpi.FontScalingFactor
+    height: 45 * Hdpi.FontScalingFactor
     smooth: true
 }

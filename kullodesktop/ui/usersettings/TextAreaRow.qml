@@ -33,6 +33,6 @@ Item {
             bottom: parent.bottom
         }
         y: marginTop
-        height: 100
+        height: 100 * Hdpi.FontScalingFactor
     }
 }

@@ -8,6 +8,15 @@
 
 #include "kullodesktop/applications/kulloapplication.h"
 
+namespace {
+QScreen* firstScreen()
+{
+    const auto screens = KulloDesktop::Applications::KulloApplication::screens();
+    kulloAssert(screens.size() >= 1);
+    return screens[0];
+}
+}
+
 namespace KulloDesktop {
 namespace Qml {
 
@@ -17,16 +26,21 @@ Hdpi::Hdpi(QObject *parent) : QObject(parent)
 
 qreal Hdpi::fontScalingFactor() const
 {
-    const auto screens = Applications::KulloApplication::screens();
-    kulloAssert(screens.size() >= 1);
-    const auto logicalDotsPerInch = screens[0]->logicalDotsPerInch();
-    //Log.d() << "Screen logical dpi: " << logicalDotsPerInch;
-    //Log.d() << "Factor: " << logicalDotsPerInch/96.0;
+    const auto screen = firstScreen();
+    // Unfortunately, the value of logicalDotsPerInch does not change over the
+    // lifetime of the application, so a running application will not be adjusted,
+    // no matter which signals we send.
+    const auto logicalDotsPerInch = screen->logicalDotsPerInch();
+
+    qreal factor;
 #ifdef K_OS_OSX
-    return logicalDotsPerInch / 72.0;
+    factor = logicalDotsPerInch / 72.0;
 #else
-    return logicalDotsPerInch / 96.0;
+    factor = logicalDotsPerInch / 96.0;
 #endif
+    // Log.d() << "Screen logical dpi: " << logicalDotsPerInch;
+    // Log.d() << "Factor: " << factor;
+    return factor;
 }
 
 qreal Hdpi::maxDevicePixelRatio() const

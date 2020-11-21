@@ -33,7 +33,7 @@ FocusScope {
             // one extra pixel to the right to cover rounding errors
             rightMargin: -1
             top: parent.top
-            topMargin: 5
+            topMargin: 5 * Hdpi.FontScalingFactor
         }
 
         height: closeButton.height
@@ -54,7 +54,7 @@ FocusScope {
                 PropertyChanges {
                     target: buttonBox
                     // one extra pixel to the right to cover rounding errors
-                    width: 36 + 1
+                    width: 36 * Hdpi.FontScalingFactor + 1
                 }
             }
         ]
@@ -75,7 +75,7 @@ FocusScope {
                 borderRadiusBottomRight: 0
                 iconPosition: _POSITION_LEFT
                 source: "/resources/scalable/close_b.svg"
-                paddingH: 8
+                paddingH: 8 * Hdpi.FontScalingFactor
             }
             onClicked: inboxScreen.closeAnswer()
         }
@@ -92,10 +92,10 @@ FocusScope {
 
             anchors {
                 fill: parent
-                topMargin: 10
-                rightMargin: 15
-                bottomMargin: 10
-                leftMargin: 15
+                topMargin: 10 * Hdpi.FontScalingFactor
+                rightMargin: 15 * Hdpi.FontScalingFactor
+                bottomMargin: 10 * Hdpi.FontScalingFactor
+                leftMargin: 15 * Hdpi.FontScalingFactor
             }
 
             focus: true

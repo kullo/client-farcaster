@@ -14,7 +14,7 @@ class KulloUpdaterModel : public QObject
     Q_OBJECT
 
 public:
-    explicit KulloUpdaterModel(QObject *parent = 0);
+    explicit KulloUpdaterModel(QObject *parent = nullptr);
     ~KulloUpdaterModel();
 
     Q_PROPERTY(bool canRunInstaller READ canRunInstaller NOTIFY canRunInstallerChanged)

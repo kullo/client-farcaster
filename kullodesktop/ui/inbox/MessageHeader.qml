@@ -21,8 +21,8 @@ Rectangle {
     property string messageDeliveryStatus
 
     /* private */
-    property int _PADDING_VERTICAL: 5
-    property int _PADDING_HORIZONTAL: 5
+    property int _PADDING_VERTICAL: 5 * Hdpi.FontScalingFactor
+    property int _PADDING_HORIZONTAL: 5 * Hdpi.FontScalingFactor
     property string _textRow1: organization.trim() == ""
                                ? name
                                : name + " (" + organization + ")"
@@ -71,8 +71,8 @@ Rectangle {
                 leftMargin: _PADDING_HORIZONTAL
                 verticalCenter: parent.verticalCenter
             }
-            height: 40
-            width: 40
+            height: 40 * Hdpi.FontScalingFactor
+            width: 40 * Hdpi.FontScalingFactor
             asynchronous: true
 
             MouseArea {
@@ -87,9 +87,9 @@ Rectangle {
             id: senderNameBlock
             anchors {
                 left: senderAvatar.right
-                leftMargin: 7
+                leftMargin: 7 * Hdpi.FontScalingFactor
                 right: textDate.left
-                rightMargin: 5
+                rightMargin: 5 * Hdpi.FontScalingFactor
                 verticalCenter: parent.verticalCenter
             }
 
@@ -126,7 +126,7 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: stateBox.left
-                rightMargin: 5
+                rightMargin: 5 * Hdpi.FontScalingFactor
             }
             wrapMode: Text.NoWrap
             enabled: date
@@ -153,13 +153,14 @@ Rectangle {
                 right: parent.right
                 rightMargin: _PADDING_HORIZONTAL
             }
-            height: 20
-            width: 20
+            height: 20 * Hdpi.FontScalingFactor
+            width: 20 * Hdpi.FontScalingFactor
             visible: showMessageState
 
+
             NativeImage {
-                width: 20
-                height: 20
+                width: 20 * Hdpi.FontScalingFactor
+                height: 20 * Hdpi.FontScalingFactor
                 source: !read
                         ? "/resources/scalable/state_unread_b.svg"
                         : (!done ? "/resources/scalable/state_undone_b.svg" : "/resources/scalable/state_done_b.svg")
@@ -188,13 +189,13 @@ Rectangle {
                 right: parent.right
                 rightMargin: _PADDING_HORIZONTAL
             }
-            height: 20
-            width: 20
+            height: 20 * Hdpi.FontScalingFactor
+            width: 20 * Hdpi.FontScalingFactor
             visible: showMessageDeliveryStatus
 
             NativeImage {
-                height: 20
-                width: 20
+                height: 20 * Hdpi.FontScalingFactor
+                width: 20 * Hdpi.FontScalingFactor
                 source: messageDeliveryStatus && messageDeliveryStatus !== "none"
                         ? "/resources/scalable/delivery_%1.svg".arg(messageDeliveryStatus)
                         : ""

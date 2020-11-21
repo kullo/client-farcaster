@@ -10,10 +10,10 @@ import "../js/mime.js" as Mime
 
 Item {
     /* public */
-    property int paddingTop: 3
-    property int paddingBottom: 3
-    property int paddingLeft: 3
-    property int paddingRight: 3
+    property int paddingTop: 3 * Hdpi.FontScalingFactor
+    property int paddingBottom: 3 * Hdpi.FontScalingFactor
+    property int paddingLeft: 3 * Hdpi.FontScalingFactor
+    property int paddingRight: 3 * Hdpi.FontScalingFactor
 
     property bool selected: false
     property bool listHasActiveFocus: false
@@ -46,7 +46,7 @@ Item {
             right: parent.right
             bottom: parent.bottom
         }
-        radius: 3
+        radius: 3 * Hdpi.FontScalingFactor
         color: selected ?
                    listHasActiveFocus ? palette.highlight : palette.alternateBase : "transparent"
 
@@ -62,13 +62,13 @@ Item {
                     leftMargin: paddingLeft
                     rightMargin: paddingRight
                 }
-                spacing: 2
+                spacing: 2 * Hdpi.FontScalingFactor
 
                 NativeImage {
                     id: fileIcon
 
-                    property int _WIDTH: 120
-                    property int _HEIGHT: 48
+                    property int _WIDTH: 120 * Hdpi.FontScalingFactor
+                    property int _HEIGHT: 48 * Hdpi.FontScalingFactor
                     function _isImage(mime)
                     {
                         return mime === "image/bmp"
@@ -125,8 +125,9 @@ Item {
                     text: Format.filesize_human(size)
                     font.pointSize: Style.fontSize.attachmentFilesize
                     horizontalAlignment: Text.AlignHCenter
-                    color: (selected && listHasActiveFocus) ?
-                               palette.midlight : palette.mid
+                    color: (selected && listHasActiveFocus)
+                           ? palette.midlight
+                           : palette.mid
                 }
             }
         }

@@ -9,8 +9,8 @@ import "../native"
 
 NativeModalWindow {
     id: root
-    width: 500
-    height: 410
+    width: 500 * Hdpi.FontScalingFactor
+    height: 410 * Hdpi.FontScalingFactor
     title: qsTr("MasterKey backup notification")
     objectName: "MasterKeyBackupReminderWindow"
 
@@ -64,8 +64,8 @@ NativeModalWindow {
 
         Rectangle {
             id: header
-            property int paddingH: 10
-            property int paddingV: 10
+            property int paddingH: 10 * Hdpi.FontScalingFactor
+            property int paddingV: 10 * Hdpi.FontScalingFactor
 
             color: Qt.darker(root.color, 1.20)
             anchors {
@@ -88,7 +88,7 @@ NativeModalWindow {
                     id: remindTime
                 }
 
-                spacing: 5
+                spacing: 5 * Hdpi.FontScalingFactor
 
                 NativeText {
                     id: remind
@@ -144,17 +144,17 @@ NativeModalWindow {
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                topMargin: 30
-                leftMargin: 10
-                rightMargin: 10
-                bottomMargin: 10
+                topMargin: 30 * Hdpi.FontScalingFactor
+                leftMargin: 10 * Hdpi.FontScalingFactor
+                rightMargin: 10 * Hdpi.FontScalingFactor
+                bottomMargin: 10 * Hdpi.FontScalingFactor
             }
 
             Column {
                 anchors {
                     fill: parent
                 }
-                spacing: 20
+                spacing: 20 * Hdpi.FontScalingFactor
 
                 NativeText {
                     text: qsTr("If your MasterKey is lost,\nyour messages are lost.")
@@ -199,7 +199,7 @@ NativeModalWindow {
                     right: parent.right
                     bottom: parent.bottom
                 }
-                spacing: 10
+                spacing: 10 * Hdpi.FontScalingFactor
 
                 CheckBox {
                     id: checkBox

@@ -13,11 +13,11 @@ import "../js/shortcut.js" as SC
 Item {
     /* public */
     property var messagesList
-    property int paddingTop: 5
-    property int paddingRight: 5
-    property int paddingBottom: 5
-    property int paddingLeft: 5
-    property int borderWidth: 4
+    property int paddingTop: 5 * Hdpi.FontScalingFactor
+    property int paddingRight: 5 * Hdpi.FontScalingFactor
+    property int paddingBottom: 5 * Hdpi.FontScalingFactor
+    property int paddingLeft: 5 * Hdpi.FontScalingFactor
+    property int borderWidth: 4 * Hdpi.FontScalingFactor
     property int conversationId: -1
     property int messageId: -1
     property string highlightColor: "#bbbbbb"
@@ -45,7 +45,7 @@ Item {
     property bool _selected: ListView.isCurrentItem
     property bool _showFooter: false
     property bool _hasFooter: footer.trim() !== ""
-    property real _maxTextWidth: 600*Hdpi.FontScalingFactor
+    property real _maxTextWidth: 600 * Hdpi.FontScalingFactor
 
 
     id: root
@@ -170,9 +170,9 @@ Item {
                     anchors {
                         top: parent.top
                         left: parent.left
-                        topMargin: 20
-                        leftMargin: 15
-                        bottomMargin: 20
+                        topMargin: 20 * Hdpi.FontScalingFactor
+                        leftMargin: 15 * Hdpi.FontScalingFactor
+                        bottomMargin: 20 * Hdpi.FontScalingFactor
                     }
                     width: (body.width-2*anchors.leftMargin) < _maxTextWidth
                            ? (body.width-2*anchors.leftMargin)
@@ -331,7 +331,7 @@ Item {
                         right: parent.right
                         rightMargin: paddingRight
                     }
-                    height: 1
+                    height: 1 * Hdpi.FontScalingFactor
                     color: "#ddd"
                 }
 
@@ -340,9 +340,9 @@ Item {
                     visible: _hasFooter
                     anchors {
                         left: parent.left
-                        leftMargin: 15
+                        leftMargin: 15 * Hdpi.FontScalingFactor
                         top: footerBorderTop.bottom
-                        topMargin: 5
+                        topMargin: 5 * Hdpi.FontScalingFactor
                     }
 
                     width: _showFooter
@@ -352,8 +352,8 @@ Item {
 
                     NativeImage {
                         id: img
-                        width: 14
-                        height: 14
+                        width: 14 * Hdpi.FontScalingFactor
+                        height: 14 * Hdpi.FontScalingFactor
                         anchors {
                             left: parent.left
                             top: parent.top
@@ -370,7 +370,7 @@ Item {
                         wrapMode: Text.NoWrap
                         anchors {
                             left: img.right
-                            leftMargin: 6
+                            leftMargin: 6 * Hdpi.FontScalingFactor
                             top: parent.top
                         }
                         text: qsTr("Footer")
@@ -399,7 +399,7 @@ Item {
                         top: footerBorderTop.bottom
                         topMargin: deleteBottom.anchors.topMargin
                         left: parent.left
-                        leftMargin: 35
+                        leftMargin: 35 * Hdpi.FontScalingFactor
                         right: deleteBottom.left
                     }
 
@@ -418,9 +418,9 @@ Item {
                     id: deleteBottom
                     anchors {
                         right: parent.right
-                        rightMargin: 5
+                        rightMargin: 5 * Hdpi.FontScalingFactor
                         top: footerBorderTop.bottom
-                        topMargin: 5
+                        topMargin: 5 * Hdpi.FontScalingFactor
                     }
                     tooltip: qsTr("Delete message")
                     source: "/resources/scalable/delete_b.svg"

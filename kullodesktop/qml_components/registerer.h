@@ -34,7 +34,7 @@ class Registerer : public QObject
     Q_OBJECT
 
 public:
-    explicit Registerer(QObject *parent = 0);
+    explicit Registerer(QObject *parent = nullptr);
     ~Registerer();
 
     Q_PROPERTY(KulloDesktop::Qml::InnerApplication* application READ application WRITE setApplication NOTIFY applicationChanged)

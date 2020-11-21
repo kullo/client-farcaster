@@ -60,11 +60,11 @@ BackgroundCover {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
         }
-        width: 650
+        width: 650 * Hdpi.FontScalingFactor
         height: content.anchors.topMargin
                 + content.implicitHeight
                 + content.anchors.bottomMargin
-        radius: 10
+        radius: 10 * Hdpi.FontScalingFactor
 
         MouseArea {
             anchors.fill: parent
@@ -76,8 +76,8 @@ BackgroundCover {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 7
-                rightMargin: 10
+                topMargin: 7 * Hdpi.FontScalingFactor
+                rightMargin: 10 * Hdpi.FontScalingFactor
             }
             tooltip: qsTr("Close (Esc)")
             source: "/resources/scalable/close2_b.svg"
@@ -88,10 +88,7 @@ BackgroundCover {
             id: content
             anchors {
                 fill: parent
-                topMargin: 15
-                leftMargin: 15
-                rightMargin: 15
-                bottomMargin: 15
+                margins: 15 * Hdpi.FontScalingFactor
             }
 
             implicitHeight: headline.height
@@ -122,7 +119,7 @@ BackgroundCover {
                 id: subheadline
                 anchors {
                     top: headline.bottom
-                    topMargin: 3
+                    topMargin: 3 * Hdpi.FontScalingFactor
                     left: parent.left
                     right: parent.right
                 }
@@ -146,19 +143,19 @@ BackgroundCover {
                     left: parent.left
                     right: parent.right
                     top: subheadline.bottom
-                    topMargin: 20
+                    topMargin: 20 * Hdpi.FontScalingFactor
                 }
                 height: Math.max(leftColumn.implicitHeight,
                                  rightColumn.implicitHeight)
 
                 Column {
                     id: leftColumn
-                    spacing: 7
-                    width: 200
+                    spacing: 7 * Hdpi.FontScalingFactor
                     anchors {
                         top: parent.top
                         left: parent.left
                     }
+                    width: inputAvatar.width
 
                     AvatarChooser {
                         id: inputAvatar
@@ -169,16 +166,16 @@ BackgroundCover {
 
                 Column {
                     id: rightColumn
-                    spacing: 7
+                    spacing: 7 * Hdpi.FontScalingFactor
                     anchors {
                         top: parent.top
                         left: leftColumn.right
-                        leftMargin: 20
+                        leftMargin: 20 * Hdpi.FontScalingFactor
                         right: parent.right
                     }
 
                     Column {
-                        spacing: 1
+                        spacing: 1 * Hdpi.FontScalingFactor
                         id: nameGroup
 
                         anchors {
@@ -232,12 +229,13 @@ BackgroundCover {
 
                 anchors {
                     top: meBlock.bottom
-                    topMargin: 20
+                    topMargin: 20 * Hdpi.FontScalingFactor
                     left: parent.left
                     right: parent.right
                 }
 
-                spacing: 10
+                spacing: 10 * Hdpi.FontScalingFactor
+                property real buttonHeight: 40 * Hdpi.FontScalingFactor
 
                 AccountInfo {
                     id: accountInfo
@@ -245,7 +243,7 @@ BackgroundCover {
                 }
 
                 Button {
-                    height: 40
+                    height: footerRow.buttonHeight
                     text: qsTr("Show MasterKey")
                     style: KulloButtonStyle {}
 
@@ -263,14 +261,14 @@ BackgroundCover {
                 }
 
                 Button {
-                    height: 40
+                    height: footerRow.buttonHeight
                     text: qsTr("Account settings")
                     style: KulloButtonStyle {}
                     onClicked: accountInfo.openSettingsLocationUrl()
                 }
 
                 Button {
-                    height: 40
+                    height: footerRow.buttonHeight
                     text: qsTr("Plan: %1 (%2/%3 GB)")
                     .arg(accountInfo.planName)
                     .arg((accountInfo.storageUsed/(1024*1024*1024)).toLocaleString(Qt.locale(), 'f', 2))

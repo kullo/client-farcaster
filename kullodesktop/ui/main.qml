@@ -29,6 +29,11 @@ ApplicationWindow {
         console.info("Max. device pixel ratio across all screens: " + _maxDevicePixelRatio)
     }
 
+    property real _fontScalingFactor: Hdpi.FontScalingFactor
+    on_FontScalingFactorChanged:  {
+        console.info("Font scaling factor: " + _fontScalingFactor)
+    }
+
     UpdateDialog {
         id: updateDialog
         textUpdateAvailable: qsTr("A new version of Kullo is available. Download now?")
@@ -136,10 +141,10 @@ ApplicationWindow {
                 }
                 PropertyChanges {
                     target: appWindow
-                    width: 1000
-                    height: 600
-                    minimumWidth: 800
-                    minimumHeight: 400
+                    width: 1000 * Hdpi.FontScalingFactor
+                    height: 600 * Hdpi.FontScalingFactor
+                    minimumWidth: 800 * Hdpi.FontScalingFactor
+                    minimumHeight: 400 * Hdpi.FontScalingFactor
                 }
             },
             State {
@@ -154,8 +159,8 @@ ApplicationWindow {
                 }
                 PropertyChanges {
                     target: appWindow
-                    width: 300
-                    height: 500
+                    width: 300 * Hdpi.FontScalingFactor
+                    height: 500 * Hdpi.FontScalingFactor
                     minimumWidth: 0
                     minimumHeight: 0
                 }
@@ -175,10 +180,10 @@ ApplicationWindow {
                     // right column width: 250-300
                     // height: 400-500
                     target: appWindow
-                    width: 300 + (InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0)
-                    height: 500
-                    minimumWidth: 250 + (InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0)
-                    minimumHeight: 400
+                    width: (300 + (InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0)) * Hdpi.FontScalingFactor
+                    height: 500 * Hdpi.FontScalingFactor
+                    minimumWidth: (250 + (InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0)) * Hdpi.FontScalingFactor
+                    minimumHeight: 400 * Hdpi.FontScalingFactor
                 }
             },
             State {
@@ -193,8 +198,8 @@ ApplicationWindow {
                 }
                 PropertyChanges {
                     target: appWindow
-                    width: 300
-                    height: 500
+                    width: 300 * Hdpi.FontScalingFactor
+                    height: 500 * Hdpi.FontScalingFactor
                     minimumWidth: 0
                     minimumHeight: 0
                 }

@@ -13,7 +13,7 @@ class Os : public QObject
     Q_OBJECT
 
 public:
-    explicit Os(QObject *parent = 0) : QObject(parent) {}
+    explicit Os(QObject *parent = nullptr) : QObject(parent) {}
 
     Q_PROPERTY(QString familyPretty READ familyPretty NOTIFY familyPrettyChanged)
     static QString familyPretty() { return DesktopUtil::OsDetection::familyPretty(); }

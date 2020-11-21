@@ -93,7 +93,7 @@ Item {
             left: label.right
             right: parent.right
             top: combobox.bottom
-            topMargin: 4
+            topMargin: 4 * Hdpi.FontScalingFactor
         }
         text: _root.description
         visible: text !== ""

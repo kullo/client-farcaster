@@ -11,7 +11,7 @@ class LibraryLoggerQmlConnector : public QObject
     Q_OBJECT
 
 public:
-    explicit LibraryLoggerQmlConnector(QObject *parent = 0);
+    explicit LibraryLoggerQmlConnector(QObject *parent = nullptr);
     Q_INVOKABLE void e(const QString &msg, const QString &stacktrace = "");
     Q_INVOKABLE void w(const QString &msg, const QString &stacktrace = "");
     Q_INVOKABLE void i(const QString &msg, const QString &stacktrace = "");

@@ -17,7 +17,7 @@ BaseDialog {
     property bool errorHintVisible: false
     property alias errorHintText: errorHintTextBox.text
 
-    width: 400
+    width: 400 * Hdpi.FontScalingFactor
     height: mainItem.implicitHeight
             + 2*verticalPadding
     title: text
@@ -75,7 +75,7 @@ BaseDialog {
                 id: contentInput
                 anchors {
                     top: parent.top
-                    topMargin: 5
+                    topMargin: 5 * Hdpi.FontScalingFactor
                     left: parent.left
                     right: parent.right
                 }
@@ -90,13 +90,13 @@ BaseDialog {
                 id: errorHint
                 anchors {
                     left: parent.left
-                    leftMargin: 150
+                    leftMargin: 150 * Hdpi.FontScalingFactor
                     right: parent.right
-                    rightMargin: 20
+                    rightMargin: 20 * Hdpi.FontScalingFactor
                     bottom: parent.bottom
                 }
-                height: errorHintVisible ? 30 : 0
-                paddingTop: 10
+                height: errorHintVisible ? 30 * Hdpi.FontScalingFactor : 0
+                paddingTop: 10 * Hdpi.FontScalingFactor
                 color: Style.red
                 clip: true
 
@@ -104,9 +104,9 @@ BaseDialog {
                     id: errorHintTextBox
                     anchors {
                         bottom: parent.bottom
-                        bottomMargin: 2
+                        bottomMargin: 2 * Hdpi.FontScalingFactor
                         left: parent.left
-                        leftMargin: 10
+                        leftMargin: 10 * Hdpi.FontScalingFactor
                     }
                     color: "white"
                 }

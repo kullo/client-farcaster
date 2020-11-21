@@ -8,13 +8,13 @@ import "../native"
 NativeModalWindow {
     id: root
 
-    property int contentFooterSpacing: 12
-    property int buttonsSpacing: 5
-    property int verticalPadding: 12
-    property int horizontalPadding: 15
+    property int contentFooterSpacing: 12 * Hdpi.FontScalingFactor
+    property int buttonsSpacing: 5 * Hdpi.FontScalingFactor
+    property int verticalPadding: 12 * Hdpi.FontScalingFactor
+    property int horizontalPadding: 15 * Hdpi.FontScalingFactor
 
-    width: 300
-    height: 80
+    width: 300 * Hdpi.FontScalingFactor
+    height: 80 * Hdpi.FontScalingFactor
     Component.onCompleted: {
         if (title.trim() === "") console.warn("Dialog created with no title set.")
     }

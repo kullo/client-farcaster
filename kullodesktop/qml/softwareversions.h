@@ -12,7 +12,7 @@ class SoftwareVersions : public QObject
     Q_OBJECT
 
 public:
-    explicit SoftwareVersions(QObject *parent = 0);
+    explicit SoftwareVersions(QObject *parent = nullptr);
 
     Q_PROPERTY(QStringList list READ list NOTIFY listChanged)
     static QStringList list();

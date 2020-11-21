@@ -28,13 +28,13 @@ ScrollView {
 
         section.property: "sectionId_"
         section.delegate: Item {
-            height: 50
+            height: 50 * Hdpi.FontScalingFactor
             width: accountsListView.width
 
             NativeText {
                 anchors {
                     left: parent.left
-                    leftMargin: 10
+                    leftMargin: 10 * Hdpi.FontScalingFactor
                     right: parent.right
                     verticalCenter: parent.verticalCenter
                 }
@@ -90,14 +90,14 @@ ScrollView {
 
         delegate: AccountDelegate {
             id: delegate
-            height: 40
+            height: 40 * Hdpi.FontScalingFactor
             width: accountsListView.width
             address: address_
 
             YesNoDialog {
                 id: logoutConfirmationDialog
                 objectName: "logoutConfirmation"
-                width: 400
+                width: 400 * Hdpi.FontScalingFactor
                 title: qsTr("Log out and delete data")
                 text: qsTr("Make sure you have a backup of your MasterKey before logging out. " +
                            "Otherwise, you will lose access to your account!") +

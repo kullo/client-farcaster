@@ -7,7 +7,7 @@ import "../js/format.js" as Format
 
 Rectangle {
     /* public */
-    width: 400
+    width: 400 * Hdpi.FontScalingFactor
     property int messageId: -1
     property int conversationId: -1
     property string senderDisplayName: ""
@@ -19,11 +19,11 @@ Rectangle {
 
     /* private */
     id: root
-    property int _VERTICAL_PADDING: 12
-    property int _HORIZONTAL_PADDING: 8
+    property int _VERTICAL_PADDING: 12 * Hdpi.FontScalingFactor
+    property int _HORIZONTAL_PADDING: 8 * Hdpi.FontScalingFactor
     implicitHeight: _VERTICAL_PADDING
                     + header.implicitHeight
-                    + 5
+                    + 5 * Hdpi.FontScalingFactor
                     + Math.max(snippet.implicitHeight, meta.implicitHeight)
                     + _VERTICAL_PADDING
 
@@ -41,8 +41,8 @@ Rectangle {
             top: parent.top
             topMargin: _VERTICAL_PADDING
         }
-        height: 40
-        width: 40
+        height: 40 * Hdpi.FontScalingFactor
+        width: 40 * Hdpi.FontScalingFactor
         asynchronous: true
         source: "image://messagesenderavatars/" + Utils.urlencode(Inbox.userSettings.address)
                 + "/" + conversationId + "/" + messageId
@@ -50,15 +50,15 @@ Rectangle {
 
     Item {
         id: header
-        width: 400 - (2*_HORIZONTAL_PADDING + 40 + 5)
+        width: 400 * Hdpi.FontScalingFactor - (2*_HORIZONTAL_PADDING + 45 * Hdpi.FontScalingFactor)
         anchors {
             top: parent.top
             topMargin: _VERTICAL_PADDING
             left: parent.left
-            leftMargin: _HORIZONTAL_PADDING + 40 + 5
+            leftMargin: _HORIZONTAL_PADDING + 45 * Hdpi.FontScalingFactor
         }
         implicitHeight: sender.implicitHeight
-            + 3
+            + 3 * Hdpi.FontScalingFactor
         property color headerTextColor: Style.gray
 
         NativeText {
@@ -67,7 +67,7 @@ Rectangle {
                 top: parent.top
                 left: parent.left
             }
-            width: 280
+            width: 280 * Hdpi.FontScalingFactor
             wrapMode: Text.NoWrap
             text: senderDisplayName
             elide: Text.ElideRight
@@ -80,7 +80,7 @@ Rectangle {
                 top: parent.top
                 right: parent.right
             }
-            width: 100
+            width: 100 * Hdpi.FontScalingFactor
             wrapMode: Text.NoWrap
             horizontalAlignment: Text.AlignRight
             text: root.date ? Format.humanDatetime(root.date, Locale.ShortFormat, Locale.ShortFormat) : ""
@@ -89,7 +89,7 @@ Rectangle {
 
         Rectangle {
             color: Utils.setAlpha(header.headerTextColor, 0.5)
-            height: 1
+            height: 1 * Hdpi.FontScalingFactor
             anchors {
                 bottom: parent.bottom
                 left: parent.left
@@ -102,11 +102,13 @@ Rectangle {
         id: snippet
         anchors {
             top: header.bottom
-            topMargin: 5
+            topMargin: 5 * Hdpi.FontScalingFactor
             left: parent.left
-            leftMargin: _HORIZONTAL_PADDING + 40 + 5
+            leftMargin: _HORIZONTAL_PADDING + 45 * Hdpi.FontScalingFactor
         }
-        width: 400- (_HORIZONTAL_PADDING + 40 + 5) - (meta.width + _HORIZONTAL_PADDING)
+        width: 400 * Hdpi.FontScalingFactor
+               - (_HORIZONTAL_PADDING + 45 * Hdpi.FontScalingFactor)
+               - (meta.width + _HORIZONTAL_PADDING)
         textFormat: Text.StyledText
         text: root.snippet
     }
@@ -115,17 +117,17 @@ Rectangle {
         id: meta
         anchors {
             top: header.bottom
-            topMargin: 5
+            topMargin: 5 * Hdpi.FontScalingFactor
             right: parent.right
             rightMargin: _HORIZONTAL_PADDING
         }
-        width: 30
+        width: 30 * Hdpi.FontScalingFactor
 
         NativeImage {
             source: "/resources/scalable/attach_b.svg"
-            width: 20
-            height: 20
-            x: 10
+            width: 20 * Hdpi.FontScalingFactor
+            height: 20 * Hdpi.FontScalingFactor
+            x: 10 * Hdpi.FontScalingFactor
             visible: root.hasAttachments
         }
     }

@@ -20,10 +20,10 @@ Rectangle {
     /* private */
     id: root
     property bool _showBanner: false
-    property int _paddingV: 8
+    property int _paddingV: 8 * Hdpi.FontScalingFactor
 
     anchors.horizontalCenter: parent.horizontalCenter
-    width: 250
+    width: 250 * Hdpi.FontScalingFactor
     height: syncingText.implicitHeight
             + radius
             + 2*_paddingV
@@ -43,13 +43,13 @@ Rectangle {
             topMargin: radius + _paddingV
             horizontalCenter: parent.horizontalCenter
         }
-        spacing: 8
+        spacing: 8 * Hdpi.FontScalingFactor
 
         CircularProgressBar {
             id: progressBar
             visible: _showBanner
-            height: 16
-            width: 16
+            height: 16 * Hdpi.FontScalingFactor
+            width: 16 * Hdpi.FontScalingFactor
             value: 0.75
             indeterminate: true
             color: syncingText.color

@@ -2,7 +2,7 @@
 import QtQuick 2.4
 
 Row {
-    spacing: 10
+    spacing: 10 * Hdpi.FontScalingFactor
     anchors {
         left: parent.left
         right: parent.right

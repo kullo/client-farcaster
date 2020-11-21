@@ -14,8 +14,8 @@ NativeModalWindow {
 
     /* private */
     id: root
-    property int _DEFAULT_WINDOW_WIDTH: 400
-    property int _DEFAULT_WINDOW_HEIGHT: 500
+    property int _DEFAULT_WINDOW_WIDTH: 400 * Hdpi.FontScalingFactor
+    property int _DEFAULT_WINDOW_HEIGHT: 500 * Hdpi.FontScalingFactor
 
     width: _DEFAULT_WINDOW_WIDTH
     height: _DEFAULT_WINDOW_HEIGHT
@@ -53,7 +53,7 @@ NativeModalWindow {
         id: mainItem
         anchors {
             fill: parent
-            margins: 10
+            margins: 10 * Hdpi.FontScalingFactor
         }
 
         Keys.onEscapePressed: root.closeWindow()
@@ -66,7 +66,7 @@ NativeModalWindow {
                 top: parent.top
                 right: parent.right
             }
-            spacing: 10
+            spacing: 10 * Hdpi.FontScalingFactor
 
             ComboBoxRow {
                 id: fontSizeUserFactorRow
@@ -135,7 +135,7 @@ NativeModalWindow {
                 right: parent.right
                 bottom: parent.bottom
             }
-            spacing: 10
+            spacing: 10 * Hdpi.FontScalingFactor
 
             NativeButton {
                 id: buttonDiscard

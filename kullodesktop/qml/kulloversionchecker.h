@@ -20,7 +20,7 @@ class KulloVersionChecker : public QObject
     Q_OBJECT
 
 public:
-    explicit KulloVersionChecker(InnerApplication &app, QObject *parent = 0);
+    explicit KulloVersionChecker(InnerApplication &app, QObject *parent = nullptr);
 
     Q_PROPERTY(bool updateAvailable READ updateAvailable NOTIFY updateAvailableChanged)
     bool updateAvailable() const;

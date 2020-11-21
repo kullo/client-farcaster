@@ -15,8 +15,8 @@ class ConversationListSorted : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    explicit ConversationListSorted(QObject *parent = 0);
-    explicit ConversationListSorted(ConversationListSource *conversations, QObject *parent = 0);
+    explicit ConversationListSorted(QObject *parent = nullptr);
+    explicit ConversationListSorted(ConversationListSource *conversations, QObject *parent = nullptr);
     ~ConversationListSorted();
 
     Q_INVOKABLE KulloDesktop::Qml::ConversationModel *get(Kullo::id_type conversationId) const;

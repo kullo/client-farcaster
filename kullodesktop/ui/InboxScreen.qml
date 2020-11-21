@@ -176,10 +176,10 @@ FocusScope {
         z: 4
         onLoaded: {
             item.contentWidth = Qt.binding(function() {
-                return Math.min(0.92*inboxScreen.width, 1100)
+                return Math.min(0.92*inboxScreen.width, 1100 * Hdpi.FontScalingFactor)
             })
             item.contentHeight = Qt.binding(function() {
-                return inboxScreen.height - 40
+                return inboxScreen.height - 40 * Hdpi.FontScalingFactor
             })
         }
     }
@@ -555,7 +555,7 @@ FocusScope {
                 width: parent.width-2*parent.padding
                 style: KulloButtonStyle {
                     iconPosition: _POSITION_LEFT
-                    paddingH: 10
+                    paddingH: 10 * Hdpi.FontScalingFactor
                     source: "/resources/scalable/profile_w.svg"
                     backgroundColor: "transparent"
                     hoverColor: "#33ffffff"
@@ -575,7 +575,7 @@ FocusScope {
                 width: parent.width-2*parent.padding
                 style: KulloButtonStyle {
                     iconPosition: _POSITION_LEFT
-                    paddingH: 10
+                    paddingH: 10 * Hdpi.FontScalingFactor
                     source: "/resources/scalable/settings2_w.svg"
                     backgroundColor: "transparent"
                     hoverColor: "#33ffffff"
@@ -594,7 +594,7 @@ FocusScope {
                 width: parent.width-2*parent.padding
                 style: KulloButtonStyle {
                     iconPosition: _POSITION_LEFT
-                    paddingH: 10
+                    paddingH: 10 * Hdpi.FontScalingFactor
                     source: "/resources/scalable/info_w.svg"
                     backgroundColor: "transparent"
                     hoverColor: "#33ffffff"
@@ -615,7 +615,7 @@ FocusScope {
                 width: parent.width-2*parent.padding
                 style: KulloButtonStyle {
                     iconPosition: _POSITION_LEFT
-                    paddingH: 10
+                    paddingH: 10 * Hdpi.FontScalingFactor
                     source: "/resources/scalable/logout2_w.svg"
                     backgroundColor: "transparent"
                     hoverColor: "#33ffffff"
@@ -631,7 +631,7 @@ FocusScope {
                 left: parent.left
                 top: parent.top
             }
-            width: 230
+            width: 230 * Hdpi.FontScalingFactor
 
             focus: true
             onActiveFocusChanged: {
@@ -660,7 +660,7 @@ FocusScope {
                 // paddings, margins and borders and the SYSTEM DEPENDENT 13 px scroll
                 // bar on Ubuntu. As soon as we get below that, we'll crash.
                 // Go for 210+something to deal with different scroll bar widths.
-                readonly property real minimumWidth: 220
+                readonly property real minimumWidth: 220 * Hdpi.FontScalingFactor
 
                 Layout.fillWidth: true
                 Layout.minimumWidth: minimumWidth // Avoids deep recursion crash from geometry updates
@@ -675,7 +675,7 @@ FocusScope {
                 id: rightColumn
                 property bool minimumWidthSet: false
 
-                Layout.minimumWidth: minimumWidthSet ? 150 : 0
+                Layout.minimumWidth: minimumWidthSet ? 150 * Hdpi.FontScalingFactor : 0
                 visible: inboxScreen.state == "reply" || width > 0
 
                 function updateWidthFromConstrains() {

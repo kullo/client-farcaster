@@ -26,7 +26,7 @@ class AttachmentsAdder : public QObject
     Q_OBJECT
 
 public:
-    explicit AttachmentsAdder(QObject *parent = 0);
+    explicit AttachmentsAdder(QObject *parent = nullptr);
     ~AttachmentsAdder() override;
 
     Q_PROPERTY(KulloDesktop::Qml::DraftModel* target READ target WRITE setTarget NOTIFY targetChanged)

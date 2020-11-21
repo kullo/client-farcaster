@@ -19,7 +19,7 @@ class RegistrationRegisterAccountListener
     Q_OBJECT
 
 public:
-    explicit RegistrationRegisterAccountListener(QObject *parent = 0)
+    explicit RegistrationRegisterAccountListener(QObject *parent = nullptr)
         : QObject(parent)
     {
         K_REGISTER_QT_META_TYPE(SignalSlotValue<Kullo::Api::Address>);

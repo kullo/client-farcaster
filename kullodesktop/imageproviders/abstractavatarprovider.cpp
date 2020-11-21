@@ -105,14 +105,17 @@ QPixmap AbstractAvatarProvider::getTextAvatar(const QString &text, const QSize &
 
 QPixmap AbstractAvatarProvider::makeTextAvatar(const QString &text, const QSize &renderSize)
 {
-    QPixmap pixmap(renderSize);
+    auto fontSize = static_cast<int>(std::lround(0.4 * renderSize.width()));
+    auto font = QFont("Arial");
+    font.setBold(true);
+    font.setPixelSize(fontSize);
 
+    QPixmap pixmap(renderSize);
     pixmap.fill(FALLBACK_AVATAR_BACKGROUND_COLOR);
     QPainter textPainter(&pixmap);
     QRect rect(0, 0, renderSize.width(), renderSize.height());
-    int fontSize = std::lround(15.0 * renderSize.width() / 50.0);
     textPainter.setOpacity(FALLBACK_AVATAR_FOREGROUND_OPACITY);
-    textPainter.setFont(QFont("Arial", fontSize, QFont::Bold));
+    textPainter.setFont(font);
     textPainter.setPen(QPen(FALLBACK_AVATAR_FOREGROUND_COLOR));
     textPainter.drawText(rect, Qt::AlignCenter, text);
 

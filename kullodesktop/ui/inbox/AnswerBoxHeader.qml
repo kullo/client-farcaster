@@ -59,13 +59,13 @@ Rectangle {
 
         columns: _participantsCount === 1 ? 1
                                           : _participantsCount === 2 ? 2
-                                                                     : width > 550 ? 3
-                                                                                   : 2
+                                                                     : width > 550 * Hdpi.FontScalingFactor ? 3
+                                                                                                            : 2
 
-        property int _cellHeight: 10 // max. of cells' implicit height
+        property int _cellHeight: 10 * Hdpi.FontScalingFactor // max. of cells' implicit height
 
-        columnSpacing: 10
-        rowSpacing: 10
+        columnSpacing: 10 * Hdpi.FontScalingFactor
+        rowSpacing: 10 * Hdpi.FontScalingFactor
 
         Repeater {
             model: ListModel {
@@ -102,8 +102,8 @@ Rectangle {
                             left: parent.left
                             verticalCenter: parent.verticalCenter
                         }
-                        width: 40
-                        height: 40
+                        width: 40 * Hdpi.FontScalingFactor
+                        height: 40 * Hdpi.FontScalingFactor
                         asynchronous: true
                         source: "image://participantavatars/" + Utils.urlencode(address)
                     }
@@ -113,7 +113,7 @@ Rectangle {
                         id: textbox
                         anchors {
                             left: participantAvatar.right
-                            leftMargin: 8
+                            leftMargin: 8 * Hdpi.FontScalingFactor
                             right: parent.right
                             verticalCenter: parent.verticalCenter
                         }

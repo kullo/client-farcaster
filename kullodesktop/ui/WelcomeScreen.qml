@@ -19,7 +19,9 @@ FocusScope {
             top: parent.top
             bottom: parent.bottom
         }
-        width: InnerApplication.deviceSettings.usersList().length > 0 ? 250 : 0
+        width: InnerApplication.deviceSettings.usersList().length > 0
+               ? 250 * Hdpi.FontScalingFactor
+               : 0
         color: Style.welcomeAccountsBackground
 
         AccountsList {
@@ -43,8 +45,8 @@ FocusScope {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 10
-                rightMargin: 10
+                topMargin: 10 * Hdpi.FontScalingFactor
+                rightMargin: 10 * Hdpi.FontScalingFactor
             }
         }
 
@@ -52,14 +54,14 @@ FocusScope {
             id: column1
             anchors {
                 top: logo.bottom
-                topMargin: 60
+                topMargin: 60 * Hdpi.FontScalingFactor
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                leftMargin: 20
-                rightMargin: 20
+                leftMargin: 20 * Hdpi.FontScalingFactor
+                rightMargin: 20 * Hdpi.FontScalingFactor
             }
-            spacing: 40
+            spacing: 40 * Hdpi.FontScalingFactor
 
             Column {
                 id: blockLogin
@@ -67,7 +69,7 @@ FocusScope {
                     left: parent.left
                     right: parent.right
                 }
-                spacing: 10
+                spacing: 10 * Hdpi.FontScalingFactor
 
                 NativeText {
                     anchors {
@@ -107,7 +109,7 @@ FocusScope {
                     left: parent.left
                     right: parent.right
                 }
-                spacing: 10
+                spacing: 10 * Hdpi.FontScalingFactor
 
                 NativeText {
                     anchors {

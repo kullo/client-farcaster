@@ -12,11 +12,11 @@ TextField {
 
     // height 32, radius 4 like KulloButtonStyle
 
-    implicitWidth: 200
-    height: 32
+    implicitWidth: 200 * Hdpi.FontScalingFactor
+    height: 32 * Hdpi.FontScalingFactor
     style: TextFieldStyle {
         background: Rectangle {
-            radius: 4
+            radius: 4 * Hdpi.FontScalingFactor
             color: "#55ffffff"
         }
         renderType: Text.NativeRendering

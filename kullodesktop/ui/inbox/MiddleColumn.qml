@@ -43,8 +43,8 @@ FocusScope {
 
         Item {
             id: conversationHeader
-            property int _PADDING_VERTICAL: 5
-            property int _PADDING_HORIZONTAL: 15
+            property int _PADDING_VERTICAL: 5 * Hdpi.FontScalingFactor
+            property int _PADDING_HORIZONTAL: 15 * Hdpi.FontScalingFactor
 
             anchors {
                 left: parent.left
@@ -61,9 +61,9 @@ FocusScope {
                     top: parent.top
                     topMargin: conversationHeader._PADDING_VERTICAL
                     leftMargin: conversationHeader._PADDING_HORIZONTAL
-                    rightMargin: 15
+                    rightMargin: 15 * Hdpi.FontScalingFactor
                 }
-                spacing: 10
+                spacing: 10 * Hdpi.FontScalingFactor
 
                 SearchInput {
                     id: search
@@ -116,7 +116,7 @@ FocusScope {
         ScrollView {
             anchors {
                 left: parent.left
-                leftMargin: 10
+                leftMargin: 10 * Hdpi.FontScalingFactor
                 right: parent.right
                 top: conversationHeader.bottom
                 bottom: parent.bottom

@@ -18,7 +18,7 @@ NativeWindow {
     id: root
 
     title: "MasterKey"
-    width: 400
+    width: 400 * Hdpi.FontScalingFactor
     height: mainItem.anchors.topMargin +
             windowContent.implicitHeight +
             mainItem.anchors.bottomMargin
@@ -29,7 +29,7 @@ NativeWindow {
         id: mainItem
         anchors {
             fill: parent
-            margins: 10
+            margins: 10 * Hdpi.FontScalingFactor
         }
 
         Keys.onEscapePressed: root.closeWindow()
@@ -49,7 +49,7 @@ NativeWindow {
             anchors {
                 fill: parent
             }
-            property int spacing: 10
+            property int spacing: 10 * Hdpi.FontScalingFactor
             implicitHeight: infoTextRow.implicitHeight
                             + keyInput.implicitHeight
                             + printButton.implicitHeight

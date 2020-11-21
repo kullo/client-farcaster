@@ -2,6 +2,6 @@
 import QtQuick 2.4
 
 Row {
-    spacing: 2
-    width: 90
+    spacing: 2 * Hdpi.FontScalingFactor
+    width: 90 * Hdpi.FontScalingFactor
 }

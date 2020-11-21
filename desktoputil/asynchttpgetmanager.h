@@ -30,7 +30,7 @@ public:
     using Response = boost::optional<Kullo::Http::Response>;
     using ResponseError = Kullo::Http::ResponseError;
 
-    explicit AsyncHttpGetManager(QObject *parent = 0);
+    explicit AsyncHttpGetManager(QObject *parent = nullptr);
     ~AsyncHttpGetManager();
 
     void get(const QUrl &url, std::shared_ptr<QIODevice> target);

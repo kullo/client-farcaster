@@ -4,7 +4,7 @@ import QtQuick 2.4
 Item {
     /* public */
     property alias color: content.color
-    property real size: 10
+    property real size: 10 * Hdpi.FontScalingFactor
 
     /* private */
     id: root

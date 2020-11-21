@@ -12,14 +12,14 @@ Rectangle {
     signal avatarChanged()
 
     /* private */
-    property int _borderWidth: 1
+    property int _borderWidth: 1 * Hdpi.FontScalingFactor
     id: root
     color: Style.black
 
-    implicitHeight: 202
-    implicitWidth: 202
-    width: 202
-    height: 202
+    implicitHeight: 200 * Hdpi.FontScalingFactor + 2 * _borderWidth
+    implicitWidth: 200 * Hdpi.FontScalingFactor + 2 * _borderWidth
+    width: 200 * Hdpi.FontScalingFactor + 2 * _borderWidth
+    height: 200 * Hdpi.FontScalingFactor + 2 * _borderWidth
 
     function refreshAvatar() {
         avatar.source = (address !== "")
@@ -94,8 +94,8 @@ Rectangle {
                     anchors {
                         top: parent.top
                         right: parent.right
-                        topMargin: 4
-                        rightMargin: 4
+                        topMargin: 4 * Hdpi.FontScalingFactor
+                        rightMargin: 4 * Hdpi.FontScalingFactor
                     }
                     visible: false
 

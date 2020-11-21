@@ -11,7 +11,7 @@ NativeText {
     anchors {
         left: parent.left
     }
-    width: 100
+    width: 100 * Hdpi.FontScalingFactor
 
     verticalAlignment: Text.AlignVCenter
 }

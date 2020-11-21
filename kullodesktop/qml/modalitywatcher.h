@@ -12,7 +12,7 @@ class ModalityWatcher : public QObject
     Q_OBJECT
 
 public:
-    explicit ModalityWatcher(QObject *parent = 0);
+    explicit ModalityWatcher(QObject *parent = nullptr);
 
     Q_INVOKABLE bool aboutToOpen(QString objectName);
     Q_INVOKABLE void closed(QString objectName);

@@ -13,8 +13,8 @@ ProgressBar {
 
     /* private */
     id: root
-    property int _defaultWidth: 32
-    property int _defaultHeight: 32
+    property int _defaultWidth: 32 * Hdpi.FontScalingFactor
+    property int _defaultHeight: 32 * Hdpi.FontScalingFactor
 
     Component {
         id: circularProgressBarStyle

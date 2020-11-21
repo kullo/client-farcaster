@@ -39,10 +39,10 @@ Item {
             id: input
             anchors {
                 fill: parent
-                leftMargin: 5
-                rightMargin: 5
-                topMargin: 2
-                bottomMargin: 2
+                leftMargin: 5 * Hdpi.FontScalingFactor
+                rightMargin: 5 * Hdpi.FontScalingFactor
+                topMargin: 2 * Hdpi.FontScalingFactor
+                bottomMargin: 2 * Hdpi.FontScalingFactor
             }
             font.family: FontList.MonospaceFamily
             verticalAlignment: TextEdit.AlignVCenter

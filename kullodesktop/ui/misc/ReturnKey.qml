@@ -5,7 +5,9 @@ import Kullo 1.0
 
 Key {
     text: Os.osx ? "↩" : "↵"
-    textPaddingTop: Os.osx ? 5 : -1
+    textPaddingTop: Os.osx
+                    ? 5 * Hdpi.FontScalingFactor
+                    : -1
 
     // Override monospace font for this symbol
     fontFamily: FontList.SansSerifFamily

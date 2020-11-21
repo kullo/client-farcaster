@@ -7,10 +7,10 @@ import "../native"
 Column {
     /* public */
     property var conversationParticipantsAddresses: [] // stringlist
-    property int paddingTop: 10
-    property int paddingRight: 10
-    property int paddingBottom: 10
-    property int paddingLeft: 10
+    property int paddingTop: 10 * Hdpi.FontScalingFactor
+    property int paddingRight: 10 * Hdpi.FontScalingFactor
+    property int paddingBottom: 10 * Hdpi.FontScalingFactor
+    property int paddingLeft: 10 * Hdpi.FontScalingFactor
 
     id: root
 
@@ -24,7 +24,7 @@ Column {
     height: implicitHeight + paddingBottom
 
     topPadding: paddingTop
-    spacing: 3
+    spacing: 3 * Hdpi.FontScalingFactor
 
     NativeText {
         id: textLine1

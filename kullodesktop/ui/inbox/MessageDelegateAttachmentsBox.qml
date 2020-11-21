@@ -21,16 +21,16 @@ Item {
         id: attachmentsList
         anchors {
             left: parent.left
-            leftMargin: 10
+            leftMargin: 10 * Hdpi.FontScalingFactor
             right: parent.right
-            rightMargin: 20
+            rightMargin: 20 * Hdpi.FontScalingFactor
             top: parent.top
-            topMargin: 10
+            topMargin: 10 * Hdpi.FontScalingFactor
         }
         property int cols: Math.floor(width/cellWidth)
         height: cellHeight*Math.ceil(attachmentsList.count/cols)
-        cellWidth: 145
-        cellHeight: 85
+        cellWidth: 145 * Hdpi.FontScalingFactor
+        cellHeight: 85 * Hdpi.FontScalingFactor
 
         clip: true
         interactive: false

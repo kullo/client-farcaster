@@ -175,12 +175,12 @@ FocusScope {
                 left: parent.left
                 right: parent.right
                 bottom: footer.top
-                bottomMargin: 5
+                bottomMargin: 5 * Hdpi.FontScalingFactor
             }
             color: "white"
             radius: messageText.anchors.margins * 0.666
 
-            property int _padding: 8
+            property int _padding: 8 * Hdpi.FontScalingFactor
 
             AnswerBoxHeader {
                 id: header
@@ -334,7 +334,7 @@ FocusScope {
 
                     CircularProgressBar {
                         id: workingIndicator
-                        property int _padding: 6
+                        property int _padding: 6 * Hdpi.FontScalingFactor
                         anchors {
                             top: parent.top
                             right: parent.right
@@ -365,13 +365,13 @@ FocusScope {
                         left: addAttachmentsBox.right
                         right: parent.right
                         bottom: parent.bottom
-                        leftMargin: 15
+                        leftMargin: 15 * Hdpi.FontScalingFactor
                         rightMargin: 0
                     }
                     property int cols: Math.floor(width/cellWidth)
                     height: cellHeight*Math.ceil(attachmentsList.count/cols)
-                    cellWidth: 145
-                    cellHeight: 85
+                    cellWidth: 145 * Hdpi.FontScalingFactor
+                    cellHeight: 85 * Hdpi.FontScalingFactor
 
                     clip: true
                     interactive: false

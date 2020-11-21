@@ -101,7 +101,7 @@ FForm {
     Column {
         id: column1
         anchors.fill: parent
-        spacing: 30
+        spacing: 30 * Hdpi.FontScalingFactor
 
         BackButton {
             onClicked: app.state = "welcome"
@@ -113,7 +113,7 @@ FForm {
                 left: parent.left
                 right: parent.right
             }
-            spacing: 8
+            spacing: 8 * Hdpi.FontScalingFactor
 
             NativeText {
                 text: qsTr("Choose your Kullo address:")
@@ -205,7 +205,7 @@ FForm {
                 id: errorHintUser
                 anchors {
                     right: parent.right
-                    rightMargin: 20
+                    rightMargin: 20 * Hdpi.FontScalingFactor
                 }
                 maxWidth: blockAddress.width - anchors.rightMargin
                 direction: "topleft"
@@ -235,7 +235,7 @@ FForm {
 
             Column {
                 id: challengeBlockContent
-                spacing: 8
+                spacing: 8 * Hdpi.FontScalingFactor
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -290,7 +290,7 @@ FForm {
                 id: termsText
                 anchors {
                     left: termsAccepted.right
-                    leftMargin: 5
+                    leftMargin: 5 * Hdpi.FontScalingFactor
                     right: parent.right
                 }
                 text: qsTr("I accept the <a href='%1'>terms of service</a>").arg(registerer.termsUrl)
@@ -303,7 +303,7 @@ FForm {
                 left: parent.left
                 right: parent.right
             }
-            spacing: 10
+            spacing: 10 * Hdpi.FontScalingFactor
 
             Row {
                 anchors {
@@ -325,7 +325,7 @@ FForm {
                 id: errorHintGlobal
                 anchors {
                     left: parent.left
-                    leftMargin: 15
+                    leftMargin: 15 * Hdpi.FontScalingFactor
                 }
                 maxWidth: blockRegisterButtom.width - anchors.leftMargin
             }

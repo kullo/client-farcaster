@@ -19,8 +19,9 @@ NativeWindow {
     property alias senderAddress: senderAddress.text
 
     /* private */
-    property int _DEFAULT_WINDOW_WIDTH: 550
-    property int _DEFAULT_WINDOW_HEIGHT: 220
+    property int _DEFAULT_WINDOW_WIDTH: 550 * Hdpi.FontScalingFactor
+    property int _DEFAULT_WINDOW_HEIGHT: 220 * Hdpi.FontScalingFactor
+    property int _LABEL_COLUMN_WIDTH: 110 * Hdpi.FontScalingFactor
 
     width: _DEFAULT_WINDOW_WIDTH
     height: _DEFAULT_WINDOW_HEIGHT
@@ -48,15 +49,15 @@ NativeWindow {
             anchors {
                 left: parent.left
                 top: parent.top
-                topMargin: 10
-                leftMargin: 10
+                topMargin: 10 * Hdpi.FontScalingFactor
+                leftMargin: 10 * Hdpi.FontScalingFactor
             }
             source: messageId != -1
                     ? "image://messagesenderavatars/" + Utils.urlencode(Inbox.userSettings.address) + "/" + conversationId + "/" + messageId
                     : ""
             asynchronous: true
-            height: 200
-            width: 200
+            height: 200 * Hdpi.FontScalingFactor
+            width: 200 * Hdpi.FontScalingFactor
         }
 
         Column {
@@ -64,9 +65,9 @@ NativeWindow {
                 top: parent.top
                 left: avatar.right
                 right: parent.right
-                margins: 10
+                margins: 10 * Hdpi.FontScalingFactor
             }
-            spacing: 10
+            spacing: 10 * Hdpi.FontScalingFactor
 
             Item {
                 width: parent.width
@@ -76,7 +77,7 @@ NativeWindow {
                     id: senderNameLabel
                     text: qsTr("Name") + ":"
                     font.bold: true
-                    width: 110
+                    width: _LABEL_COLUMN_WIDTH
                 }
                 NativeSelectableText {
                     id: senderName
@@ -95,7 +96,7 @@ NativeWindow {
                     id: senderOrganizationLabel
                     text: qsTr("Organization") + ":"
                     font.bold: true
-                    width: 110
+                    width: _LABEL_COLUMN_WIDTH
                 }
                 NativeSelectableText {
                     id: senderOrganization
@@ -114,7 +115,7 @@ NativeWindow {
                     id: senderAddressLabel
                     text: qsTr("Address") + ":"
                     font.bold: true
-                    width: 110
+                    width: _LABEL_COLUMN_WIDTH
                 }
                 NativeSelectableText {
                     id: senderAddress

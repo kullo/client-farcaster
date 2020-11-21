@@ -35,7 +35,7 @@ Item {
             right: parent.right
         }
 
-        spacing: 30
+        spacing: 30 * Hdpi.FontScalingFactor
 
         BackButton {
             onClicked: app.state = "welcome"

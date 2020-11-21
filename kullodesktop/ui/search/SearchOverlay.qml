@@ -37,7 +37,7 @@ BackgroundCover {
     id: root
     property bool _doneLoading: false
     property var _messageDelegateComponent: null
-    property int _HEADER_CONTENT_SPACING: 25
+    property int _HEADER_CONTENT_SPACING: 25 * Hdpi.FontScalingFactor
 
     onDirectionChanged: {
         if (direction == "both") messageDirectionBoth.checked = true
@@ -115,9 +115,9 @@ BackgroundCover {
             'borderWidth': 0,
             'width': Qt.binding(function() {
                 return content.width
-                        - 400 // search results
-                        - 20 // spacing
-                        - 20 // scrollbar width
+                        - 400 * Hdpi.FontScalingFactor // search results
+                        - 20 * Hdpi.FontScalingFactor // spacing
+                        - 20 * Hdpi.FontScalingFactor // scrollbar width
             }),
         }
 
@@ -151,7 +151,7 @@ BackgroundCover {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
         }
-        radius: 10
+        radius: 10 * Hdpi.FontScalingFactor
 
         MouseArea {
             anchors.fill: parent
@@ -163,8 +163,8 @@ BackgroundCover {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 7
-                rightMargin: 10
+                topMargin: 8 * Hdpi.FontScalingFactor
+                rightMargin: 10 * Hdpi.FontScalingFactor
             }
             tooltip: qsTr("Close (Esc)")
             source: "/resources/scalable/close2_b.svg"
@@ -175,10 +175,7 @@ BackgroundCover {
             id: content
             anchors {
                 fill: parent
-                topMargin: 15
-                leftMargin: 15
-                rightMargin: 15
-                bottomMargin: 15
+                margins: 15 * Hdpi.FontScalingFactor
             }
 
             Flow {
@@ -188,16 +185,16 @@ BackgroundCover {
                     left: parent.left
                     right: parent.right
                 }
-                property int _SEARCH_INPUT_DEFAULT_WIDTH: 250
-                property int _HORIZONTAL_SPACING: 40
-                property int _VERTICAL_SPACING: 5
+                property int _SEARCH_INPUT_DEFAULT_WIDTH: 250 * Hdpi.FontScalingFactor
+                property int _HORIZONTAL_SPACING: 40 * Hdpi.FontScalingFactor
+                property int _VERTICAL_SPACING: 5 * Hdpi.FontScalingFactor
                 property bool showOneLine: header.width >= (
                                                + _SEARCH_INPUT_DEFAULT_WIDTH
                                                + _HORIZONTAL_SPACING
                                                + directionFilter.implicitWidth
                                                + _HORIZONTAL_SPACING
                                                + conversationFilterBox.implicitWidth
-                                               + 50 // right space for close button and some fresh air
+                                               + 50 * Hdpi.FontScalingFactor // right space for close button and some fresh air
                                                )
                 spacing: _VERTICAL_SPACING
 
@@ -205,7 +202,7 @@ BackgroundCover {
                     id: searchInput
                     width: header.showOneLine
                            ? header._SEARCH_INPUT_DEFAULT_WIDTH
-                           : parent.width - 100
+                           : parent.width - 100 * Hdpi.FontScalingFactor
                     placeholderText: root.global
                                      ? qsTr("Search Kullo")
                                      : qsTr("Search conversation")
@@ -217,7 +214,7 @@ BackgroundCover {
                 }
 
                 Item {
-                    height: 1
+                    height: 1 * Hdpi.FontScalingFactor
                     width: header.showOneLine
                            ? (header._HORIZONTAL_SPACING - 2*header._VERTICAL_SPACING)
                            : 0
@@ -225,7 +222,7 @@ BackgroundCover {
 
                 Row {
                     id: directionFilter
-                    spacing: 8
+                    spacing: 8 * Hdpi.FontScalingFactor
 
                     ExclusiveGroup {
                         id: messageDirection
@@ -258,13 +255,13 @@ BackgroundCover {
                 }
 
                 Item {
-                    height: 1
+                    height: 1 * Hdpi.FontScalingFactor
                     width: (header._HORIZONTAL_SPACING - 2*header._VERTICAL_SPACING)
                 }
 
                 Row {
                     id: conversationFilterBox
-                    spacing: 8
+                    spacing: 8 * Hdpi.FontScalingFactor
 
                     ExclusiveGroup {
                         id: conversationFilter
@@ -287,7 +284,7 @@ BackgroundCover {
                     }
 
                     Row {
-                        spacing: 4
+                        spacing: 4 * Hdpi.FontScalingFactor
                         RadioButton {
                             id: conversationFilterConversation
                             text: qsTr("in conversation")
@@ -299,7 +296,7 @@ BackgroundCover {
                             id: conversationSelection
                             model: Inbox.allConversations
                             textRole: "titleShort_"
-                            width: 160
+                            width: 160 * Hdpi.FontScalingFactor
 
                             onCurrentIndexChanged: {
                                 var modelIndex = currentIndex
@@ -335,7 +332,7 @@ BackgroundCover {
                     topMargin: _HEADER_CONTENT_SPACING
                     bottom: parent.bottom
                 }
-                width: 400
+                width: 400 * Hdpi.FontScalingFactor
                 clip: true
                 model: searchModel
                 interactive: true
@@ -367,7 +364,7 @@ BackgroundCover {
             ScrollView {
                 anchors {
                     left: searchResults.right
-                    leftMargin: 20
+                    leftMargin: 20 * Hdpi.FontScalingFactor
                     right: parent.right
                     top: header.bottom
                     topMargin: _HEADER_CONTENT_SPACING
@@ -401,9 +398,9 @@ BackgroundCover {
                     anchors {
                         verticalCenter: parent.verticalCenter
                         left: parent.left
-                        leftMargin: 50
+                        leftMargin: 50 * Hdpi.FontScalingFactor
                         right: parent.right
-                        rightMargin: 50
+                        rightMargin: 50 * Hdpi.FontScalingFactor
                     }
 
                     NativeText {

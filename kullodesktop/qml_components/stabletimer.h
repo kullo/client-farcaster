@@ -13,7 +13,7 @@ class StableTimer : public QObject
     Q_OBJECT
 
 public:
-    explicit StableTimer(QObject *parent = 0);
+    explicit StableTimer(QObject *parent = nullptr);
 
     // defaults to 1000
     Q_PROPERTY(int interval READ interval WRITE setInterval NOTIFY intervalChanged)

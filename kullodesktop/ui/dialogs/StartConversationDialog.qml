@@ -26,7 +26,7 @@ BaseDialog {
     signal addressAdded()
 
     id: root
-    width: 400
+    width: 400 * Hdpi.FontScalingFactor
     minimumHeight: mainItem.implicitHeight + 2*verticalPadding
     height: mainItem.implicitHeight + 2*verticalPadding
 
@@ -103,7 +103,7 @@ BaseDialog {
                     left: parent.left
                     right: parent.right
                 }
-                spacing: 5
+                spacing: 5 * Hdpi.FontScalingFactor
 
                 NativeText {
                     id: stagedAddressesLabel
@@ -131,7 +131,7 @@ BaseDialog {
 
                 anchors {
                     top: stagedAddresses.bottom
-                    topMargin: 5
+                    topMargin: 5 * Hdpi.FontScalingFactor
                     left: parent.left
                     right: parent.right
                 }
@@ -145,7 +145,7 @@ BaseDialog {
                         top: parent.top
                         left: parent.left
                         right: addButton.left
-                        rightMargin: 2
+                        rightMargin: 2 * Hdpi.FontScalingFactor
                     }
 
                     focus: true
@@ -232,7 +232,7 @@ BaseDialog {
                 id: errorHint
                 anchors {
                     right: parent.right
-                    rightMargin: 20
+                    rightMargin: 20 * Hdpi.FontScalingFactor
                     bottom: parent.bottom
                 }
                 maxWidth: parent.width-2*anchors.rightMargin

@@ -24,9 +24,9 @@ Rectangle {
         text: root.address
         anchors {
             left: parent.left
-            leftMargin: 10
+            leftMargin: 10 * Hdpi.FontScalingFactor
             right: parent.right
-            rightMargin: 5
+            rightMargin: 5 * Hdpi.FontScalingFactor
             verticalCenter: parent.verticalCenter
         }
         color: !accountsListView.contextMenuVisible && mouseArea.containsMouse

@@ -77,7 +77,7 @@ FocusScope {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 10
+                topMargin: 10 * Hdpi.FontScalingFactor
                 rightMargin: anchors.topMargin
             }
         }
@@ -88,12 +88,12 @@ FocusScope {
 
             anchors {
                 top: logo.bottom
-                topMargin: 50
+                topMargin: 50 * Hdpi.FontScalingFactor
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                leftMargin: 20
-                rightMargin: 20
+                leftMargin: 20 * Hdpi.FontScalingFactor
+                rightMargin: 20 * Hdpi.FontScalingFactor
             }
         }
     }

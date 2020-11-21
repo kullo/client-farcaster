@@ -12,7 +12,7 @@ NativeWindow {
     id: root
 
     title: qsTr("Import MasterKey")
-    width: 400
+    width: 400 * Hdpi.FontScalingFactor
     height: windowContent.anchors.topMargin +
             windowContent.implicitHeight +
             windowContent.anchors.bottomMargin
@@ -33,9 +33,9 @@ NativeWindow {
             id: windowContent
             anchors {
                 fill: parent
-                margins: 10
+                margins: 10 * Hdpi.FontScalingFactor
             }
-            spacing: 10
+            spacing: 10 * Hdpi.FontScalingFactor
 
             NativeText {
                 text: qsTr("Import Kullo MasterKey")
@@ -47,7 +47,7 @@ NativeWindow {
                     left: parent.left
                     right: parent.right
                 }
-                height: 150
+                height: 150 * Hdpi.FontScalingFactor
                 focus: true
 
                 textFormat: TextEdit.PlainText

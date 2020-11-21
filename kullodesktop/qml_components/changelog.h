@@ -14,7 +14,7 @@ class Changelog : public QObject
     Q_OBJECT
 
 public:
-    explicit Changelog(QObject *parent = 0);
+    explicit Changelog(QObject *parent = nullptr);
 
     Q_PROPERTY(QString html READ html NOTIFY htmlChanged)
     QString html() const;

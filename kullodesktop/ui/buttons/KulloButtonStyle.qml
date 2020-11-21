@@ -11,12 +11,12 @@ ButtonStyle {
     property int _POSITION_LEFT: 1
     property int _POSITION_RIGHT: 2
 
-    property int iconSize: 20
+    property int iconSize: 20 * Hdpi.FontScalingFactor
     property int iconPosition: _POSITION_RIGHT
     property url source: ""
-    property int paddingH: 14
-    property int paddingV: 6
-    property int borderRadius: 4
+    property int paddingH: 14 * Hdpi.FontScalingFactor
+    property int paddingV: 6 * Hdpi.FontScalingFactor
+    property int borderRadius: 4 * Hdpi.FontScalingFactor
     property color backgroundColor: Style.buttonBackgroundColor
     property color backgroundColorDisabled: Style.buttonBackgroundColorDisabled
     property color hoverColor: Style.buttonHoverColor
@@ -114,7 +114,9 @@ ButtonStyle {
                                    + (icon.width ? labelIconSpacing + icon.width : 0)
                     implicitHeight: Math.max(labelBlock.implicitHeight, icon.height)
 
-                    property real labelIconSpacing: label.implicitWidth > 0 ? 8 : 0
+                    property real labelIconSpacing: label.implicitWidth > 0
+                                                    ? 8 * Hdpi.FontScalingFactor
+                                                    : 0
                     property real spaceLeft: width - (icon.width ? labelIconSpacing + icon.width : 0)
 
                     Column {
@@ -137,7 +139,7 @@ ButtonStyle {
                             elide: Text.ElideRight
                         }
 
-                        spacing: 2
+                        spacing: 2 * Hdpi.FontScalingFactor
 
                         Rectangle {
                             id: progress
@@ -148,17 +150,17 @@ ButtonStyle {
                             property bool enabled: visibleValue >= 0
                             width: labelBlock.width
 
-                            implicitHeight: enabled ? 6 : 0
+                            implicitHeight: enabled ? 6 * Hdpi.FontScalingFactor : 0
                             visible: enabled
 
-                            border.width: 1
+                            border.width: 1 * Hdpi.FontScalingFactor
                             border.color: root.progressBarBorderColor
 
                             Rectangle {
                                 color: root.progressBarColor
-                                x: 2
-                                y: 2
-                                height: 2
+                                x: 2 * Hdpi.FontScalingFactor
+                                y: 2 * Hdpi.FontScalingFactor
+                                height: 2 * Hdpi.FontScalingFactor
                                 width: (parent.width - 2*x) * progress.visibleValue
                             }
                         }
@@ -187,12 +189,12 @@ ButtonStyle {
                             anchors {
                                 top: parent.top
                                 right: parent.right
-                                topMargin: -3
-                                rightMargin: -3
+                                topMargin: -3 * Hdpi.FontScalingFactor
+                                rightMargin: -3 * Hdpi.FontScalingFactor
                             }
-                            width: 8
-                            height: 8
-                            radius: 8/2
+                            width: 8 * Hdpi.FontScalingFactor
+                            height: 8 * Hdpi.FontScalingFactor
+                            radius: width / 2
                         }
                     }
                 }

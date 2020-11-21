@@ -18,7 +18,7 @@ BaseDialog {
            ? qsTr("Downloading Kullo update")
            : qsTr("Kullo update available")
 
-    width: 500
+    width: 500 * Hdpi.FontScalingFactor
     minimumHeight: content.implicitHeight
                    + footer.implicitHeight
                    + 2*verticalPadding
@@ -263,7 +263,7 @@ BaseDialog {
                 id: changelogTextbox
                 textFormat: Text.RichText
                 readOnly: true
-                implicitHeight: visible ? 250 : 0
+                implicitHeight: visible ? 250 * Hdpi.FontScalingFactor : 0
                 visible: false
                 text: (changelog.html !== "")
                       ? changelog.html
@@ -271,7 +271,7 @@ BaseDialog {
 
                 anchors {
                     top: showDetailsText.bottom
-                    topMargin: 5
+                    topMargin: 5 * Hdpi.FontScalingFactor
                     left: parent.left
                     right: parent.right
                     bottom: parent.bottom

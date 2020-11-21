@@ -14,11 +14,11 @@ BackgroundCover {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
         }
-        width: 520
+        width: 520 * Hdpi.FontScalingFactor
         height: column.anchors.topMargin
                 + column.implicitHeight
                 + column.anchors.bottomMargin
-        radius: 10
+        radius: 10 * Hdpi.FontScalingFactor
 
         MouseArea {
             anchors.fill: parent
@@ -30,8 +30,8 @@ BackgroundCover {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 7
-                rightMargin: 10
+                topMargin: 7 * Hdpi.FontScalingFactor
+                rightMargin: 10 * Hdpi.FontScalingFactor
             }
             tooltip: qsTr("Close (Esc)")
             source: "/resources/scalable/close2_b.svg"
@@ -42,12 +42,12 @@ BackgroundCover {
             id: column
             anchors {
                 fill: parent
-                topMargin: 25
-                leftMargin: 15
-                rightMargin: 15
-                bottomMargin: 15
+                topMargin: 25 * Hdpi.FontScalingFactor
+                leftMargin: 15 * Hdpi.FontScalingFactor
+                rightMargin: 15 * Hdpi.FontScalingFactor
+                bottomMargin: 15 * Hdpi.FontScalingFactor
             }
-            spacing: 20
+            spacing: 20 * Hdpi.FontScalingFactor
 
             NativeText {
                 text: qsTr("Use Kullo like a pro")
@@ -60,7 +60,7 @@ BackgroundCover {
             }
 
             Column {
-                spacing: 7
+                spacing: 7 * Hdpi.FontScalingFactor
                 anchors {
                     left: parent.left
                     right: parent.right

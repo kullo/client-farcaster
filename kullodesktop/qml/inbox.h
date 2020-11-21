@@ -29,7 +29,7 @@ public:
     explicit Inbox(InnerApplication &innerApplication,
                    ApiMirror::Client &client,
                    Kullo::Util::StlTaskRunner *taskRunner,
-                   QObject *parent = 0);
+                   QObject *parent = nullptr);
     ~Inbox() override;
 
     Q_PROPERTY(KulloDesktop::Qml::UserSettings *userSettings READ userSettings NOTIFY userSettingsChanged)

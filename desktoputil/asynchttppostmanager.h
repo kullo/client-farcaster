@@ -29,7 +29,7 @@ public:
     using Response = boost::optional<Kullo::Http::Response>;
     using ResponseError = Kullo::Http::ResponseError;
 
-    explicit AsyncHttpPostManager(QObject *parent = 0);
+    explicit AsyncHttpPostManager(QObject *parent = nullptr);
     ~AsyncHttpPostManager();
     void post(const QUrl &url, const std::string &boundary, const std::vector<uint8_t> &data);
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 set -e
-which shellcheck > /dev/null && shellcheck "$0"
+command -v shellcheck > /dev/null && shellcheck "$0"
 
 function md5() {
     md5sum "$1" | cut -d" " -f 1

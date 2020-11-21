@@ -7,8 +7,10 @@ Label {
     property bool _FORM_TYPE_IGNORE_IN_FORM_VALIDATION: true
     property bool _FORM_TYPE_IGNORE_IN_FORM_CLEARING: true
 
-    width: 100
-    height: target ? target.implicitHeight : 62
+    width: 100 * Hdpi.FontScalingFactor
+    height: target
+            ? target.implicitHeight
+            : 62 * Hdpi.FontScalingFactor
     verticalAlignment: Text.AlignVCenter
 
     MouseArea {

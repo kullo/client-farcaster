@@ -18,8 +18,8 @@ NativeWindow {
     property var participantNames // adress->name map
 
     /* private */
-    property int _DEFAULT_WINDOW_WIDTH: 550
-    property int _DEFAULT_WINDOW_HEIGHT: 250
+    property int _DEFAULT_WINDOW_WIDTH: 550 * Hdpi.FontScalingFactor
+    property int _DEFAULT_WINDOW_HEIGHT: 250 * Hdpi.FontScalingFactor
     property Conversation _conversation: conversationId !== -1
                                          ? Inbox.allConversations.get(conversationId)
                                          : null
@@ -59,7 +59,7 @@ NativeWindow {
         id: mainItem
         anchors {
             fill: parent
-            margins: 10
+            margins: 10 * Hdpi.FontScalingFactor
         }
 
         Keys.onEscapePressed: root.closeWindow()
@@ -72,7 +72,7 @@ NativeWindow {
                 left: parent.left
                 bottom: parent.bottom
             }
-            width: 300
+            width: 300 * Hdpi.FontScalingFactor
 
             ListModel {
                 id: participantsModel
@@ -85,9 +85,9 @@ NativeWindow {
                     right: parent.right
                     top: parent.top
                     bottom: actionButton.top
-                    bottomMargin: 10
+                    bottomMargin: 10 * Hdpi.FontScalingFactor
                 }
-                width: 300
+                width: 300 * Hdpi.FontScalingFactor
                 clip: true
 
                 ListView {
@@ -97,7 +97,7 @@ NativeWindow {
                     model: participantsModel
 
                     delegate: Item {
-                        height: 44
+                        height: 44 * Hdpi.FontScalingFactor
                         width: scrollView.width
 
                         property string address: address_
@@ -109,20 +109,20 @@ NativeWindow {
                             asynchronous: true
                             source: "image://participantavatars/" + Utils.urlencode(address)
 
-                            width: 40
-                            height: 40
+                            width: 40 * Hdpi.FontScalingFactor
+                            height: 40 * Hdpi.FontScalingFactor
 
                             anchors {
                                 left: parent.left
                                 top: parent.top
-                                topMargin: 2
+                                topMargin: 2 * Hdpi.FontScalingFactor
                             }
                         }
 
                         NativeSelectableText {
                             anchors {
                                 left: participantAvatar.right
-                                leftMargin: 8
+                                leftMargin: 8 * Hdpi.FontScalingFactor
                                 top: parent.top
                                 bottom: parent.bottom
                                 right: checkbox.left
@@ -138,7 +138,7 @@ NativeWindow {
                                 right: parent.right
                                 verticalCenter: parent.verticalCenter
                             }
-                            width: 40
+                            width: 40 * Hdpi.FontScalingFactor
                             onCheckedChanged: {
                                 if (checked) {
                                     // remove first to ensure uniqueness
@@ -175,10 +175,10 @@ NativeWindow {
             anchors {
                 top: parent.top
                 left: leftColumn.right
-                leftMargin: 20
+                leftMargin: 20 * Hdpi.FontScalingFactor
                 right: parent.right
             }
-            spacing: 10
+            spacing: 10 * Hdpi.FontScalingFactor
 
             NativeText {
                 text: qsTr("Statistics")
@@ -190,7 +190,7 @@ NativeWindow {
                     left: parent.left
                     right: parent.right
                 }
-                spacing: 10
+                spacing: 10 * Hdpi.FontScalingFactor
 
                 NativeText {
                     id: statsLabel

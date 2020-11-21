@@ -9,7 +9,7 @@ import "../misc"
 import "../js/shortcut.js" as SC
 
 Rectangle {
-    height: profileButton.implicitHeight + 2*5
+    height: profileButton.implicitHeight + 2*5 * Hdpi.FontScalingFactor
     color: Style.leftToolbarBackground
 
     // delay loading data to speed up software start
@@ -31,11 +31,11 @@ Rectangle {
         id: profileButton
         anchors {
             top: parent.top
-            topMargin: 5
+            topMargin: 5 * Hdpi.FontScalingFactor
             left: parent.left
-            leftMargin: 5
+            leftMargin: 5 * Hdpi.FontScalingFactor
             right: moreButton.left
-            rightMargin: 5
+            rightMargin: 5 * Hdpi.FontScalingFactor
         }
 
         text: qsTr("My Kullo")
@@ -46,10 +46,10 @@ Rectangle {
             }
 
             source: "image://usersettingsavatars/" + Inbox.userSettings.address + "?circle"
-            iconSize: 32
+            iconSize: 32 * Hdpi.FontScalingFactor
             iconPosition: _POSITION_LEFT
-            paddingH: 8
-            paddingV: 2
+            paddingH: 8 * Hdpi.FontScalingFactor
+            paddingV: 2 * Hdpi.FontScalingFactor
             backgroundColor: "transparent"
             hoverColor: "#22000000"
             textColor: Style.black
@@ -74,7 +74,7 @@ Rectangle {
         anchors {
             verticalCenter: parent.verticalCenter
             right: parent.right
-            rightMargin: 5
+            rightMargin: 5 * Hdpi.FontScalingFactor
         }
         source: "/resources/scalable/more_b.svg"
         badgeEnabled: KulloVersionChecker.updateAvailable

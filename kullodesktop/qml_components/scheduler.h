@@ -13,7 +13,7 @@ class Scheduler : public QObject
     Q_OBJECT
 
 public:
-    explicit Scheduler(QObject *parent = 0);
+    explicit Scheduler(QObject *parent = nullptr);
     ~Scheduler();
 
     Q_PROPERTY(KulloDesktop::Qml::UserSettings* user READ user WRITE setUser NOTIFY userChanged)

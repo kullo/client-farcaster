@@ -17,10 +17,10 @@ Rectangle {
 
     /* private */
     id: root
-    width: 150
-    height: 150
+    width: 150 * Hdpi.FontScalingFactor
+    height: 150 * Hdpi.FontScalingFactor
     visible: true
-    radius: 15
+    radius: 15 * Hdpi.FontScalingFactor
     opacity: 1
     color: "#dd000000"
     state: "hidden"

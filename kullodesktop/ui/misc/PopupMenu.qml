@@ -3,9 +3,9 @@ import QtQuick 2.6
 
 Item {
     default property alias children: column.children
-    property int padding: 5
+    property int padding: 5 * Hdpi.FontScalingFactor
     property color backgroundColor: "#303030"
-    width: 200
+    width: 200 * Hdpi.FontScalingFactor
 
     z: 1
 
@@ -15,7 +15,7 @@ Item {
     Rectangle {
         id: main
         color: root.backgroundColor
-        radius: 5
+        radius: 5 * Hdpi.FontScalingFactor
 
         anchors {
             left: parent.left
@@ -34,14 +34,14 @@ Item {
                 margins: padding
             }
 
-            spacing: 5
+            spacing: 5 * Hdpi.FontScalingFactor
         }
     }
 
     Pointer {
         id: pointer
         color: root.backgroundColor
-        size: 8
+        size: 8 * Hdpi.FontScalingFactor
         anchors {
             top: main.bottom
             horizontalCenter: parent.horizontalCenter

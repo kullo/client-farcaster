@@ -8,10 +8,10 @@ Rectangle {
     /* private */
     id: root
     property bool _showBanner: false
-    property int _paddingV: 8
-    property int _paddingH: 15
+    property int _paddingV: 8 * Hdpi.FontScalingFactor
+    property int _paddingH: 15 * Hdpi.FontScalingFactor
     anchors.horizontalCenter: parent.horizontalCenter
-    width: Math.max(250, bannerText.contentWidth) + 2*_paddingH
+    width: Math.max(250 * Hdpi.FontScalingFactor, bannerText.contentWidth) + 2*_paddingH
     height: bannerText.implicitHeight
             + radius
             + 2*_paddingV

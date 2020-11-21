@@ -36,7 +36,7 @@ class KulloTrayIcon : public QObject
 
 public:
     explicit KulloTrayIcon(Qml::InnerApplication& app,
-                           QObject *parent = 0);
+                           QObject *parent = nullptr);
     ~KulloTrayIcon();
 
 signals:
