@@ -1,7 +1,13 @@
-/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
+/*
+ * Copyright 2013–2020 Kullo GmbH
+ *
+ * This source code is licensed under the 3-clause BSD license. See LICENSE.txt
+ * in the root directory of this source tree for details.
+ */
 import QtQuick 2.4
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 import Kullo 1.0
 
 import ".."
@@ -35,6 +41,33 @@ BackgroundCover {
                 saveFromUi()
             }
         }
+    }
+
+    Connections {
+        target: Inbox
+        onExportFinished: {
+            exportDataButton.setExporting(false)
+            if (error) {
+                exportDataErrorDialog.error = error
+                exportDataErrorDialog.open()
+            } else {
+                exportDataFinishedDialog.open()
+            }
+        }
+    }
+
+    MessageDialog {
+        id: exportDataFinishedDialog
+        title: qsTr("Data export finished")
+        text: qsTr("Your data has been exported successfully.")
+    }
+
+    MessageDialog {
+        property string error: null
+
+        id: exportDataErrorDialog
+        title: qsTr("Data export failed")
+        text: qsTr("Exporting your data failed:") + " " + error
     }
 
     Component.onCompleted: {
@@ -268,20 +301,39 @@ BackgroundCover {
                 }
 
                 Button {
+                    id: exportDataButton
+
                     height: footerRow.buttonHeight
-                    text: qsTr("Plan: %1 (%2/%3 GB)")
-                    .arg(accountInfo.planName)
-                    .arg((accountInfo.storageUsed/(1024*1024*1024)).toLocaleString(Qt.locale(), 'f', 2))
-                    .arg(accountInfo.storageQuota/(1024*1024*1024))
-                    style: KulloButtonStyle {
-                        progress: accountInfo.storageUsed
-                        progressMax: accountInfo.storageQuota
-                        progressBarColor: backgroundColor
-                        progressBarBackgroundColor: Style.white
-                        progressBarBorderColor: Utils.setAlpha(Style.white, 0.33)
+                    text: qsTr("Export your data")
+                    style: KulloButtonStyle {}
+                    onClicked: {
+                        setExporting(true)
+                        exportDataDialog.openDialog()
                     }
 
-                    onClicked: accountInfo.openSettingsLocationUrl()
+                    function setExporting(isExporting) {
+                        enabled = !isExporting
+                        if (isExporting) {
+                            text = qsTr("Exporting…")
+                        } else {
+                            text = qsTr("Export your data")
+                        }
+                    }
+                }
+
+                AdvancedFileSaveDialog {
+                    id: exportDataDialog
+
+                    title: qsTr("Export your data")
+                    filename: "KulloExport"
+
+                    onAccepted: {
+                        Inbox.exportDataAsync(fileUrl)
+                    }
+
+                    onRejected: {
+                        exportDataButton.setExporting(false)
+                    }
                 }
             }
         }

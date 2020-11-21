@@ -1,4 +1,9 @@
-/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
+/*
+ * Copyright 2013–2020 Kullo GmbH
+ *
+ * This source code is licensed under the 3-clause BSD license. See LICENSE.txt
+ * in the root directory of this source tree for details.
+ */
 #pragma once
 
 #include <memory>
@@ -17,6 +22,7 @@
 
 #include "desktoputil/desktoputil-forwards.h"
 #include "kullodesktop/farcaster-forwards.h"
+#include "kullodesktop/util/dataexporter.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -51,6 +57,8 @@ public:
     Q_INVOKABLE void removeConversation(Kullo::id_type conversationId);
 
     Q_INVOKABLE bool sync();
+
+    Q_INVOKABLE void exportDataAsync(const QUrl &destination);
 
     // TODO: move this functionality to C++ to ensure critical operations are performed,
     // even if the user interface has problems.
@@ -105,6 +113,7 @@ signals:
     void syncError(ApiMirror::Enums::NetworkErrorHolder::NetworkError error);
     void clientTooOld();
     void openConversation(Kullo::id_type conversationId);
+    void exportFinished(QString error);
 
 private slots:
     void onCreateSessionMigrationStarted();
@@ -117,6 +126,10 @@ private slots:
     void onSyncProgressed(const SignalSlotValue<Kullo::Api::SyncProgress> &progress);
     void onSyncFinished();
     void onSyncError(Kullo::Api::NetworkError error);
+
+    void onDataExporterDidFinish();
+    void onDataExporterDidError(QString error);
+    void onExportFinished(QString error);
 
 private:
     void setLocalDatabaseKulloVersion(
@@ -136,6 +149,7 @@ private:
     std::unique_ptr<UserSettings> userSettingsModel_;
 
     std::shared_ptr<Kullo::Api::AsyncTask> createSessionTask_;
+    std::shared_ptr<Util::DataExporter> dataExporter_;
 
     Q_DISABLE_COPY(Inbox)
 };

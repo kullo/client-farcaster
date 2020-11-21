@@ -1,6 +1,7 @@
-# OS / Qt Creator
+# OS / IDEs
 *~
 *.autosave
+.vscode/
 
 # generated files
 bin/

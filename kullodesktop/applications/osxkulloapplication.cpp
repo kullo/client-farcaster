@@ -1,4 +1,9 @@
-/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
+/*
+ * Copyright 2013–2020 Kullo GmbH
+ *
+ * This source code is licensed under the 3-clause BSD license. See LICENSE.txt
+ * in the root directory of this source tree for details.
+ */
 #include "osxkulloapplication.h"
 
 #include <kulloclient/util/assert.h>
@@ -6,6 +11,7 @@
 #include <kulloclient/util/misc.h>
 
 #ifdef Q_OS_MAC
+#define OBJC_OLD_DISPATCH_PROTOTYPES 1
 #include <objc/objc.h>
 #include <objc/message.h>
 #endif

@@ -122,7 +122,9 @@ SOURCES += \
     qml_components/registerer.cpp \
     qml_components/scheduler.cpp \
     qml_components/stabletimer.cpp \
+    util/attachmentexporter.cpp \
     util/consoleextendedloglistener.cpp \
+    util/dataexporter.cpp \
     util/htmlfileloglistener.cpp \
     util/kullofoldersetup.cpp \
     util/logfilecleaner.cpp \
@@ -181,7 +183,9 @@ HEADERS += \
     qml_components/registerer.h \
     qml_components/scheduler.h \
     qml_components/stabletimer.h \
+    util/attachmentexporter.h \
     util/consoleextendedloglistener.h \
+    util/dataexporter.h \
     util/htmlfileloglistener.h \
     util/kullofoldersetup.h \
     util/logfilecleaner.h \

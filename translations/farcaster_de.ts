@@ -1152,16 +1152,36 @@ sind deine Nachrichten verloren.</translation>
         <translation>MasterKey anzeigen</translation>
     </message>
     <message>
-        <source>Plan: %1 (%2/%3 GB)</source>
-        <translation>Tarif: %1 (%2/%3 GB)</translation>
-    </message>
-    <message>
         <source>Name must be set in order to send messages</source>
         <translation>Name muss gesetzt sein um Nachrichten zu verschicken</translation>
     </message>
     <message>
         <source>Account settings</source>
         <translation>Account-Einstellungen</translation>
+    </message>
+    <message>
+        <source>Data export finished</source>
+        <translation>Datenexport abgeschlossen</translation>
+    </message>
+    <message>
+        <source>Your data has been exported successfully.</source>
+        <translation>Deine Daten wurden erfolgreich exportiert.</translation>
+    </message>
+    <message>
+        <source>Data export failed</source>
+        <translation>Datenexport fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Exporting your data failed:</source>
+        <translation>Der Datenexport ist fehlgeschlagen:</translation>
+    </message>
+    <message>
+        <source>Export your data</source>
+        <translation>Exportiere deine Daten</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Exportieren …</translation>
     </message>
 </context>
 <context>

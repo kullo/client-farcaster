@@ -1,4 +1,9 @@
-/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
+/*
+ * Copyright 2013–2020 Kullo GmbH
+ *
+ * This source code is licensed under the 3-clause BSD license. See LICENSE.txt
+ * in the root directory of this source tree for details.
+ */
 #include "inbox.h"
 
 #include <exception>
@@ -40,6 +45,7 @@
 #include "kullodesktop/qml/innerapplication.h"
 #include "kullodesktop/qml/sender.h"
 #include "kullodesktop/qml/usersettings.h"
+#include "kullodesktop/util/dataexporter.h"
 
 namespace KulloDesktop {
 namespace Qml {
@@ -82,6 +88,9 @@ Inbox::Inbox(InnerApplication &innerApplication,
             &innerApplication_, &InnerApplication::unreadMessagesCountChanged);
     connect(this, &Inbox::syncFinished,
             &innerApplication_, &InnerApplication::syncFinished);
+
+    connect(this, &Inbox::exportFinished,
+            this, &Inbox::onExportFinished);
 }
 
 Inbox::~Inbox()
@@ -261,6 +270,18 @@ bool Inbox::sync()
     return true;
 }
 
+void Inbox::exportDataAsync(const QUrl &destination)
+{
+    if (!hasSession()) return;
+
+    dataExporter_ = std::make_shared<Util::DataExporter>(session_, destination);
+    connect(dataExporter_.get(), &Util::DataExporter::didFinish,
+            this, &Inbox::onDataExporterDidFinish);
+    connect(dataExporter_.get(), &Util::DataExporter::didError,
+            this, &Inbox::onDataExporterDidError);
+    dataExporter_->exportDataAsync();
+}
+
 void Inbox::clearDatabaseAndStoreCredentials(const QString &addressString, const QString &masterKeyPem)
 {
     const auto address = *Kullo::Api::AddressHelpers::create(addressString.toStdString());
@@ -430,6 +451,24 @@ void Inbox::onSyncError(Kullo::Api::NetworkError error)
     emit syncFinished(false);
 
     latestSyncProgress_ = boost::none;
+}
+
+void Inbox::onExportFinished(QString error)
+{
+    K_UNUSED(error);
+    dataExporter_.reset();
+}
+
+void Inbox::onDataExporterDidFinish()
+{
+    Log.i() << "Exporting data succeeded";
+    emit exportFinished("");
+}
+
+void Inbox::onDataExporterDidError(QString error)
+{
+    Log.e() << "Exporting data failed: " << error;
+    emit exportFinished(error);
 }
 
 void Inbox::setLocalDatabaseKulloVersion(

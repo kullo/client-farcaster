@@ -1,4 +1,9 @@
-/* Copyright 2013–2018 Kullo GmbH. All rights reserved. */
+/*
+ * Copyright 2013–2020 Kullo GmbH
+ *
+ * This source code is licensed under the 3-clause BSD license. See LICENSE.txt
+ * in the root directory of this source tree for details.
+ */
 #include "versions.h"
 
 #include <QtGlobal>
@@ -10,7 +15,7 @@
 
 namespace {
 
-const std::string KULLO_DESKTOP_VERSION = "59.0.0";
+const std::string KULLO_DESKTOP_VERSION = "60.0.0";
 
 bool charCiLess(char c1, char c2)
 {
